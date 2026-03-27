@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🤖 AI エージェント経済圏</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0d0d1a;
+    --bg2: #12122a;
+    --panel: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --accent1: #ff6b9d;
+    --accent2: #7c3aed;
+    --accent3: #06b6d4;
+    --accent4: #10b981;
+    --accent5: #f59e0b;
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --glow1: rgba(255,107,157,0.3);
+    --glow2: rgba(124,58,237,0.3);
+    --glow3: rgba(6,182,212,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    z-index: 100;
+  }
+
+  .title {
+    font-size: 18px;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--accent1), var(--accent3), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.05em;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+  }
+
+  .hstat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .hstat-label { color: var(--text-dim); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .hstat-value { color: var(--text); font-weight: 700; font-size: 13px; }
+
+  .btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: rgba(255,255,255,0.1); border-color: var(--accent1); }
+  .btn.active { background: var(--accent1); border-color: var(--accent1); color: white; }
+
+  /* Main layout */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* Simulation canvas area */
+  .sim-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 30% 20%, rgba(124,58,237,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(6,182,212,0.06) 0%, transparent 50%),
+                var(--bg);
+  }
+
+  /* Grid lines */
+  .sim-area::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  #canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Agent DOM elements */
+  .agent {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    transition: none;
+    z-index: 10;
+  }
+
+  .agent-body {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    position: relative;
+    box-shadow: 0 0 20px var(--glow), 0 4px 12px rgba(0,0,0,0.5);
+    border: 2px solid var(--agent-color);
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.2), transparent 60%), var(--agent-bg);
+    transition: transform 0.08s ease;
+  }
+
+  .agent-body::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid var(--agent-color);
+    opacity: 0.3;
+    animation: pulse-ring 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.15); opacity: 0; }
+  }
+
+  .agent-name {
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 3px;
+    color: var(--agent-color);
+    white-space: nowrap;
+    text-shadow: 0 0 8px var(--agent-color);
+    letter-spacing: 0.05em;
+  }
+
+  .agent-bar {
+    width: 44px;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-top: 3px;
+    overflow: hidden;
+  }
+
+  .agent-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--agent-color);
+    transition: width 0.3s ease;
+  }
+
+  .agent-carry {
+    font-size: 12px;
+    margin-top: 2px;
+    line-height: 1;
+  }
+
+  /* Trade particle */
+  .trade-particle {
+    position: absolute;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 20;
+    animation: fly-trade 0.8s ease-out forwards;
+  }
+
+  @keyframes fly-trade {
+    0% { transform: scale(0.5) translateY(0); opacity: 1; }
+    100% { transform: scale(1.5) translateY(-40px); opacity: 0; }
+  }
+
+  /* Speech bubble */
+  .speech {
+    position: absolute;
+    background: rgba(255,255,255,0.9);
+    color: #1a1a2e;
+    font-size: 10px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 10px;
+    pointer-events: none;
+    z-index: 30;
+    white-space: nowrap;
+    animation: pop-speech 1.5s ease forwards;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .speech::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 3px solid transparent;
+    border-top-color: rgba(255,255,255,0.9);
+  }
+
+  @keyframes pop-speech {
+    0% { transform: scale(0.5) translateY(0); opacity: 0; }
+    15% { transform: scale(1.1) translateY(-5px); opacity: 1; }
+    70% { transform: scale(1) translateY(-5px); opacity: 1; }
+    100% { transform: scale(0.8) translateY(-15px); opacity: 0; }
+  }
+
+  /* Trade line */
+  .trade-line {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Right panel */
+  .panel {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--bg2);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .panel::-webkit-scrollbar { width: 4px; }
+  .panel::-webkit-scrollbar-track { background: transparent; }
+  .panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .panel-section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+  }
+
+  .panel-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  /* Market prices */
+  .resource-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .resource-row:last-child { border-bottom: none; }
+  .res-icon { font-size: 16px; width: 24px; text-align: center; }
+  .res-name { flex: 1; margin-left: 6px; color: var(--text-dim); font-size: 11px; }
+  .res-price {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .res-trend { font-size: 10px; margin-left: 4px; }
+
+  /* Agents list */
+  .agent-list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .agent-list-item:last-child { border-bottom: none; }
+  .agent-list-icon { font-size: 18px; }
+  .agent-list-info { flex: 1; }
+  .agent-list-name { font-size: 11px; font-weight: 700; }
+  .agent-list-role { font-size: 9px; color: var(--text-dim); }
+  .agent-list-wealth {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent4);
+  }
+
+  /* Log */
+  .log-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+  .log-area::-webkit-scrollbar { width: 3px; }
+  .log-area::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .log-entry {
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.4;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    animation: fadeInLog 0.3s ease;
+  }
+  @keyframes fadeInLog { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; } }
+  .log-entry .log-time { color: var(--accent3); font-family: 'Space Mono', monospace; font-size: 9px; }
+
+  /* GDP Chart */
+  .chart-wrap {
+    height: 60px;
+    position: relative;
+  }
+  #gdpChart { width: 100%; height: 100%; }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* Speed slider */
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent1);
+    cursor: pointer;
+    box-shadow: 0 0 8px var(--glow1);
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .slider-val {
+    font-family: 'Space Mono', monospace;
+    color: var(--text);
+    width: 30px;
+    text-align: right;
+    font-size: 11px;
+  }
+
+  /* Connection lines canvas */
+  #connectCanvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  /* Season indicator */
+  .season-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">🤖 AI エージェント経済圏</div>
+  <div class="header-stats">
+    <div class="hstat">
+      <span class="hstat-label">GDP</span>
+      <span class="hstat-value" id="gdpVal">0</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">取引数</span>
+      <span class="hstat-value" id="tradeCount">0</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">サイクル</span>
+      <span class="hstat-value" id="cycleVal">0</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">平均資産</span>
+      <span class="hstat-value" id="avgWealth">0</span>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <div class="season-badge" id="seasonBadge">🌸 春</div>
+    <button class="btn active" id="pauseBtn" onclick="togglePause()">⏸ 一時停止</button>
+    <button class="btn" onclick="addAgent()">+ エージェント</button>
+    <button class="btn" onclick="triggerEvent()">⚡ イベント</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="sim-area" id="simArea">
+    <canvas id="connectCanvas"></canvas>
+    <div id="agentContainer"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-section">
+      <div class="panel-title">⚙️ シミュレーション設定</div>
+      <div class="controls">
+        <div style="width:100%">
+          <div class="slider-row">
+            <span>速度</span>
+            <input type="range" id="speedSlider" min="0.5" max="4" step="0.5" value="1.5" oninput="updateSpeed(this.value)">
+            <span class="slider-val" id="speedVal">1.5x</span>
+          </div>
+        </div>
+        <button class="btn" style="font-size:10px;" onclick="triggerBoom()">📈 好景気</button>
+        <button class="btn" style="font-size:10px;" onclick="triggerCrash()">📉 不景気</button>
+        <button class="btn" style="font-size:10px;" onclick="addMarket()">🏪 市場+</button>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">📊 市場価格</div>
+      <div id="marketPrices"></div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">📈 GDP 推移</div>
+      <div class="chart-wrap">
+        <canvas id="gdpChart"></canvas>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">🤖 エージェント一覧</div>
+      <div id="agentList"></div>
+    </div>
+
+    <div class="panel-section" style="flex:1;">
+      <div class="panel-title">📝 取引ログ</div>
+      <div class="log-area" id="logArea"></div>
+    </div>
+  </div>
+</div>
+
+<canvas id="connectCanvas" style="display:none"></canvas>
+
+<script>
+// ============================================================
+// DATA SETUP
+// ============================================================
+const RESOURCES = [
+  { id: 'food',   name: '食料',   icon: '🍎', basePrice: 10, price: 10, color: '#10b981' },
+  { id: 'wood',   name: '木材',   icon: '🪵', basePrice: 8,  price: 8,  color: '#f59e0b' },
+  { id: 'stone',  name: '石材',   icon: '🪨', basePrice: 12, price: 12, color: '#94a3b8' },
+  { id: 'gold',   name: '金塊',   icon: '🪙', basePrice: 30, price: 30, color: '#fbbf24' },
+  { id: 'tech',   name: '技術',   icon: '💡', basePrice: 50, price: 50, color: '#7c3aed' },
+  { id: 'energy', name: 'エネルギー', icon: '⚡', basePrice: 20, price: 20, color: '#06b6d4' },
+];
+
+const AGENT_TYPES = [
+  { role: 'farmer',   name: '農家',     icon: '🧑‍🌾', color: '#10b981', bg: 'rgba(16,185,129,0.15)', produces: 'food',   consumes: 'wood',   speciality: '食料生産' },
+  { role: 'miner',    name: '採掘者',   icon: '⛏️',  color: '#f59e0b', bg: 'rgba(245,158,11,0.15)',  produces: 'stone',  consumes: 'food',   speciality: '採掘' },
+  { role: 'trader',   name: '商人',     icon: '💼',  color: '#ff6b9d', bg: 'rgba(255,107,157,0.15)', produces: null,     consumes: null,     speciality: '交易仲介' },
+  { role: 'engineer', name: 'エンジニア', icon: '🔬', color: '#7c3aed', bg: 'rgba(124,58,237,0.15)', produces: 'tech',   consumes: 'energy', speciality: '技術開発' },
+  { role: 'banker',   name: '銀行家',   icon: '🏦',  color: '#fbbf24', bg: 'rgba(251,191,36,0.15)', produces: 'gold',   consumes: 'tech',   speciality: '金融' },
+  { role: 'builder',  name: '建築家',   icon: '🏗️',  color: '#06b6d4', bg: 'rgba(6,182,212,0.15)',  produces: 'wood',   consumes: 'stone',  speciality: '建設' },
+  { role: 'scientist',name: '科学者',   icon: '🧪',  color: '#ec4899', bg: 'rgba(236,72,153,0.15)', produces: 'energy', consumes: 'gold',   speciality: '研究' },
+];
+
+const SEASONS = ['🌸 春', '☀️ 夏', '🍂 秋', '❄️ 冬'];
+const SPEECH_OPTIONS = [
+  '取引しよう！', '安く売るよ！', '買ってくれ！', 'いい商品だ！',
+  '利益が出た！', '交渉しよう', 'ラッキー！', '困ったな…',
+  '儲かった♪', '値上がり中！', 'チャンス！', 'もっと欲しい！'
+];
+
+// ============================================================
+// SIMULATION STATE
+// ============================================================
+let agents = [];
+let particles = [];
+let tradeLines = [];
+let logEntries = [];
+let gdpHistory = [];
+let totalTrades = 0;
+let cycle = 0;
+let seasonIdx = 0;
+let paused = false;
+let speed = 1.5;
+let gdpValue = 0;
+let agentIdCounter = 0;
+let animFrame;
+let lastTime = 0;
+let connectCanvas, connectCtx;
+let simArea;
+
+// ============================================================
+// AGENT CLASS
+// ============================================================
+class Agent {
+  constructor(typeIdx) {
+    const t = AGENT_TYPES[typeIdx % AGENT_TYPES.length];
+    this.id = agentIdCounter++;
+    this.type = t;
+    this.name = t.name + (agentIdCounter);
+    this.wealth = 50 + Math.random() * 100;
+    this.inventory = {};
+    RESOURCES.forEach(r => { this.inventory[r.id] = Math.floor(Math.random() * 5); });
+    this.x = 60 + Math.random() * (simArea.clientWidth - 120);
+    this.y = 60 + Math.random() * (simArea.clientHeight - 120);
+    this.vx = (Math.random() - 0.5) * 1.5;
+    this.vy = (Math.random() - 0.5) * 1.5;
+    this.targetX = this.x;
+    this.targetY = this.y;
+    this.happiness = 0.7 + Math.random() * 0.3;
+    this.energy = 80 + Math.random() * 20;
+    this.tradeCooldown = 0;
+    this.produceCooldown = 0;
+    this.bobOffset = Math.random() * Math.PI * 2;
+    this.bobSpeed = 2 + Math.random() * 2;
+    this.el = null;
+    this.bodyEl = null;
+    this.barFill = null;
+    this.carryEl = null;
+    this.tradeTarget = null;
+    this.wanderTimer = 0;
+    this.state = 'wander'; // wander, seek, trade, produce
+  }
+
+  createElement() {
+    const el = document.createElement('div');
+    el.className = 'agent';
+    el.style.setProperty('--agent-color', this.type.color);
+    el.style.setProperty('--agent-bg', this.type.bg);
+    el.style.setProperty('--glow', this.type.color + '40');
+    el.innerHTML = `
+      <div class="agent-body">${this.type.icon}</div>
+      <div class="agent-name">${this.type.name}</div>
+      <div class="agent-bar"><div class="agent-bar-fill" style="width:${this.energy}%"></div></div>
+      <div class="agent-carry"></div>
+    `;
+    this.el = el;
+    this.bodyEl = el.querySelector('.agent-body');
+    this.barFill = el.querySelector('.agent-bar-fill');
+    this.carryEl = el.querySelector('.agent-carry');
+    document.getElementById('agentContainer').appendChild(el);
+  }
+
+  update(dt) {
+    const sw = simArea.clientWidth;
+    const sh = simArea.clientHeight;
+
+    this.bobOffset += this.bobSpeed * dt * speed;
+    this.tradeCooldown = Math.max(0, this.tradeCooldown - dt * speed);
+    this.produceCooldown = Math.max(0, this.produceCooldown - dt * speed);
+    this.wanderTimer = Math.max(0, this.wanderTimer - dt * speed);
+
+    // Production
+    if (this.produceCooldown <= 0 && this.type.produces) {
+      this.inventory[this.type.produces] = (this.inventory[this.type.produces] || 0) + 1;
+      this.wealth += 2;
+      this.produceCooldown = 3 + Math.random() * 3;
+    }
+
+    // Wander behavior
+    if (this.wanderTimer <= 0) {
+      this.targetX = 60 + Math.random() * (sw - 120);
+      this.targetY = 60 + Math.random() * (sh - 120);
+      this.wanderTimer = 2 + Math.random() * 4;
+    }
+
+    // Move toward target
+    const dx = this.targetX - this.x;
+    const dy = this.targetY - this.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > 5) {
+      const spd = 40 * speed;
+      this.vx = (dx / dist) * spd;
+      this.vy = (dy / dist) * spd;
+    } else {
+      this.vx *= 0.9;
+      this.vy *= 0.9;
+    }
+
+    this.x += this.vx * dt;
+    this.y += this.vy * dt;
+
+    // Bounds
+    this.x = Math.max(30, Math.min(sw - 80, this.x));
+    this.y = Math.max(30, Math.min(sh - 80, this.y));
+
+    // Bob animation
+    const bob = Math.sin(this.bobOffset) * 4;
+    if (this.el) {
+      this.el.style.transform = `translate(${this.x}px, ${this.y + bob}px)`;
+      const squish = 1 + Math.sin(this.bobOffset) * 0.05;
+      this.bodyEl.style.transform = `scaleY(${squish}) scaleX(${2 - squish})`;
+
+      // Update bar
+      this.barFill.style.width = Math.min(100, this.energy) + '%';
+      this.barFill.style.background = this.type.color;
+
+      // Show top resource
+      const topRes = Object.entries(this.inventory)
+        .filter(([,v]) => v > 0)
+        .sort(([,a],[,b]) => b - a)[0];
+      if (topRes) {
+        const res = RESOURCES.find(r => r.id === topRes[0]);
+        this.carryEl.textContent = res ? res.icon : '';
+      } else {
+        this.carryEl.textContent = '';
+      }
+    }
+  }
+
+  tryTrade(others) {
+    if (this.tradeCooldown > 0) return;
+    for (const other of others) {
+      if (other.id === this.id) continue;
+      if (other.tradeCooldown > 0) continue;
+      const dx = other.x - this.x;
+      const dy = other.y - this.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 80) {
+        this.executeTrade(other);
+        return;
+      }
+    }
+  }
+
+  executeTrade(other) {
+    // Find something to trade
+    const myRes = Object.entries(this.inventory).filter(([,v]) => v > 2);
+    const theirNeed = RESOURCES.find(r => (other.inventory[r.id] || 0) < 2);
+    if (!myRes.length || !theirNeed) return;
+
+    const give = RESOURCES.find(r => r.id === myRes[0][0]);
+    if (!give || give.id === theirNeed.id) return;
+
+    const price = theirNeed.price;
+    if (other.wealth < price) return;
+
+    // Execute
+    this.inventory[give.id]--;
+    other.inventory[give.id] = (other.inventory[give.id] || 0) + 1;
+    other.wealth -= price * 0.5;
+    this.wealth += price * 0.5;
+
+    this.tradeCooldown = 2;
+    other.tradeCooldown = 2;
+    totalTrades++;
+    gdpValue += price;
+
+    // Seek apart
+    this.targetX = this.x + (Math.random() - 0.5) * 200;
+    this.targetY = this.y + (Math.random() - 0.5) * 200;
+
+    // Update prices
+    const res = RESOURCES.find(r => r.id === give.id);
+    if (res) {
+      res.price = Math.max(2, res.price - 0.5);
+    }
+    theirNeed.price = Math.min(theirNeed.basePrice * 3, theirNeed.price + 0.3);
+
+    // Visual effects
+    spawnParticle(
+      this.x + 26 + (other.x - this.x) * 0.5,
+      this.y + 26 + (other.y - this.y) * 0.5,
+      give.icon
+    );
+    spawnSpeech(this.x + 26, this.y, SPEECH_OPTIONS[Math.floor(Math.random() * SPEECH_OPTIONS.length)]);
+    addTradeLine(this.x + 26, this.y + 26, other.x + 26, other.y + 26, give.color);
+    addLog(`${this.name} → ${other.name}: ${give.icon}${give.name} ¥${price.toFixed(0)}`);
+  }
+}
+
+// ============================================================
+// EFFECTS
+// ============================================================
+function spawnParticle(x, y, icon) {
+  const el = document.createElement('div');
+  el.className = 'trade-particle';
+  el.textContent = icon;
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  document.getElementById('agentContainer').appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+function spawnSpeech(x, y, text) {
+  const el = document.createElement('div');
+  el.className = 'speech';
+  el.textContent = text;
+  el.style.left = (x - 30) + 'px';
+  el.style.top = (y - 30) + 'px';
+  document.getElementById('agentContainer').appendChild(el);
+  setTimeout(() => el.remove(), 1500);
+}
+
+function addTradeLine(x1, y1, x2, y2, color) {
+  tradeLines.push({ x1, y1, x2, y2, color, alpha: 1 });
+  setTimeout(() => {
+    const idx = tradeLines.findIndex(l => l.x1 === x1 && l.y1 === y1);
+    if (idx !== -1) tradeLines.splice(idx, 1);
+  }, 600);
+}
+
+function addLog(msg) {
+  const now = new Date();
+  const time = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+  logEntries.unshift({ time, msg });
+  if (logEntries.length > 30) logEntries.pop();
+  renderLog();
+}
+
+function renderLog() {
+  const area = document.getElementById('logArea');
+  area.innerHTML = logEntries.slice(0, 15).map(e =>
+    `<div class="log-entry"><span class="log-time">${e.time}</span> ${e.msg}</div>`
+  ).join('');
+}
+
+// ============================================================
+// GDP CHART
+// ============================================================
+function drawGDPChart() {
+  const canvas = document.getElementById('gdpChart');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = 60;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (gdpHistory.length < 2) return;
+
+  const data = gdpHistory.slice(-40);
+  const max = Math.max(...data) || 1;
+  const min = Math.min(...data);
+  const w = canvas.width;
+  const h = canvas.height;
+  const pad = 4;
+
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    const x = pad + (i / (data.length - 1)) * (w - pad * 2);
+    const y = h - pad - ((v - min) / (max - min + 1)) * (h - pad * 2);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  const grad = ctx.createLinearGradient(0, 0, w, 0);
+  grad.addColorStop(0, '#7c3aed');
+  grad.addColorStop(1, '#06b6d4');
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // Fill
+  ctx.lineTo(w - pad, h);
+  ctx.lineTo(pad, h);
+  ctx.closePath();
+  const fillGrad = ctx.createLinearGradient(0, 0, 0, h);
+  fillGrad.addColorStop(0, 'rgba(124,58,237,0.3)');
+  fillGrad.addColorStop(1, 'rgba(6,182,212,0)');
+  ctx.fillStyle = fillGrad;
+  ctx.fill();
+}
+
+// ============================================================
+// CONNECT CANVAS (trade lines)
+// ============================================================
+function drawConnections() {
+  const canvas = document.getElementById('connectCanvas');
+  if (!canvas) return;
+  canvas.width = simArea.clientWidth;
+  canvas.height = simArea.clientHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw active trade lines
+  tradeLines.forEach(l => {
+    ctx.beginPath();
+    ctx.moveTo(l.x1, l.y1);
+    ctx.lineTo(l.x2, l.y2);
+    ctx.strokeStyle = l.color + 'aa';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  // Draw proximity lines (faint)
+  for (let i = 0; i < agents.length; i++) {
+    for (let j = i + 1; j < agents.length; j++) {
+      const a = agents[i], b = agents[j];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 100) {
+        ctx.beginPath();
+        ctx.moveTo(a.x + 26, a.y + 26);
+        ctx.lineTo(b.x + 26, b.y + 26);
+        const alpha = (1 - dist / 100) * 0.12;
+        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+// ============================================================
+// UI UPDATES
+// ============================================================
+function updateMarketPrices() {
+  const el = document.getElementById('marketPrices');
+  el.innerHTML = RESOURCES.map(r => {
+    const trend = r.price > r.basePrice ? '↑' : r.price < r.basePrice ? '↓' : '→';
+    const tColor = r.price > r.basePrice ? '#10b981' : r.price < r.basePrice ? '#ef4444' : '#64748b';
+    return `<div class="resource-row">
+      <span class="res-icon">${r.icon}</span>
+      <span class="res-name">${r.name}</span>
+      <span class="res-price" style="color:${r.color}">¥${r.price.toFixed(1)}</span>
+      <span class="res-trend" style="color:${tColor}">${trend}</span>
+    </div>`;
+  }).join('');
+}
+
+function updateAgentList() {
+  const el = document.getElementById('agentList');
+  const sorted = [...agents].sort((a, b) => b.wealth - a.wealth);
+  el.innerHTML = sorted.slice(0, 8).map(a =>
+    `<div class="agent-list-item">
+      <span class="agent-list-icon">${a.type.icon}</span>
+      <div class="agent-list-info">
+        <div class="agent-list-name" style="color:${a.type.color}">${a.name}</div>
+        <div class="agent-list-role">${a.type.speciality}</div>
+      </div>
+      <span class="agent-list-wealth">¥${a.wealth.toFixed(0)}</span>
+    </div>`
+  ).join('');
+}
+
+function updateHeaderStats() {
+  document.getElementById('gdpVal').textContent = '¥' + gdpValue.toFixed(0);
+  document.getElementById('tradeCount').textContent = totalTrades;
+  document.getElementById('cycleVal').textContent = cycle;
+  const avg = agents.length ? (agents.reduce((s, a) => s + a.wealth, 0) / agents.length) : 0;
+  document.getElementById('avgWealth').textContent = '¥' + avg.toFixed(0);
+  document.getElementById('seasonBadge').textContent = SEASONS[seasonIdx];
+}
+
+// ============================================================
+// MAIN LOOP
+// ============================================================
+let uiTimer = 0;
+let gdpTimer = 0;
+let cycleTimer = 0;
+
+function loop(ts) {
+  if (!lastTime) lastTime = ts;
+  const dt = Math.min((ts - lastTime) / 1000, 0.05);
+  lastTime = ts;
+
+  if (!paused) {
+    // Update agents
+    agents.forEach(a => {
+      a.update(dt);
+      a.tryTrade(agents);
+    });
+
+    // Draw connections
+    drawConnections();
+
+    // UI updates
+    uiTimer += dt;
+    if (uiTimer > 0.3) {
+      uiTimer = 0;
+      updateMarketPrices();
+      updateAgentList();
+      updateHeaderStats();
+    }
+
+    // GDP recording
+    gdpTimer += dt;
+    if (gdpTimer > 1) {
+      gdpTimer = 0;
+      gdpHistory.push(gdpValue);
+      if (gdpHistory.length > 100) gdpHistory.shift();
+      drawGDPChart();
+    }
+
+    // Cycle / season
+    cycleTimer += dt * speed;
+    if (cycleTimer > 20) {
+      cycleTimer = 0;
+      cycle++;
+      seasonIdx = Math.floor(cycle / 3) % 4;
+      // Season effects
+      applySeasonEffect();
+    }
+
+    // Price drift back to base
+    RESOURCES.forEach(r => {
+      r.price += (r.basePrice - r.price) * 0.001 * speed;
+    });
+  }
+
+  animFrame = requestAnimationFrame(loop);
+}
+
+function applySeasonEffect() {
+  const season = seasonIdx;
+  if (season === 0) { // Spring - food boom
+    RESOURCES.find(r => r.id === 'food').basePrice *= 0.9;
+    addLog('🌸 春：農作物が豊作！食料価格下落');
+  } else if (season === 1) { // Summer - energy high
+    RESOURCES.find(r => r.id === 'energy').basePrice *= 1.1;
+    addLog('☀️ 夏：エネルギー需要増加！');
+  } else if (season === 2) { // Autumn - gold rush
+    RESOURCES.find(r => r.id === 'gold').basePrice *= 1.15;
+    addLog('🍂 秋：金価格上昇！採掘ラッシュ');
+  } else { // Winter - tech investment
+    RESOURCES.find(r => r.id === 'tech').basePrice *= 0.95;
+    addLog('❄️ 冬：技術投資が活発に');
+  }
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function togglePause() {
+  paused = !paused;
+  const btn = document.getElementById('pauseBtn');
+  btn.textContent = paused ? '▶ 再開' : '⏸ 一時停止';
+  btn.classList.toggle('active', !paused);
+}
+
+function updateSpeed(val) {
+  speed = parseFloat(val);
+  document.getElementById('speedVal').textContent = val + 'x';
+}
+
+function addAgent() {
+  const typeIdx = Math.floor(Math.random() * AGENT_TYPES.length);
+  const a = new Agent(typeIdx);
+  a.createElement();
+  agents.push(a);
+  addLog(`🆕 新エージェント「${a.name}」が参入！`);
+}
+
+function addMarket() {
+  addLog('🏪 新しい市場が開設されました！');
+  // Boost all prices briefly
+  RESOURCES.forEach(r => r.price *= 1.05);
+  agents.forEach(a => a.wealth += 20);
+  spawnParticle(
+    simArea.clientWidth / 2,
+    simArea.clientHeight / 2,
+    '🏪'
+  );
+}
+
+function triggerBoom() {
+  agents.forEach(a => {
+    a.wealth += 50 + Math.random() * 50;
+    a.energy = Math.min(100, a.energy + 20);
+  });
+  RESOURCES.forEach(r => r.basePrice *= 1.2);
+  addLog('📈 経済ブーム！全エージェントの資産が増加！');
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => spawnParticle(
+      100 + Math.random() * (simArea.clientWidth - 200),
+      100 + Math.random() * (simArea.clientHeight - 200),
+      '💰'
+    ), i * 200);
+  }
+}
+
+function triggerCrash() {
+  agents.forEach(a => {
+    a.wealth = Math.max(10, a.wealth * 0.6);
+    a.energy = Math.max(20, a.energy - 30);
+  });
+  RESOURCES.forEach(r => r.basePrice *= 0.8);
+  addLog('📉 経済危機！市場が大幅下落...');
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => spawnParticle(
+      100 + Math.random() * (simArea.clientWidth - 200),
+      100 + Math.random() * (simArea.clientHeight - 200),
+      '💸'
+    ), i * 150);
+  }
+}
+
+function triggerEvent() {
+  const events = [
+    { msg: '🌪️ 台風！農地が被害を受けた', fn: () => RESOURCES.find(r=>r.id==='food').basePrice *= 1.3 },
+    { msg: '🔥 鉱山火災！石材が不足', fn: () => RESOURCES.find(r=>r.id==='stone').basePrice *= 1.5 },
+    { msg: '💻 技術革新！効率が向上', fn: () => agents.forEach(a => a.produceCooldown = 0) },
+    { msg: '🤝 国際貿易協定！価格安定', fn: () => RESOURCES.forEach(r => r.price = r.basePrice) },
+    { msg: '🎊 祭り！消費が増加', fn: () => agents.forEach(a => { a.tradeCooldown = 0; a.wanderTimer = 0; }) },
+    { msg: '🏛️ 政府補助金！全員に支援', fn: () => agents.forEach(a => a.wealth += 30) },
+  ];
+  const ev = events[Math.floor(Math.random() * events.length)];
+  ev.fn();
+  addLog(ev.msg);
+  spawnParticle(simArea.clientWidth/2, simArea.clientHeight/2, '⚡');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  simArea = document.getElementById('simArea');
+
+  // Set up connect canvas
+  const cc = document.createElement('canvas');
+  cc.id = 'connectCanvas';
+  cc.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:3;';
+  simArea.appendChild(cc);
+
+  // Create initial agents
+  for (let i = 0; i < AGENT_TYPES.length; i++) {
+    const a = new Agent(i);
+    a.createElement();
+    agents.push(a);
+  }
+  // Add a few more random
+  for (let i = 0; i < 5; i++) {
+    const a = new Agent(Math.floor(Math.random() * AGENT_TYPES.length));
+    a.createElement();
+    agents.push(a);
+  }
+
+  addLog('🚀 AI エージェント経済圏が始動しました！');
+  addLog('💱 エージェントたちが活動を開始...');
+
+  requestAnimationFrame(loop);
+}
+
+window.addEventListener('load', init);
+window.addEventListener('resize', () => {
+  drawGDPChart();
+});
+</script>
+</body>
+</html>
