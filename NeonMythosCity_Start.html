@@ -17,7 +17,10 @@
             overflow: hidden;
             font-family: 'Courier New', 'MS Gothic', monospace;
         }
-    </style>
+
+        .data-font { font-family: 'Inter', sans-serif; }
+</style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="root"></div>
@@ -98,11 +101,16 @@ const buildSprites=()=>{
 };
 const ALL_SPRITES=buildSprites();
 
-const PixelChar=({spriteId,state,isSelected,isAvatar,name,color,onClick,x,y,tick:t,tile})=>{
+const PixelChar=({spriteId,state,isSelected,isAvatar,name,color,onClick,x,y,tick:t,tile,id})=>{
+  const [hov, setHov] = React.useState(false);
   const spr=ALL_SPRITES[spriteId];if(!spr)return null;
   const frame=(state==="walk"&&t%4<2)?"walk":"idle";
+
+  // Random TX hash
+  const txHash = React.useMemo(() => "0x" + Math.random().toString(16).substr(2, 8) + "...", []);
+
   return(
-    <div onClick={onClick} style={{position:"absolute",
+    <div onClick={onClick} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)} style={{position:"absolute",
       left:x*tile+(tile-8*PX)/2,top:y*tile+(tile-11*PX)/2-2,
       width:8*PX,height:11*PX,cursor:"pointer",zIndex:20+y,
       transition:"left .15s linear,top .15s linear",
@@ -114,6 +122,11 @@ const PixelChar=({spriteId,state,isSelected,isAvatar,name,color,onClick,x,y,tick
         color,fontWeight:"bold",whiteSpace:"nowrap",textShadow:"0 1px 3px #000,0 0 6px #000"}}>
         {isAvatar?"👤":""}{name}
       </div>
+      {(hov || isSelected) && (
+        <div className="data-font" style={{position:"absolute", top:-22, left:"50%", transform:"translateX(-50%)", background:"rgba(0,0,0,0.8)", border:`1px solid ${color}`, padding:"2px 4px", fontSize:"6px", borderRadius:"2px", color:"#fff", whiteSpace:"nowrap", zIndex:100}}>
+          TX: {txHash}
+        </div>
+      )}
       {state==="work"&&<div style={{position:"absolute",top:-6,right:-6,fontSize:"9px",
         animation:"sparkle 1s infinite"}}>{["💰","💡","💬","⚡"][t%4]}</div>}
       {isSelected&&<div style={{position:"absolute",bottom:-4,left:2,width:20,height:6,
@@ -359,6 +372,7 @@ const DevTerminal=({show,onClose,gameState,setRes,setTp,log,agents,setAgents,res
 function NeonMythosCity(){
   const isMobile=useIsMobile();
   const TILE=isMobile?16:30;
+  const[connections,setConnections]=useState([]);
   const[tick,setTick]=useState(0);
   const[day,setDay]=useState(1);
   const[speed,setSpeed]=useState(1);
@@ -447,7 +461,22 @@ function NeonMythosCity(){
     if(c.state==="work"){c.timer--;c.mood=Math.max(15,c.mood-.1);if(c.timer<=0){c.state="idle";c.timer=5+Math.floor(Math.random()*10);}return c;}
     return c;
   }));};
-  useEffect(()=>{if(paused||showAvSel)return;runAI(setAgents);runAI(setResi);},[tick]);
+  useEffect(()=>{if(paused||showAvSel)return;runAI(setAgents);runAI(setResi);
+    // Generate random A2A connections for visual effect
+    if(tick%10===0){
+      const workers=all.filter(a=>a.state==="work");
+      const newConns=[];
+      for(let i=0;i<Math.min(3,workers.length-1);i++){
+        if(workers.length>=2){
+          const a=workers[Math.floor(Math.random()*workers.length)];
+          const b=workers[Math.floor(Math.random()*workers.length)];
+          if(a.id!==b.id) newConns.push({id:`${a.id}-${b.id}-${tick}`, from:a, to:b, time:0});
+        }
+      }
+      setConnections(prev=>[...prev, ...newConns].slice(-8));
+    }
+    setConnections(prev=>prev.map(c=>({...c, time:c.time+1})).filter(c=>c.time<30));
+  },[tick]);
 
   // Events
   useEffect(()=>{if(tick%120===0&&tick>0&&!paused){
@@ -486,23 +515,117 @@ function NeonMythosCity(){
   }
 
   // ===== PANELS (shared) =====
+
+  // ===== MARKET BOARD =====
+  const MarketBoard = () => {
+    // Generate a scrolling list of fake economy transactions based on the tick
+    const [txs, setTxs] = useState([]);
+    useEffect(() => {
+      if (paused) return;
+      if (tick % 5 === 0 && Math.random() < 0.95) {
+        const assets = ["SOL", "USDC", "NEON", "DATA", "JUP"];
+        const types = ["BUY", "SELL", "SWAP", "FEE"];
+        const amt = (Math.random() * 50).toFixed(2);
+        const a = assets[Math.floor(Math.random()*assets.length)];
+        const t = types[Math.floor(Math.random()*types.length)];
+        const hash = "0x" + Math.random().toString(16).substr(2,6);
+        setTxs(p => [{id: tick, t, amt, a, hash, time: new Date().toISOString().substring(11,19)}, ...p].slice(0, 15));
+      }
+    }, [tick, paused]);
+
+    return (
+      <div className="data-font" style={{background:"#080a14",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"8px",display:"flex",flexDirection:"column",height:"100%"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"6px",borderBottom:"1px solid #ffffff11",paddingBottom:"4px"}}>
+           <span style={{fontSize:"10px",color:"#FFD700",fontWeight:"800",letterSpacing:"1px"}}>📈 LIVE MARKET LEDGER</span>
+           <span style={{fontSize:"8px",color:"#00FF88",animation:"blink 1.5s infinite"}}>● SYNCED</span>
+        </div>
+        <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:"2px",fontSize:"9px",fontFamily:"'Courier New', monospace"}}>
+           <div style={{display:"grid",gridTemplateColumns:"50px 30px 45px 1fr",color:"#666",marginBottom:"4px",borderBottom:"1px dotted #333",paddingBottom:"2px"}}>
+             <span>TIME</span><span>TYPE</span><span>AMOUNT</span><span style={{textAlign:"right"}}>TX HASH</span>
+           </div>
+           {txs.map((tx, i) => (
+             <div key={tx.id} style={{display:"grid",gridTemplateColumns:"50px 30px 45px 1fr",color:"#ccc",opacity:Math.max(0.2, 1 - i*0.06),padding:"2px 0",alignItems:"center"}}>
+               <span style={{color:"#555"}}>{tx.time}</span>
+               <span style={{color:tx.t==="BUY"?"#0F8":tx.t==="SELL"?"#F44":tx.t==="SWAP"?"#0EF":"#FD0",fontWeight:"bold"}}>{tx.t}</span>
+               <span>{tx.amt} <span style={{fontSize:"7px",color:"#777"}}>{tx.a}</span></span>
+               <span style={{textAlign:"right",color:"#48F"}}>{tx.hash}</span>
+             </div>
+           ))}
+           {txs.length === 0 && <div style={{color:"#555",textAlign:"center",marginTop:"20px"}}>Awaiting transactions...</div>}
+        </div>
+      </div>
+    );
+  };
+
   const InfoPanel=()=>(<div style={{display:"flex",flexDirection:"column",gap:"4px",fontSize:"9px",padding:isMobile?"4px":"4px 4px 4px 0"}}>
     {sel&&(()=>{const c=all.find(x=>x.id===sel);if(!c)return null;const spr=ALL_SPRITES[c.spriteId];
-      return(<div style={{background:"#0c0f1f",border:`1px solid ${c.color}44`,borderRadius:"6px",padding:"7px"}}>
-        <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"5px"}}>
-          <div style={{width:8*PX+4,height:11*PX+4,position:"relative",flexShrink:0}}>
+      // Generate some consistent pseudo-random data based on agent ID
+      const charIdNum = c.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const convRate = (10 + (charIdNum % 15) + (tick % 10)*0.1).toFixed(1);
+      const volSOL = (1000 + (charIdNum * 13) % 4000 + (tick % 5)*12).toLocaleString();
+      const adoptRate = 70 + (charIdNum % 25);
+      const reasoningLogs = [
+        `[LOG] Scouting local merchant...`,
+        `[LOG] Negotiating 5% success fee...`,
+        `[LOG] Analyzing target route optimization...`,
+        `[LOG] Verifying SAS cryptographic signature...`,
+        `[LOG] Waiting for user adoption...`,
+        `[LOG] Initiating x402 usage fee stream...`
+      ];
+      const activeLogs = [
+        reasoningLogs[charIdNum % reasoningLogs.length],
+        reasoningLogs[(charIdNum + Math.floor(tick/10)) % reasoningLogs.length]
+      ];
+
+      return(<div className="data-font" style={{background:"#0a0a14",border:`1px solid ${c.color}88`,borderRadius:"6px",padding:"8px",boxShadow:`0 0 10px ${c.color}22`}}>
+        <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"8px",borderBottom:`1px solid #ffffff11`,paddingBottom:"6px"}}>
+          <div style={{width:8*PX+4,height:11*PX+4,position:"relative",flexShrink:0,background:"#111",border:`1px solid #333`,borderRadius:"4px"}}>
             <div style={{width:PX,height:PX,boxShadow:spr?.idle,position:"absolute",top:2,left:2}} />
           </div>
-          <div><div style={{fontSize:"11px",fontWeight:"bold",color:c.color}}>{c.name||c.jp}{avatar?.id===c.id?" 👤":""}</div>
-          <div style={{fontSize:"7px",color:"#777"}}>{c.title||""} · Lv.{c.level} · {c.state==="walk"?"移動中":c.state==="work"?"活動中":"待機中"}</div></div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:"13px",fontWeight:"700",color:c.color,letterSpacing:"0.5px"}}>{c.name||c.jp}{avatar?.id===c.id?" 👤":""}</div>
+            <div style={{fontSize:"8px",color:"#777",textTransform:"uppercase",marginTop:"2px"}}>ID: {c.id.toUpperCase()}-X402 · STATUS: {c.state==="walk"?"ROUTING":c.state==="work"?"EXECUTING":"STANDBY"}</div>
+          </div>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"2px"}}>
-          {[{l:"MOOD",v:`${Math.round(c.mood)}%`,c:c.mood>60?"#0F8":"#FD0"},{l:"EXP",v:`${c.exp}/${c.level*50}`,c:"#48F"},{l:"稼ぎ",v:`¥${c.earn.toLocaleString()}`,c:"#FD0"},{l:"Lv",v:c.level,c:"#aaa"}].map((s,i)=>(
-            <div key={i} style={{background:"#0d0d20",padding:"2px 4px",borderRadius:"2px"}}><span style={{color:"#666"}}>{s.l} </span><span style={{color:s.c}}>{s.v}</span></div>))}
+
+        {/* SAS Reputation Layer - KPIs */}
+        <div style={{display:"flex",flexDirection:"column",gap:"4px",marginBottom:"8px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
+            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>CONVERSION RATE</span>
+            <span style={{color:"#0F8",fontSize:"10px",fontWeight:"700"}}>{convRate}%</span>
+          </div>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
+            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>TOTAL VOLUME</span>
+            <span style={{color:"#FFD700",fontSize:"10px",fontWeight:"700"}}>{volSOL} SOL</span>
+          </div>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
+            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>ADOPTION RATE</span>
+            <div style={{display:"flex",alignItems:"center",gap:"4px",width:"50px"}}>
+              <div style={{flex:1,background:"#333",height:"4px",borderRadius:"2px",overflow:"hidden"}}>
+                <div style={{width:`${adoptRate}%`,height:"100%",background:"#00E5FF"}} />
+              </div>
+              <span style={{color:"#00E5FF",fontSize:"9px",fontWeight:"700"}}>{adoptRate}%</span>
+            </div>
+          </div>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
+            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>SAS STATUS</span>
+            <span style={{color:"#fff",fontSize:"9px",fontWeight:"600",display:"flex",alignItems:"center",gap:"2px"}}>
+              <span style={{color:"#10B981"}}>✔</span> Verified
+            </span>
+          </div>
+        </div>
+
+        {/* Reasoning Trace Terminal */}
+        <div style={{background:"#05050a",border:"1px solid #1a1a3e",borderRadius:"3px",padding:"4px",fontFamily:"monospace",fontSize:"7.5px",color:"#0F8",height:"45px",overflow:"hidden",display:"flex",flexDirection:"column",gap:"2px"}}>
+          <div style={{color:"#555",marginBottom:"1px"}}>&gt; LIVE_REASONING_TRACE</div>
+          {activeLogs.map((lg, i) => (
+             <div key={i} style={{opacity: 1 - i*0.4, textShadow:"0 0 2px #0F8"}}>{lg}</div>
+          ))}
+          <div style={{animation:"blink 1s infinite"}}>&gt; _</div>
         </div>
       </div>);})()}
 
-    <div style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
+    <div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
       <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>⚔ AI AGENTS</div>
       {agents.map(c=>(<div key={c.id} onClick={()=>setSel(sel===c.id?null:c.id)} style={{display:"flex",alignItems:"center",gap:"4px",padding:"3px",cursor:"pointer",background:sel===c.id?`${c.color}11`:"transparent",borderRadius:"2px"}}>
         <span style={{color:c.color,fontWeight:"bold",fontSize:"9px",width:"42px"}}>{c.jp}</span>
@@ -522,7 +645,7 @@ function NeonMythosCity(){
       </div>))}
     </div>)}
 
-    <div style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
+    <div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
       <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>💰 ECONOMY</div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"2px"}}>
         {[{l:"総資産",v:`¥${res.yen.toLocaleString()}`,c:"#FD0"},{l:"累計利益",v:`+¥${tp.toLocaleString()}`,c:"#0F8"},{l:"DATA",v:`${res.data}TB`,c:"#0EF"},{l:"契約",v:`${res.con}件`,c:"#F6B"}].map((s,i)=>(
@@ -533,7 +656,7 @@ function NeonMythosCity(){
     </div>
   </div>);
 
-  const FeedPanel=()=>(<div style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px",flex:1,minHeight:"80px",maxHeight:isMobile?"none":"160px",overflow:"auto",display:"flex",flexDirection:"column"}}>
+  const FeedPanel=()=>(<div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px",flex:1,minHeight:"80px",maxHeight:isMobile?"none":"160px",overflow:"auto",display:"flex",flexDirection:"column"}}>
     <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>📜 LIVE FEED</div>
     <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:"1px",WebkitOverflowScrolling:"touch"}}>
       {logs.slice(0,40).map((l,i)=>(<div key={i} style={{fontSize:"8px",lineHeight:"1.4",opacity:Math.max(.2,1-i*.04),padding:"2px 0",borderBottom:"1px solid #0d0d2022"}}>
@@ -564,13 +687,40 @@ function NeonMythosCity(){
     })}
 
     {all.map(c=>(
-      <PixelChar key={c.id} spriteId={c.spriteId} state={c.state} isSelected={sel===c.id}
+      <PixelChar key={c.id} id={c.id} spriteId={c.spriteId} state={c.state} isSelected={sel===c.id}
         isAvatar={avatar?.id===c.id} name={c.jp} color={c.color}
         onClick={()=>setSel(sel===c.id?null:c.id)} x={c.x} y={c.y} tick={tick} tile={TILE} />
     ))}
 
+
+    {/* A2A Network Connections SVG Layer */}
+    <svg style={{position:"absolute",left:0,top:0,width:"100%",height:"100%",pointerEvents:"none",zIndex:15, overflow:"visible"}}>
+      {connections.map(c=>{
+        const sx=c.from.x*TILE+TILE/2; const sy=c.from.y*TILE+TILE/2-11*PX/2;
+        const ex=c.to.x*TILE+TILE/2; const ey=c.to.y*TILE+TILE/2-11*PX/2;
+        const op=Math.max(0, 1 - c.time/30);
+        // Show only if hovered or selected (Progressive Disclosure)
+        // Wait, the instructions say "Progressive Disclosure for Clarity: Default view should be clean. The complex metrics... should only appear when the user hovers over or clicks on a specific agent or route."
+        // Let's modify so it only shows if `sel === null` (wait, no, "complex metrics... should only appear when user hovers").
+        // For lines, "Add dynamic, glowing connection lines ... between agents". Let's show them faintly, but strongly if selected.
+        const isSel = sel === c.from.id || sel === c.to.id;
+        if (!isSel && sel !== null) return null; // hide if someone else is selected
+        const strokeOp = isSel ? op : op * 0.3;
+
+        return (
+          <g key={c.id}>
+            <line x1={sx} y1={sy} x2={ex} y2={ey} stroke={`rgba(0, 229, 255, ${strokeOp})`} strokeWidth="1.5" strokeDasharray="4 2" />
+            {/* Packet / SOL Coin flowing */}
+            {c.time % 2 === 0 && (
+              <circle cx={sx + (ex-sx)*(c.time/30)} cy={sy + (ey-sy)*(c.time/30)} r="2" fill="#FFD700" style={{filter:"drop-shadow(0 0 2px #FFD700)"}} />
+            )}
+          </g>
+        );
+      })}
+    </svg>
     {phase==="night"&&<div style={{position:"absolute",inset:0,background:"rgba(5,5,20,.2)",pointerEvents:"none"}} />}
   </div>);
+
 
   // ===== MAIN GAME RENDER =====
   return(<div style={{background:"#08091a",minHeight:"100vh",fontFamily:"'Courier New','MS Gothic',monospace",color:"#eee",userSelect:"none",display:"flex",flexDirection:"column"}} tabIndex={0}>
@@ -694,12 +844,14 @@ function NeonMythosCity(){
       </div>
     ):(
       // ===== DESKTOP LAYOUT =====
-      <div style={{display:"flex",flexWrap:"wrap",flex:1,overflow:"auto"}}>
-        <div style={{padding:"4px"}}><GameMap/></div>
-        <div style={{flex:1,minWidth:"230px",maxWidth:"310px",display:"flex",flexDirection:"column",gap:"4px",padding:"4px 4px 4px 0"}}>
-          <InfoPanel/>
-          <FeedPanel/>
+      <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative"}}>
+        <div style={{width:"280px", borderRight:"1px solid #1a1a3e", padding:"10px", background:"rgba(0,0,0,0.5)"}}>
+           <MarketBoard />
         </div>
+        <div style={{flex:1, display:"flex", padding:"10px", overflow:"hidden", justifyContent:"center"}}>
+           <div style={{width:"fit-content",margin:"0 auto"}}><GameMap/></div>
+        </div>
+        {sel && <AgentTerminal c={all.find(x => x.id === sel)} onClose={() => setSel(null)} lang={lang} />}
       </div>
     )}
 
