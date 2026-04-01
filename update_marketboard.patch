@@ -1,0 +1,113 @@
+--- NeonMythosCity_Start.html
++++ NeonMythosCity_Start.html
+@@ -293,6 +293,45 @@
+       </div>
+     </div>
+ };
++
++const MarketBoard = ({ tick, paused }) => {
++  // Generate a scrolling list of fake economy transactions based on the tick
++  const [txs, setTxs] = useState([]);
++  const scrollRef = useRef(null);
++
++  useEffect(() => {
++    if (paused) return;
++    if (tick % 5 === 0 && Math.random() < 0.95) {
++      const assets = ["SOL", "USDC", "NEON", "DATA", "JUP"];
++      const types = ["BUY", "SELL", "SWAP", "FEE"];
++      const amt = (Math.random() * 50).toFixed(2);
++      const a = assets[Math.floor(Math.random()*assets.length)];
++      const t = types[Math.floor(Math.random()*types.length)];
++      const hash = "0x" + Math.random().toString(16).substr(2,6);
++      setTxs(p => [...p, {id: tick, t, amt, a, hash, time: new Date().toISOString().substring(11,19)}].slice(-100));
++    }
++  }, [tick, paused]);
++
++  useEffect(() => {
++    if (scrollRef.current) {
++      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
++    }
++  }, [txs]);
++
++  return (
++    <div className="data-font" style={{background:"#080a14",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"8px",display:"flex",flexDirection:"column",height:"100%"}}>
++      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"6px",borderBottom:"1px solid #ffffff11",paddingBottom:"4px"}}>
++         <span style={{fontSize:"10px",color:"#FFD700",fontWeight:"800",letterSpacing:"1px"}}>📈 LIVE MARKET LEDGER</span>
++         <span style={{fontSize:"8px",color:"#00FF88",animation:"blink 1.5s infinite"}}>● SYNCED</span>
++      </div>
++      <div style={{display:"grid",gridTemplateColumns:"50px 30px 45px 1fr",color:"#666",marginBottom:"4px",borderBottom:"1px dotted #333",paddingBottom:"2px",fontSize:"9px",fontFamily:"'Courier New', monospace"}}>
++         <span>TIME</span><span>TYPE</span><span>AMOUNT</span><span style={{textAlign:"right"}}>TX HASH</span>
++      </div>
++      <div ref={scrollRef} style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:"2px",fontSize:"9px",fontFamily:"'Courier New', monospace"}}>
++         {txs.map((tx, i) => (
++           <div key={tx.id} style={{display:"grid",gridTemplateColumns:"50px 30px 45px 1fr",color:"#ccc",padding:"2px 0",alignItems:"center"}}>
++             <span style={{color:"#555"}}>{tx.time}</span>
++             <span style={{color:tx.t==="BUY"?"#0F8":tx.t==="SELL"?"#F44":tx.t==="SWAP"?"#0EF":"#FD0",fontWeight:"bold"}}>{tx.t}</span>
++             <span>{tx.amt} <span style={{fontSize:"7px",color:"#777"}}>{tx.a}</span></span>
++             <span style={{textAlign:"right",color:"#48F"}}>{tx.hash}</span>
++           </div>
++         ))}
++         {txs.length === 0 && <div style={{color:"#555",textAlign:"center",marginTop:"20px"}}>Awaiting transactions...</div>}
++      </div>
++    </div>
++  );
++};
++
+ function NeonMythosCity(){
+   const isMobile=useIsMobile();
+   const TILE=isMobile?16:30;
+@@ -512,38 +551,6 @@
+   // ===== PANELS (shared) =====
+
+-  // ===== MARKET BOARD =====
+-  const MarketBoard = () => {
+-    // Generate a scrolling list of fake economy transactions based on the tick
+-    const [txs, setTxs] = useState([]);
+-    useEffect(() => {
+-      if (paused) return;
+-      if (tick % 5 === 0 && Math.random() < 0.95) {
+-        const assets = ["SOL", "USDC", "NEON", "DATA", "JUP"];
+-        const types = ["BUY", "SELL", "SWAP", "FEE"];
+-        const amt = (Math.random() * 50).toFixed(2);
+-        const a = assets[Math.floor(Math.random()*assets.length)];
+-        const t = types[Math.floor(Math.random()*types.length)];
+-        const hash = "0x" + Math.random().toString(16).substr(2,6);
+-        setTxs(p => [{id: tick, t, amt, a, hash, time: new Date().toISOString().substring(11,19)}, ...p].slice(0, 15));
+-      }
+-    }, [tick, paused]);
+-
+-    return (
+-      <div className="data-font" style={{background:"#080a14",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"8px",display:"flex",flexDirection:"column",height:"100%"}}>
+-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"6px",borderBottom:"1px solid #ffffff11",paddingBottom:"4px"}}>
+-           <span style={{fontSize:"10px",color:"#FFD700",fontWeight:"800",letterSpacing:"1px"}}>📈 LIVE MARKET LEDGER</span>
+-           <span style={{fontSize:"8px",color:"#00FF88",animation:"blink 1.5s infinite"}}>● SYNCED</span>
+-        </div>
+-        <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:"2px",fontSize:"9px",fontFamily:"'Courier New', monospace"}}>
+-           <div style={{display:"grid",gridTemplateColumns:"50px 30px 45px 1fr",color:"#666",marginBottom:"4px",borderBottom:"1px dotted #333",paddingBottom:"2px"}}>
+-             <span>TIME</span><span>TYPE</span><span>AMOUNT</span><span style={{textAlign:"right"}}>TX HASH</span>
+-           </div>
+-           {txs.map((tx, i) => (
+-             <div key={tx.id} style={{display:"grid",gridTemplateColumns:"50px 30px 45px 1fr",color:"#ccc",opacity:Math.max(0.2, 1 - i*0.06),padding:"2px 0",alignItems:"center"}}>
+-               <span style={{color:"#555"}}>{tx.time}</span>
+-               <span style={{color:tx.t==="BUY"?"#0F8":tx.t==="SELL"?"#F44":tx.t==="SWAP"?"#0EF":"#FD0",fontWeight:"bold"}}>{tx.t}</span>
+-               <span>{tx.amt} <span style={{fontSize:"7px",color:"#777"}}>{tx.a}</span></span>
+-               <span style={{textAlign:"right",color:"#48F"}}>{tx.hash}</span>
+-             </div>
+-           ))}
+-           {txs.length === 0 && <div style={{color:"#555",textAlign:"center",marginTop:"20px"}}>Awaiting transactions...</div>}
+-        </div>
+-      </div>
+-    );
+-  };
+-
+   const InfoPanel=()=>(<div style={{display:"flex",flexDirection:"column",gap:"4px",fontSize:"9px",padding:isMobile?"4px":"4px 4px 4px 0"}}>
+     {sel&&(()=>{const c=all.find(x=>x.id===sel);if(!c)return null;const spr=ALL_SPRITES[c.spriteId];
+@@ -849,7 +856,7 @@
+       // ===== DESKTOP LAYOUT =====
+       <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative"}}>
+         <div style={{width:"280px", borderRight:"1px solid #1a1a3e", padding:"10px", background:"rgba(0,0,0,0.5)"}}>
+-           <MarketBoard />
++           <MarketBoard tick={tick} paused={paused} />
+         </div>
+         <div style={{flex:1, display:"flex", padding:"10px", overflow:"hidden", justifyContent:"center"}}>
+            <div style={{width:"fit-content",margin:"0 auto"}}><GameMap/></div>
