@@ -9,7 +9,9 @@ The easiest way to play is to open the game directly in your browser. Since it's
 ### Option 1: One-Click Play (HTML Preview)
 Click the button below to instantly load and play the game in your browser using an HTML previewer:
 
-[![Play Neon Mythos City](https://img.shields.io/badge/Play-Neon_Mythos_City-00E5FF?style=for-the-badge&logo=play&logoColor=white)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html)
+[![Play Neon Mythos City](https://img.shields.io/badge/Play-Neon_Mythos_City-00E5FF?style=for-the-badge&logo=play&logoColor=white)](https://raw.githack.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html)
+
+*(Note: If the link above does not work, you can also set up GitHub Pages for this repository to serve the HTML file directly!)*
 
 ### Option 2: Download and Run Locally
 If you want to run it on your own machine without an internet connection (after initial load), or if you want to modify the code:
