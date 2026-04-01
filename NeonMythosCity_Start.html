@@ -154,6 +154,7 @@ const BUILDINGS=[
   {id:"academy",name:"Sage Academy",x:16,y:11,w:3,h:2,color:"#4488FF",desc:"Learning",cat:"learn",t:[["📖","🏫","🎓"],["🧱","🚪","🧱"]],rc:"#223388"},
   {id:"garden",name:"Ancient Garden",x:20,y:11,w:2,h:2,color:"#44BB44",desc:"Healing",cat:"rest",t:[["🌳","🌸"],["🌿","🪻"]],rc:"#228822"},
 ];
+const BUILDING_MAP = BUILDINGS.reduce((acc, b) => { acc[b.id] = b; return acc; }, {});
 const DECO=[{x:5,y:0,e:"🌲"},{x:6,y:0,e:"🌲"},{x:10,y:0,e:"🌲"},{x:16,y:0,e:"🌲"},{x:17,y:0,e:"🌲"},{x:0,y:4,e:"🌿"},{x:3,y:4,e:"🌷"},{x:10,y:4,e:"🪨"},{x:15,y:4,e:"🌾"},{x:21,y:4,e:"🌻"},{x:3,y:9,e:"🪨"},{x:7,y:9,e:"🌿"},{x:14,y:9,e:"🌾"},{x:19,y:9,e:"🍄"},{x:0,y:14,e:"🌲"},{x:5,y:14,e:"🌷"},{x:15,y:14,e:"🌿"},{x:6,y:15,e:"🌲"},{x:19,y:15,e:"🌲"},{x:1,y:16,e:"🌲"},{x:9,y:17,e:"🌲"},{x:21,y:17,e:"🌲"}];
 const ROADS=new Set();
 for(let x=0;x<MAP_W;x++){ROADS.add(`${x},4`);ROADS.add(`${x},5`);ROADS.add(`${x},9`);ROADS.add(`${x},10`);ROADS.add(`${x},14`);ROADS.add(`${x},15`);}
@@ -524,7 +525,7 @@ function NeonMythosCity(){
   const runAI=(setter)=>{setter(prev=>prev.map(ch=>{
     let c={...ch};
     if(c.state==="idle"){c.timer--;if(c.timer<=0){const r=Math.random();let tb;
-      if(r<.55){const pid=c.pref[Math.floor(Math.random()*c.pref.length)];tb=BUILDINGS.find(b=>b.id===pid);}
+      if(r<.55){const pid=c.pref[Math.floor(Math.random()*c.pref.length)];tb=BUILDING_MAP[pid];}
       else if(r<.85)tb=BUILDINGS[Math.floor(Math.random()*BUILDINGS.length)];
       else{c.tx=Math.max(0,Math.min(MAP_W-1,c.x+Math.floor(Math.random()*9)-4));c.ty=Math.max(0,Math.min(MAP_H-1,c.y+Math.floor(Math.random()*7)-3));c.state="walk";return c;}
       if(tb){c.tx=tb.x+Math.floor(Math.random()*tb.w);c.ty=tb.y+tb.h;c.state="walk";}
