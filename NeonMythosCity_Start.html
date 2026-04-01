@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -138,21 +138,21 @@ const PixelChar=({spriteId,state,isSelected,isAvatar,name,color,onClick,x,y,tick
 // ======= MAP DATA =======
 const MAP_W=22,MAP_H=18;
 const BUILDINGS=[
-  {id:"shrine",name:"黄金神殿",x:1,y:1,w:3,h:2,color:"#FFD700",desc:"投資・資産運用",cat:"finance",t:[["🏛","🏛","🔱"],["🪙","⛩","🪙"]],rc:"#B8860B"},
-  {id:"tower",name:"観測の塔",x:7,y:0,w:2,h:3,color:"#00E5FF",desc:"データ予測",cat:"data",t:[["🔭","🌟"],["🗼","📡"],["🧱","🧱"]],rc:"#005577"},
-  {id:"market",name:"交渉ギルド",x:12,y:1,w:3,h:2,color:"#FF69B4",desc:"売買・交渉",cat:"trade",t:[["🏪","💕","📜"],["🧱","🚪","🧱"]],rc:"#882255"},
-  {id:"tavern",name:"404の酒場",x:18,y:1,w:3,h:2,color:"#AA8855",desc:"休憩・噂",cat:"rest",t:[["🍺","🏠","🪵"],["🧱","🚪","🧱"]],rc:"#664422"},
-  {id:"house1",name:"石造りの民家",x:0,y:6,w:2,h:2,color:"#8B7355",desc:"住居",cat:"house",t:[["🏠","🪴"],["🧱","🚪"]],rc:"#5C4033"},
-  {id:"hacklab",name:"闇の工房",x:4,y:6,w:2,h:2,color:"#BF40FF",desc:"錬金・ハック",cat:"hack",t:[["🔮","🧪"],["🧱","🚪"]],rc:"#4B0082"},
-  {id:"well",name:"魔法の泉",x:8,y:6,w:2,h:2,color:"#44AADD",desc:"回復",cat:"rest",t:[["⛲","💧"],["🪨","🪨"]],rc:"#336699"},
-  {id:"forge",name:"鍛冶場",x:12,y:6,w:2,h:2,color:"#FF6633",desc:"装備強化",cat:"trade",t:[["⚒","🔥"],["🧱","🚪"]],rc:"#993300"},
-  {id:"port",name:"飛竜の厩舎",x:16,y:5,w:3,h:2,color:"#00FF88",desc:"配送",cat:"logistics",t:[["🐉","🏚","🪵"],["🌿","🚪","🌿"]],rc:"#226644"},
-  {id:"house2",name:"木組みの家",x:20,y:6,w:2,h:2,color:"#AA9966",desc:"住居",cat:"house",t:[["🏡","🌻"],["🪵","🚪"]],rc:"#776644"},
-  {id:"church",name:"星詠みの教会",x:1,y:11,w:3,h:2,color:"#DDDDFF",desc:"祈り",cat:"rest",t:[["⛪","✝","🕯"],["🧱","🚪","🧱"]],rc:"#8888AA"},
-  {id:"bank",name:"地下金庫",x:6,y:11,w:3,h:2,color:"#FFD700",desc:"預金・融資",cat:"finance",t:[["🏦","💰","🔒"],["🧱","🚪","🧱"]],rc:"#8B6914"},
-  {id:"arena",name:"闘技場",x:11,y:11,w:3,h:2,color:"#FF4444",desc:"バトル取引",cat:"trade",t:[["⚔","🏟","🛡"],["🧱","🚪","🧱"]],rc:"#881111"},
-  {id:"academy",name:"賢者の学院",x:16,y:11,w:3,h:2,color:"#4488FF",desc:"学習",cat:"learn",t:[["📖","🏫","🎓"],["🧱","🚪","🧱"]],rc:"#223388"},
-  {id:"garden",name:"古代庭園",x:20,y:11,w:2,h:2,color:"#44BB44",desc:"癒し",cat:"rest",t:[["🌳","🌸"],["🌿","🪻"]],rc:"#228822"},
+  {id:"shrine",name:"Golden Shrine",x:1,y:1,w:3,h:2,color:"#FFD700",desc:"Invest & Assets",cat:"finance",t:[["🏛","🏛","🔱"],["🪙","⛩","🪙"]],rc:"#B8860B"},
+  {id:"tower",name:"Observation Tower",x:7,y:0,w:2,h:3,color:"#00E5FF",desc:"Data Prediction",cat:"data",t:[["🔭","🌟"],["🗼","📡"],["🧱","🧱"]],rc:"#005577"},
+  {id:"market",name:"Negotiation Guild",x:12,y:1,w:3,h:2,color:"#FF69B4",desc:"Trade & Deals",cat:"trade",t:[["🏪","💕","📜"],["🧱","🚪","🧱"]],rc:"#882255"},
+  {id:"tavern",name:"Tavern 404",x:18,y:1,w:3,h:2,color:"#AA8855",desc:"Rest & Rumors",cat:"rest",t:[["🍺","🏠","🪵"],["🧱","🚪","🧱"]],rc:"#664422"},
+  {id:"house1",name:"Stone House",x:0,y:6,w:2,h:2,color:"#8B7355",desc:"Residence",cat:"house",t:[["🏠","🪴"],["🧱","🚪"]],rc:"#5C4033"},
+  {id:"hacklab",name:"Dark Lab",x:4,y:6,w:2,h:2,color:"#BF40FF",desc:"Alchemy & Hacks",cat:"hack",t:[["🔮","🧪"],["🧱","🚪"]],rc:"#4B0082"},
+  {id:"well",name:"Magic Spring",x:8,y:6,w:2,h:2,color:"#44AADD",desc:"Recovery",cat:"rest",t:[["⛲","💧"],["🪨","🪨"]],rc:"#336699"},
+  {id:"forge",name:"Forge",x:12,y:6,w:2,h:2,color:"#FF6633",desc:"Enhance Gear",cat:"trade",t:[["⚒","🔥"],["🧱","🚪"]],rc:"#993300"},
+  {id:"port",name:"Wyvern Stable",x:16,y:5,w:3,h:2,color:"#00FF88",desc:"Delivery",cat:"logistics",t:[["🐉","🏚","🪵"],["🌿","🚪","🌿"]],rc:"#226644"},
+  {id:"house2",name:"Timber House",x:20,y:6,w:2,h:2,color:"#AA9966",desc:"Residence",cat:"house",t:[["🏡","🌻"],["🪵","🚪"]],rc:"#776644"},
+  {id:"church",name:"Stargazer Church",x:1,y:11,w:3,h:2,color:"#DDDDFF",desc:"Prayer",cat:"rest",t:[["⛪","✝","🕯"],["🧱","🚪","🧱"]],rc:"#8888AA"},
+  {id:"bank",name:"Underground Vault",x:6,y:11,w:3,h:2,color:"#FFD700",desc:"Deposit & Loan",cat:"finance",t:[["🏦","💰","🔒"],["🧱","🚪","🧱"]],rc:"#8B6914"},
+  {id:"arena",name:"Arena",x:11,y:11,w:3,h:2,color:"#FF4444",desc:"Battle Trade",cat:"trade",t:[["⚔","🏟","🛡"],["🧱","🚪","🧱"]],rc:"#881111"},
+  {id:"academy",name:"Sage Academy",x:16,y:11,w:3,h:2,color:"#4488FF",desc:"Learning",cat:"learn",t:[["📖","🏫","🎓"],["🧱","🚪","🧱"]],rc:"#223388"},
+  {id:"garden",name:"Ancient Garden",x:20,y:11,w:2,h:2,color:"#44BB44",desc:"Healing",cat:"rest",t:[["🌳","🌸"],["🌿","🪻"]],rc:"#228822"},
 ];
 const DECO=[{x:5,y:0,e:"🌲"},{x:6,y:0,e:"🌲"},{x:10,y:0,e:"🌲"},{x:16,y:0,e:"🌲"},{x:17,y:0,e:"🌲"},{x:0,y:4,e:"🌿"},{x:3,y:4,e:"🌷"},{x:10,y:4,e:"🪨"},{x:15,y:4,e:"🌾"},{x:21,y:4,e:"🌻"},{x:3,y:9,e:"🪨"},{x:7,y:9,e:"🌿"},{x:14,y:9,e:"🌾"},{x:19,y:9,e:"🍄"},{x:0,y:14,e:"🌲"},{x:5,y:14,e:"🌷"},{x:15,y:14,e:"🌿"},{x:6,y:15,e:"🌲"},{x:19,y:15,e:"🌲"},{x:1,y:16,e:"🌲"},{x:9,y:17,e:"🌲"},{x:21,y:17,e:"🌲"}];
 const ROADS=new Set();
@@ -162,47 +162,47 @@ const getBld=(x,y)=>BUILDINGS.find(b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h);
 
 // ======= AGENTS =======
 const AGENTS=[
-  {id:"kane",name:"KANE-KAMI",jp:"金神",spriteId:"kane",color:"#FFD700",bx:2,by:3,p:{g:.9,s:.3,c:.2,e:.5},pref:["shrine","bank","arena"],act:{shrine:["黄金を数えている…","寝息で利益生成💤"],bank:["金庫で目が光る","秘密の蓄えから補填"],arena:["高リスク取引！","×3レート発動！"],market:["掘り出し物発見"],tavern:["眠そうにエール飲む"]}},
-  {id:"oracle",name:"ORACLE-01",jp:"オラクル",spriteId:"oracle",color:"#00E5FF",bx:8,by:3,p:{g:.3,s:.2,c:.95,e:.7},pref:["tower","hacklab","academy"],act:{tower:["全データスキャン中…","美しいデータに反応"],hacklab:["量子暗号を解析"],academy:["予測モデル構築"],tavern:["データは嘘つかない…"]}},
-  {id:"nego",name:"NEGO-CHAN",jp:"ネゴちゃん",spriteId:"nego",color:"#FF69B4",bx:13,by:3,p:{g:.6,s:.95,c:.4,e:.8},pref:["market","arena","forge"],act:{market:["DEAL!交渉中♡","Win-Win契約！"],arena:["交渉バトル圧勝！"],forge:["値切り交渉中♡"],tavern:["一人反省会…"]}},
-  {id:"human",name:"404 HUMAN",jp:"404",spriteId:"human",color:"#888",bx:19,by:3,p:{g:.1,s:.5,c:.3,e:.3},pref:["tavern","garden","church"],act:{tavern:["エールこぼした💦","Purpose Not Found…"],garden:["ぼーっとしている"],church:["温かいものを感じた"],well:["覚醒の予兆？"]}},
-  {id:"yami",name:"YAMI-NEKO",jp:"ヤミネコ",spriteId:"yami",color:"#BF40FF",bx:5,by:7,p:{g:.5,s:.4,c:.8,e:.85},pref:["hacklab","tower","market"],act:{hacklab:["ファイアウォール突破にゃ♪","ゼロデイ準備中"],tower:["侵入試みる…返り討ち！"],market:["裏ルートで希少品入手"],tavern:["キャットフード要求🐱"]}},
-  {id:"drone",name:"DRONE-TAN",jp:"ドロンたん",spriteId:"drone",color:"#00FF88",bx:17,by:7,p:{g:.2,s:.7,c:.5,e:.9},pref:["port","market","tower"],act:{port:["配送ルート最適化！","分身ドローン展開"],market:["高速配送中"],tower:["データ空輸"],tavern:["充電切れ⚡"]}},
-  {id:"sage",name:"SAGE-BOY",jp:"セージ",spriteId:"sage",color:"#4488FF",bx:17,by:13,p:{g:.2,s:.6,c:.95,e:.6},pref:["academy","tower","hacklab"],act:{academy:["新スキル！Lv UP↑","もっと強くなる！"],tower:["分析手法を学習中"],hacklab:["技術を見学"],tavern:["404先輩と呼ぶ"]}},
+  {id:"kane",name:"KANE-KAMI",jp:"Golden God",spriteId:"kane",color:"#FFD700",bx:2,by:3,p:{g:.9,s:.3,c:.2,e:.5},pref:["shrine","bank","arena"],act:{shrine:["Counting gold...","Sleeping yields profit💤"],bank:["Eyes glowing at the vault","Compensating from secret stash"],arena:["High-risk trade!","3x rate activated!"],market:["Found a bargain"],tavern:["Sleepily drinking ale"]}},
+  {id:"oracle",name:"ORACLE-01",jp:"Oracle",spriteId:"oracle",color:"#00E5FF",bx:8,by:3,p:{g:.3,s:.2,c:.95,e:.7},pref:["tower","hacklab","academy"],act:{tower:["Scanning all data...","Reacting to beautiful data"],hacklab:["Analyzing quantum cryptography"],academy:["Building prediction model"],tavern:["Data doesn't lie..."]}},
+  {id:"nego",name:"NEGO-CHAN",jp:"Nego-chan",spriteId:"nego",color:"#FF69B4",bx:13,by:3,p:{g:.6,s:.95,c:.4,e:.8},pref:["market","arena","forge"],act:{market:["DEAL! Negotiating♡","Win-Win Contract!"],arena:["Total victory in negotiation battle!"],forge:["Haggling♡"],tavern:["Reflecting alone..."]}},
+  {id:"human",name:"404 HUMAN",jp:"404",spriteId:"human",color:"#888",bx:19,by:3,p:{g:.1,s:.5,c:.3,e:.3},pref:["tavern","garden","church"],act:{tavern:["Spilled ale💦","Purpose Not Found..."],garden:["Spacing out"],church:["Felt something warm"],well:["Omen of awakening?"]}},
+  {id:"yami",name:"YAMI-NEKO",jp:"Dark Cat",spriteId:"yami",color:"#BF40FF",bx:5,by:7,p:{g:.5,s:.4,c:.8,e:.85},pref:["hacklab","tower","market"],act:{hacklab:["Breached the firewall, meow♪","Preparing zero-day"],tower:["Attempting intrusion... repelled!"],market:["Acquired rare item via back route"],tavern:["Demanding cat food🐱"]}},
+  {id:"drone",name:"DRONE-TAN",jp:"Drone-tan",spriteId:"drone",color:"#00FF88",bx:17,by:7,p:{g:.2,s:.7,c:.5,e:.9},pref:["port","market","tower"],act:{port:["Optimizing delivery route!","Deploying decoy drones"],market:["High-speed delivery in progress"],tower:["Airlifting data"],tavern:["Out of battery⚡"]}},
+  {id:"sage",name:"SAGE-BOY",jp:"Sage",spriteId:"sage",color:"#4488FF",bx:17,by:13,p:{g:.2,s:.6,c:.95,e:.6},pref:["academy","tower","hacklab"],act:{academy:["New skill! Lv UP↑","Becoming stronger!"],tower:["Learning analysis methods"],hacklab:["Observing tech"],tavern:["Calling 404 Senpai"]}},
 ];
 
 const RES_POOL=[
-  {id:"hinata",jp:"ヒナタ",title:"炎Rapper",spriteId:"hinata",color:"#FF3333",tier:"gym",p:{g:.5,s:.8,c:.4,e:.9},pref:["arena","forge","market"],act:{arena:["炎のラップバトル🔥"],forge:["炎で鍛冶を手伝う"],market:["客寄せ"],tavern:["即興ラップ"]}},
-  {id:"sui",jp:"スイ",title:"氷モデル",spriteId:"sui",color:"#88CCFF",tier:"gym",p:{g:.4,s:.7,c:.3,e:.6},pref:["market","church","garden"],act:{market:["クールに交渉"],church:["静かに祈る"],garden:["美しい庭を散策"],tavern:["冷たい視線"]}},
-  {id:"mio",jp:"ミオ",title:"草植物学者",spriteId:"mio",color:"#44BB44",tier:"gym",p:{g:.3,s:.5,c:.9,e:.6},pref:["garden","academy","well"],act:{garden:["新種発見！🌱"],academy:["植物図鑑執筆"],well:["水質分析"],tavern:["ハーブティー"]}},
-  {id:"raiga",jp:"ライガ",title:"電気配信者",spriteId:"raiga",color:"#FFDD00",tier:"gym",p:{g:.6,s:.9,c:.5,e:.95},pref:["tower","arena","port"],act:{tower:["ライブ配信📡"],arena:["実況バトル！"],port:["電気で充電"],tavern:["配信で満員"]}},
-  {id:"kuroha",jp:"クロハ",title:"悪ハッカー",spriteId:"kuroha",color:"#AA0044",tier:"gym",p:{g:.7,s:.3,c:.85,e:.8},pref:["hacklab","tower","bank"],act:{hacklab:["共同ハッキング"],tower:["カメラジャック"],bank:["セキュリティ強化"],tavern:["情報収集"]}},
-  {id:"tetsu",jp:"テツジロウ",title:"格闘元レスラー",spriteId:"tetsu",color:"#DD8844",tier:"gym",p:{g:.3,s:.7,c:.2,e:.95},pref:["arena","forge","tavern"],act:{arena:["必殺技で圧勝💪"],forge:["素手で鉄を曲げた"],tavern:["豪快に酒を飲む🍺"]}},
-  {id:"hikari",jp:"ヒカリ",title:"妖精アイドル",spriteId:"hikari",color:"#FFaaDD",tier:"gym",p:{g:.4,s:.95,c:.3,e:.7},pref:["church","garden","market"],act:{church:["天使の歌声✨"],garden:["ファンサ中"],market:["アイドルパワー"],tavern:["甘いもの食べる"]}},
-  {id:"bartho",jp:"カイヨウ",title:"水航海士",spriteId:"bartho",color:"#2266AA",tier:"gym",p:{g:.5,s:.6,c:.7,e:.8},pref:["port","bank","well"],act:{port:["海路地図更新"],bank:["貿易資金融資"],well:["水の実験"],tavern:["冒険談"]}},
-  {id:"scarlet",jp:"スカーレット",title:"戦術家",spriteId:"scarlet",color:"#CC2244",tier:"e4",p:{g:.6,s:.5,c:.85,e:.7},pref:["arena","tower","academy"],act:{arena:["完璧な戦略で全勝"],tower:["戦術データ解析"],academy:["戦略論講義"],tavern:["チェスで全員倒す"]}},
-  {id:"rei",jp:"レイ",title:"天才PG",spriteId:"rei",color:"#33DDAA",tier:"e4",p:{g:.5,s:.3,c:.95,e:.85},pref:["tower","hacklab","academy"],act:{tower:["新アルゴリズム実装"],hacklab:["ORACLE共同開発"],academy:["AI講座"],tavern:["黙々とコーディング"]}},
-  {id:"nadia",jp:"ナディア",title:"古代研究者",spriteId:"nadia",color:"#DDAA44",tier:"e4",p:{g:.3,s:.6,c:.95,e:.6},pref:["church","academy","garden"],act:{church:["古代碑文解読"],academy:["古代史講義"],garden:["遺跡の欠片発見！"],tavern:["古代酒を再現"]}},
-  {id:"souji",jp:"ソウジ",title:"剣聖",spriteId:"souji",color:"#8888CC",tier:"e4",p:{g:.2,s:.4,c:.5,e:.9},pref:["arena","forge","garden"],act:{arena:["居合い一閃！"],forge:["名刀研ぎ"],garden:["瞑想中…"],tavern:["茶を頼む"]}},
-  {id:"kaito",jp:"カイト",title:"無敗の王者",spriteId:"kaito",color:"#FFD700",tier:"champ",p:{g:.7,s:.7,c:.6,e:.95},pref:["arena","shrine","tower"],act:{arena:["無敗記録更新👑"],shrine:["王者の祈り"],tower:["挑戦者を分析"],tavern:["風格で酒場が静まる"]}},
-  {id:"yuki",jp:"ユキ",title:"元王者実業家",spriteId:"yuki",color:"#9977CC",tier:"sp",p:{g:.85,s:.8,c:.6,e:.6},pref:["bank","market","shrine"],act:{bank:["大型投資案件"],market:["ネットワーク拡大"],shrine:["育成資金寄付"],tavern:["高級ワイン"]}},
-  {id:"haru",jp:"ハル",title:"挑戦者(17)",spriteId:"haru",color:"#FF8833",tier:"sp",p:{g:.3,s:.7,c:.8,e:.95},pref:["arena","academy","forge"],act:{arena:["型破りな勝利！"],academy:["猛勉強中！"],forge:["自分の武器作成"],tavern:["ジュースを頼む"]}},
-  {id:"aoi",jp:"アオイ",title:"VRランカー",spriteId:"aoi",color:"#7744FF",tier:"sp",p:{g:.5,s:.6,c:.7,e:.9},pref:["tower","arena","hacklab"],act:{tower:["VRトレーニング"],arena:["仮想×現実バトル"],hacklab:["VR改造"],tavern:["ゲーム大会開催"]}},
-  {id:"blanche",jp:"ブランシュ",title:"デザイナー",spriteId:"blanche",color:"#EEDDFF",tier:"sp",p:{g:.5,s:.9,c:.7,e:.6},pref:["market","garden","church"],act:{market:["新作発表！"],garden:["インスピレーション"],church:["ステンドグラスに見入る"],tavern:["コーデチェック"]}},
-  {id:"daigo",jp:"ダイゴ",title:"冒険家",spriteId:"daigo",color:"#88AA66",tier:"sp",p:{g:.3,s:.6,c:.8,e:.9},pref:["port","garden","forge"],act:{port:["新ルート開拓"],garden:["薬草採集"],forge:["登山道具鍛造"],tavern:["冒険談で盛り上がる"]}},
-  {id:"wakana",jp:"ワカナ",title:"工芸の匠",spriteId:"wakana",color:"#CC8866",tier:"sp",p:{g:.2,s:.5,c:.6,e:.4},pref:["forge","academy","church"],act:{forge:["逸品を創造"],academy:["技術伝承"],church:["手を合わせる"],tavern:["穏やかに昔話"]}},
-  {id:"graff",jp:"リュウ",title:"ストリートアート",spriteId:"graff",color:"#FF44AA",tier:"sp",p:{g:.4,s:.7,c:.8,e:.8},pref:["garden","market","arena"],act:{garden:["壁画で街を彩る🎨"],market:["アート販売"],arena:["パフォーマンス！"],tavern:["壁にこっそり絵を描く"]}},
+  {id:"hinata",jp:"Hinata",title:"Fire Rapper",spriteId:"hinata",color:"#FF3333",tier:"gym",p:{g:.5,s:.8,c:.4,e:.9},pref:["arena","forge","market"],act:{arena:["Fire rap battle🔥"],forge:["Helping forge with fire"],market:["Attracting customers"],tavern:["Freestyle rap"]}},
+  {id:"sui",jp:"Sui",title:"Ice Model",spriteId:"sui",color:"#88CCFF",tier:"gym",p:{g:.4,s:.7,c:.3,e:.6},pref:["market","church","garden"],act:{market:["Cool negotiation"],church:["Praying quietly"],garden:["Strolling beautiful garden"],tavern:["Cold gaze"]}},
+  {id:"mio",jp:"Mio",title:"Grass Botanist",spriteId:"mio",color:"#44BB44",tier:"gym",p:{g:.3,s:.5,c:.9,e:.6},pref:["garden","academy","well"],act:{garden:["Discovered new species!🌱"],academy:["Writing botanical encyclopedia"],well:["Water quality analysis"],tavern:["Herbal tea"]}},
+  {id:"raiga",jp:"Raiga",title:"Electric Streamer",spriteId:"raiga",color:"#FFDD00",tier:"gym",p:{g:.6,s:.9,c:.5,e:.95},pref:["tower","arena","port"],act:{tower:["Live streaming📡"],arena:["Play-by-play battle!"],port:["Charging electricity"],tavern:["Stream is full"]}},
+  {id:"kuroha",jp:"Kuroha",title:"Evil Hacker",spriteId:"kuroha",color:"#AA0044",tier:"gym",p:{g:.7,s:.3,c:.85,e:.8},pref:["hacklab","tower","bank"],act:{hacklab:["Co-hacking"],tower:["Camera jack"],bank:["Security enhancement"],tavern:["Gathering intel"]}},
+  {id:"tetsu",jp:"Tetsujiro",title:"Ex-Wrestler",spriteId:"tetsu",color:"#DD8844",tier:"gym",p:{g:.3,s:.7,c:.2,e:.95},pref:["arena","forge","tavern"],act:{arena:["Overwhelming win with special move💪"],forge:["Bent iron barehanded"],tavern:["Drinking ale heartily🍺"]}},
+  {id:"hikari",jp:"Hikari",title:"Fairy Idol",spriteId:"hikari",color:"#FFaaDD",tier:"gym",p:{g:.4,s:.95,c:.3,e:.7},pref:["church","garden","market"],act:{church:["Angel's voice✨"],garden:["Fan service"],market:["Idol power"],tavern:["Eating sweets"]}},
+  {id:"bartho",jp:"Kaiyo",title:"Water Navigator",spriteId:"bartho",color:"#2266AA",tier:"gym",p:{g:.5,s:.6,c:.7,e:.8},pref:["port","bank","well"],act:{port:["Updating sea route map"],bank:["Trade financing loan"],well:["Water experiments"],tavern:["Tale of adventure"]}},
+  {id:"scarlet",jp:"Scarlet",title:"Tactician",spriteId:"scarlet",color:"#CC2244",tier:"e4",p:{g:.6,s:.5,c:.85,e:.7},pref:["arena","tower","academy"],act:{arena:["Perfect strategy, all wins"],tower:["Tactical data analysis"],academy:["Strategy lecture"],tavern:["Beating everyone at chess"]}},
+  {id:"rei",jp:"Rei",title:"Genius PG",spriteId:"rei",color:"#33DDAA",tier:"e4",p:{g:.5,s:.3,c:.95,e:.85},pref:["tower","hacklab","academy"],act:{tower:["New algorithm implementation"],hacklab:["Co-developing ORACLE"],academy:["AI seminar"],tavern:["Coding silently"]}},
+  {id:"nadia",jp:"Nadia",title:"Ancient Researcher",spriteId:"nadia",color:"#DDAA44",tier:"e4",p:{g:.3,s:.6,c:.95,e:.6},pref:["church","academy","garden"],act:{church:["Decoding ancient inscriptions"],academy:["Ancient history lecture"],garden:["Discovered relic fragment!"],tavern:["Recreating ancient brew"]}},
+  {id:"souji",jp:"Souji",title:"Sword Saint",spriteId:"souji",color:"#8888CC",tier:"e4",p:{g:.2,s:.4,c:.5,e:.9},pref:["arena","forge","garden"],act:{arena:["Iai flash!"],forge:["Polishing famous sword"],garden:["Meditating..."],tavern:["Ordering tea"]}},
+  {id:"kaito",jp:"Kaito",title:"Undefeated Champ",spriteId:"kaito",color:"#FFD700",tier:"champ",p:{g:.7,s:.7,c:.6,e:.95},pref:["arena","shrine","tower"],act:{arena:["Undefeated record updated👑"],shrine:["Champion's prayer"],tower:["Analyzing challengers"],tavern:["Tavern quiets from his presence"]}},
+  {id:"yuki",jp:"Yuki",title:"Ex-Champ Tycoon",spriteId:"yuki",color:"#9977CC",tier:"sp",p:{g:.85,s:.8,c:.6,e:.6},pref:["bank","market","shrine"],act:{bank:["Large-scale investment"],market:["Network expansion"],shrine:["Donating for training"],tavern:["Fine wine"]}},
+  {id:"haru",jp:"Haru",title:"Challenger (17)",spriteId:"haru",color:"#FF8833",tier:"sp",p:{g:.3,s:.7,c:.8,e:.95},pref:["arena","academy","forge"],act:{arena:["Unconventional victory!"],academy:["Studying hard!"],forge:["Crafting own weapon"],tavern:["Ordering juice"]}},
+  {id:"aoi",jp:"Aoi",title:"VR Ranker",spriteId:"aoi",color:"#7744FF",tier:"sp",p:{g:.5,s:.6,c:.7,e:.9},pref:["tower","arena","hacklab"],act:{tower:["VR training"],arena:["Virtual x Real Battle"],hacklab:["VR modding"],tavern:["Hosting game tournament"]}},
+  {id:"blanche",jp:"Blanche",title:"Designer",spriteId:"blanche",color:"#EEDDFF",tier:"sp",p:{g:.5,s:.9,c:.7,e:.6},pref:["market","garden","church"],act:{market:["New collection release!"],garden:["Getting inspiration"],church:["Mesmerized by stained glass"],tavern:["Outfit check"]}},
+  {id:"daigo",jp:"Daigo",title:"Adventurer",spriteId:"daigo",color:"#88AA66",tier:"sp",p:{g:.3,s:.6,c:.8,e:.9},pref:["port","garden","forge"],act:{port:["Pioneering new route"],garden:["Gathering herbs"],forge:["Forging climbing gear"],tavern:["Lively adventure tales"]}},
+  {id:"wakana",jp:"Wakana",title:"Master Artisan",spriteId:"wakana",color:"#CC8866",tier:"sp",p:{g:.2,s:.5,c:.6,e:.4},pref:["forge","academy","church"],act:{forge:["Creating masterpiece"],academy:["Passing down techniques"],church:["Putting hands together in prayer"],tavern:["Peacefully recalling old times"]}},
+  {id:"graff",jp:"Ryu",title:"Street Art",spriteId:"graff",color:"#FF44AA",tier:"sp",p:{g:.4,s:.7,c:.8,e:.8},pref:["garden","market","arena"],act:{garden:["Coloring the city with murals🎨"],market:["Selling art"],arena:["Performance!"],tavern:["Secretly drawing on the wall"]}},
 ];
 
 const QTES=[
-  {title:"🔥 火災発生！",desc:"ギルドが燃えている！",key:"F",tl:6000,color:"#FF4422",ok:"消火成功！",ng:"大ダメージ…",rw:{yen:2000,rep:5},pn:{yen:-5000,rep:-8}},
-  {title:"🗡 盗賊襲来！",desc:"金庫が狙われている！",key:"G",tl:5000,color:"#FF0000",ok:"撃退成功！",ng:"資金流出…",rw:{yen:3000,data:10},pn:{yen:-8000}},
-  {title:"🐉 ドラゴン出現！",desc:"古代竜が上空に！",key:"D",tl:4500,color:"#FF6600",ok:"交渉成功！",ng:"炎で被害…",rw:{yen:5000,rep:10},pn:{yen:-6000}},
-  {title:"📉 市場暴落！",desc:"全資産急落中！",key:"S",tl:5500,color:"#FF2266",ok:"神業で回避！",ng:"暴落に飲まれた…",rw:{yen:8000},pn:{yen:-10000}},
-  {title:"🌀 異次元の裂け目！",desc:"ポータルが開いた！",key:"P",tl:5000,color:"#BF40FF",ok:"レアデータ回収！",ng:"ウイルス流入…",rw:{data:50},pn:{data:-30}},
-  {title:"📜 緊急依頼！",desc:"王国からのミッション！",key:"Q",tl:6000,color:"#FFD700",ok:"依頼完遂！",ng:"信用失墜…",rw:{yen:6000,con:3,rep:8},pn:{rep:-10}},
-  {title:"⚡ 魔法嵐！",desc:"塔に雷が直撃！",key:"Z",tl:4000,color:"#00CCFF",ok:"データ守った！",ng:"データ消失…",rw:{data:40},pn:{data:-40}},
-  {title:"💎 宝箱発見！",desc:"遺跡から宝箱が！",key:"T",tl:5000,color:"#FFD700",ok:"財宝獲得！",ng:"罠が発動…",rw:{yen:10000},pn:{yen:-3000}},
+  {title:"🔥 Fire Breakout!",desc:"The guild is burning!",key:"F",tl:6000,color:"#FF4422",ok:"Extinguished!",ng:"Massive damage...",rw:{yen:2000,rep:5},pn:{yen:-5000,rep:-8}},
+  {title:"🗡 Bandits Attack!",desc:"The vault is targeted!",key:"G",tl:5000,color:"#FF0000",ok:"Repelled them!",ng:"Funds stolen...",rw:{yen:3000,data:10},pn:{yen:-8000}},
+  {title:"🐉 Dragon Appeared!",desc:"An ancient dragon is above!",key:"D",tl:4500,color:"#FF6600",ok:"Negotiation success!",ng:"Damage from flames...",rw:{yen:5000,rep:10},pn:{yen:-6000}},
+  {title:"📉 Market Crash!",desc:"Assets are plummeting!",key:"S",tl:5500,color:"#FF2266",ok:"Dodged by a miracle!",ng:"Swallowed by the crash...",rw:{yen:8000},pn:{yen:-10000}},
+  {title:"🌀 Dimensional Rift!",desc:"A portal has opened!",key:"P",tl:5000,color:"#BF40FF",ok:"Rare data collected!",ng:"Virus infiltrated...",rw:{data:50},pn:{data:-30}},
+  {title:"📜 Urgent Request!",desc:"Mission from the kingdom!",key:"Q",tl:6000,color:"#FFD700",ok:"Mission accomplished!",ng:"Lost trust...",rw:{yen:6000,con:3,rep:8},pn:{rep:-10}},
+  {title:"⚡ Magic Storm!",desc:"Lightning hit the tower!",key:"Z",tl:4000,color:"#00CCFF",ok:"Data protected!",ng:"Data lost...",rw:{data:40},pn:{data:-40}},
+  {title:"💎 Treasure Chest!",desc:"Found a chest in the ruins!",key:"T",tl:5000,color:"#FFD700",ok:"Loot acquired!",ng:"Trap triggered...",rw:{yen:10000},pn:{yen:-3000}},
 ];
 
 // ======= DEV TERMINAL =======
@@ -369,6 +369,55 @@ const DevTerminal=({show,onClose,gameState,setRes,setTp,log,agents,setAgents,res
 };
 
 // ======= MAIN GAME =======
+
+const MarketBoard = ({ tick, paused }) => {
+  // Generate a scrolling list of fake economy transactions based on the tick
+  const [txs, setTxs] = useState([]);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    if (paused) return;
+    if (tick % 5 === 0 && Math.random() < 0.95) {
+      const assets = ["SOL", "USDC", "NEON", "DATA", "JUP"];
+      const types = ["BUY", "SELL", "SWAP", "FEE"];
+      const amt = (Math.random() * 50).toFixed(2);
+      const a = assets[Math.floor(Math.random()*assets.length)];
+      const t = types[Math.floor(Math.random()*types.length)];
+      const hash = "0x" + Math.random().toString(16).substr(2,6);
+      setTxs(p => [...p, {id: tick, t, amt, a, hash, time: new Date().toISOString().substring(11,19)}].slice(-100));
+    }
+  }, [tick, paused]);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [txs]);
+
+  return (
+    <div className="data-font" style={{background:"#080a14",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"8px",display:"flex",flexDirection:"column",height:"100%"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"6px",borderBottom:"1px solid #ffffff11",paddingBottom:"4px"}}>
+         <span style={{fontSize:"10px",color:"#FFD700",fontWeight:"800",letterSpacing:"1px"}}>📈 LIVE MARKET LEDGER</span>
+         <span style={{fontSize:"8px",color:"#00FF88",animation:"blink 1.5s infinite"}}>● SYNCED</span>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"50px 30px 45px 1fr",color:"#666",marginBottom:"4px",borderBottom:"1px dotted #333",paddingBottom:"2px",fontSize:"9px",fontFamily:"'Courier New', monospace"}}>
+         <span>TIME</span><span>TYPE</span><span>AMOUNT</span><span style={{textAlign:"right"}}>TX HASH</span>
+      </div>
+      <div ref={scrollRef} style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:"2px",fontSize:"9px",fontFamily:"'Courier New', monospace"}}>
+         {txs.map((tx, i) => (
+           <div key={tx.id} style={{display:"grid",gridTemplateColumns:"50px 30px 45px 1fr",color:"#ccc",padding:"2px 0",alignItems:"center"}}>
+             <span style={{color:"#555"}}>{tx.time}</span>
+             <span style={{color:tx.t==="BUY"?"#0F8":tx.t==="SELL"?"#F44":tx.t==="SWAP"?"#0EF":"#FD0",fontWeight:"bold"}}>{tx.t}</span>
+             <span>{tx.amt} <span style={{fontSize:"7px",color:"#777"}}>{tx.a}</span></span>
+             <span style={{textAlign:"right",color:"#48F"}}>{tx.hash}</span>
+           </div>
+         ))}
+         {txs.length === 0 && <div style={{color:"#555",textAlign:"center",marginTop:"20px"}}>Awaiting transactions...</div>}
+      </div>
+    </div>
+  );
+};
+
 function NeonMythosCity(){
   const isMobile=useIsMobile();
   const TILE=isMobile?16:30;
@@ -387,7 +436,7 @@ function NeonMythosCity(){
   const[rTab,setRTab]=useState("gym");
   const[agents,setAgents]=useState(()=>AGENTS.map(c=>({...c,x:c.bx,y:c.by+2,tx:null,ty:null,state:"idle",timer:0,mood:80,exp:0,level:1,earn:0})));
   const[resi,setResi]=useState([]);
-  const[logs,setLogs]=useState([{ch:"SYSTEM",msg:"アバターを選んでください",col:"#00E5FF"}]);
+  const[logs,setLogs]=useState([{ch:"SYSTEM",msg:"Please select your avatar",col:"#00E5FF"}]);
   const[sel,setSel]=useState(null);
   const[hovB,setHovB]=useState(null);
   const[qte,setQte]=useState(null);
@@ -402,14 +451,14 @@ function NeonMythosCity(){
   const log=useCallback((ch,msg,col)=>{setLogs(p=>[{ch,msg,col},...p].slice(0,80));},[]);
   const all=[...agents,...resi];
 
-  const pickAvatar=r=>{setAvatar(r);setShowAvSel(false);log("SYSTEM",`${r.jp}でゲーム開始！`,r.color);};
+  const pickAvatar=r=>{setAvatar(r);setShowAvSel(false);log("SYSTEM",`Game started with ${r.jp}!`,r.color);};
   const recruit=r=>{
     if(recruited.find(x=>x.id===r.id))return;
     const cost=r.tier==="champ"?8000:r.tier==="e4"?5000:r.tier==="gym"?3000:2000;
-    if(res.yen<cost){log("SYSTEM","資金不足！","#FF4444");return;}
+    if(res.yen<cost){log("SYSTEM","Not enough funds!","#FF4444");return;}
     setRes(p=>({...p,yen:p.yen-cost}));setRecruited(p=>[...p,r]);
     setResi(p=>[...p,{...r,x:Math.floor(Math.random()*MAP_W),y:[5,9,14][Math.floor(Math.random()*3)],tx:null,ty:null,state:"idle",timer:5,mood:80,exp:0,level:1,earn:0}]);
-    log("🎉雇用",`${r.jp}（${r.title}）が来た！`,r.color);
+    log("🎉Hired",`${r.jp} (${r.title}) has arrived!`,r.color);
   };
 
   // ESC to toggle terminal
@@ -486,7 +535,7 @@ function NeonMythosCity(){
 
   const dp=(tick%DAY_TICKS)/DAY_TICKS;
   const sky=phase==="morning"?"#1a1e3a":phase==="noon"?"#222850":phase==="evening"?"#2a1528":"#0a0c1a";
-  const tierNames={gym:"ジムリーダー",e4:"四天王",champ:"チャンピオン",sp:"特別枠"};
+  const tierNames={gym:"Gym Leader",e4:"Elite Four",champ:"Champion",sp:"Special"};
 
   // ===== AVATAR SELECT (Mobile optimized) =====
   if(showAvSel){
@@ -494,7 +543,7 @@ function NeonMythosCity(){
     return(<div style={{background:"#050510",minHeight:"100vh",fontFamily:"'Courier New','MS Gothic',monospace",color:"#eee",display:"flex",flexDirection:"column",alignItems:"center",padding:isMobile?"12px 8px":"20px",paddingBottom:"env(safe-area-inset-bottom)"}}>
       <style>{`*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#333;border-radius:2px}body{overscroll-behavior:none}`}</style>
       <h1 style={{fontSize:isMobile?"20px":"24px",fontWeight:"900",background:"linear-gradient(90deg,#FF69B4,#00E5FF,#FFD700)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:"4px"}}>NEON MYTHOS</h1>
-      <p style={{color:"#888",fontSize:"11px",marginBottom:"12px"}}>アバターを選択してください</p>
+      <p style={{color:"#888",fontSize:"11px",marginBottom:"12px"}}>Select your avatar</p>
       <div style={{display:"flex",gap:"6px",marginBottom:"12px",flexWrap:"wrap",justifyContent:"center"}}>
         {tabs.map(t=>(<button key={t} onClick={()=>setRTab(t)} style={{padding:"6px 14px",borderRadius:"12px",border:`1px solid ${rTab===t?"#FFD700":"#333"}`,background:rTab===t?"#FFD70015":"#111",color:rTab===t?"#FFD700":"#888",fontSize:"11px",cursor:"pointer"}}>{tierNames[t]}</button>))}
       </div>
@@ -515,47 +564,6 @@ function NeonMythosCity(){
   }
 
   // ===== PANELS (shared) =====
-
-  // ===== MARKET BOARD =====
-  const MarketBoard = () => {
-    // Generate a scrolling list of fake economy transactions based on the tick
-    const [txs, setTxs] = useState([]);
-    useEffect(() => {
-      if (paused) return;
-      if (tick % 5 === 0 && Math.random() < 0.95) {
-        const assets = ["SOL", "USDC", "NEON", "DATA", "JUP"];
-        const types = ["BUY", "SELL", "SWAP", "FEE"];
-        const amt = (Math.random() * 50).toFixed(2);
-        const a = assets[Math.floor(Math.random()*assets.length)];
-        const t = types[Math.floor(Math.random()*types.length)];
-        const hash = "0x" + Math.random().toString(16).substr(2,6);
-        setTxs(p => [{id: tick, t, amt, a, hash, time: new Date().toISOString().substring(11,19)}, ...p].slice(0, 15));
-      }
-    }, [tick, paused]);
-
-    return (
-      <div className="data-font" style={{background:"#080a14",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"8px",display:"flex",flexDirection:"column",height:"100%"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"6px",borderBottom:"1px solid #ffffff11",paddingBottom:"4px"}}>
-           <span style={{fontSize:"10px",color:"#FFD700",fontWeight:"800",letterSpacing:"1px"}}>📈 LIVE MARKET LEDGER</span>
-           <span style={{fontSize:"8px",color:"#00FF88",animation:"blink 1.5s infinite"}}>● SYNCED</span>
-        </div>
-        <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:"2px",fontSize:"9px",fontFamily:"'Courier New', monospace"}}>
-           <div style={{display:"grid",gridTemplateColumns:"50px 30px 45px 1fr",color:"#666",marginBottom:"4px",borderBottom:"1px dotted #333",paddingBottom:"2px"}}>
-             <span>TIME</span><span>TYPE</span><span>AMOUNT</span><span style={{textAlign:"right"}}>TX HASH</span>
-           </div>
-           {txs.map((tx, i) => (
-             <div key={tx.id} style={{display:"grid",gridTemplateColumns:"50px 30px 45px 1fr",color:"#ccc",opacity:Math.max(0.2, 1 - i*0.06),padding:"2px 0",alignItems:"center"}}>
-               <span style={{color:"#555"}}>{tx.time}</span>
-               <span style={{color:tx.t==="BUY"?"#0F8":tx.t==="SELL"?"#F44":tx.t==="SWAP"?"#0EF":"#FD0",fontWeight:"bold"}}>{tx.t}</span>
-               <span>{tx.amt} <span style={{fontSize:"7px",color:"#777"}}>{tx.a}</span></span>
-               <span style={{textAlign:"right",color:"#48F"}}>{tx.hash}</span>
-             </div>
-           ))}
-           {txs.length === 0 && <div style={{color:"#555",textAlign:"center",marginTop:"20px"}}>Awaiting transactions...</div>}
-        </div>
-      </div>
-    );
-  };
 
   const InfoPanel=()=>(<div style={{display:"flex",flexDirection:"column",gap:"4px",fontSize:"9px",padding:isMobile?"4px":"4px 4px 4px 0"}}>
     {sel&&(()=>{const c=all.find(x=>x.id===sel);if(!c)return null;const spr=ALL_SPRITES[c.spriteId];
@@ -636,7 +644,7 @@ function NeonMythosCity(){
     </div>
 
     {resi.length>0&&(<div style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px",maxHeight:isMobile?"150px":"120px",overflow:"auto"}}>
-      <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>🏰 住人({resi.length})</div>
+      <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>🏰 RESIDENTS({resi.length})</div>
       {resi.map(c=>(<div key={c.id} onClick={()=>setSel(sel===c.id?null:c.id)} style={{display:"flex",alignItems:"center",gap:"4px",padding:"3px",cursor:"pointer",background:sel===c.id?`${c.color}11`:"transparent",borderRadius:"2px"}}>
         <span style={{color:c.color,fontWeight:"bold",fontSize:"9px",width:"50px"}}>{avatar?.id===c.id?"👤":""}{c.jp}</span>
         <span style={{color:"#555",width:"14px"}}>{c.state==="walk"?"🚶":c.state==="work"?"⚡":"💤"}</span>
@@ -648,7 +656,7 @@ function NeonMythosCity(){
     <div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
       <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>💰 ECONOMY</div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"2px"}}>
-        {[{l:"総資産",v:`¥${res.yen.toLocaleString()}`,c:"#FD0"},{l:"累計利益",v:`+¥${tp.toLocaleString()}`,c:"#0F8"},{l:"DATA",v:`${res.data}TB`,c:"#0EF"},{l:"契約",v:`${res.con}件`,c:"#F6B"}].map((s,i)=>(
+        {[{l:"TOTAL ASSETS",v:`¥${res.yen.toLocaleString()}`,c:"#FD0"},{l:"TOTAL PROFIT",v:`+¥${tp.toLocaleString()}`,c:"#0F8"},{l:"DATA",v:`${res.data}TB`,c:"#0EF"},{l:"CONTRACTS",v:`${res.con}`,c:"#F6B"}].map((s,i)=>(
           <div key={i} style={{background:"#0d0d20",padding:"3px",borderRadius:"2px",textAlign:"center"}}>
             <div style={{fontSize:"7px",color:"#666"}}>{s.l}</div><div style={{fontSize:"10px",color:s.c,fontWeight:"bold"}}>{s.v}</div>
           </div>))}
@@ -748,11 +756,11 @@ function NeonMythosCity(){
         <div style={{height:"8px",background:"#1a1a2e",borderRadius:"4px",overflow:"hidden",marginBottom:"8px"}}>
           <div style={{height:"100%",width:`${(qteTm/qte.tl)*100}%`,background:qteTm/qte.tl>.5?qte.color:"#FF0000",borderRadius:"4px",transition:"width .1s"}} />
         </div>
-        <div style={{fontSize:"11px",color:"#888",marginBottom:"10px"}}>残り {(qteTm/1000).toFixed(1)}秒</div>
+        <div style={{fontSize:"11px",color:"#888",marginBottom:"10px"}}>Time left: {(qteTm/1000).toFixed(1)}s</div>
         <button onClick={()=>doQ(true)} style={{width:isMobile?"100%":"auto",marginTop:"8px",padding:isMobile?"14px 24px":"8px 24px",borderRadius:"10px",
           border:`3px solid ${qte.color}`,background:`${qte.color}22`,color:qte.color,fontSize:isMobile?"18px":"14px",fontWeight:"900",cursor:"pointer",
           boxShadow:`0 0 20px ${qte.color}44`,animation:"qteF .35s infinite",touchAction:"manipulation"}}>
-          {isMobile?`⚡ TAP! [${qte.key}]`:`▶ ${qte.key} を押せ！`}
+          {isMobile?`⚡ TAP! [${qte.key}]`:`▶ Press ${qte.key}!`}
         </button>
       </div>
     </div>)}
@@ -765,7 +773,7 @@ function NeonMythosCity(){
     {showRecruit&&(<div style={{position:"fixed",inset:0,zIndex:900,display:"flex",alignItems:isMobile?"flex-end":"center",justifyContent:"center",background:"rgba(0,0,0,.7)"}}>
       <div style={{background:"#0a0e1a",border:"1px solid #FFD70044",borderRadius:isMobile?"12px 12px 0 0":"12px",padding:"14px",maxWidth:"520px",width:isMobile?"100%":"95%",maxHeight:isMobile?"85vh":"80vh",overflow:"auto",paddingBottom:isMobile?"calc(14px + env(safe-area-inset-bottom))":"14px"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}}>
-          <span style={{fontSize:"13px",fontWeight:"bold",color:"#FFD700"}}>🏰 住人を雇用</span>
+          <span style={{fontSize:"13px",fontWeight:"bold",color:"#FFD700"}}>🏰 Hire Residents</span>
           <button onClick={()=>setShowRecruit(false)} style={{background:"#222",border:"1px solid #444",color:"#aaa",padding:"4px 12px",borderRadius:"4px",cursor:"pointer",fontSize:"11px"}}>✕</button>
         </div>
         <div style={{display:"flex",gap:"4px",marginBottom:"8px",overflowX:"auto"}}>
@@ -783,7 +791,7 @@ function NeonMythosCity(){
                 <div style={{fontSize:"11px",fontWeight:"bold",color:r.color}}>{r.jp}{avatar?.id===r.id?" 👤":""}</div>
                 <div style={{fontSize:"8px",color:"#777",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r.title}</div>
               </div>
-              {hired?<span style={{fontSize:"8px",color:"#00FF88",padding:"2px 6px",background:"#00FF8815",borderRadius:"3px"}}>済</span>:
+              {hired?<span style={{fontSize:"8px",color:"#00FF88",padding:"2px 6px",background:"#00FF8815",borderRadius:"3px"}}>Hired</span>:
                 <button onClick={()=>recruit(r)} style={{fontSize:"10px",padding:"4px 10px",borderRadius:"4px",border:`1px solid ${r.color}44`,background:`${r.color}11`,color:r.color,cursor:"pointer",whiteSpace:"nowrap"}}>¥{cost.toLocaleString()}</button>}
             </div>);
           })}
@@ -846,7 +854,7 @@ function NeonMythosCity(){
       // ===== DESKTOP LAYOUT =====
       <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative"}}>
         <div style={{width:"280px", borderRight:"1px solid #1a1a3e", padding:"10px", background:"rgba(0,0,0,0.5)"}}>
-           <MarketBoard />
+           <MarketBoard tick={tick} paused={paused} />
         </div>
         <div style={{flex:1, display:"flex", padding:"10px", overflow:"hidden", justifyContent:"center"}}>
            <div style={{width:"fit-content",margin:"0 auto"}}><GameMap/></div>
@@ -857,7 +865,7 @@ function NeonMythosCity(){
 
     {/* Footer */}
     <div style={{display:"flex",justifyContent:"space-between",padding:isMobile?"4px 8px":"3px 10px",borderTop:"1px solid #1a1a3e",background:"#0a0c1a",fontSize:"8px",color:"#444",flexShrink:0,paddingBottom:isMobile?"calc(4px + env(safe-area-inset-bottom))":"3px"}}>
-      <span>⚔ NEON CITY / D{day} / 住人:{all.length}</span>
+      <span>⚔ NEON CITY / D{day} / Pop:{all.length}</span>
       <span style={{animation:"blink 2s infinite"}}>● ONLINE</span>
     </div>
   </div>);
