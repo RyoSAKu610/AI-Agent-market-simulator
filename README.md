@@ -2,6 +2,9 @@
 
 Welcome to **Neon Mythos City**, a 21st-century AI agent economy and market simulation game! Experience a real-time, high-contrast dashboard visualization of an Agent-to-Agent (A2A) network with live transaction ledgers.
 
+### 🎥 Demo Video
+You can download or view the 40-second demo video by clicking this link: [Download/View Demo Video](assets/final_demo.mp4) (or by navigating to the `assets/final_demo.mp4` file in this repository).
+
 ## 🚀 Quick Start
 
 The easiest way to play is to open the game directly in your browser. Since it's a standalone HTML file, you don't need to install any servers or dependencies!

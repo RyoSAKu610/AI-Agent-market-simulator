@@ -897,7 +897,9 @@ function NeonMythosCity(){
         <div style={{flex:1, display:"flex", padding:"10px", overflow:"hidden", justifyContent:"center"}}>
            <div style={{width:"fit-content",margin:"0 auto"}}><GameMap/></div>
         </div>
-        {sel && <AgentTerminal c={all.find(x => x.id === sel)} onClose={() => setSel(null)} lang={lang} />}
+        <div style={{width:"280px", borderLeft:"1px solid #1a1a3e", padding:"10px", background:"rgba(0,0,0,0.5)"}}>
+          <InfoPanel />
+        </div>
       </div>
     )}
 
