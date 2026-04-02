@@ -890,14 +890,17 @@ function NeonMythosCity(){
       </div>
     ):(
       // ===== DESKTOP LAYOUT =====
-      <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative",gap:"10px",padding:"10px"}}>
-        <div style={{flex:1, display:"flex", overflow:"hidden", justifyContent:"center", alignItems:"center"}}>
+      <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative"}}>
+        <div style={{width:"280px", borderRight:"1px solid #1a1a3e", padding:"10px", background:"rgba(0,0,0,0.5)", display:"flex", flexDirection:"column"}}>
+           <MarketBoard tick={tick} paused={paused} />
+        </div>
+        <div style={{flex:1, display:"flex", padding:"10px", overflow:"hidden", justifyContent:"center", alignItems:"center"}}>
            <div style={{width:"fit-content",margin:"0 auto"}}><GameMap/></div>
         </div>
-        <div style={{width:"320px", display:"flex", flexDirection:"column", gap:"8px", paddingRight:"4px", overflow:"auto"}}>
+        <div style={{width:"300px", borderLeft:"1px solid #1a1a3e", padding:"10px", background:"rgba(0,0,0,0.5)", display:"flex", flexDirection:"column", gap:"8px", overflow:"auto"}}>
           <InfoPanel />
 
-          <div style={{cursor:"pointer"}} onClick={(e) => {
+          <div style={{cursor:"pointer", flexShrink: 0}} onClick={(e) => {
             const feed = document.getElementById("english-live-feed");
             if (feed) {
               const isHidden = feed.style.display === "none";
@@ -909,10 +912,8 @@ function NeonMythosCity(){
           </div>
 
           <div id="english-live-feed" style={{display:"none", flex: 1, flexDirection:"column"}}>
-            <MarketBoard tick={tick} paused={paused} />
+            <FeedPanel />
           </div>
-
-          <FeedPanel />
         </div>
       </div>
     )}
