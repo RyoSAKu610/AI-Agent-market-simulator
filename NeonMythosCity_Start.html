@@ -192,6 +192,12 @@ const QTES=[
   {title:"💎 宝箱発見！",desc:"遺跡から宝箱が！",key:"T",tl:5000,color:"#FFD700",ok:"財宝獲得！",ng:"罠が発動…",rw:{yen:10000},pn:{yen:-3000}},
 ];
 
+const RANDOM_EVENTS = [
+  { m: "💫 流れ星！¥3,000", f: r => ({ ...r, yen: r.yen + 3000 }) },
+  { m: "🐦 新規契約！", f: r => ({ ...r, con: r.con + 1 }) },
+  { m: "📡 DATA+25", f: r => ({ ...r, data: r.data + 25 }) }
+];
+
 // ======= DEV TERMINAL =======
 const DevTerminal=({show,onClose,gameState,setRes,setTp,log,agents,setAgents,resi,setResi,recruited,setRecruited,setDay,setTick})=>{
   const[input,setInput]=useState("");
@@ -305,8 +311,7 @@ const DevTerminal=({show,onClose,gameState,setRes,setTp,log,agents,setAgents,res
         break;}
       case"spawn":
         if(args[0]==="event"){
-          const ev=[{m:"💫 流れ星！¥3,000",f:()=>setRes(r=>({...r,yen:r.yen+3000}))},{m:"🐦 新規契約！",f:()=>setRes(r=>({...r,con:r.con+1}))},{m:"📡 DATA+25",f:()=>setRes(r=>({...r,data:r.data+25}))}];
-          const e=ev[Math.floor(Math.random()*ev.length)];e.f();log("EVENT",e.m,"#AADDFF");out(`Event triggered: ${e.m}`);
+          const e=RANDOM_EVENTS[Math.floor(Math.random()*RANDOM_EVENTS.length)];setRes(e.f);log("EVENT",e.m,"#AADDFF");out(`Event triggered: ${e.m}`);
         } else out("Usage: spawn event","err");
         break;
       case"reset":
@@ -451,8 +456,7 @@ function NeonMythosCity(){
 
   // Events
   useEffect(()=>{if(tick%120===0&&tick>0&&!paused){
-    const ev=[{m:"💫 流れ星！¥3,000",f:()=>setRes(r=>({...r,yen:r.yen+3000}))},{m:"🐦 新規契約！",f:()=>setRes(r=>({...r,con:r.con+1}))},{m:"📡 DATA+25",f:()=>setRes(r=>({...r,data:r.data+25}))}];
-    const e=ev[Math.floor(Math.random()*ev.length)];e.f();log("EVENT",e.m,"#AADDFF");
+    const e=RANDOM_EVENTS[Math.floor(Math.random()*RANDOM_EVENTS.length)];setRes(e.f);log("EVENT",e.m,"#AADDFF");
   }},[tick,paused,log]);
 
   const dp=(tick%DAY_TICKS)/DAY_TICKS;
