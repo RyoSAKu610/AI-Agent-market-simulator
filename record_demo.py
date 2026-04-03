@@ -131,6 +131,7 @@ if __name__ == "__main__":
         # Using a large viewport to prevent vertical auto-scrolling issues during demo recordings
         context = browser.new_context(
             record_video_dir="/home/jules/verification/videos",
+            record_video_size={"width": 1600, "height": 900},
             viewport={"width": 1600, "height": 900}
         )
         page = context.new_page()
