@@ -495,6 +495,24 @@
 <canvas id="connectCanvas" style="display:none"></canvas>
 
 <script>
+/**
+ * Sanitizes a string for safe injection into innerHTML.
+ * @param {string} str - The string to escape.
+ * @returns {string} - The escaped string.
+ */
+function escapeHTML(str) {
+  if (typeof str !== 'string') str = String(str);
+  return str.replace(/[&<>"']/g, function(m) {
+    return ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[m];
+  });
+}
+
 // ============================================================
 // DATA SETUP
 // ============================================================
@@ -584,9 +602,9 @@ class Agent {
     el.style.setProperty('--agent-bg', this.type.bg);
     el.style.setProperty('--glow', this.type.color + '40');
     el.innerHTML = `
-      <div class="agent-body">${this.type.icon}</div>
-      <div class="agent-name">${this.type.name}</div>
-      <div class="agent-bar"><div class="agent-bar-fill" style="width:${this.energy}%"></div></div>
+      <div class="agent-body">${escapeHTML(this.type.icon)}</div>
+      <div class="agent-name">${escapeHTML(this.type.name)}</div>
+      <div class="agent-bar"><div class="agent-bar-fill" style="width:${escapeHTML(this.energy)}%"></div></div>
       <div class="agent-carry"></div>
     `;
     this.el = el;
@@ -766,7 +784,7 @@ function addLog(msg) {
 function renderLog() {
   const area = document.getElementById('logArea');
   area.innerHTML = logEntries.slice(0, 15).map(e =>
-    `<div class="log-entry"><span class="log-time">${e.time}</span> ${e.msg}</div>`
+    `<div class="log-entry"><span class="log-time">${escapeHTML(e.time)}</span> ${escapeHTML(e.msg)}</div>`
   ).join('');
 }
 
@@ -864,10 +882,10 @@ function updateMarketPrices() {
     const trend = r.price > r.basePrice ? '↑' : r.price < r.basePrice ? '↓' : '→';
     const tColor = r.price > r.basePrice ? '#10b981' : r.price < r.basePrice ? '#ef4444' : '#64748b';
     return `<div class="resource-row">
-      <span class="res-icon">${r.icon}</span>
-      <span class="res-name">${r.name}</span>
-      <span class="res-price" style="color:${r.color}">¥${r.price.toFixed(1)}</span>
-      <span class="res-trend" style="color:${tColor}">${trend}</span>
+      <span class="res-icon">${escapeHTML(r.icon)}</span>
+      <span class="res-name">${escapeHTML(r.name)}</span>
+      <span class="res-price" style="color:${escapeHTML(r.color)}">¥${escapeHTML(r.price.toFixed(1))}</span>
+      <span class="res-trend" style="color:${escapeHTML(tColor)}">${escapeHTML(trend)}</span>
     </div>`;
   }).join('');
 }
@@ -877,12 +895,12 @@ function updateAgentList() {
   const sorted = [...agents].sort((a, b) => b.wealth - a.wealth);
   el.innerHTML = sorted.slice(0, 8).map(a =>
     `<div class="agent-list-item">
-      <span class="agent-list-icon">${a.type.icon}</span>
+      <span class="agent-list-icon">${escapeHTML(a.type.icon)}</span>
       <div class="agent-list-info">
-        <div class="agent-list-name" style="color:${a.type.color}">${a.name}</div>
-        <div class="agent-list-role">${a.type.speciality}</div>
+        <div class="agent-list-name" style="color:${escapeHTML(a.type.color)}">${escapeHTML(a.name)}</div>
+        <div class="agent-list-role">${escapeHTML(a.type.speciality)}</div>
       </div>
-      <span class="agent-list-wealth">¥${a.wealth.toFixed(0)}</span>
+      <span class="agent-list-wealth">¥${escapeHTML(a.wealth.toFixed(0))}</span>
     </div>`
   ).join('');
 }
