@@ -74,13 +74,6 @@ def run_cuj(page):
     # 2. Main View & Live Ledger
     inject_overlay(page, "A Bloomberg-style terminal for AI agent economy", 2500)
 
-    # Open English live feed
-    try:
-        page.locator("text=▶ ENGLISH LIVEFEED").click()
-    except Exception:
-        pass
-    page.wait_for_timeout(1000)
-
     inject_overlay(page, "Observe real-time transactions & market ledger", 2500)
 
     # 3. Agents and Map interactions

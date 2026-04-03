@@ -774,7 +774,7 @@ function NeonMythosCity(){
 
 
   // ===== MAIN GAME RENDER =====
-  return(<div style={{background:"#08091a",minHeight:"100vh",fontFamily:"'Courier New','MS Gothic',monospace",color:"#eee",userSelect:"none",display:"flex",flexDirection:"column"}} tabIndex={0}>
+  return(<div style={{background:"#08091a",height:"100vh",overflow:"hidden",fontFamily:"'Courier New','MS Gothic',monospace",color:"#eee",userSelect:"none",display:"flex",flexDirection:"column"}} tabIndex={0}>
     <style>{`
       @keyframes pxBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
       @keyframes pxWork{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
@@ -896,28 +896,18 @@ function NeonMythosCity(){
     ):(
       // ===== DESKTOP LAYOUT =====
       <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative",gap:"10px",padding:"10px"}}>
+        {/* Left Column: Ledger */}
+        <div style={{width:"280px", display:"flex", flexDirection:"column", overflow:"hidden"}}>
+          <MarketBoard tick={tick} paused={paused} />
+        </div>
+        {/* Center Column: Map */}
         <div style={{flex:1, display:"flex", overflow:"hidden", justifyContent:"center", alignItems:"center"}}>
            <div style={{width:"fit-content",margin:"0 auto"}}><GameMap/></div>
         </div>
-        <div style={{width:"320px", display:"flex", flexDirection:"column", gap:"8px", paddingRight:"4px", overflow:"auto"}}>
-          <InfoPanel />
-
-          <div style={{cursor:"pointer"}} onClick={(e) => {
-            const feed = document.getElementById("english-live-feed");
-            if (feed) {
-              const isHidden = feed.style.display === "none";
-              feed.style.display = isHidden ? "flex" : "none";
-              e.currentTarget.querySelector('div').innerHTML = isHidden ? "▼ ENGLISH LIVEFEED" : "▶ ENGLISH LIVEFEED";
-            }
-          }}>
-            <div style={{fontSize:"10px",color:"#00E5FF",letterSpacing:"1.5px",marginBottom:"3px",border:"1px solid #00E5FF",padding:"4px",textAlign:"center",borderRadius:"4px",background:"rgba(0,229,255,0.1)", fontWeight: "bold"}}>▶ ENGLISH LIVEFEED</div>
-          </div>
-
-          <div id="english-live-feed" style={{display:"none", flex: 1, flexDirection:"column"}}>
-            <MarketBoard tick={tick} paused={paused} />
-          </div>
-
-          <FeedPanel />
+        {/* Right Column: Info & Feed */}
+        <div style={{width:"320px", display:"flex", flexDirection:"column", gap:"8px", paddingRight:"4px", overflow:"hidden"}}>
+          <div style={{flexShrink: 0}}><InfoPanel /></div>
+          <div style={{flex: 1, minHeight: 0, display: "flex", flexDirection: "column"}}><FeedPanel /></div>
         </div>
       </div>
     )}
