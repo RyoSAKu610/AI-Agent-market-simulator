@@ -272,10 +272,11 @@ const DevTerminal=({show,onClose,gameState,setRes,setTp,log,agents,setAgents,res
         else out("list agents | residents | buildings","err");
         break;
       case"recruit":{
+        const currentRecruitedIds = new Set(recruited.map(x => x.id));
         if(args[0]==="all"){
           let count=0;
           RES_POOL.forEach(r=>{
-            if(!recruited.find(x=>x.id===r.id)){
+            if(!currentRecruitedIds.has(r.id)){
               setRecruited(p=>[...p,r]);
               setResi(p=>[...p,{...r,x:Math.floor(Math.random()*MAP_W),y:[5,9,14][Math.floor(Math.random()*3)],tx:null,ty:null,state:"idle",timer:5,mood:80,exp:0,level:1,earn:0}]);
               count++;
@@ -285,7 +286,7 @@ const DevTerminal=({show,onClose,gameState,setRes,setTp,log,agents,setAgents,res
         } else {
           const rid=args[0];const r=RES_POOL.find(x=>x.id===rid);
           if(!r){out(`Unknown resident: ${rid}`,"err");break;}
-          if(recruited.find(x=>x.id===rid)){out(`${rid} already recruited`,"err");break;}
+          if(currentRecruitedIds.has(rid)){out(`${rid} already recruited`,"err");break;}
           setRecruited(p=>[...p,r]);
           setResi(p=>[...p,{...r,x:Math.floor(Math.random()*MAP_W),y:[5,9,14][Math.floor(Math.random()*3)],tx:null,ty:null,state:"idle",timer:5,mood:80,exp:0,level:1,earn:0}]);
           out(`Recruited ${r.jp} (free)`);log("DEV",`${r.jp}を無料雇用！`,"#FF44AA");
@@ -438,6 +439,7 @@ function NeonMythosCity(){
   const[avatar,setAvatar]=useState(null);
   const[showAvSel,setShowAvSel]=useState(true);
   const[recruited,setRecruited]=useState([]);
+  const recruitedIds = useMemo(() => new Set(recruited.map(r => r.id)), [recruited]);
   const[showRecruit,setShowRecruit]=useState(false);
   const[rTab,setRTab]=useState("gym");
   const[agents,setAgents]=useState(()=>AGENTS.map(c=>({...c,x:c.bx,y:c.by+2,tx:null,ty:null,state:"idle",timer:0,mood:80,exp:0,level:1,earn:0})));
@@ -497,7 +499,7 @@ function NeonMythosCity(){
 
   const pickAvatar=r=>{setAvatar(r);setShowAvSel(false);log("SYSTEM",`Game started with ${r.jp}!`,r.color);};
   const recruit=r=>{
-    if(recruited.find(x=>x.id===r.id))return;
+    if(recruitedIds.has(r.id))return;
     const cost=r.tier==="champ"?8000:r.tier==="e4"?5000:r.tier==="gym"?3000:2000;
     if(res.yen<cost){log("SYSTEM","Not enough funds!","#FF4444");return;}
     setRes(p=>({...p,yen:p.yen-cost}));setRecruited(p=>[...p,r]);
@@ -823,7 +825,7 @@ function NeonMythosCity(){
           {Object.keys(tierNames).map(t=>(<button key={t} onClick={()=>setRTab(t)} style={{padding:"4px 10px",borderRadius:"8px",border:`1px solid ${rTab===t?"#FFD700":"#333"}`,background:rTab===t?"#FFD70015":"#111",color:rTab===t?"#FFD700":"#777",fontSize:"10px",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>{tierNames[t]}</button>))}
         </div>
         <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(2,1fr)",gap:"6px"}}>
-          {RES_POOL.filter(r=>r.tier===rTab).map(r=>{const hired=recruited.find(x=>x.id===r.id);
+          {RES_POOL.filter(r=>r.tier===rTab).map(r=>{const hired=recruitedIds.has(r.id);
             const cost=r.tier==="champ"?8000:r.tier==="e4"?5000:r.tier==="gym"?3000:2000;
             const spr=ALL_SPRITES[r.spriteId];
             return(<div key={r.id} style={{background:hired?`${r.color}11`:"#0d0d20",border:`1px solid ${r.color}22`,borderRadius:"6px",padding:"8px",display:"flex",gap:"8px",alignItems:"center"}}>
