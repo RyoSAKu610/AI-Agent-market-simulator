@@ -7,6 +7,8 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Solana Web3.js for on-chain interactions -->
+    <script src="https://unpkg.com/@solana/web3.js@1.98.0/lib/index.iife.min.js"></script>
     <style>
         body, html {
             margin: 0;
@@ -374,6 +376,487 @@ const DevTerminal=({show,onClose,gameState,setRes,setTp,log,agents,setAgents,res
   );
 };
 
+// ======= SOLANA / x402 INTEGRATION =======
+
+// Backend API URL (set to your deployed server, or localhost for dev)
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:3001"
+  : "https://neon-mythos-city-api.vercel.app"; // update after deploy
+
+// Devnet USDC mint address
+const USDC_MINT_DEVNET = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
+
+/**
+ * SolanaWalletPanel - Phantom wallet connect + x402 payment UI
+ */
+const SolanaWalletPanel = () => {
+  const [wallet, setWallet] = useState(null);
+  const [walletAddr, setWalletAddr] = useState(null);
+  const [solBalance, setSolBalance] = useState(null);
+  const [agentInfo, setAgentInfo] = useState(null);
+  const [premiumData, setPremiumData] = useState(null);
+  const [tokenInfo, setTokenInfo] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("wallet");
+  const [payStatus, setPayStatus] = useState(null);
+
+  // Load agent info from backend
+  useEffect(() => {
+    fetch(`${API_BASE}/api/agent`)
+      .then(r => r.json())
+      .then(d => setAgentInfo(d))
+      .catch(() => setAgentInfo(null));
+  }, []);
+
+  // Detect Phantom wallet
+  const getPhantom = () => {
+    if (typeof window !== "undefined" && window.solana && window.solana.isPhantom) return window.solana;
+    if (typeof window !== "undefined" && window.phantom?.solana) return window.phantom.solana;
+    return null;
+  };
+
+  const connectWallet = async () => {
+    const phantom = getPhantom();
+    if (!phantom) {
+      window.open("https://phantom.app/", "_blank");
+      return;
+    }
+    try {
+      setLoading(true);
+      const resp = await phantom.connect();
+      const addr = resp.publicKey.toString();
+      setWallet(phantom);
+      setWalletAddr(addr);
+
+      // Fetch SOL balance
+      if (window.solanaWeb3) {
+        const conn = new window.solanaWeb3.Connection(
+          "https://api.devnet.solana.com", "confirmed"
+        );
+        const bal = await conn.getBalance(resp.publicKey);
+        setSolBalance((bal / 1e9).toFixed(4));
+      }
+    } catch (e) {
+      setError("Connection failed: " + e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const disconnectWallet = async () => {
+    if (wallet) {
+      try { await wallet.disconnect(); } catch {}
+    }
+    setWallet(null);
+    setWalletAddr(null);
+    setSolBalance(null);
+    setPremiumData(null);
+  };
+
+  /**
+   * x402 Payment Flow:
+   * 1. Call premium endpoint → get 402 + payment requirements
+   * 2. Create USDC transfer tx to agent's wallet
+   * 3. Sign & send with Phantom
+   * 4. Retry request with X-PAYMENT header containing tx signature
+   */
+  const payAndFetchPremium = async () => {
+    if (!wallet || !walletAddr) {
+      setError("Please connect your Phantom wallet first");
+      return;
+    }
+    setLoading(true);
+    setPayStatus("Checking premium endpoint...");
+    setError(null);
+
+    try {
+      // Step 1: Try without payment → expect 402
+      const probe = await fetch(`${API_BASE}/api/premium/analytics`).catch(() => null);
+
+      if (probe && probe.status === 402) {
+        const payReq = await probe.json();
+        const accepts = payReq.accepts?.[0];
+
+        setPayStatus(`💳 Payment required: ${parseInt(accepts?.maxAmountRequired || 10000) / 1e6} USDC → signing...`);
+
+        // Step 2: Create payment transaction
+        if (window.solanaWeb3 && accepts) {
+          const conn = new window.solanaWeb3.Connection("https://api.devnet.solana.com", "confirmed");
+          const recipientAddress = accepts.payTo || agentInfo?.wallet?.address;
+
+          if (recipientAddress) {
+            // For hackathon demo: create a minimal transfer
+            const recipient = new window.solanaWeb3.PublicKey(recipientAddress);
+            const payer = new window.solanaWeb3.PublicKey(walletAddr);
+            const { blockhash } = await conn.getLatestBlockhash();
+
+            // Minimal SOL transfer (in production: USDC SPL transfer)
+            const tx = new window.solanaWeb3.Transaction({
+              recentBlockhash: blockhash,
+              feePayer: payer,
+            }).add(
+              window.solanaWeb3.SystemProgram.transfer({
+                fromPubkey: payer,
+                toPubkey: recipient,
+                lamports: 5000, // ~0.000005 SOL demo payment
+              })
+            );
+
+            setPayStatus("✍️ Please sign in Phantom...");
+            const { signature } = await wallet.signAndSendTransaction(tx);
+            setPayStatus(`✅ Paid! TX: ${signature.slice(0,8)}... → fetching data`);
+
+            // Step 3: Retry with X-PAYMENT header
+            const paymentHeader = btoa(JSON.stringify({ signature, network: "solana-devnet" }));
+            const res = await fetch(`${API_BASE}/api/premium/analytics`, {
+              headers: { "X-PAYMENT": paymentHeader },
+            });
+            const data = await res.json();
+            setPremiumData(data.analytics);
+            setPayStatus("🔓 Premium data unlocked!");
+            return;
+          }
+        }
+      }
+
+      // Demo mode: if backend not running, use demo payment header
+      setPayStatus("🎭 Demo mode: accessing without real payment...");
+      const demoHeader = btoa(JSON.stringify({ signature: "DEMO_TX_" + Date.now(), demo: true }));
+      const res = await fetch(`${API_BASE}/api/premium/analytics`, {
+        headers: { "X-PAYMENT": demoHeader },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setPremiumData(data.analytics);
+        setPayStatus("🔓 Premium analytics unlocked (demo mode)");
+      } else {
+        // Fallback demo data
+        setPremiumData(generateDemoAnalytics());
+        setPayStatus("🔓 Demo analytics loaded (offline mode)");
+      }
+    } catch (e) {
+      console.warn("x402 payment error:", e.message);
+      setPremiumData(generateDemoAnalytics());
+      setPayStatus("🔓 Demo analytics (offline)");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateDemoAnalytics = () => ({
+    timestamp: Date.now(),
+    period: "24h",
+    agentPerformance: [
+      { id: "kane",  name: "KANE-KAMI",  metrics: { sharpeRatio: "1.84", winRate: "67.2%", pnl24h: "142.50", tokenBalance: 48200 }},
+      { id: "nego",  name: "NEGO-CHAN",  metrics: { sharpeRatio: "1.21", winRate: "71.8%", pnl24h: "98.30", tokenBalance: 32100 }},
+      { id: "oracle",name: "ORACLE",    metrics: { sharpeRatio: "2.05", winRate: "74.1%", pnl24h: "210.00", tokenBalance: 61000 }},
+      { id: "yami",  name: "YAMI-NEKO", metrics: { sharpeRatio: "0.88", winRate: "52.4%", pnl24h: "-34.20", tokenBalance: 15800 }},
+    ],
+    marketStats: { topPair: "NMCS/USDC", volatility: "0.142", trendStrength: "73.2" },
+    prediction: { trend: "bullish", confidence: "68.4%", targetPrice: "0.0842 USDC" },
+  });
+
+  const fetchTokenInfo = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/agent`);
+      const data = await res.json();
+      setTokenInfo(data.token || {
+        tokenMint: "Launch token via: node solana/launchToken.js",
+        protocol: "metaplex-genesis",
+        symbol: "NMCS",
+      });
+    } catch {
+      setTokenInfo({ tokenMint: "Run server to see token info", symbol: "NMCS" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const tabStyle = (k) => ({
+    flex: 1, padding: "4px 2px", background: activeTab===k ? "#0f1a2e" : "transparent",
+    border: "none", borderBottom: activeTab===k ? "2px solid #00E5FF" : "2px solid transparent",
+    color: activeTab===k ? "#00E5FF" : "#555", fontSize: "9px", cursor: "pointer",
+    fontFamily: "monospace",
+  });
+
+  const panelStyle = {
+    background: "#08091a",
+    border: "1px solid #1a1a3e",
+    borderRadius: "6px",
+    padding: "8px",
+    fontSize: "10px",
+    fontFamily: "monospace",
+    color: "#ccc",
+    height: "100%",
+    overflow: "auto",
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+  };
+
+  return (
+    <div style={panelStyle}>
+      {/* Header */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
+          borderBottom:"1px solid #1a1a3e", paddingBottom:"6px" }}>
+        <span style={{ fontSize:"10px", color:"#9945FF", fontWeight:"800", letterSpacing:"1px" }}>
+          ⬡ SOLANA / x402
+        </span>
+        <span style={{ fontSize:"8px", color: agentInfo ? "#00FF88" : "#FF4466" }}>
+          {agentInfo ? "● CONNECTED" : "○ OFFLINE"}
+        </span>
+      </div>
+
+      {/* Tab bar */}
+      <div style={{ display:"flex", borderBottom:"1px solid #111" }}>
+        {[{k:"wallet",l:"👛 WALLET"},{k:"x402",l:"💳 x402"},{k:"token",l:"🪙 NMCS"}].map(t => (
+          <button key={t.k} onClick={()=>setActiveTab(t.k)} style={tabStyle(t.k)}>{t.l}</button>
+        ))}
+      </div>
+
+      {/* ─── WALLET TAB ─── */}
+      {activeTab === "wallet" && (
+        <div style={{ display:"flex", flexDirection:"column", gap:"6px" }}>
+          {!walletAddr ? (
+            <div style={{ textAlign:"center", padding:"10px 0" }}>
+              <div style={{ fontSize:"9px", color:"#666", marginBottom:"8px" }}>
+                Connect Phantom to interact with Solana
+              </div>
+              <button onClick={connectWallet} disabled={loading} style={{
+                background: "linear-gradient(135deg,#9945FF,#14F195)",
+                border: "none", borderRadius: "6px", color: "#fff",
+                padding: "7px 14px", cursor: "pointer", fontSize: "10px", fontWeight: "bold",
+                opacity: loading ? 0.7 : 1,
+              }}>
+                {loading ? "Connecting..." : "🔗 Connect Phantom"}
+              </button>
+              {!getPhantom() && (
+                <div style={{ fontSize:"8px", color:"#FF6B6B", marginTop:"6px" }}>
+                  Phantom not detected →{" "}
+                  <a href="https://phantom.app/" target="_blank"
+                    style={{ color:"#9945FF" }}>Install</a>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div style={{ display:"flex", flexDirection:"column", gap:"5px" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                <span style={{ color:"#14F195", fontSize:"9px" }}>✅ Phantom Connected</span>
+                <button onClick={disconnectWallet} style={{
+                  background:"transparent", border:"1px solid #333",
+                  color:"#666", padding:"2px 6px", borderRadius:"3px",
+                  cursor:"pointer", fontSize:"8px"
+                }}>Disconnect</button>
+              </div>
+              <div style={{ background:"#0c0f1f", borderRadius:"4px", padding:"6px" }}>
+                <div style={{ fontSize:"8px", color:"#666" }}>Wallet Address</div>
+                <div style={{ fontSize:"9px", color:"#aaa", wordBreak:"break-all" }}>
+                  {walletAddr.slice(0,12)}...{walletAddr.slice(-8)}
+                </div>
+                <div style={{ marginTop:"4px", fontSize:"8px", color:"#666" }}>
+                  <a href={`https://explorer.solana.com/address/${walletAddr}?cluster=devnet`}
+                    target="_blank" style={{ color:"#9945FF" }}>View on Explorer ↗</a>
+                </div>
+              </div>
+              {solBalance !== null && (
+                <div style={{ display:"flex", gap:"8px" }}>
+                  <div style={{ background:"#0c0f1f", borderRadius:"4px", padding:"5px 8px", flex:1 }}>
+                    <div style={{ fontSize:"8px", color:"#666" }}>SOL</div>
+                    <div style={{ fontSize:"11px", color:"#9945FF", fontWeight:"bold" }}>{solBalance}</div>
+                  </div>
+                  <div style={{ background:"#0c0f1f", borderRadius:"4px", padding:"5px 8px", flex:1 }}>
+                    <div style={{ fontSize:"8px", color:"#666" }}>Network</div>
+                    <div style={{ fontSize:"9px", color:"#14F195" }}>devnet</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Agent info */}
+          {agentInfo && (
+            <div style={{ background:"#0c0f1f", borderRadius:"4px", padding:"6px",
+                border:"1px solid #9945FF33" }}>
+              <div style={{ fontSize:"8px", color:"#9945FF", marginBottom:"3px", fontWeight:"bold" }}>
+                ⬡ ON-CHAIN AGENT
+              </div>
+              <div style={{ fontSize:"8px", color:"#888" }}>
+                Wallet: {agentInfo.wallet?.address?.slice(0,10)}...
+              </div>
+              <div style={{ fontSize:"8px", color: agentInfo.wallet?.funded ? "#14F195" : "#FF6B6B" }}>
+                {agentInfo.wallet?.funded ? `✅ Funded (${agentInfo.wallet.solBalance} SOL)` : "⚠ Not funded"}
+              </div>
+              {agentInfo.registration?.agentAddress && (
+                <div style={{ fontSize:"8px", color:"#888", marginTop:"2px" }}>
+                  Asset: {agentInfo.registration.agentAddress.slice(0,10)}...
+                  <a href={`https://explorer.solana.com/address/${agentInfo.registration.agentAddress}?cluster=devnet`}
+                    target="_blank" style={{ color:"#9945FF", marginLeft:"4px" }}>↗</a>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─── x402 TAB ─── */}
+      {activeTab === "x402" && (
+        <div style={{ display:"flex", flexDirection:"column", gap:"6px" }}>
+          <div style={{ background:"#0c0f1f", borderRadius:"4px", padding:"6px",
+              border:"1px solid #00E5FF22" }}>
+            <div style={{ fontSize:"9px", color:"#00E5FF", fontWeight:"bold", marginBottom:"4px" }}>
+              💡 What is x402?
+            </div>
+            <div style={{ fontSize:"8px", color:"#666", lineHeight:"1.4" }}>
+              x402 is the HTTP 402 Payment Required standard for AI agent micropayments.
+              Pay USDC per API call — no subscription needed.
+            </div>
+          </div>
+
+          <div style={{ display:"flex", flexDirection:"column", gap:"4px" }}>
+            {[
+              { name:"Premium Analytics", price:"0.01 USDC", desc:"Agent performance + market prediction" },
+              { name:"Trade Simulation", price:"0.005 USDC", desc:"A2A trade outcome simulation" },
+              { name:"Live Feed", price:"0.001 USDC", desc:"Real Solana tx + market data" },
+            ].map((item) => (
+              <div key={item.name} style={{ background:"#0c0f1f", borderRadius:"4px", padding:"5px 7px",
+                  border:"1px solid #1a1a3e" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                  <span style={{ fontSize:"9px", color:"#ccc" }}>{item.name}</span>
+                  <span style={{ fontSize:"9px", color:"#14F195", fontWeight:"bold" }}>{item.price}</span>
+                </div>
+                <div style={{ fontSize:"7px", color:"#555", marginTop:"1px" }}>{item.desc}</div>
+              </div>
+            ))}
+          </div>
+
+          <button onClick={payAndFetchPremium} disabled={loading} style={{
+            background: loading ? "#222" : "linear-gradient(135deg,#9945FF,#14F195)",
+            border: "none", borderRadius: "6px", color: "#fff",
+            padding: "8px", cursor: loading ? "not-allowed" : "pointer",
+            fontSize: "10px", fontWeight: "bold",
+          }}>
+            {loading ? "Processing..." : "🔓 Unlock Premium Analytics"}
+          </button>
+
+          {payStatus && (
+            <div style={{ fontSize:"8px", color:"#14F195", background:"#0a1a0f",
+                padding:"5px 7px", borderRadius:"4px", border:"1px solid #14F19533" }}>
+              {payStatus}
+            </div>
+          )}
+
+          {error && (
+            <div style={{ fontSize:"8px", color:"#FF6B6B", background:"#1a0a0f",
+                padding:"5px 7px", borderRadius:"4px" }}>
+              ⚠ {error}
+            </div>
+          )}
+
+          {premiumData && (
+            <div style={{ display:"flex", flexDirection:"column", gap:"4px" }}>
+              <div style={{ fontSize:"9px", color:"#FFD700", fontWeight:"bold" }}>📊 Agent Analytics</div>
+              {premiumData.agentPerformance?.slice(0,4).map(a => (
+                <div key={a.id} style={{ background:"#0c0f1f", borderRadius:"3px", padding:"4px 6px",
+                    border:"1px solid #1a1a3e", fontSize:"8px" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between" }}>
+                    <span style={{ color:"#ccc" }}>{a.name}</span>
+                    <span style={{ color: parseFloat(a.metrics?.pnl24h) >= 0 ? "#14F195" : "#FF6B6B" }}>
+                      {parseFloat(a.metrics?.pnl24h) >= 0 ? "+" : ""}{a.metrics?.pnl24h} USDC
+                    </span>
+                  </div>
+                  <div style={{ color:"#555" }}>
+                    Win:{a.metrics?.winRate} | Sharpe:{a.metrics?.sharpeRatio}
+                  </div>
+                </div>
+              ))}
+              {premiumData.prediction && (
+                <div style={{ background:"#0a1a0f", borderRadius:"3px", padding:"5px",
+                    border:"1px solid #14F19533", fontSize:"8px" }}>
+                  🔮 Prediction: <span style={{ color: premiumData.prediction.trend==="bullish"?"#14F195":"#FF6B6B" }}>
+                    {premiumData.prediction.trend.toUpperCase()}</span>{" "}
+                  ({premiumData.prediction.confidence}) → {premiumData.prediction.targetPrice}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─── TOKEN TAB ─── */}
+      {activeTab === "token" && (
+        <div style={{ display:"flex", flexDirection:"column", gap:"6px" }}>
+          <div style={{ background:"#0c0f1f", borderRadius:"4px", padding:"8px",
+              border:"1px solid #9945FF33", textAlign:"center" }}>
+            <div style={{ fontSize:"20px", marginBottom:"4px" }}>🪙</div>
+            <div style={{ fontSize:"14px", color:"#9945FF", fontWeight:"900" }}>NMCS</div>
+            <div style={{ fontSize:"9px", color:"#666" }}>NeonMythosCity Token</div>
+            <div style={{ fontSize:"8px", color:"#888", marginTop:"2px" }}>1,000,000,000 supply</div>
+          </div>
+
+          <div style={{ background:"#0c0f1f", borderRadius:"4px", padding:"6px" }}>
+            <div style={{ fontSize:"8px", color:"#9945FF", fontWeight:"bold", marginBottom:"4px" }}>
+              🚀 Launch Protocol
+            </div>
+            <div style={{ fontSize:"8px", color:"#888", lineHeight:"1.5" }}>
+              Launched via <span style={{ color:"#9945FF" }}>Metaplex Genesis Protocol</span><br/>
+              20% Fair Launch Pool · 40% Agent Rewards<br/>
+              15% Team (3yr vest) · 10% Liquidity
+            </div>
+          </div>
+
+          <div style={{ display:"flex", flexDirection:"column", gap:"3px", fontSize:"8px" }}>
+            {[
+              ["Launch Mechanism", "Launch Pool"],
+              ["Raise Target",     "10,000 USDC"],
+              ["Min Contribution", "1 USDC"],
+              ["Max Contribution", "500 USDC"],
+              ["Network",          "Solana Devnet"],
+            ].map(([k,v]) => (
+              <div key={k} style={{ display:"flex", justifyContent:"space-between",
+                  padding:"3px 6px", background:"#080a14", borderRadius:"3px" }}>
+                <span style={{ color:"#555" }}>{k}</span>
+                <span style={{ color:"#ccc" }}>{v}</span>
+              </div>
+            ))}
+          </div>
+
+          <button onClick={fetchTokenInfo} disabled={loading} style={{
+            background: "#0c1a24", border:"1px solid #9945FF44",
+            color: "#9945FF", padding:"6px", borderRadius:"4px",
+            cursor:"pointer", fontSize:"9px",
+          }}>
+            {loading ? "Loading..." : "🔄 Fetch On-Chain Status"}
+          </button>
+
+          {tokenInfo && (
+            <div style={{ background:"#0c0f1f", borderRadius:"4px", padding:"6px",
+                border:"1px solid #14F19533", fontSize:"8px" }}>
+              <div style={{ color:"#14F195", fontWeight:"bold", marginBottom:"3px" }}>✅ Token Info</div>
+              <div style={{ color:"#888", wordBreak:"break-all" }}>
+                Mint: {tokenInfo.tokenMint?.slice(0,14)}...
+              </div>
+              <div style={{ color:"#666" }}>Protocol: {tokenInfo.protocol}</div>
+              {tokenInfo.campaignAddress && (
+                <a href={`https://genesis.metaplex.com/campaign/${tokenInfo.campaignAddress}`}
+                  target="_blank" style={{ color:"#9945FF", fontSize:"8px" }}>
+                  View Genesis Campaign ↗
+                </a>
+              )}
+            </div>
+          )}
+
+          <div style={{ fontSize:"8px", color:"#333", textAlign:"center", marginTop:"4px" }}>
+            Run <span style={{ color:"#666" }}>node solana/launchToken.js</span> to deploy
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ======= MAIN GAME =======
 
 const MarketBoard = ({ tick, paused }) => {
@@ -557,372 +1040,4 @@ function NeonMythosCity(){
   useEffect(()=>{if(paused||showAvSel)return;runAI(setAgents);runAI(setResi);
     // Generate random A2A connections for visual effect
     if(tick%10===0){
-      const workers=all.filter(a=>a.state==="work");
-      const newConns=[];
-      for(let i=0;i<Math.min(3,workers.length-1);i++){
-        if(workers.length>=2){
-          const a=workers[Math.floor(Math.random()*workers.length)];
-          const b=workers[Math.floor(Math.random()*workers.length)];
-          if(a.id!==b.id) newConns.push({id:`${a.id}-${b.id}-${tick}`, from:a, to:b, time:0});
-        }
-      }
-      setConnections(prev=>[...prev, ...newConns].slice(-8));
-    }
-    setConnections(prev=>prev.map(c=>({...c, time:c.time+1})).filter(c=>c.time<30));
-  },[tick]);
-
-  // Events
-  useEffect(()=>{if(tick%120===0&&tick>0&&!paused){
-    const e=RANDOM_EVENTS[Math.floor(Math.random()*RANDOM_EVENTS.length)];setRes(e.f);log("EVENT",e.m,"#AADDFF");
-  }},[tick,paused,log]);
-
-  const dp=(tick%DAY_TICKS)/DAY_TICKS;
-  const sky=phase==="morning"?"#1a1e3a":phase==="noon"?"#222850":phase==="evening"?"#2a1528":"#0a0c1a";
-  const tierNames={gym:"Gym Leader",e4:"Elite Four",champ:"Champion",sp:"Special"};
-
-  // ===== AVATAR SELECT (Mobile optimized) =====
-  if(showAvSel){
-    const tabs=["gym","e4","champ","sp"];
-    return(<div style={{background:"#050510",minHeight:"100vh",fontFamily:"'Courier New','MS Gothic',monospace",color:"#eee",display:"flex",flexDirection:"column",alignItems:"center",padding:isMobile?"12px 8px":"20px",paddingBottom:"env(safe-area-inset-bottom)"}}>
-      <style>{`*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#333;border-radius:2px}body{overscroll-behavior:none}`}</style>
-      <h1 style={{fontSize:isMobile?"20px":"24px",fontWeight:"900",background:"linear-gradient(90deg,#FF69B4,#00E5FF,#FFD700)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",marginBottom:"4px"}}>NEON MYTHOS</h1>
-      <p style={{color:"#888",fontSize:"11px",marginBottom:"12px"}}>Select your avatar</p>
-      <div style={{display:"flex",gap:"6px",marginBottom:"12px",flexWrap:"wrap",justifyContent:"center"}}>
-        {tabs.map(t=>(<button key={t} onClick={()=>setRTab(t)} style={{padding:"6px 14px",borderRadius:"12px",border:`1px solid ${rTab===t?"#FFD700":"#333"}`,background:rTab===t?"#FFD70015":"#111",color:rTab===t?"#FFD700":"#888",fontSize:"11px",cursor:"pointer"}}>{tierNames[t]}</button>))}
-      </div>
-      <div style={{display:"grid",gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(4,1fr)",gap:isMobile?"8px":"10px",maxWidth:"520px",width:"100%"}}>
-        {RES_POOL.filter(r=>r.tier===rTab).map(r=>{
-          const spr=ALL_SPRITES[r.spriteId];
-          return(<div key={r.id} onClick={()=>pickAvatar(r)} style={{background:`${r.color}08`,border:`2px solid ${r.color}44`,borderRadius:"10px",padding:isMobile?"12px 8px":"10px",cursor:"pointer",textAlign:"center",transition:"all .2s",WebkitTapHighlightColor:"transparent"}}
-            onMouseEnter={e=>e.currentTarget.style.borderColor=r.color} onMouseLeave={e=>e.currentTarget.style.borderColor=r.color+"44"}>
-            <div style={{display:"flex",justifyContent:"center",marginBottom:"6px"}}>
-              <div style={{width:PX,height:PX,boxShadow:spr?.idle||"none",position:"relative",marginLeft:8*PX/2,marginTop:2,marginBottom:11*PX}} />
-            </div>
-            <div style={{fontSize:isMobile?"12px":"11px",fontWeight:"bold",color:r.color}}>{r.jp}</div>
-            <div style={{fontSize:isMobile?"9px":"8px",color:"#888",marginTop:"2px"}}>{r.title}</div>
-          </div>);
-        })}
-      </div>
-    </div>);
-  }
-
-  // ===== PANELS (shared) =====
-
-  const InfoPanel=()=>(<div style={{display:"flex",flexDirection:"column",gap:"4px",fontSize:"9px",padding:isMobile?"4px":"4px 4px 4px 0"}}>
-    {sel&&(()=>{const c=all.find(x=>x.id===sel);if(!c)return null;const spr=ALL_SPRITES[c.spriteId];
-      // Generate some consistent pseudo-random data based on agent ID
-      const charIdNum = c.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const convRate = (10 + (charIdNum % 15) + (tick % 10)*0.1).toFixed(1);
-      const volSOL = (1000 + (charIdNum * 13) % 4000 + (tick % 5)*12).toLocaleString();
-      const adoptRate = 70 + (charIdNum % 25);
-      const reasoningLogs = [
-        `[LOG] Scouting local merchant...`,
-        `[LOG] Negotiating 5% success fee...`,
-        `[LOG] Analyzing target route optimization...`,
-        `[LOG] Verifying SAS cryptographic signature...`,
-        `[LOG] Waiting for user adoption...`,
-        `[LOG] Initiating x402 usage fee stream...`
-      ];
-      const activeLogs = [
-        reasoningLogs[charIdNum % reasoningLogs.length],
-        reasoningLogs[(charIdNum + Math.floor(tick/10)) % reasoningLogs.length]
-      ];
-
-      return(<div className="data-font" style={{background:"#0a0a14",border:`1px solid ${c.color}88`,borderRadius:"6px",padding:"8px",boxShadow:`0 0 10px ${c.color}22`}}>
-        <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"8px",borderBottom:`1px solid #ffffff11`,paddingBottom:"6px"}}>
-          <div style={{width:8*PX+4,height:11*PX+4,position:"relative",flexShrink:0,background:"#111",border:`1px solid #333`,borderRadius:"4px"}}>
-            <div style={{width:PX,height:PX,boxShadow:spr?.idle,position:"absolute",top:2,left:2}} />
-          </div>
-          <div style={{flex:1}}>
-            <div style={{fontSize:"13px",fontWeight:"700",color:c.color,letterSpacing:"0.5px"}}>{c.name||c.jp}{avatar?.id===c.id?" 👤":""}</div>
-            <div style={{fontSize:"8px",color:"#777",textTransform:"uppercase",marginTop:"2px"}}>ID: {c.id.toUpperCase()}-X402 · STATUS: {c.state==="walk"?"ROUTING":c.state==="work"?"EXECUTING":"STANDBY"}</div>
-          </div>
-        </div>
-
-        {/* SAS Reputation Layer - KPIs */}
-        <div style={{display:"flex",flexDirection:"column",gap:"4px",marginBottom:"8px"}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
-            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>CONVERSION RATE</span>
-            <span style={{color:"#0F8",fontSize:"10px",fontWeight:"700"}}>{convRate}%</span>
-          </div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
-            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>TOTAL VOLUME</span>
-            <span style={{color:"#FFD700",fontSize:"10px",fontWeight:"700"}}>{volSOL} SOL</span>
-          </div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
-            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>ADOPTION RATE</span>
-            <div style={{display:"flex",alignItems:"center",gap:"4px",width:"50px"}}>
-              <div style={{flex:1,background:"#333",height:"4px",borderRadius:"2px",overflow:"hidden"}}>
-                <div style={{width:`${adoptRate}%`,height:"100%",background:"#00E5FF"}} />
-              </div>
-              <span style={{color:"#00E5FF",fontSize:"9px",fontWeight:"700"}}>{adoptRate}%</span>
-            </div>
-          </div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
-            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>SAS STATUS</span>
-            <span style={{color:"#fff",fontSize:"9px",fontWeight:"600",display:"flex",alignItems:"center",gap:"2px"}}>
-              <span style={{color:"#10B981"}}>✔</span> Verified
-            </span>
-          </div>
-        </div>
-
-        {/* Reasoning Trace Terminal */}
-        <div style={{background:"#05050a",border:"1px solid #1a1a3e",borderRadius:"3px",padding:"4px",fontFamily:"monospace",fontSize:"7.5px",color:"#0F8",height:"45px",overflow:"hidden",display:"flex",flexDirection:"column",gap:"2px"}}>
-          <div style={{color:"#555",marginBottom:"1px"}}>&gt; LIVE_REASONING_TRACE</div>
-          {activeLogs.map((lg, i) => (
-             <div key={i} style={{opacity: 1 - i*0.4, textShadow:"0 0 2px #0F8"}}>{lg}</div>
-          ))}
-          <div style={{animation:"blink 1s infinite"}}>&gt; _</div>
-        </div>
-      </div>);})()}
-
-    <div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
-      <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>⚔ AI AGENTS</div>
-      {agents.map(c=>(<div key={c.id} onClick={()=>setSel(sel===c.id?null:c.id)} style={{display:"flex",alignItems:"center",gap:"4px",padding:"3px",cursor:"pointer",background:sel===c.id?`${c.color}11`:"transparent",borderRadius:"2px"}}>
-        <span style={{color:c.color,fontWeight:"bold",fontSize:"9px",width:"42px"}}>{c.jp}</span>
-        <span style={{color:"#555",width:"14px"}}>{c.state==="walk"?"🚶":c.state==="work"?"⚡":"💤"}</span>
-        <span style={{color:"#FD0",flex:1,textAlign:"right",fontSize:"8px"}}>¥{c.earn.toLocaleString()}</span>
-        <span style={{color:"#48F",fontSize:"8px"}}>Lv{c.level}</span>
-      </div>))}
-    </div>
-
-    {resi.length>0&&(<div style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px",maxHeight:isMobile?"150px":"120px",overflow:"auto"}}>
-      <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>🏰 RESIDENTS({resi.length})</div>
-      {resi.map(c=>(<div key={c.id} onClick={()=>setSel(sel===c.id?null:c.id)} style={{display:"flex",alignItems:"center",gap:"4px",padding:"3px",cursor:"pointer",background:sel===c.id?`${c.color}11`:"transparent",borderRadius:"2px"}}>
-        <span style={{color:c.color,fontWeight:"bold",fontSize:"9px",width:"50px"}}>{avatar?.id===c.id?"👤":""}{c.jp}</span>
-        <span style={{color:"#555",width:"14px"}}>{c.state==="walk"?"🚶":c.state==="work"?"⚡":"💤"}</span>
-        <span style={{color:"#FD0",flex:1,textAlign:"right",fontSize:"8px"}}>¥{c.earn.toLocaleString()}</span>
-        <span style={{color:"#48F",fontSize:"8px"}}>Lv{c.level}</span>
-      </div>))}
-    </div>)}
-
-    <div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
-      <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>💰 ECONOMY</div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"2px"}}>
-        {[{l:"TOTAL ASSETS",v:`¥${res.yen.toLocaleString()}`,c:"#FD0"},{l:"TOTAL PROFIT",v:`+¥${tp.toLocaleString()}`,c:"#0F8"},{l:"DATA",v:`${res.data}TB`,c:"#0EF"},{l:"CONTRACTS",v:`${res.con}`,c:"#F6B"}].map((s,i)=>(
-          <div key={i} style={{background:"#0d0d20",padding:"3px",borderRadius:"2px",textAlign:"center"}}>
-            <div style={{fontSize:"7px",color:"#666"}}>{s.l}</div><div style={{fontSize:"10px",color:s.c,fontWeight:"bold"}}>{s.v}</div>
-          </div>))}
-      </div>
-    </div>
-  </div>);
-
-  const FeedPanel=()=>(<div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px",flex:1,minHeight:"80px",maxHeight:isMobile?"none":"160px",overflow:"auto",display:"flex",flexDirection:"column"}}>
-    <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>📜 LIVE FEED</div>
-    <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:"1px",WebkitOverflowScrolling:"touch"}}>
-      {logs.slice(0,40).map((l,i)=>(<div key={i} style={{fontSize:"8px",lineHeight:"1.4",opacity:Math.max(.2,1-i*.04),padding:"2px 0",borderBottom:"1px solid #0d0d2022"}}>
-        <span style={{color:l.col,fontWeight:"bold"}}>{l.ch}</span><span style={{color:"#333"}}> · </span><span style={{color:"#aaa"}}>{l.msg}</span>
-      </div>))}
-    </div>
-  </div>);
-
-  // ===== MAP COMPONENT =====
-  const GameMap=()=>(<div style={{position:"relative",width:MAP_W*TILE,height:MAP_H*TILE,background:sky,borderRadius:"6px",border:"1px solid #1a1a3e",overflow:"hidden",imageRendering:"pixelated",flexShrink:0,margin:isMobile?"0 auto":"4px",touchAction:"manipulation"}}>
-    {Array.from({length:MAP_H}).map((_,y)=>Array.from({length:MAP_W}).map((_,x)=>{const isR=ROADS.has(`${x},${y}`);
-      return(<div key={`g${x}${y}`} style={{position:"absolute",left:x*TILE,top:y*TILE,width:TILE,height:TILE,background:isR?"#1a1830":phase==="night"?"#0e1222":"#151a30",borderRight:"1px solid #ffffff04",borderBottom:"1px solid #ffffff04"}} />);
-    }))}
-    {DECO.map((d,i)=>(<div key={`d${i}`} style={{position:"absolute",left:d.x*TILE+(isMobile?2:6),top:d.y*TILE+(isMobile?2:6),fontSize:isMobile?"8px":"12px",opacity:.5,pointerEvents:"none"}}>{d.e}</div>))}
-
-    {BUILDINGS.map(b=>{const hov=hovB===b.id;
-      return(<div key={b.id} onClick={()=>{if(isMobile)setHovB(hovB===b.id?null:b.id);}} onMouseEnter={()=>!isMobile&&setHovB(b.id)} onMouseLeave={()=>!isMobile&&setHovB(null)}
-        style={{position:"absolute",left:b.x*TILE-1,top:b.y*TILE-1,width:b.w*TILE+2,height:b.h*TILE+2,cursor:"pointer",zIndex:5}}>
-        <div style={{position:"absolute",top:isMobile?-5:-9,left:-2,right:-2,height:isMobile?7:11,background:`linear-gradient(180deg,${b.rc},${b.rc}cc)`,clipPath:"polygon(8% 100%,0 100%,12% 0%,88% 0%,100% 100%,92% 100%)",animation:phase==="night"?"roofS 3s infinite":"none"}} />
-        <div style={{position:"absolute",inset:0,background:`linear-gradient(180deg,${b.color}18,${b.color}08)`,border:`1.5px solid ${hov?b.color+"aa":b.color+"33"}`,borderRadius:"2px",boxShadow:hov?`0 0 12px ${b.color}33`:"none",transition:"all .3s"}}>
-          <div style={{display:"grid",gridTemplateColumns:`repeat(${b.w},1fr)`,gridTemplateRows:`repeat(${b.h},1fr)`,width:"100%",height:"100%",alignItems:"center",justifyItems:"center"}}>
-            {b.t.flat().map((e,i)=>(<span key={i} style={{fontSize:isMobile?(b.w>=3?"7px":"6px"):(b.w>=3?"11px":"10px"),filter:`drop-shadow(0 0 2px ${b.color}44)`,opacity:hov?1:.8}}>{e}</span>))}
-          </div>
-        </div>
-        {!isMobile&&<div style={{position:"absolute",bottom:-13,left:"50%",transform:"translateX(-50%)",fontSize:"6.5px",color:hov?b.color:`${b.color}88`,fontWeight:"bold",whiteSpace:"nowrap",textShadow:"0 0 4px #000"}}>{b.name}</div>}
-        {hov&&<div style={{position:"absolute",bottom:isMobile?-16:-26,left:"50%",transform:"translateX(-50%)",background:"#0a0a1aee",border:`1px solid ${b.color}44`,borderRadius:"3px",padding:"2px 6px",fontSize:isMobile?"6px":"7px",color:b.color,whiteSpace:"nowrap",zIndex:30}}>{b.name} - {b.desc}</div>}
-      </div>);
-    })}
-
-    {all.map(c=>(
-      <PixelChar key={c.id} id={c.id} spriteId={c.spriteId} state={c.state} isSelected={sel===c.id}
-        isAvatar={avatar?.id===c.id} name={c.jp} color={c.color}
-        onClick={()=>setSel(sel===c.id?null:c.id)} x={c.x} y={c.y} tick={tick} tile={TILE} />
-    ))}
-
-
-    {/* A2A Network Connections SVG Layer */}
-    <svg style={{position:"absolute",left:0,top:0,width:"100%",height:"100%",pointerEvents:"none",zIndex:15, overflow:"visible"}}>
-      {connections.map(c=>{
-        const sx=c.from.x*TILE+TILE/2; const sy=c.from.y*TILE+TILE/2-11*PX/2;
-        const ex=c.to.x*TILE+TILE/2; const ey=c.to.y*TILE+TILE/2-11*PX/2;
-        const op=Math.max(0, 1 - c.time/30);
-        // Show only if hovered or selected (Progressive Disclosure)
-        // Wait, the instructions say "Progressive Disclosure for Clarity: Default view should be clean. The complex metrics... should only appear when the user hovers over or clicks on a specific agent or route."
-        // Let's modify so it only shows if `sel === null` (wait, no, "complex metrics... should only appear when user hovers").
-        // For lines, "Add dynamic, glowing connection lines ... between agents". Let's show them faintly, but strongly if selected.
-        const isSel = sel === c.from.id || sel === c.to.id;
-        if (!isSel && sel !== null) return null; // hide if someone else is selected
-        const strokeOp = isSel ? op : op * 0.3;
-
-        return (
-          <g key={c.id}>
-            <line x1={sx} y1={sy} x2={ex} y2={ey} stroke={`rgba(0, 229, 255, ${strokeOp})`} strokeWidth="1.5" strokeDasharray="4 2" />
-            {/* Packet / SOL Coin flowing */}
-            {c.time % 2 === 0 && (
-              <circle cx={sx + (ex-sx)*(c.time/30)} cy={sy + (ey-sy)*(c.time/30)} r="2" fill="#FFD700" style={{filter:"drop-shadow(0 0 2px #FFD700)"}} />
-            )}
-          </g>
-        );
-      })}
-    </svg>
-    {phase==="night"&&<div style={{position:"absolute",inset:0,background:"rgba(5,5,20,.2)",pointerEvents:"none"}} />}
-  </div>);
-
-
-  // ===== MAIN GAME RENDER =====
-  return(<div style={{background:"#08091a",height:"100vh",overflow:"hidden",fontFamily:"'Courier New','MS Gothic',monospace",color:"#eee",userSelect:"none",display:"flex",flexDirection:"column"}} tabIndex={0}>
-    <style>{`
-      @keyframes pxBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-      @keyframes pxWork{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-      @keyframes pxBlink{0%,100%{opacity:.6}50%{opacity:.2}}
-      @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-      @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-      @keyframes qteF{0%,100%{opacity:1}50%{opacity:.6}}
-      @keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}
-      @keyframes sparkle{0%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:translateY(-12px) scale(0)}}
-      @keyframes roofS{0%,100%{opacity:.3}50%{opacity:.6}}
-      *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-      ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#0a0a1a}::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
-      body{overscroll-behavior:none;-webkit-overflow-scrolling:touch}
-    `}</style>
-
-    {/* QTE Modal */}
-    {qte&&(<div style={{position:"fixed",inset:0,zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,.78)",animation:"slideIn .3s ease",padding:isMobile?"16px":"0"}}>
-      <div style={{background:"#0a0e1a",border:`3px solid ${qte.color}`,borderRadius:"16px",padding:isMobile?"20px":"24px 36px",textAlign:"center",maxWidth:"400px",width:isMobile?"100%":"auto",boxShadow:`0 0 60px ${qte.color}44`,animation:"shake .5s infinite"}}>
-        <div style={{fontSize:isMobile?"28px":"32px",marginBottom:"4px"}}>{qte.title.split(" ")[0]}</div>
-        <div style={{fontSize:isMobile?"16px":"18px",fontWeight:"900",color:qte.color,textShadow:`0 0 20px ${qte.color}`}}>{qte.title}</div>
-        <div style={{fontSize:"12px",color:"#ccc",margin:"8px 0 12px"}}>{qte.desc}</div>
-        <div style={{height:"8px",background:"#1a1a2e",borderRadius:"4px",overflow:"hidden",marginBottom:"8px"}}>
-          <div style={{height:"100%",width:`${(qteTm/qte.tl)*100}%`,background:qteTm/qte.tl>.5?qte.color:"#FF0000",borderRadius:"4px",transition:"width .1s"}} />
-        </div>
-        <div style={{fontSize:"11px",color:"#888",marginBottom:"10px"}}>Time left: {(qteTm/1000).toFixed(1)}s</div>
-        <button onClick={()=>doQ(true)} style={{width:isMobile?"100%":"auto",marginTop:"8px",padding:isMobile?"14px 24px":"8px 24px",borderRadius:"10px",
-          border:`3px solid ${qte.color}`,background:`${qte.color}22`,color:qte.color,fontSize:isMobile?"18px":"14px",fontWeight:"900",cursor:"pointer",
-          boxShadow:`0 0 20px ${qte.color}44`,animation:"qteF .35s infinite",touchAction:"manipulation"}}>
-          {isMobile?`⚡ TAP! [${qte.key}]`:`▶ Press ${qte.key}!`}
-        </button>
-      </div>
-    </div>)}
-    {qteRes&&(<div style={{position:"fixed",top:"18%",left:"50%",transform:"translateX(-50%)",zIndex:999,background:"#0a0e1aee",border:`2px solid ${qteRes.ok?"#00FF88":"#FF4444"}`,borderRadius:"10px",padding:"14px 28px",textAlign:"center",animation:"slideIn .3s ease"}}>
-      <div style={{fontSize:"18px",fontWeight:"900",color:qteRes.ok?"#00FF88":"#FF4444"}}>{qteRes.ok?"✅ SUCCESS!":"❌ FAILED..."}</div>
-      <div style={{fontSize:"12px",color:"#ccc"}}>{qteRes.msg}</div>
-    </div>)}
-
-    {/* Recruit Modal */}
-    {showRecruit&&(<div style={{position:"fixed",inset:0,zIndex:900,display:"flex",alignItems:isMobile?"flex-end":"center",justifyContent:"center",background:"rgba(0,0,0,.7)"}}>
-      <div style={{background:"#0a0e1a",border:"1px solid #FFD70044",borderRadius:isMobile?"12px 12px 0 0":"12px",padding:"14px",maxWidth:"520px",width:isMobile?"100%":"95%",maxHeight:isMobile?"85vh":"80vh",overflow:"auto",paddingBottom:isMobile?"calc(14px + env(safe-area-inset-bottom))":"14px"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}}>
-          <span style={{fontSize:"13px",fontWeight:"bold",color:"#FFD700"}}>🏰 Hire Residents</span>
-          <button onClick={()=>setShowRecruit(false)} style={{background:"#222",border:"1px solid #444",color:"#aaa",padding:"4px 12px",borderRadius:"4px",cursor:"pointer",fontSize:"11px"}}>✕</button>
-        </div>
-        <div style={{display:"flex",gap:"4px",marginBottom:"8px",overflowX:"auto"}}>
-          {Object.keys(tierNames).map(t=>(<button key={t} onClick={()=>setRTab(t)} style={{padding:"4px 10px",borderRadius:"8px",border:`1px solid ${rTab===t?"#FFD700":"#333"}`,background:rTab===t?"#FFD70015":"#111",color:rTab===t?"#FFD700":"#777",fontSize:"10px",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>{tierNames[t]}</button>))}
-        </div>
-        <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(2,1fr)",gap:"6px"}}>
-          {RES_POOL.filter(r=>r.tier===rTab).map(r=>{const hired=recruited.find(x=>x.id===r.id);
-            const cost=r.tier==="champ"?8000:r.tier==="e4"?5000:r.tier==="gym"?3000:2000;
-            const spr=ALL_SPRITES[r.spriteId];
-            return(<div key={r.id} style={{background:hired?`${r.color}11`:"#0d0d20",border:`1px solid ${r.color}22`,borderRadius:"6px",padding:"8px",display:"flex",gap:"8px",alignItems:"center"}}>
-              <div style={{width:8*PX+4,height:11*PX+4,position:"relative",flexShrink:0}}>
-                <div style={{width:PX,height:PX,boxShadow:spr?.idle||"none",position:"absolute",top:2,left:2}} />
-              </div>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:"11px",fontWeight:"bold",color:r.color}}>{r.jp}{avatar?.id===r.id?" 👤":""}</div>
-                <div style={{fontSize:"8px",color:"#777",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r.title}</div>
-              </div>
-              {hired?<span style={{fontSize:"8px",color:"#00FF88",padding:"2px 6px",background:"#00FF8815",borderRadius:"3px"}}>Hired</span>:
-                <button onClick={()=>recruit(r)} style={{fontSize:"10px",padding:"4px 10px",borderRadius:"4px",border:`1px solid ${r.color}44`,background:`${r.color}11`,color:r.color,cursor:"pointer",whiteSpace:"nowrap"}}>¥{cost.toLocaleString()}</button>}
-            </div>);
-          })}
-        </div>
-      </div>
-    </div>)}
-
-    {/* Dev Terminal */}
-    <DevTerminal show={showTerm} onClose={()=>setShowTerm(false)} gameState={res}
-      setRes={setRes} setTp={setTp} log={log} agents={agents} setAgents={setAgents}
-      resi={resi} setResi={setResi} recruited={recruited} setRecruited={setRecruited}
-      setDay={setDay} setTick={setTick} />
-
-    {/* Top bar */}
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:isMobile?"6px 8px":"4px 10px",background:"#0c0f1f",borderBottom:"1px solid #1a1a3e",flexShrink:0}}>
-      <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
-        <span style={{fontSize:isMobile?"12px":"14px",fontWeight:"900",background:"linear-gradient(90deg,#FF69B4,#00E5FF,#FFD700)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>NEON MYTHOS</span>
-      </div>
-      <div style={{display:"flex",gap:isMobile?"6px":"10px",alignItems:"center",fontSize:isMobile?"9px":"10px"}}>
-        <span style={{color:"#FFD700"}}>💰{isMobile?`${Math.floor(res.yen/1000)}k`:`¥${res.yen.toLocaleString()}`}</span>
-        <span style={{color:"#00E5FF"}}>📊{res.data}</span>
-        {!isMobile&&<span style={{color:"#FF69B4"}}>📜{res.con}</span>}
-        <span style={{color:"#00FF88"}}>⭐{res.rep}</span>
-      </div>
-    </div>
-
-    {/* Controls */}
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:isMobile?"4px 8px":"3px 10px",background:"#0a0c1a",borderBottom:"1px solid #12122e",fontSize:"9px",flexShrink:0,gap:"4px",overflowX:"auto"}}>
-      <div style={{display:"flex",alignItems:"center",gap:"4px",flexShrink:0}}>
-        <span style={{color:phase==="night"?"#66b":phase==="evening"?"#b85":"#7b9"}}>{phase==="morning"?"🌅":phase==="noon"?"☀️":phase==="evening"?"🌇":"🌙"}</span>
-        <span style={{color:"#777",fontSize:"9px"}}>D{day}</span>
-        <div style={{width:"30px",height:"3px",background:"#1a1a2e",borderRadius:"2px",overflow:"hidden"}}><div style={{height:"100%",width:`${dp*100}%`,background:"linear-gradient(90deg,#48F,#FD0)",borderRadius:"2px"}} /></div>
-      </div>
-      <div style={{display:"flex",gap:"3px",flexShrink:0}}>
-        <button onClick={()=>setPaused(!paused)} style={{background:paused?"#320":"#151520",border:"1px solid #333",color:paused?"#FD0":"#777",padding:isMobile?"4px 8px":"2px 6px",borderRadius:"3px",cursor:"pointer",fontSize:"9px"}}>{paused?"▶":"⏸"}</button>
-        {[1,2,3].map(s=>(<button key={s} onClick={()=>setSpeed(s)} style={{background:speed===s?"#0f20f":"#151520",border:`1px solid ${speed===s?"#0F8":"#333"}`,color:speed===s?"#0F8":"#555",padding:isMobile?"4px 6px":"2px 5px",borderRadius:"3px",cursor:"pointer",fontSize:"9px"}}>×{s}</button>))}
-        <button onClick={()=>setShowRecruit(true)} style={{background:"#1a1520",border:"1px solid #FF69B488",color:"#FF69B4",padding:isMobile?"4px 8px":"2px 6px",borderRadius:"3px",cursor:"pointer",fontSize:"9px"}}>🏰</button>
-        <button onClick={()=>{if(!qte){const e=QTES[Math.floor(Math.random()*QTES.length)];setQte(e);setQteTm(e.tl);lastQ.current=Date.now();}}} style={{background:"#200",border:"1px solid #FF444466",color:"#F64",padding:isMobile?"4px 6px":"2px 5px",borderRadius:"3px",cursor:"pointer",fontSize:"9px"}}>⚡</button>
-        <button onClick={()=>setShowTerm(true)} style={{background:"#001a0a",border:"1px solid #00FF8844",color:"#00FF88",padding:isMobile?"4px 8px":"2px 6px",borderRadius:"3px",cursor:"pointer",fontSize:"9px",fontFamily:"monospace"}}>$_</button>
-      </div>
-    </div>
-
-    {/* MAIN CONTENT */}
-    {isMobile?(
-      // ===== MOBILE LAYOUT =====
-      <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-        {/* Mobile Tab Bar */}
-        <div style={{display:"flex",borderBottom:"1px solid #1a1a3e",flexShrink:0}}>
-          {[{k:"map",l:"🗺 MAP"},{k:"info",l:"📊 INFO"},{k:"feed",l:"📜 FEED"}].map(t=>(
-            <button key={t.k} onClick={()=>setMobileTab(t.k)} style={{flex:1,padding:"8px",background:mobileTab===t.k?"#0c0f1f":"#08091a",border:"none",borderBottom:mobileTab===t.k?"2px solid #00E5FF":"2px solid transparent",color:mobileTab===t.k?"#00E5FF":"#555",fontSize:"10px",fontWeight:"bold",cursor:"pointer",fontFamily:"inherit"}}>{t.l}</button>
-          ))}
-        </div>
-        <div style={{flex:1,overflow:"auto",padding:"4px",WebkitOverflowScrolling:"touch"}}>
-          {mobileTab==="map"&&<div style={{overflow:"auto",WebkitOverflowScrolling:"touch"}}><GameMap/></div>}
-          {mobileTab==="info"&&<InfoPanel/>}
-          {mobileTab==="feed"&&<FeedPanel/>}
-        </div>
-      </div>
-    ):(
-      // ===== DESKTOP LAYOUT =====
-      <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative",gap:"10px",padding:"10px"}}>
-        {/* Left Column: Ledger */}
-        <div style={{width:"280px", display:"flex", flexDirection:"column", overflow:"hidden"}}>
-          <MarketBoard tick={tick} paused={paused} />
-        </div>
-        {/* Center Column: Map */}
-        <div style={{flex:1, display:"flex", overflow:"hidden", justifyContent:"center", alignItems:"center"}}>
-           <div style={{width:"fit-content",margin:"0 auto"}}><GameMap/></div>
-        </div>
-        {/* Right Column: Info & Feed */}
-        <div style={{width:"320px", display:"flex", flexDirection:"column", gap:"8px", paddingRight:"4px", overflow:"hidden"}}>
-          <div style={{flexShrink: 0}}><InfoPanel /></div>
-          <div style={{flex: 1, minHeight: 0, display: "flex", flexDirection: "column"}}><FeedPanel /></div>
-        </div>
-      </div>
-    )}
-
-    {/* Footer */}
-    <div style={{display:"flex",justifyContent:"space-between",padding:isMobile?"4px 8px":"3px 10px",borderTop:"1px solid #1a1a3e",background:"#0a0c1a",fontSize:"8px",color:"#444",flexShrink:0,paddingBottom:isMobile?"calc(4px + env(safe-area-inset-bottom))":"3px"}}>
-      <span>⚔ NEON CITY / D{day} / Pop:{all.length}</span>
-      <span style={{animation:"blink 2s infinite"}}>● ONLINE</span>
-    </div>
-  </div>);
-}
-
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<NeonMythosCity />);
-    </script>
-</body>
-</html>
+      const workers=all.filter(
