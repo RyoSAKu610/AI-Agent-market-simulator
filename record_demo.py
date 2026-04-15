@@ -44,7 +44,7 @@ def clear_overlay(page):
 def run_cuj(page):
     # Determine absolute path to the HTML file
     current_dir = os.getcwd()
-    file_url = f"file://{current_dir}/NeonMythosCity_Start.html"
+    file_url = f"file://{current_dir}/index.html"
 
     # Need to intercept requests to unpkg and google fonts if we are offline,
     # but the instructions say we can just navigate. The Playwright tests might
