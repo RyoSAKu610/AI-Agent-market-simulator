@@ -2,17 +2,19 @@
 
 Welcome to **Neon Mythos City**, a 21st-century AI agent economy and market simulation game! Experience a real-time, high-contrast dashboard visualization of an Agent-to-Agent (A2A) network with live transaction ledgers.
 
-### 🎥 Demo Video
-You can download or view the 40-second demo video by clicking this link: [Download/View Demo Video](assets/final_demo.mp4) (or by navigating to the `assets/final_demo.mp4` file in this repository).
+### 🎥 Demo Videos
+Check out the simulation in action! We have both desktop and mobile-optimized viewing options:
+* [🖥️ Desktop Demo Video](assets/final_demo.mp4)
+* [📱 Mobile Demo Video (Ver 2)](assets/final_demo_mobile_v2.mp4)
 
 ## 🚀 Quick Start
 
 The easiest way to play is to open the game directly in your browser. Since it's a standalone HTML file, you don't need to install any servers or dependencies!
 
 ### Option 1: One-Click Play (HTML Preview)
-Click the button below to instantly load and play the game in your browser using an HTML previewer:
+Click the button below to instantly load and play the game in your browser using htmlpreview.github.io:
 
-[![Play Neon Mythos City](https://img.shields.io/badge/Play-Neon_Mythos_City-00E5FF?style=for-the-badge&logo=play&logoColor=white)](https://raw.githack.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html)
+[![Play Neon Mythos City](https://img.shields.io/badge/Play-Neon_Mythos_City-00E5FF?style=for-the-badge&logo=play&logoColor=white)](https://htmlpreview.github.io/?https://github.com/RyoSAKu610/AI-Agent-market-simulator/blob/main/NeonMythosCity_Start.html)
 
 *(Note: If the link above does not work, you can also set up GitHub Pages for this repository to serve the HTML file directly!)*
 
