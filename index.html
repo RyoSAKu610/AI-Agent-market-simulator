@@ -154,6 +154,7 @@ const BUILDINGS=[
   {id:"academy",name:"Sage Academy",x:16,y:11,w:3,h:2,color:"#4488FF",desc:"Learning",cat:"learn",t:[["📖","🏫","🎓"],["🧱","🚪","🧱"]],rc:"#223388"},
   {id:"garden",name:"Ancient Garden",x:20,y:11,w:2,h:2,color:"#44BB44",desc:"Healing",cat:"rest",t:[["🌳","🌸"],["🌿","🪻"]],rc:"#228822"},
 ];
+const BUILDING_MAP = BUILDINGS.reduce((acc, b) => { acc[b.id] = b; return acc; }, {});
 const DECO=[{x:5,y:0,e:"🌲"},{x:6,y:0,e:"🌲"},{x:10,y:0,e:"🌲"},{x:16,y:0,e:"🌲"},{x:17,y:0,e:"🌲"},{x:0,y:4,e:"🌿"},{x:3,y:4,e:"🌷"},{x:10,y:4,e:"🪨"},{x:15,y:4,e:"🌾"},{x:21,y:4,e:"🌻"},{x:3,y:9,e:"🪨"},{x:7,y:9,e:"🌿"},{x:14,y:9,e:"🌾"},{x:19,y:9,e:"🍄"},{x:0,y:14,e:"🌲"},{x:5,y:14,e:"🌷"},{x:15,y:14,e:"🌿"},{x:6,y:15,e:"🌲"},{x:19,y:15,e:"🌲"},{x:1,y:16,e:"🌲"},{x:9,y:17,e:"🌲"},{x:21,y:17,e:"🌲"}];
 const ROADS=new Set();
 for(let x=0;x<MAP_W;x++){ROADS.add(`${x},4`);ROADS.add(`${x},5`);ROADS.add(`${x},9`);ROADS.add(`${x},10`);ROADS.add(`${x},14`);ROADS.add(`${x},15`);}
@@ -203,6 +204,12 @@ const QTES=[
   {title:"📜 Urgent Request!",desc:"Mission from the kingdom!",key:"Q",tl:6000,color:"#FFD700",ok:"Mission accomplished!",ng:"Lost trust...",rw:{yen:6000,con:3,rep:8},pn:{rep:-10}},
   {title:"⚡ Magic Storm!",desc:"Lightning hit the tower!",key:"Z",tl:4000,color:"#00CCFF",ok:"Data protected!",ng:"Data lost...",rw:{data:40},pn:{data:-40}},
   {title:"💎 Treasure Chest!",desc:"Found a chest in the ruins!",key:"T",tl:5000,color:"#FFD700",ok:"Loot acquired!",ng:"Trap triggered...",rw:{yen:10000},pn:{yen:-3000}},
+];
+
+const RANDOM_EVENTS = [
+  { m: "💫 流れ星！¥3,000", f: r => ({ ...r, yen: r.yen + 3000 }) },
+  { m: "🐦 新規契約！", f: r => ({ ...r, con: r.con + 1 }) },
+  { m: "📡 DATA+25", f: r => ({ ...r, data: r.data + 25 }) }
 ];
 
 // ======= DEV TERMINAL =======
@@ -265,10 +272,11 @@ const DevTerminal=({show,onClose,gameState,setRes,setTp,log,agents,setAgents,res
         else out("list agents | residents | buildings","err");
         break;
       case"recruit":{
+        const currentRecruitedIds = new Set(recruited.map(x => x.id));
         if(args[0]==="all"){
           let count=0;
           RES_POOL.forEach(r=>{
-            if(!recruited.find(x=>x.id===r.id)){
+            if(!currentRecruitedIds.has(r.id)){
               setRecruited(p=>[...p,r]);
               setResi(p=>[...p,{...r,x:Math.floor(Math.random()*MAP_W),y:[5,9,14][Math.floor(Math.random()*3)],tx:null,ty:null,state:"idle",timer:5,mood:80,exp:0,level:1,earn:0}]);
               count++;
@@ -278,7 +286,7 @@ const DevTerminal=({show,onClose,gameState,setRes,setTp,log,agents,setAgents,res
         } else {
           const rid=args[0];const r=RES_POOL.find(x=>x.id===rid);
           if(!r){out(`Unknown resident: ${rid}`,"err");break;}
-          if(recruited.find(x=>x.id===rid)){out(`${rid} already recruited`,"err");break;}
+          if(currentRecruitedIds.has(rid)){out(`${rid} already recruited`,"err");break;}
           setRecruited(p=>[...p,r]);
           setResi(p=>[...p,{...r,x:Math.floor(Math.random()*MAP_W),y:[5,9,14][Math.floor(Math.random()*3)],tx:null,ty:null,state:"idle",timer:5,mood:80,exp:0,level:1,earn:0}]);
           out(`Recruited ${r.jp} (free)`);log("DEV",`${r.jp}を無料雇用！`,"#FF44AA");
@@ -318,8 +326,7 @@ const DevTerminal=({show,onClose,gameState,setRes,setTp,log,agents,setAgents,res
         break;}
       case"spawn":
         if(args[0]==="event"){
-          const ev=[{m:"💫 流れ星！¥3,000",f:()=>setRes(r=>({...r,yen:r.yen+3000}))},{m:"🐦 新規契約！",f:()=>setRes(r=>({...r,con:r.con+1}))},{m:"📡 DATA+25",f:()=>setRes(r=>({...r,data:r.data+25}))}];
-          const e=ev[Math.floor(Math.random()*ev.length)];e.f();log("EVENT",e.m,"#AADDFF");out(`Event triggered: ${e.m}`);
+          const e=RANDOM_EVENTS[Math.floor(Math.random()*RANDOM_EVENTS.length)];setRes(e.f);log("EVENT",e.m,"#AADDFF");out(`Event triggered: ${e.m}`);
         } else out("Usage: spawn event","err");
         break;
       case"reset":
@@ -432,6 +439,7 @@ function NeonMythosCity(){
   const[avatar,setAvatar]=useState(null);
   const[showAvSel,setShowAvSel]=useState(true);
   const[recruited,setRecruited]=useState([]);
+  const recruitedIds = useMemo(() => new Set(recruited.map(r => r.id)), [recruited]);
   const[showRecruit,setShowRecruit]=useState(false);
   const[rTab,setRTab]=useState("gym");
   const[agents,setAgents]=useState(()=>AGENTS.map(c=>({...c,x:c.bx,y:c.by+2,tx:null,ty:null,state:"idle",timer:0,mood:80,exp:0,level:1,earn:0})));
@@ -451,9 +459,47 @@ function NeonMythosCity(){
   const log=useCallback((ch,msg,col)=>{setLogs(p=>[{ch,msg,col},...p].slice(0,80));},[]);
   const all=[...agents,...resi];
 
+  // ===== AUDIO (Click Sound) =====
+  useEffect(() => {
+    const clickSoundData = "data:audio/wav;base64,UklGRl4RAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YToRAAAAAI0O5hzcKkA450SmUFZb1GQCbcNzAnmvfLx+JH/mfQZ7jnaOcBlpSGA6VhFL8D4BMm8kaBYZCLT5Zutg3dDP48LFtpyrjqG9mESRPYu7hs2De4LMgruERIhZjeqT4ZsipY6vBLtbx2zUCuIJ8Dn+awxxGh0oPzWuQT9Nzlc2YVlpHHBqdTB5Y3v7e/h6XXgydIdubmf/XldVlUrfPlsyMiWRF6UJnvun7fHfqNL5xQ66Dq8epV6c65TdjkiKPIfBhdyFjYfOipOPzZVlnUOmSbBVu0PH6tMg4bruifxgChIYcSVQMoU+50lRVKFdt2V6bNJxsHUFeMx4AXiodchxcGyxZaJdXlQESrc+nDLcJaIYGQtw/dLvbOJt1f3ISL1zsqKo9p+LmHqS1Y2tiguJ9YhqimWN3JHAl/yeeacZsb67QseA007gg+3x+mwIyRXaInQvbTueRuFQFlodYtxoPW4vcqR0lnUBdedyUG9JauJjMVxQU1xJdz7GMm8mmxl2DCz/5vHT5B7Y8MtywMq1HKyGoyacE5ZhkSCOWowVjFCNCJA0lMSZpqDDqP+xPbxYxy3TlN9j7HD5jwaVE1cgqixmOGRDfk2VVopeQ2Wqaq1uQHFacvhxHHDMbBNoAmKtWi1SnkghPtgy6SZ8GrsNzwDk8yXnu9rQzozDE7mJrwynuZ+omeyUlZGujzuPQJC3kpmW2JthoiCq+rLSvIbH89Ly3lzrB/jIBHcR6R30KXA1OEAoSh9TAFuwYRpnLGvabRlv6G5GbTpqzmURYBdZ9lDLR7Q90zJMJ0Ub5w5cAsz1YelE3Z7RlcZOvOqyiapGozmddZgLlQSTaJI5k3KVDJn7nS+kkqsLtH69y8fQ0mjebeq29hkDcA+QG1EnjTIdPeBGtU9+VyNejmOsZ3Fq1GvQa2dqnGd6Yw9ebVerT+JGMD22MpYn9hv8D9EDnfeH67nfWdSOyXq/P7b8rcumxKD8m4GYXpablTqWN5iNmy+gDqYWrS+1P74myMXS9t2V6Xz1gQF+DUwZwiS7LxI6pUNVTAZUnVoFYC1kB2eKaLJofmfyZBhh/VuyVUxO5EWWPIIyySePHPoQLwVX+ZjtGuIC13XMlsKGuWOxR6pKpICf9pu7mdOYQpkHmxqecaL+p62uabYWv5nI0dKc3dboWfQAAKMLHRdGIvssFzd5QAJJl1AeV4FcsGCcYz1ljWWMZD1iqV7bWeVT2UzRROY7ODLlJxAd3xF1Bvv6k+9l5JbZSs+jxcG8wLS8rcqnAKNsnxmdEJxTnOCds6DCpP6pV7C2twPAIsn00lndLuhP85f+3wkEFd8fTiotNFw9vEUyTaZTAlk1XTFg7GFiYpJhfV8sXKpXBlJUS6lDIDvWMekneh2sEqQHh/x48ZzmGNwO0qDI7b8RuCexRKt9puCieaBRn2qfw6BZoyGnD6wTshe5BcHByS/TLt2e51zyRP0xCAATjB20J1QxTTqCQthJNlCIVbxZxVyZXjJfj16yXKJZalUXULtJbUJFOl4x1SfLHWITuwj8/UbzveiG3sDUjcsLw1e7iLS3rvWpUqbbo5aih6KvowqmjqkwruCzi7obwnbKgNMb3SbngfEJ/JoGEhFOGywljC5ON1Y/iUbPTBRSR1ZaWURb/VuFW95ZDFcbUxZOEEgdQVQ5zzCrJwUeABS7CVr//vTK6t/gX9dpzhvGj77gtyKyaK3DqTyn3qWrpaSmxagIrGCwv7UTvEbDQcvo0x/dxua+8Ob6GgU6DyUZuSLWK180NzxFQ3FJp07WUvBV7FfEWHVYAFdqVL5QBkxTRrk/TjgqMGknKB6GFKMKoACf9sDsJOPs2TTRHMm8wS27hbXXsDCtnqopqdSooamMq4+un7Kvt669hsQizGfUOt1+5hPw2vmwA3kNERdZIDIpgDEnOQ1AHEZAS2hPiFKUVIdVXVUZVL1RU07mSYVEQj4zN28vECczHvQUcwvPASr4oe5V5WXc7tMNzNvEb77guD+0m7AArnasAqylrFyuIrHttLC5Wr/axRjN/NRs3U3mf+/l+F4CzQsRFQ0eoSaxLiQ24TzRQuBHAEwhTztRRlJAUilRBE/aS7ZHpEK4PAM2ni6hJiYeSxUsDOgCnvls8HHny96X1u/O7MenwTK8obcCtGCxxa80r7CvNrHCs0m3wbsawUHHI86n1bbdM+YD7wj4IwE4CigT1RsiJPQrMTPBOZA/iUSdSL5L4k0DTx1PMU5BTFVJd0WzQBo7vzS4LRsmAx6KFc0M6AP7+iHyeeke4S3ZwNHwytLEe7/9umW3v7QVs2qywrIZtG22s7niverCvMhDz2nWFt4x5p/uQ/cAALoIVBGxGbYhRylNMK82Wjw5QT9FXUiJSr1L9ksyS3RJxEYpQ7E+azloM7wsfyXIHbEVVg3RBEH8wPNr613jstuC1OXN8se7wlG+w7oduGa2pLXatQW3I7kqvBLAzcRKynfQQNeN3kbmUu6V9vT+UgeWD6IXXR+sJngtqjMvOfM950H/RDFHdkjJSCtInUYmRM1AnzypN/wxrCvNJHcdwhXIDaMFcP1I9UftiOUj3jLXzNAFy/DFnsEcvne7t7nhuPe4+bnju6++UsLAxuvLwNEs2Brfc+Yd7v/1//0BBu0NqBUXHSMksyqzMA82tTqWPqZB20MtRZlFHkW9Q31BYz58OtU1fTCGKgQkDh26FSIOXQaI/rr2D++e54Lg0tmj0wvOGsnixHDBz74IvSC8Grz1vK6+P8GgxMTIns0d0y7Zvt+25v/tgPUh/ccEWwzDE+UaqyH/J8ot/DKBN0w7UT6GQONBZUIKQtVAyD7sO0s48DPrLkwpJiOPHJwVZA4AB4n/FvjA8KDpzuJg3GvWA9E6zB7IvsQkwljAYb9Bv/i/g8Hcw/3G2cpjz47URdp44BDn+O0Z9Vv8pAPfCvMRxxhGH1sl8Cr0L1c0CjgBOzM9mT4uP/E+5D0JPGg5Cjb6MUYt/SczIvobZhWPDosHcQBa+VzyjusH5d3eJNnu007PUcsFyHTFqMOkwmzCAcNgxIXGZ8n9zDvREtZx20jhgecJ7sr0rPuYAnoJOBC9FvQcyCIlKPosODHQNLc34zlPO/U70zvrOkA51za6M/MvjiubJiohThsaFaMO/wdDAYj64fNm7SznSOHM28vWVtJ6zkXLwcj1xufFm8URxkfHOMnfyzHPI9Op17LcLeIJ6DHukvQV+6QBKwiTDsgUtRpGIGklDSojLp4xcjSXNgU4uTiwOOs3bTY7NFwx2y3EKSUlDCCMGrcUnw5bCP4Bn/tR9SrvPemg42TemtlS1ZrRfs4IzEDKK8nNyCbJNsr3y2TOdNEd1VPZBt4o46foce5x9JX6xgDyBgQN5xKJGNYdvCItJxordS40MU4zvTR8NYk15DSQM5Ix8C60K+knmyPZHrQZPBSFDqAIogKf/Kr22PA76+bl6+BZ3EHYr9Sv0UrPiM1vzALMQcwszb/O9dDG0yjXD9tv3znkXOnH7mj0LPoAANAFiwsbEXAWdxsgIFwkHChVK/0tCjB2MT4yXjLXMasw3i53LH0p/CX+IZIdxxisE1MOzQguA4j97fdw8iPtGehg4wrfI9u519fUhtLO0LPPOc9hzyrQktGT0ybWQ9ne3OzgXuUm6jTvdvTb+VH/xgQoCmUPaxQrGZQdmSErJUAozSrKLDIu/y4wL8Quvi0gLPApNyf+I04gNxzEFwUTCQ7jCKIDWv4Z+fPz+O446sXlq+H43bna99e81Q/U9dJx0oXSL9Nu1DzWlNhu27/efOKY5gbrt++b9KH5uv7SA9sIww16EvEWGRvkHkYiNCWlJ5Ap8CrBKwAsrCvIKlcpXSfiJO8hjB7HGqsWRxKpDeEI/wMU/y/6YPW38EXsF+g75L/grN0N2+vYTNc21qrVrNU61lPX8dgQ26jdseAf5Ofn/OtR8Nf0f/k5/vUCpAc3DJ4QyhSvGD8cbh8zIoUkWyaxJ4IozSiPKMsnhCa+JH8izx+4HEQZfhV0ETMNyQhFBLj/Lfu39mLyPu5X6rzmd+OT4BreE9yF2nXZ5djX2EvZQNqx25nd8t+04tXlSukI7QLxK/V0+dD9LwKEBsAK1g62ElYWqRmkHD4fbiEtI3YkRSWYJW4lyCSoIxMiDiCgHdIarRc8FIoQpQyZCHMEQwAV/Pf39/Mi8IXsLOkh5m7jHeEz37ndsdwf3AXcYtw13XveL+BL4sjknefB6inuyfGV9YH5fv2AAXsFYAkiDbYQDxQjF+cZVBxgHgUgPyEJImIiSSK9IcMgXB+PHWEb2hgDFuUSiw8BDFIIiwS3AOb8Ivl39fPxoe6L67zoPOYV5Evi5uDq31nfNN993zHgT+HR4rLk7OZ46UzsX++m8hb2pPlE/ekAiAQVCIQLyQ7aEa0UORd1GVsb5BwMHtAeLB8gH60e1R2bHAMbEhnRFkYUehF3DkcL9AeKBBUBoP02+uL2r/Op8NntR+v96AHnW+UO5CDjkuJm4p3iNeMs5H7lJ+ch6WTr6u2p8Jjzrvbf+SH9aQCsA+AG+gnwDLcPSBKZFKQWYRjLGd8amBv1G/UbmBvfGs8Zahi1FrcUdhL7D00Ndgp/B3MEWwFD/jP7N/hX9Z7yFfDD7bDr4+lh6C/nUebJ5ZnlweU/5hLnN+iq6WXrY+2c7wnyofRc9zH6Ff0AAOcCwgWGCCsLpw30DwgS3xNxFbsWtxdkGL8Yxxh9GOIX+RbFFUkUjRKVEGgODgyPCfQGRASKAc/+Gvx1+er2gPQ/8i7wVe647F7rSep/6f/ozejo6E/pAer76jrsue1y72DxfPO/9SH4mvoh/a//OQK6BCcHegmqC7ENhw8nEYwSshOVFDMViRWXFV4V3hQaFBMT0BFSEKEOwgy6CpMIUQb+A6EBQ//q/J76aPhO9lf0ifLr8ILvUe5c7afsM+wB7BLsZez47Mrt1+4b8JLxN/ME9fL2/PgZ+0T9dP+iAcgD3gXeB8AJfwsVDX0Osw+zEHoRBRJUEmYSOxLTETERVxBIDwgOnAwIC1IJgAeYBaEDoQGg/6P9sfvQ+Qf4XPbU9HPzPvI58Wfwyu9j7zXvPu+A7/fvo/CA8Yzyw/Mg9Z/2O/jt+bD7fv1R/yIB7QKrBFYG6QdfCbMK4QvlDL0NZQ7dDiIPNA8UD8IOQA6PDbMMrwuFCjsJ1QdYBskELQOKAeb/Rf6t/CP7rflP+A336/Xt9Bb0afPm8pHyaPJt8p/y/fKF8zb0DPUE9hz3TviY+fT6XfzP/UX/ugApAo4D5AQnBlIHYghUCSQK0QpYC7kL8gsCDOoLrAtHC70KEQpGCV4IXAdFBhsF5AOiAlwBFADQ/pP9Yfw++y76NPlU+I/36PZi9v31uvWa9Z31wvUJ9nH29vaZ91X4KfkR+gr7EPwh/Tf+Uf9oAHwBhwKHA3gEVwUhBtUGbwfvB1MImgjECNAIvgiQCEYI4QdjB88GJgZrBaAEyQPoAgECFgErAET/Yv6I/br8+vtK+6z6I/qv+VL5DPnf+Mr4zvjp+Bz5ZfnC+TP6tfpH++b7kPxC/fv9t/50/y4A5QCXAT8C3QJuA/IDZQTIBBkFVwWCBZoFngWQBW8FPQX7BKkESQTeA2cD6AJiAtcBSQG6ACsAof8a/5r+If6y/U799fyo/Gn8OPwU/P/7+Pv/+xP8NPxh/Jn82vwl/Xb9zv0q/or+6/5N/67/CwBmALwADQFXAZkB1AEFAi4CTQJjAnACcwJuAmACSwIuAgwC4wG2AYUBUgEcAeYArwB6AEYAFADn/7z/lv90/1f/P/8s/x//F/8T/xX/Gv8k/zH/QP9S/2X/ef+O/6P/tv/I/9j/5v/y//r///8=";
+    const audio = new Audio(clickSoundData);
+    audio.volume = 0.2;
+    const clickHandler = () => {
+      audio.currentTime = 0;
+      audio.play().catch(e => {}); // ignore errors if audio context isn't ready
+    };
+    document.addEventListener("click", clickHandler);
+    return () => document.removeEventListener("click", clickHandler);
+  }, []);
+
+  // ===== BGM (Background Music) =====
+  useEffect(() => {
+    // Acid Jazz / Cyberpunk style BGM from a free public domain/CC0 source
+    // MaouDamashii or similar (we'll use a reliable hotlink for a jazzy/lofi loop)
+    // Here we use a free jazzy loop from an open source sound library
+    const bgm = new Audio("https://cdn.freesound.org/previews/568/568128_12536830-lq.mp3");
+    bgm.loop = true;
+    bgm.volume = 0.1;
+
+    // We can only play audio after the user interacts with the page
+    const startBGM = () => {
+      bgm.play().catch(e => console.log("Audio play failed:", e));
+      document.removeEventListener("click", startBGM);
+    };
+
+    document.addEventListener("click", startBGM);
+
+    return () => {
+      bgm.pause();
+      document.removeEventListener("click", startBGM);
+    };
+  }, []);
+
+
+
   const pickAvatar=r=>{setAvatar(r);setShowAvSel(false);log("SYSTEM",`Game started with ${r.jp}!`,r.color);};
   const recruit=r=>{
-    if(recruited.find(x=>x.id===r.id))return;
+    if(recruitedIds.has(r.id))return;
     const cost=r.tier==="champ"?8000:r.tier==="e4"?5000:r.tier==="gym"?3000:2000;
     if(res.yen<cost){log("SYSTEM","Not enough funds!","#FF4444");return;}
     setRes(p=>({...p,yen:p.yen-cost}));setRecruited(p=>[...p,r]);
@@ -486,7 +532,7 @@ function NeonMythosCity(){
   const runAI=(setter)=>{setter(prev=>prev.map(ch=>{
     let c={...ch};
     if(c.state==="idle"){c.timer--;if(c.timer<=0){const r=Math.random();let tb;
-      if(r<.55){const pid=c.pref[Math.floor(Math.random()*c.pref.length)];tb=BUILDINGS.find(b=>b.id===pid);}
+      if(r<.55){const pid=c.pref[Math.floor(Math.random()*c.pref.length)];tb=BUILDING_MAP[pid];}
       else if(r<.85)tb=BUILDINGS[Math.floor(Math.random()*BUILDINGS.length)];
       else{c.tx=Math.max(0,Math.min(MAP_W-1,c.x+Math.floor(Math.random()*9)-4));c.ty=Math.max(0,Math.min(MAP_H-1,c.y+Math.floor(Math.random()*7)-3));c.state="walk";return c;}
       if(tb){c.tx=tb.x+Math.floor(Math.random()*tb.w);c.ty=tb.y+tb.h;c.state="walk";}
@@ -529,8 +575,7 @@ function NeonMythosCity(){
 
   // Events
   useEffect(()=>{if(tick%120===0&&tick>0&&!paused){
-    const ev=[{m:"💫 流れ星！¥3,000",f:()=>setRes(r=>({...r,yen:r.yen+3000}))},{m:"🐦 新規契約！",f:()=>setRes(r=>({...r,con:r.con+1}))},{m:"📡 DATA+25",f:()=>setRes(r=>({...r,data:r.data+25}))}];
-    const e=ev[Math.floor(Math.random()*ev.length)];e.f();log("EVENT",e.m,"#AADDFF");
+    const e=RANDOM_EVENTS[Math.floor(Math.random()*RANDOM_EVENTS.length)];setRes(e.f);log("EVENT",e.m,"#AADDFF");
   }},[tick,paused,log]);
 
   const dp=(tick%DAY_TICKS)/DAY_TICKS;
@@ -563,175 +608,170 @@ function NeonMythosCity(){
     </div>);
   }
 
-  // ===== PANELS (shared) =====
+// ======= MAIN GAME =======
 
-  const InfoPanel=()=>(<div style={{display:"flex",flexDirection:"column",gap:"4px",fontSize:"9px",padding:isMobile?"4px":"4px 4px 4px 0"}}>
-    {sel&&(()=>{const c=all.find(x=>x.id===sel);if(!c)return null;const spr=ALL_SPRITES[c.spriteId];
-      // Generate some consistent pseudo-random data based on agent ID
-      const charIdNum = c.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const convRate = (10 + (charIdNum % 15) + (tick % 10)*0.1).toFixed(1);
-      const volSOL = (1000 + (charIdNum * 13) % 4000 + (tick % 5)*12).toLocaleString();
-      const adoptRate = 70 + (charIdNum % 25);
-      const reasoningLogs = [
-        `[LOG] Scouting local merchant...`,
-        `[LOG] Negotiating 5% success fee...`,
-        `[LOG] Analyzing target route optimization...`,
-        `[LOG] Verifying SAS cryptographic signature...`,
-        `[LOG] Waiting for user adoption...`,
-        `[LOG] Initiating x402 usage fee stream...`
-      ];
-      const activeLogs = [
-        reasoningLogs[charIdNum % reasoningLogs.length],
-        reasoningLogs[(charIdNum + Math.floor(tick/10)) % reasoningLogs.length]
-      ];
+const InfoPanel=({isMobile, sel, all, avatar, tick, agents, setSel, resi, res, tp})=>(<div style={{display:"flex",flexDirection:"column",gap:"4px",fontSize:"9px",padding:isMobile?"4px":"4px 4px 4px 0"}}>
+  {sel&&(()=>{const c=all.find(x=>x.id===sel);if(!c)return null;const spr=ALL_SPRITES[c.spriteId];
+    // Generate some consistent pseudo-random data based on agent ID
+    const charIdNum = c.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const convRate = (10 + (charIdNum % 15) + (tick % 10)*0.1).toFixed(1);
+    const volSOL = (1000 + (charIdNum * 13) % 4000 + (tick % 5)*12).toLocaleString();
+    const adoptRate = 70 + (charIdNum % 25);
+    const reasoningLogs = [
+      `[LOG] Scouting local merchant...`,
+      `[LOG] Negotiating 5% success fee...`,
+      `[LOG] Analyzing target route optimization...`,
+      `[LOG] Verifying SAS cryptographic signature...`,
+      `[LOG] Waiting for user adoption...`,
+      `[LOG] Initiating x402 usage fee stream...`
+    ];
+    const activeLogs = [
+      reasoningLogs[charIdNum % reasoningLogs.length],
+      reasoningLogs[(charIdNum + Math.floor(tick/10)) % reasoningLogs.length]
+    ];
 
-      return(<div className="data-font" style={{background:"#0a0a14",border:`1px solid ${c.color}88`,borderRadius:"6px",padding:"8px",boxShadow:`0 0 10px ${c.color}22`}}>
-        <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"8px",borderBottom:`1px solid #ffffff11`,paddingBottom:"6px"}}>
-          <div style={{width:8*PX+4,height:11*PX+4,position:"relative",flexShrink:0,background:"#111",border:`1px solid #333`,borderRadius:"4px"}}>
-            <div style={{width:PX,height:PX,boxShadow:spr?.idle,position:"absolute",top:2,left:2}} />
-          </div>
-          <div style={{flex:1}}>
-            <div style={{fontSize:"13px",fontWeight:"700",color:c.color,letterSpacing:"0.5px"}}>{c.name||c.jp}{avatar?.id===c.id?" 👤":""}</div>
-            <div style={{fontSize:"8px",color:"#777",textTransform:"uppercase",marginTop:"2px"}}>ID: {c.id.toUpperCase()}-X402 · STATUS: {c.state==="walk"?"ROUTING":c.state==="work"?"EXECUTING":"STANDBY"}</div>
-          </div>
+    return(<div className="data-font" style={{background:"#0a0a14",border:`1px solid ${c.color}88`,borderRadius:"6px",padding:"8px",boxShadow:`0 0 10px ${c.color}22`}}>
+      <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"8px",borderBottom:`1px solid #ffffff11`,paddingBottom:"6px"}}>
+        <div style={{width:8*PX+4,height:11*PX+4,position:"relative",flexShrink:0,background:"#111",border:`1px solid #333`,borderRadius:"4px"}}>
+          <div style={{width:PX,height:PX,boxShadow:spr?.idle,position:"absolute",top:2,left:2}} />
         </div>
-
-        {/* SAS Reputation Layer - KPIs */}
-        <div style={{display:"flex",flexDirection:"column",gap:"4px",marginBottom:"8px"}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
-            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>CONVERSION RATE</span>
-            <span style={{color:"#0F8",fontSize:"10px",fontWeight:"700"}}>{convRate}%</span>
-          </div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
-            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>TOTAL VOLUME</span>
-            <span style={{color:"#FFD700",fontSize:"10px",fontWeight:"700"}}>{volSOL} SOL</span>
-          </div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
-            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>ADOPTION RATE</span>
-            <div style={{display:"flex",alignItems:"center",gap:"4px",width:"50px"}}>
-              <div style={{flex:1,background:"#333",height:"4px",borderRadius:"2px",overflow:"hidden"}}>
-                <div style={{width:`${adoptRate}%`,height:"100%",background:"#00E5FF"}} />
-              </div>
-              <span style={{color:"#00E5FF",fontSize:"9px",fontWeight:"700"}}>{adoptRate}%</span>
-            </div>
-          </div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
-            <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>SAS STATUS</span>
-            <span style={{color:"#fff",fontSize:"9px",fontWeight:"600",display:"flex",alignItems:"center",gap:"2px"}}>
-              <span style={{color:"#10B981"}}>✔</span> Verified
-            </span>
-          </div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:"13px",fontWeight:"700",color:c.color,letterSpacing:"0.5px"}}>{c.name||c.jp}{avatar?.id===c.id?" 👤":""}</div>
+          <div style={{fontSize:"8px",color:"#777",textTransform:"uppercase",marginTop:"2px"}}>ID: {c.id.toUpperCase()}-X402 · STATUS: {c.state==="walk"?"ROUTING":c.state==="work"?"EXECUTING":"STANDBY"}</div>
         </div>
-
-        {/* Reasoning Trace Terminal */}
-        <div style={{background:"#05050a",border:"1px solid #1a1a3e",borderRadius:"3px",padding:"4px",fontFamily:"monospace",fontSize:"7.5px",color:"#0F8",height:"45px",overflow:"hidden",display:"flex",flexDirection:"column",gap:"2px"}}>
-          <div style={{color:"#555",marginBottom:"1px"}}>&gt; LIVE_REASONING_TRACE</div>
-          {activeLogs.map((lg, i) => (
-             <div key={i} style={{opacity: 1 - i*0.4, textShadow:"0 0 2px #0F8"}}>{lg}</div>
-          ))}
-          <div style={{animation:"blink 1s infinite"}}>&gt; _</div>
-        </div>
-      </div>);})()}
-
-    <div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
-      <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>⚔ AI AGENTS</div>
-      {agents.map(c=>(<div key={c.id} onClick={()=>setSel(sel===c.id?null:c.id)} style={{display:"flex",alignItems:"center",gap:"4px",padding:"3px",cursor:"pointer",background:sel===c.id?`${c.color}11`:"transparent",borderRadius:"2px"}}>
-        <span style={{color:c.color,fontWeight:"bold",fontSize:"9px",width:"42px"}}>{c.jp}</span>
-        <span style={{color:"#555",width:"14px"}}>{c.state==="walk"?"🚶":c.state==="work"?"⚡":"💤"}</span>
-        <span style={{color:"#FD0",flex:1,textAlign:"right",fontSize:"8px"}}>¥{c.earn.toLocaleString()}</span>
-        <span style={{color:"#48F",fontSize:"8px"}}>Lv{c.level}</span>
-      </div>))}
-    </div>
-
-    {resi.length>0&&(<div style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px",maxHeight:isMobile?"150px":"120px",overflow:"auto"}}>
-      <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>🏰 RESIDENTS({resi.length})</div>
-      {resi.map(c=>(<div key={c.id} onClick={()=>setSel(sel===c.id?null:c.id)} style={{display:"flex",alignItems:"center",gap:"4px",padding:"3px",cursor:"pointer",background:sel===c.id?`${c.color}11`:"transparent",borderRadius:"2px"}}>
-        <span style={{color:c.color,fontWeight:"bold",fontSize:"9px",width:"50px"}}>{avatar?.id===c.id?"👤":""}{c.jp}</span>
-        <span style={{color:"#555",width:"14px"}}>{c.state==="walk"?"🚶":c.state==="work"?"⚡":"💤"}</span>
-        <span style={{color:"#FD0",flex:1,textAlign:"right",fontSize:"8px"}}>¥{c.earn.toLocaleString()}</span>
-        <span style={{color:"#48F",fontSize:"8px"}}>Lv{c.level}</span>
-      </div>))}
-    </div>)}
-
-    <div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
-      <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>💰 ECONOMY</div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"2px"}}>
-        {[{l:"TOTAL ASSETS",v:`¥${res.yen.toLocaleString()}`,c:"#FD0"},{l:"TOTAL PROFIT",v:`+¥${tp.toLocaleString()}`,c:"#0F8"},{l:"DATA",v:`${res.data}TB`,c:"#0EF"},{l:"CONTRACTS",v:`${res.con}`,c:"#F6B"}].map((s,i)=>(
-          <div key={i} style={{background:"#0d0d20",padding:"3px",borderRadius:"2px",textAlign:"center"}}>
-            <div style={{fontSize:"7px",color:"#666"}}>{s.l}</div><div style={{fontSize:"10px",color:s.c,fontWeight:"bold"}}>{s.v}</div>
-          </div>))}
       </div>
-    </div>
-  </div>);
 
-  const FeedPanel=()=>(<div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px",flex:1,minHeight:"80px",maxHeight:isMobile?"none":"160px",overflow:"auto",display:"flex",flexDirection:"column"}}>
-    <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>📜 LIVE FEED</div>
-    <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:"1px",WebkitOverflowScrolling:"touch"}}>
-      {logs.slice(0,40).map((l,i)=>(<div key={i} style={{fontSize:"8px",lineHeight:"1.4",opacity:Math.max(.2,1-i*.04),padding:"2px 0",borderBottom:"1px solid #0d0d2022"}}>
-        <span style={{color:l.col,fontWeight:"bold"}}>{l.ch}</span><span style={{color:"#333"}}> · </span><span style={{color:"#aaa"}}>{l.msg}</span>
-      </div>))}
-    </div>
-  </div>);
-
-  // ===== MAP COMPONENT =====
-  const GameMap=()=>(<div style={{position:"relative",width:MAP_W*TILE,height:MAP_H*TILE,background:sky,borderRadius:"6px",border:"1px solid #1a1a3e",overflow:"hidden",imageRendering:"pixelated",flexShrink:0,margin:isMobile?"0 auto":"4px",touchAction:"manipulation"}}>
-    {Array.from({length:MAP_H}).map((_,y)=>Array.from({length:MAP_W}).map((_,x)=>{const isR=ROADS.has(`${x},${y}`);
-      return(<div key={`g${x}${y}`} style={{position:"absolute",left:x*TILE,top:y*TILE,width:TILE,height:TILE,background:isR?"#1a1830":phase==="night"?"#0e1222":"#151a30",borderRight:"1px solid #ffffff04",borderBottom:"1px solid #ffffff04"}} />);
-    }))}
-    {DECO.map((d,i)=>(<div key={`d${i}`} style={{position:"absolute",left:d.x*TILE+(isMobile?2:6),top:d.y*TILE+(isMobile?2:6),fontSize:isMobile?"8px":"12px",opacity:.5,pointerEvents:"none"}}>{d.e}</div>))}
-
-    {BUILDINGS.map(b=>{const hov=hovB===b.id;
-      return(<div key={b.id} onClick={()=>{if(isMobile)setHovB(hovB===b.id?null:b.id);}} onMouseEnter={()=>!isMobile&&setHovB(b.id)} onMouseLeave={()=>!isMobile&&setHovB(null)}
-        style={{position:"absolute",left:b.x*TILE-1,top:b.y*TILE-1,width:b.w*TILE+2,height:b.h*TILE+2,cursor:"pointer",zIndex:5}}>
-        <div style={{position:"absolute",top:isMobile?-5:-9,left:-2,right:-2,height:isMobile?7:11,background:`linear-gradient(180deg,${b.rc},${b.rc}cc)`,clipPath:"polygon(8% 100%,0 100%,12% 0%,88% 0%,100% 100%,92% 100%)",animation:phase==="night"?"roofS 3s infinite":"none"}} />
-        <div style={{position:"absolute",inset:0,background:`linear-gradient(180deg,${b.color}18,${b.color}08)`,border:`1.5px solid ${hov?b.color+"aa":b.color+"33"}`,borderRadius:"2px",boxShadow:hov?`0 0 12px ${b.color}33`:"none",transition:"all .3s"}}>
-          <div style={{display:"grid",gridTemplateColumns:`repeat(${b.w},1fr)`,gridTemplateRows:`repeat(${b.h},1fr)`,width:"100%",height:"100%",alignItems:"center",justifyItems:"center"}}>
-            {b.t.flat().map((e,i)=>(<span key={i} style={{fontSize:isMobile?(b.w>=3?"7px":"6px"):(b.w>=3?"11px":"10px"),filter:`drop-shadow(0 0 2px ${b.color}44)`,opacity:hov?1:.8}}>{e}</span>))}
+      {/* SAS Reputation Layer - KPIs */}
+      <div style={{display:"flex",flexDirection:"column",gap:"4px",marginBottom:"8px"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
+          <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>CONVERSION RATE</span>
+          <span style={{color:"#0F8",fontSize:"10px",fontWeight:"700"}}>{convRate}%</span>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
+          <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>TOTAL VOLUME</span>
+          <span style={{color:"#FFD700",fontSize:"10px",fontWeight:"700"}}>{volSOL} SOL</span>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
+          <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>ADOPTION RATE</span>
+          <div style={{display:"flex",alignItems:"center",gap:"4px",width:"50px"}}>
+            <div style={{flex:1,background:"#333",height:"4px",borderRadius:"2px",overflow:"hidden"}}>
+              <div style={{width:`${adoptRate}%`,height:"100%",background:"#00E5FF"}} />
+            </div>
+            <span style={{color:"#00E5FF",fontSize:"9px",fontWeight:"700"}}>{adoptRate}%</span>
           </div>
         </div>
-        {!isMobile&&<div style={{position:"absolute",bottom:-13,left:"50%",transform:"translateX(-50%)",fontSize:"6.5px",color:hov?b.color:`${b.color}88`,fontWeight:"bold",whiteSpace:"nowrap",textShadow:"0 0 4px #000"}}>{b.name}</div>}
-        {hov&&<div style={{position:"absolute",bottom:isMobile?-16:-26,left:"50%",transform:"translateX(-50%)",background:"#0a0a1aee",border:`1px solid ${b.color}44`,borderRadius:"3px",padding:"2px 6px",fontSize:isMobile?"6px":"7px",color:b.color,whiteSpace:"nowrap",zIndex:30}}>{b.name} - {b.desc}</div>}
-      </div>);
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",background:"#151520",padding:"4px 6px",borderRadius:"3px"}}>
+          <span style={{color:"#888",fontSize:"8px",fontWeight:"600"}}>SAS STATUS</span>
+          <span style={{color:"#fff",fontSize:"9px",fontWeight:"600",display:"flex",alignItems:"center",gap:"2px"}}>
+            <span style={{color:"#10B981"}}>✔</span> Verified
+          </span>
+        </div>
+      </div>
+
+      {/* Reasoning Trace Terminal */}
+      <div style={{background:"#05050a",border:"1px solid #1a1a3e",borderRadius:"3px",padding:"4px",fontFamily:"monospace",fontSize:"7.5px",color:"#0F8",height:"45px",overflow:"hidden",display:"flex",flexDirection:"column",gap:"2px"}}>
+        <div style={{color:"#555",marginBottom:"1px"}}>&gt; LIVE_REASONING_TRACE</div>
+        {activeLogs.map((lg, i) => (
+           <div key={i} style={{opacity: 1 - i*0.4, textShadow:"0 0 2px #0F8"}}>{lg}</div>
+        ))}
+        <div style={{animation:"blink 1s infinite"}}>&gt; _</div>
+      </div>
+    </div>);})()}
+
+  <div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
+    <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>⚔ AI AGENTS</div>
+    {agents.map(c=>(<div key={c.id} onClick={()=>setSel(sel===c.id?null:c.id)} style={{display:"flex",alignItems:"center",gap:"4px",padding:"3px",cursor:"pointer",background:sel===c.id?`${c.color}11`:"transparent",borderRadius:"2px"}}>
+      <span style={{color:c.color,fontWeight:"bold",fontSize:"9px",width:"42px"}}>{c.jp}</span>
+      <span style={{color:"#555",width:"14px"}}>{c.state==="walk"?"🚶":c.state==="work"?"⚡":"💤"}</span>
+      <span style={{color:"#FD0",flex:1,textAlign:"right",fontSize:"8px"}}>¥{c.earn.toLocaleString()}</span>
+      <span style={{color:"#48F",fontSize:"8px"}}>Lv{c.level}</span>
+    </div>))}
+  </div>
+
+  {resi.length>0&&(<div style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px",maxHeight:isMobile?"150px":"120px",overflow:"auto"}}>
+    <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>🏰 RESIDENTS({resi.length})</div>
+    {resi.map(c=>(<div key={c.id} onClick={()=>setSel(sel===c.id?null:c.id)} style={{display:"flex",alignItems:"center",gap:"4px",padding:"3px",cursor:"pointer",background:sel===c.id?`${c.color}11`:"transparent",borderRadius:"2px"}}>
+      <span style={{color:c.color,fontWeight:"bold",fontSize:"9px",width:"50px"}}>{avatar?.id===c.id?"👤":""}{c.jp}</span>
+      <span style={{color:"#555",width:"14px"}}>{c.state==="walk"?"🚶":c.state==="work"?"⚡":"💤"}</span>
+      <span style={{color:"#FD0",flex:1,textAlign:"right",fontSize:"8px"}}>¥{c.earn.toLocaleString()}</span>
+      <span style={{color:"#48F",fontSize:"8px"}}>Lv{c.level}</span>
+    </div>))}
+  </div>)}
+
+  <div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px"}}>
+    <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>💰 ECONOMY</div>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"2px"}}>
+      {[{l:"TOTAL ASSETS",v:`¥${res.yen.toLocaleString()}`,c:"#FD0"},{l:"TOTAL PROFIT",v:`+¥${tp.toLocaleString()}`,c:"#0F8"},{l:"DATA",v:`${res.data}TB`,c:"#0EF"},{l:"CONTRACTS",v:`${res.con}`,c:"#F6B"}].map((s,i)=>(
+        <div key={i} style={{background:"#0d0d20",padding:"3px",borderRadius:"2px",textAlign:"center"}}>
+          <div style={{fontSize:"7px",color:"#666"}}>{s.l}</div><div style={{fontSize:"10px",color:s.c,fontWeight:"bold"}}>{s.v}</div>
+        </div>))}
+    </div>
+  </div>
+</div>);
+
+const FeedPanel=({isMobile, logs})=>(<div className="data-font" style={{background:"#0c0f1f",border:"1px solid #1a1a3e",borderRadius:"5px",padding:"5px",flex:1,minHeight:"80px",maxHeight:isMobile?"none":"160px",overflow:"auto",display:"flex",flexDirection:"column"}}>
+  <div style={{fontSize:"8px",color:"#444",letterSpacing:"1.5px",marginBottom:"3px"}}>📜 LIVE FEED</div>
+  <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column",gap:"1px",WebkitOverflowScrolling:"touch"}}>
+    {logs.slice(0,40).map((l,i)=>(<div key={i} style={{fontSize:"8px",lineHeight:"1.4",opacity:Math.max(.2,1-i*.04),padding:"2px 0",borderBottom:"1px solid #0d0d2022"}}>
+      <span style={{color:l.col,fontWeight:"bold"}}>{l.ch}</span><span style={{color:"#333"}}> · </span><span style={{color:"#aaa"}}>{l.msg}</span>
+    </div>))}
+  </div>
+</div>);
+
+const GameMap=({TILE, sky, isMobile, hovB, setHovB, phase, all, avatar, sel, setSel, tick, connections})=>(<div style={{position:"relative",width:MAP_W*TILE,height:MAP_H*TILE,background:sky,borderRadius:"6px",border:"1px solid #1a1a3e",overflow:"hidden",imageRendering:"pixelated",flexShrink:0,margin:isMobile?"0 auto":"4px",touchAction:"manipulation"}}>
+  {Array.from({length:MAP_H}).map((_,y)=>Array.from({length:MAP_W}).map((_,x)=>{const isR=ROADS.has(`${x},${y}`);
+    return(<div key={`g${x}${y}`} style={{position:"absolute",left:x*TILE,top:y*TILE,width:TILE,height:TILE,background:isR?"#1a1830":phase==="night"?"#0e1222":"#151a30",borderRight:"1px solid #ffffff04",borderBottom:"1px solid #ffffff04"}} />);
+  }))}
+  {DECO.map((d,i)=>(<div key={`d${i}`} style={{position:"absolute",left:d.x*TILE+(isMobile?2:6),top:d.y*TILE+(isMobile?2:6),fontSize:isMobile?"8px":"12px",opacity:.5,pointerEvents:"none"}}>{d.e}</div>))}
+
+  {BUILDINGS.map(b=>{const hov=hovB===b.id;
+    return(<div key={b.id} onClick={()=>{if(isMobile)setHovB(hovB===b.id?null:b.id);}} onMouseEnter={()=>!isMobile&&setHovB(b.id)} onMouseLeave={()=>!isMobile&&setHovB(null)}
+      style={{position:"absolute",left:b.x*TILE-1,top:b.y*TILE-1,width:b.w*TILE+2,height:b.h*TILE+2,cursor:"pointer",zIndex:5}}>
+      <div style={{position:"absolute",top:isMobile?-5:-9,left:-2,right:-2,height:isMobile?7:11,background:`linear-gradient(180deg,${b.rc},${b.rc}cc)`,clipPath:"polygon(8% 100%,0 100%,12% 0%,88% 0%,100% 100%,92% 100%)",animation:phase==="night"?"roofS 3s infinite":"none"}} />
+      <div style={{position:"absolute",inset:0,background:`linear-gradient(180deg,${b.color}18,${b.color}08)`,border:`1.5px solid ${hov?b.color+"aa":b.color+"33"}`,borderRadius:"2px",boxShadow:hov?`0 0 12px ${b.color}33`:"none",transition:"all .3s"}}>
+        <div style={{display:"grid",gridTemplateColumns:`repeat(${b.w},1fr)`,gridTemplateRows:`repeat(${b.h},1fr)`,width:"100%",height:"100%",alignItems:"center",justifyItems:"center"}}>
+          {b.t.flat().map((e,i)=>(<span key={i} style={{fontSize:isMobile?(b.w>=3?"7px":"6px"):(b.w>=3?"11px":"10px"),filter:`drop-shadow(0 0 2px ${b.color}44)`,opacity:hov?1:.8}}>{e}</span>))}
+        </div>
+      </div>
+      {!isMobile&&<div style={{position:"absolute",bottom:-13,left:"50%",transform:"translateX(-50%)",fontSize:"6.5px",color:hov?b.color:`${b.color}88`,fontWeight:"bold",whiteSpace:"nowrap",textShadow:"0 0 4px #000"}}>{b.name}</div>}
+      {hov&&<div style={{position:"absolute",bottom:isMobile?-16:-26,left:"50%",transform:"translateX(-50%)",background:"#0a0a1aee",border:`1px solid ${b.color}44`,borderRadius:"3px",padding:"2px 6px",fontSize:isMobile?"6px":"7px",color:b.color,whiteSpace:"nowrap",zIndex:30}}>{b.name} - {b.desc}</div>}
+    </div>);
+  })}
+
+  {all.map(c=>(
+    <PixelChar key={c.id} id={c.id} spriteId={c.spriteId} state={c.state} isSelected={sel===c.id}
+      isAvatar={avatar?.id===c.id} name={c.jp} color={c.color}
+      onClick={()=>setSel(sel===c.id?null:c.id)} x={c.x} y={c.y} tick={tick} tile={TILE} />
+  ))}
+
+
+  {/* A2A Network Connections SVG Layer */}
+  <svg style={{position:"absolute",left:0,top:0,width:"100%",height:"100%",pointerEvents:"none",zIndex:15, overflow:"visible"}}>
+    {connections.map(c=>{
+      const sx=c.from.x*TILE+TILE/2; const sy=c.from.y*TILE+TILE/2-11*PX/2;
+      const ex=c.to.x*TILE+TILE/2; const ey=c.to.y*TILE+TILE/2-11*PX/2;
+      const op=Math.max(0, 1 - c.time/30);
+      const isSel = sel === c.from.id || sel === c.to.id;
+      if (!isSel && sel !== null) return null; // hide if someone else is selected
+      const strokeOp = isSel ? op : op * 0.3;
+
+      return (
+        <g key={c.id}>
+          <line x1={sx} y1={sy} x2={ex} y2={ey} stroke={`rgba(0, 229, 255, ${strokeOp})`} strokeWidth="1.5" strokeDasharray="4 2" />
+          {/* Packet / SOL Coin flowing */}
+          {c.time % 2 === 0 && (
+            <circle cx={sx + (ex-sx)*(c.time/30)} cy={sy + (ey-sy)*(c.time/30)} r="2" fill="#FFD700" style={{filter:"drop-shadow(0 0 2px #FFD700)"}} />
+          )}
+        </g>
+      );
     })}
-
-    {all.map(c=>(
-      <PixelChar key={c.id} id={c.id} spriteId={c.spriteId} state={c.state} isSelected={sel===c.id}
-        isAvatar={avatar?.id===c.id} name={c.jp} color={c.color}
-        onClick={()=>setSel(sel===c.id?null:c.id)} x={c.x} y={c.y} tick={tick} tile={TILE} />
-    ))}
-
-
-    {/* A2A Network Connections SVG Layer */}
-    <svg style={{position:"absolute",left:0,top:0,width:"100%",height:"100%",pointerEvents:"none",zIndex:15, overflow:"visible"}}>
-      {connections.map(c=>{
-        const sx=c.from.x*TILE+TILE/2; const sy=c.from.y*TILE+TILE/2-11*PX/2;
-        const ex=c.to.x*TILE+TILE/2; const ey=c.to.y*TILE+TILE/2-11*PX/2;
-        const op=Math.max(0, 1 - c.time/30);
-        // Show only if hovered or selected (Progressive Disclosure)
-        // Wait, the instructions say "Progressive Disclosure for Clarity: Default view should be clean. The complex metrics... should only appear when the user hovers over or clicks on a specific agent or route."
-        // Let's modify so it only shows if `sel === null` (wait, no, "complex metrics... should only appear when user hovers").
-        // For lines, "Add dynamic, glowing connection lines ... between agents". Let's show them faintly, but strongly if selected.
-        const isSel = sel === c.from.id || sel === c.to.id;
-        if (!isSel && sel !== null) return null; // hide if someone else is selected
-        const strokeOp = isSel ? op : op * 0.3;
-
-        return (
-          <g key={c.id}>
-            <line x1={sx} y1={sy} x2={ex} y2={ey} stroke={`rgba(0, 229, 255, ${strokeOp})`} strokeWidth="1.5" strokeDasharray="4 2" />
-            {/* Packet / SOL Coin flowing */}
-            {c.time % 2 === 0 && (
-              <circle cx={sx + (ex-sx)*(c.time/30)} cy={sy + (ey-sy)*(c.time/30)} r="2" fill="#FFD700" style={{filter:"drop-shadow(0 0 2px #FFD700)"}} />
-            )}
-          </g>
-        );
-      })}
-    </svg>
-    {phase==="night"&&<div style={{position:"absolute",inset:0,background:"rgba(5,5,20,.2)",pointerEvents:"none"}} />}
-  </div>);
+  </svg>
+  {phase==="night"&&<div style={{position:"absolute",inset:0,background:"rgba(5,5,20,.2)",pointerEvents:"none"}} />}
+</div>);
 
 
   // ===== MAIN GAME RENDER =====
-  return(<div style={{background:"#08091a",minHeight:"100vh",fontFamily:"'Courier New','MS Gothic',monospace",color:"#eee",userSelect:"none",display:"flex",flexDirection:"column"}} tabIndex={0}>
+  return(<div style={{background:"#08091a",height:"100vh",overflow:"hidden",fontFamily:"'Courier New','MS Gothic',monospace",color:"#eee",userSelect:"none",display:"flex",flexDirection:"column"}} tabIndex={0}>
     <style>{`
       @keyframes pxBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
       @keyframes pxWork{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
@@ -780,7 +820,7 @@ function NeonMythosCity(){
           {Object.keys(tierNames).map(t=>(<button key={t} onClick={()=>setRTab(t)} style={{padding:"4px 10px",borderRadius:"8px",border:`1px solid ${rTab===t?"#FFD700":"#333"}`,background:rTab===t?"#FFD70015":"#111",color:rTab===t?"#FFD700":"#777",fontSize:"10px",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>{tierNames[t]}</button>))}
         </div>
         <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(2,1fr)",gap:"6px"}}>
-          {RES_POOL.filter(r=>r.tier===rTab).map(r=>{const hired=recruited.find(x=>x.id===r.id);
+          {RES_POOL.filter(r=>r.tier===rTab).map(r=>{const hired=recruitedIds.has(r.id);
             const cost=r.tier==="champ"?8000:r.tier==="e4"?5000:r.tier==="gym"?3000:2000;
             const spr=ALL_SPRITES[r.spriteId];
             return(<div key={r.id} style={{background:hired?`${r.color}11`:"#0d0d20",border:`1px solid ${r.color}22`,borderRadius:"6px",padding:"8px",display:"flex",gap:"8px",alignItems:"center"}}>
@@ -845,21 +885,31 @@ function NeonMythosCity(){
           ))}
         </div>
         <div style={{flex:1,overflow:"auto",padding:"4px",WebkitOverflowScrolling:"touch"}}>
-          {mobileTab==="map"&&<div style={{overflow:"auto",WebkitOverflowScrolling:"touch"}}><GameMap/></div>}
-          {mobileTab==="info"&&<InfoPanel/>}
-          {mobileTab==="feed"&&<FeedPanel/>}
+          {mobileTab==="map"&&<div style={{overflow:"auto",WebkitOverflowScrolling:"touch"}}>
+            <GameMap TILE={TILE} sky={sky} isMobile={isMobile} hovB={hovB} setHovB={setHovB} phase={phase} all={all} avatar={avatar} sel={sel} setSel={setSel} tick={tick} connections={connections} />
+          </div>}
+          {mobileTab==="info"&&<InfoPanel isMobile={isMobile} sel={sel} all={all} avatar={avatar} tick={tick} agents={agents} setSel={setSel} resi={resi} res={res} tp={tp} />}
+          {mobileTab==="feed"&&<FeedPanel isMobile={isMobile} logs={logs} />}
         </div>
       </div>
     ):(
       // ===== DESKTOP LAYOUT =====
-      <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative"}}>
-        <div style={{width:"280px", borderRight:"1px solid #1a1a3e", padding:"10px", background:"rgba(0,0,0,0.5)"}}>
-           <MarketBoard tick={tick} paused={paused} />
+      <div style={{display:"flex",flex:1,overflow:"hidden",position:"relative",gap:"10px",padding:"10px"}}>
+        {/* Left Column: Ledger */}
+        <div style={{width:"280px", display:"flex", flexDirection:"column", overflow:"hidden"}}>
+          <MarketBoard tick={tick} paused={paused} />
         </div>
-        <div style={{flex:1, display:"flex", padding:"10px", overflow:"hidden", justifyContent:"center"}}>
-           <div style={{width:"fit-content",margin:"0 auto"}}><GameMap/></div>
+        {/* Center Column: Map */}
+        <div style={{flex:1, display:"flex", overflow:"hidden", justifyContent:"center", alignItems:"center"}}>
+           <div style={{width:"fit-content",margin:"0 auto"}}>
+             <GameMap TILE={TILE} sky={sky} isMobile={isMobile} hovB={hovB} setHovB={setHovB} phase={phase} all={all} avatar={avatar} sel={sel} setSel={setSel} tick={tick} connections={connections} />
+           </div>
         </div>
-        {sel && <AgentTerminal c={all.find(x => x.id === sel)} onClose={() => setSel(null)} lang={lang} />}
+        {/* Right Column: Info & Feed */}
+        <div style={{width:"320px", display:"flex", flexDirection:"column", gap:"8px", paddingRight:"4px", overflow:"hidden"}}>
+          <div style={{flexShrink: 0}}><InfoPanel isMobile={isMobile} sel={sel} all={all} avatar={avatar} tick={tick} agents={agents} setSel={setSel} resi={resi} res={res} tp={tp} /></div>
+          <div style={{flex: 1, minHeight: 0, display: "flex", flexDirection: "column"}}><FeedPanel isMobile={isMobile} logs={logs} /></div>
+        </div>
       </div>
     )}
 
