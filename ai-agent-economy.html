@@ -601,16 +601,33 @@ class Agent {
     el.style.setProperty('--agent-color', this.type.color);
     el.style.setProperty('--agent-bg', this.type.bg);
     el.style.setProperty('--glow', this.type.color + '40');
-    el.innerHTML = `
-      <div class="agent-body">${escapeHTML(this.type.icon)}</div>
-      <div class="agent-name">${escapeHTML(this.type.name)}</div>
-      <div class="agent-bar"><div class="agent-bar-fill" style="width:${escapeHTML(this.energy)}%"></div></div>
-      <div class="agent-carry"></div>
-    `;
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'agent-body';
+    bodyEl.textContent = this.type.icon;
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'agent-name';
+    nameEl.textContent = this.type.name;
+
+    const barEl = document.createElement('div');
+    barEl.className = 'agent-bar';
+    const barFillEl = document.createElement('div');
+    barFillEl.className = 'agent-bar-fill';
+    barFillEl.style.width = this.energy + '%';
+    barEl.appendChild(barFillEl);
+
+    const carryEl = document.createElement('div');
+    carryEl.className = 'agent-carry';
+
+    el.appendChild(bodyEl);
+    el.appendChild(nameEl);
+    el.appendChild(barEl);
+    el.appendChild(carryEl);
+
     this.el = el;
-    this.bodyEl = el.querySelector('.agent-body');
-    this.barFill = el.querySelector('.agent-bar-fill');
-    this.carryEl = el.querySelector('.agent-carry');
+    this.bodyEl = bodyEl;
+    this.barFill = barFillEl;
+    this.carryEl = carryEl;
     document.getElementById('agentContainer').appendChild(el);
   }
 
