@@ -158,7 +158,9 @@ const DECO=[{x:5,y:0,e:"🌲"},{x:6,y:0,e:"🌲"},{x:10,y:0,e:"🌲"},{x:16,y:0,
 const ROADS=new Set();
 for(let x=0;x<MAP_W;x++){ROADS.add(`${x},4`);ROADS.add(`${x},5`);ROADS.add(`${x},9`);ROADS.add(`${x},10`);ROADS.add(`${x},14`);ROADS.add(`${x},15`);}
 for(let y=0;y<MAP_H;y++){ROADS.add(`3,${y}`);ROADS.add(`10,${y}`);ROADS.add(`15,${y}`);ROADS.add(`19,${y}`);}
-const getBld=(x,y)=>BUILDINGS.find(b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h);
+const BUILDING_MAP=new Array(MAP_W*MAP_H).fill(undefined);
+for(const b of BUILDINGS){for(let dx=0;dx<b.w;dx++){for(let dy=0;dy<b.h;dy++){BUILDING_MAP[(b.y+dy)*MAP_W+(b.x+dx)]=b;}}}
+const getBld=(x,y)=>(x>=0&&x<MAP_W&&y>=0&&y<MAP_H)?BUILDING_MAP[y*MAP_W+x]:undefined;
 
 // ======= AGENTS =======
 const AGENTS=[
