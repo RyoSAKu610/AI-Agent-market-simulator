@@ -525,6 +525,8 @@ const RESOURCES = [
   { id: 'energy', name: 'エネルギー', icon: '⚡', basePrice: 20, price: 20, color: '#06b6d4' },
 ];
 
+const RESOURCE_MAP = Object.fromEntries(RESOURCES.map(r => [r.id, r]));
+
 const AGENT_TYPES = [
   { role: 'farmer',   name: '農家',     icon: '🧑‍🌾', color: '#10b981', bg: 'rgba(16,185,129,0.15)', produces: 'food',   consumes: 'wood',   speciality: '食料生産' },
   { role: 'miner',    name: '採掘者',   icon: '⛏️',  color: '#f59e0b', bg: 'rgba(245,158,11,0.15)',  produces: 'stone',  consumes: 'food',   speciality: '採掘' },
@@ -673,7 +675,7 @@ class Agent {
         .filter(([,v]) => v > 0)
         .sort(([,a],[,b]) => b - a)[0];
       if (topRes) {
-        const res = RESOURCES.find(r => r.id === topRes[0]);
+        const res = RESOURCE_MAP[topRes[0]];
         this.carryEl.textContent = res ? res.icon : '';
       } else {
         this.carryEl.textContent = '';
@@ -702,7 +704,7 @@ class Agent {
     const theirNeed = RESOURCES.find(r => (other.inventory[r.id] || 0) < 2);
     if (!myRes.length || !theirNeed) return;
 
-    const give = RESOURCES.find(r => r.id === myRes[0][0]);
+    const give = RESOURCE_MAP[myRes[0][0]];
     if (!give || give.id === theirNeed.id) return;
 
     const price = theirNeed.price;
@@ -724,7 +726,7 @@ class Agent {
     this.targetY = this.y + (Math.random() - 0.5) * 200;
 
     // Update prices
-    const res = RESOURCES.find(r => r.id === give.id);
+    const res = RESOURCE_MAP[give.id];
     if (res) {
       res.price = Math.max(2, res.price - 0.5);
     }
@@ -976,16 +978,16 @@ function loop(ts) {
 function applySeasonEffect() {
   const season = seasonIdx;
   if (season === 0) { // Spring - food boom
-    RESOURCES.find(r => r.id === 'food').basePrice *= 0.9;
+    RESOURCE_MAP['food'].basePrice *= 0.9;
     addLog('🌸 春：農作物が豊作！食料価格下落');
   } else if (season === 1) { // Summer - energy high
-    RESOURCES.find(r => r.id === 'energy').basePrice *= 1.1;
+    RESOURCE_MAP['energy'].basePrice *= 1.1;
     addLog('☀️ 夏：エネルギー需要増加！');
   } else if (season === 2) { // Autumn - gold rush
-    RESOURCES.find(r => r.id === 'gold').basePrice *= 1.15;
+    RESOURCE_MAP['gold'].basePrice *= 1.15;
     addLog('🍂 秋：金価格上昇！採掘ラッシュ');
   } else { // Winter - tech investment
-    RESOURCES.find(r => r.id === 'tech').basePrice *= 0.95;
+    RESOURCE_MAP['tech'].basePrice *= 0.95;
     addLog('❄️ 冬：技術投資が活発に');
   }
 }
@@ -1059,8 +1061,8 @@ function triggerCrash() {
 
 function triggerEvent() {
   const events = [
-    { msg: '🌪️ 台風！農地が被害を受けた', fn: () => RESOURCES.find(r=>r.id==='food').basePrice *= 1.3 },
-    { msg: '🔥 鉱山火災！石材が不足', fn: () => RESOURCES.find(r=>r.id==='stone').basePrice *= 1.5 },
+    { msg: '🌪️ 台風！農地が被害を受けた', fn: () => RESOURCE_MAP['food'].basePrice *= 1.3 },
+    { msg: '🔥 鉱山火災！石材が不足', fn: () => RESOURCE_MAP['stone'].basePrice *= 1.5 },
     { msg: '💻 技術革新！効率が向上', fn: () => agents.forEach(a => a.produceCooldown = 0) },
     { msg: '🤝 国際貿易協定！価格安定', fn: () => RESOURCES.forEach(r => r.price = r.basePrice) },
     { msg: '🎊 祭り！消費が増加', fn: () => agents.forEach(a => { a.tradeCooldown = 0; a.wanderTimer = 0; }) },
