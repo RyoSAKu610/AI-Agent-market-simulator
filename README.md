@@ -7,7 +7,7 @@ Play Now
 
 Click the button below to open the HTML demo file in a browser preview service (renders the HTML from the repository):
 
-[![Play NEON MYTHOS](https://img.shields.io/badge/Play%20Now-NEON%20MYTHOS-%2300E5FF?style=for-the-badge&logo=html5)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/docs/neon-mythos-codex-pets.html)
+[![Play NEON MYTHOS](https://img.shields.io/badge/Play%20Now-NEON%20MYTHOS-%2300E5FF?style=for-the-badge&logo=html5)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html)
 
 If you prefer to host the demo via GitHub Pages, enable Pages in the repository settings and set the source to the `docs/` folder on the default branch. Once enabled, the demo will be available at:
 
@@ -26,14 +26,13 @@ Quick preview (no Pages required)
 Use the HTML preview service to open the file directly from the repository:
 
 ```
-https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/docs/neon-mythos-codex-pets.html
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html
 ```
 
 What I changed
 ---------------
-- Added `docs/neon-mythos-codex-pets.html` (the demo HTML you provided).
-- I will add `docs/index.html` (redirect) and a Pages workflow so this demo can be published via GitHub Pages.
+- Updated the Play Now badge link to open `NeonMythosCity_Start.html` via htmlpreview.github.io so anyone can preview the demo in the browser instantly.
 
 Cleanup
 -------
-I did not remove any files. If you want unused files moved into an `archive/` folder (safe cleanup), tell me which paths to move or I can propose a candidate list.
+I created an `archive/` folder (archive/README.md) to collect legacy files and large assets. I did not remove any root files. If you want, I can safely move unused files into `archive/` (or delete them) in a follow-up commit — tell me which paths you want moved or removed.
