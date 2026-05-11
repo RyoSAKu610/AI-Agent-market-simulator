@@ -5,9 +5,11 @@ Play the interactive NEON MYTHOS demo directly from this repository.
 Play Now
 --------
 
-Click the button below to open the HTML demo file in a browser preview service (renders the HTML from the repository):
+Click one of the buttons below to open the HTML demo file in a browser preview service (renders the HTML from the repository):
 
-[![Play NEON MYTHOS](https://img.shields.io/badge/Play%20Now-NEON%20MYTHOS-%2300E5FF?style=for-the-badge&logo=html5)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html)
+[![Play NEON MYTHOS (htmlpreview)](https://img.shields.io/badge/Play%20Now-NEON%20MYTHOS-%2300E5FF?style=for-the-badge&logo=html5)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html)
+
+[![Play NEON MYTHOS (githack)](https://img.shields.io/badge/Play%20Now%20%28githack%29-NEON%20MYTHOS-%2300E5FF?style=for-the-badge&logo=html5)](https://raw.githack.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html)
 
 If you prefer to host the demo via GitHub Pages, enable Pages in the repository settings and set the source to the `docs/` folder on the default branch. Once enabled, the demo will be available at:
 
@@ -23,15 +25,21 @@ Setup (GitHub Pages)
 
 Quick preview (no Pages required)
 ---------------------------------
-Use the HTML preview service to open the file directly from the repository:
+Use either preview service to open the file directly from the repository:
 
 ```
 https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html
 ```
 
+or
+
+```
+https://raw.githack.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html
+```
+
 What I changed
 ---------------
-- Updated the Play Now badge link to open `NeonMythosCity_Start.html` via htmlpreview.github.io so anyone can preview the demo in the browser instantly.
+- Added an alternate preview link (githack) alongside the existing htmlpreview badge. Some browsers or network conditions can cause htmlpreview to fail; githack is often more reliable for quickly previewing HTML from a repo.
 
 Cleanup
 -------
