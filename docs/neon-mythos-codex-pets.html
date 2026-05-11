@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#08091a">
+  <title>⚔ NEON MYTHOS</title>
+  <style>
+    /* Google Fonts with local fallback */
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #08091a;
+      overflow: hidden;
+      -webkit-text-size-adjust: 100%;
+      touch-action: manipulation;
+    }
+    #root { width: 100%; height: 100svh; overflow: hidden; }
+
+    /* ── Loading Screen ──────────────────────────────── */
+    #nm-loading {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #08091a;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+    }
+    .nm-logo {
+      font-size: clamp(22px, 6vw, 36px); font-weight: 900; letter-spacing: 6px;
+      background: linear-gradient(90deg, #FF69B4, #00E5FF, #FFD700);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      font-family: monospace; animation: nmPulse 2s infinite;
+    }
+    .nm-bar-wrap { width: min(260px, 70vw); height: 4px; background: #1a1a3e; border-radius: 4px; overflow: hidden; }
+    .nm-bar {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #00E5FF, #FFD700, #FF69B4);
+      border-radius: 4px; animation: nmLoad 1.2s ease forwards;
+    }
+    .nm-sub { font-size: 11px; color: #445; font-family: monospace; letter-spacing: 2px; }
+    .nm-dots { display: flex; gap: 6px; }
+    .nm-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      animation: nmDot 1.2s infinite;
+    }
+    @keyframes nmLoad { 0%{width:0%} 100%{width:100%} }
+    @keyframes nmPulse { 0%,100%{opacity:1} 50%{opacity:.65} }
+    @keyframes nmDot {
+      0%,80%,100%{transform:scale(0);opacity:.3}
+      40%{transform:scale(1);opacity:1}
+    }
+
+    /* ── Error Screen ────────────────────────────────── */
+    #nm-error {
+      display: none; position: fixed; inset: 0; z-index: 10000;
+      background: #08091a; color: #FF4444;
+      align-items: center; justify-content: center; flex-direction: column;
+      gap: 12px; font-family: monospace; padding: 24px; text-align: center;
+    }
+
+    /* ── Global UX ───────────────────────────────────── */
+    button {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
+    }
+    button:active { opacity: 0.75; transform: scale(0.96); }
+
+    /* Safe area (iPhone notch/home bar) */
+    @supports (padding: env(safe-area-inset-bottom)) {
+      body { padding-bottom: env(safe-area-inset-bottom); }
+    }
+    .qte-tap-btn { min-height: 56px; font-size: 20px !important; letter-spacing: 2px; }
+    @media (max-width: 640px) {
+      .qte-tap-btn { min-height: 72px !important; font-size: 24px !important; }
+    }
+    ::-webkit-scrollbar { width: 3px; height: 3px; }
+    ::-webkit-scrollbar-track { background: #0a0a1a; }
+    ::-webkit-scrollbar-thumb { background: #2a2a4e; border-radius: 2px; }
+    @media (max-width: 640px) { ::-webkit-scrollbar { display: none; } }
+  </style>
+
+  <!-- ═══════════════════════════════════════════════
+       VISUAL BOOST LAYER — NEON MYTHOS ENHANCED
+  ═══════════════════════════════════════════════ -->
+  <style>
+    /* ── Enhanced Fonts ───────────────────────────── */
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Exo+2:ital,wght@0,300;0,600;0,900;1,300&display=swap');
+
+    /* ── Global Glow Theme ───────────────────────── */
+    :root {
+      --neon-cyan:    #00E5FF;
+      --neon-pink:    #FF69B4;
+      --neon-gold:    #FFD700;
+      --neon-green:   #00FF88;
+      --neon-violet:  #BF5FFF;
+      --neon-orange:  #FF6B35;
+      --bg-deep:      #05060f;
+    }
+
+    html, body { background: var(--bg-deep) !important; }
+
+    /* ── Particle canvas (behind everything) ───── */
+    #nm-particle-canvas {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── CRT scanline overlay ───────────────────── */
+    #nm-scanlines {
+      position: fixed; inset: 0; z-index: 9998;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      animation: nm-scanroll 12s linear infinite;
+    }
+    @keyframes nm-scanroll {
+      from { background-position: 0 0; }
+      to   { background-position: 0 100vh; }
+    }
+
+    /* ── Chromatic aberration on body ──────────── */
+    #root {
+      position: relative; z-index: 1;
+    }
+
+    /* ── Corner ambient glow blobs ──────────────── */
+    #nm-glow-tl, #nm-glow-br, #nm-glow-tr, #nm-glow-bl {
+      position: fixed; pointer-events: none; z-index: 0; border-radius: 50%;
+      filter: blur(80px); opacity: .18;
+      animation: nm-breathe 6s ease-in-out infinite;
+    }
+    #nm-glow-tl {
+      width: 320px; height: 320px; top: -80px; left: -80px;
+      background: var(--neon-cyan);
+      animation-delay: 0s;
+    }
+    #nm-glow-tr {
+      width: 280px; height: 280px; top: -60px; right: -60px;
+      background: var(--neon-violet);
+      animation-delay: 1.5s;
+    }
+    #nm-glow-br {
+      width: 360px; height: 360px; bottom: -100px; right: -100px;
+      background: var(--neon-pink);
+      animation-delay: 3s;
+    }
+    #nm-glow-bl {
+      width: 250px; height: 250px; bottom: -60px; left: -60px;
+      background: var(--neon-green);
+      animation-delay: 4.5s;
+    }
+    @keyframes nm-breathe {
+      0%, 100% { opacity: .14; transform: scale(1); }
+      50%       { opacity: .26; transform: scale(1.12); }
+    }
+
+    /* ── Enhanced loading screen ─────────────────── */
+    #nm-loading {
+      background: radial-gradient(ellipse at 50% 40%, #0d1128 0%, #05060f 70%) !important;
+    }
+    .nm-logo {
+      font-family: 'Orbitron', monospace !important;
+      font-size: clamp(28px, 8vw, 52px) !important;
+      font-weight: 900 !important;
+      letter-spacing: 10px !important;
+      background: linear-gradient(90deg, var(--neon-pink) 0%, var(--neon-cyan) 45%, var(--neon-gold) 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      filter: drop-shadow(0 0 18px rgba(0,229,255,.6));
+      animation: nmPulse 2s infinite, nm-logo-glow 3s ease-in-out infinite !important;
+    }
+    @keyframes nm-logo-glow {
+      0%, 100% { filter: drop-shadow(0 0 14px rgba(0,229,255,.5)); }
+      50%       { filter: drop-shadow(0 0 28px rgba(255,105,180,.8)) drop-shadow(0 0 50px rgba(0,229,255,.4)); }
+    }
+    .nm-bar-wrap {
+      width: min(340px, 80vw) !important;
+      height: 6px !important;
+      background: rgba(26,26,62,.8) !important;
+      border: 1px solid #1a1a4e !important;
+      border-radius: 6px !important;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,229,255,.2);
+    }
+    .nm-bar {
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-violet), var(--neon-pink)) !important;
+      box-shadow: 0 0 10px rgba(0,229,255,.8), 0 0 20px rgba(191,95,255,.4) !important;
+    }
+    .nm-sub {
+      color: #556699 !important; font-family: 'Share Tech Mono', monospace !important;
+      letter-spacing: 4px !important; font-size: 12px !important;
+    }
+    .nm-dot {
+      box-shadow: 0 0 6px currentColor;
+    }
+
+    /* ── Scrollbar glow ──────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: #06060e; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--neon-cyan), var(--neon-violet));
+      border-radius: 4px;
+      box-shadow: 0 0 4px rgba(0,229,255,.5);
+    }
+
+    /* ── Button micro-interactions ───────────────── */
+    button {
+      transition: box-shadow .15s ease, transform .1s ease, opacity .1s ease !important;
+    }
+    button:hover {
+      box-shadow: 0 0 8px rgba(0,229,255,.35) !important;
+    }
+    button:active {
+      transform: scale(0.94) !important;
+      opacity: .75 !important;
+    }
+
+    /* ── Neon text shimmer on headings ───────────── */
+    @keyframes nm-shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position:  200% center; }
+    }
+
+    /* ── Floating data-mote particles ───────────── */
+    @keyframes nm-mote-float {
+      0%   { transform: translateY(0) scale(1);   opacity: .7; }
+      50%  { transform: translateY(-18px) scale(1.3); opacity: 1; }
+      100% { transform: translateY(-36px) scale(.7); opacity: 0; }
+    }
+
+    /* ── QTE panel enhanced flash ───────────────── */
+    @keyframes nm-qte-flash {
+      0%, 100% { box-shadow: 0 0 20px rgba(255,100,50,.4); }
+      50%       { box-shadow: 0 0 60px rgba(255,100,50,.9), inset 0 0 30px rgba(255,100,50,.15); }
+    }
+
+    /* ── Pixel sprite extra glow ─────────────────── */
+    canvas { image-rendering: pixelated; }
+
+    /* ── Vignette frame ──────────────────────────── */
+    #nm-vignette {
+      position: fixed; inset: 0; z-index: 9997; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 50%,
+        transparent 55%,
+        rgba(0,0,0,.55) 100%
+      );
+    }
+
+    /* ── Ticker strip enhanced ───────────────────── */
+    @keyframes nm-ticker-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── Holographic grid shimmer on hover ───────── */
+    #nm-holograph {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,229,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: nm-grid-pulse 8s ease-in-out infinite;
+    }
+    @keyframes nm-grid-pulse {
+      0%, 100% { opacity: .6; }
+      50%       { opacity: 1; }
+    }
+
+    /* ── Data stream columns (Matrix rain) ──────── */
+    #nm-datastream-canvas {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .04;
+    }
+  </style>
+
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="nm-loading">
+    <div class="nm-logo">⚔ NEON MYTHOS</div>
+    <div class="nm-dots" id="nm-dots"></div>
+    <div class="nm-bar-wrap"><div class="nm-bar"></div></div>
+    <div class="nm-sub" id="nm-status">INITIALIZING...</div>
+  </div>
+
+  <!-- Error Screen -->
+  <div id="nm-error">
+    <div style="font-size:36px">⚠</div>
+    <div style="font-size:16px;font-weight:bold">SYSTEM ERROR</div>
+    <div id="nm-err-msg" style="font-size:12px;color:#888;max-width:360px;margin-top:4px"></div>
+    <button onclick="location.reload()" style="margin-top:16px;padding:12px 28px;background:#FF444422;border:2px solid #FF4444;color:#FF4444;border-radius:8px;font-family:monospace;font-size:14px">↺ RETRY</button>
+  </div>
+
+  <!-- App Root -->
+  <div id="root"></div>
+
+  <!-- ① React 18 (inlined — no CDN needed) -->
+  <script>
+/**
+ * @license React
+ * react.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+(function(){'use strict';(function(c,x){"object"===typeof exports&&"undefined"!==typeof module?x(exports):"function"===typeof define&&define.amd?define(["exports"],x):(c=c||self,x(c.React={}))})(this,function(c){function x(a){if(null===a||"object"!==typeof a)return null;a=V&&a[V]||a["@@iterator"];return"function"===typeof a?a:null}function w(a,b,e){this.props=a;this.context=b;this.refs=W;this.updater=e||X}function Y(){}function K(a,b,e){this.props=a;this.context=b;this.refs=W;this.updater=e||X}function Z(a,b,
