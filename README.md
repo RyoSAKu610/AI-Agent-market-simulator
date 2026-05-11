@@ -1,58 +1,39 @@
-# Neon Mythos City / AI Agent Market Simulator
+# AI-Agent-market-simulator
 
-Welcome to **Neon Mythos City**, a 21st-century AI agent economy and market simulation game!  
-Experience a real-time, high-contrast dashboard visualization of an Agent-to-Agent (A2A) network with live transaction ledgers — now with **Solana / x402 payment integration** via Phantom Wallet.
+Play the interactive NEON MYTHOS demo directly from this repository.
 
----
+Play Now
+--------
 
-## 🎥 Demo Video
+Click the button below to open the HTML demo file in a browser preview service (renders the HTML from the repository):
 
-You can download or view the 40-second demo video by clicking this link:  
-[Download/View Demo Video](assets/final_demo.mp4)  
-(or by navigating to the `assets/final_demo.mp4` file in this repository).
+[![Play NEON MYTHOS](https://img.shields.io/badge/Play%20Now-NEON%20MYTHOS-%2300E5FF?style=for-the-badge&logo=html5)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/docs/neon-mythos-codex-pets.html)
 
----
+If you prefer to host the demo via GitHub Pages, enable Pages in the repository settings and set the source to the `docs/` folder on the default branch. Once enabled, the demo will be available at:
 
-## 🚀 Quick Start
+```
+https://RyoSAKu610.github.io/AI-Agent-market-simulator/
+```
 
-The easiest way to play is to open the game directly in your browser.  
-Since it's a standalone HTML file, you don't need to install any servers or dependencies!
+Setup (GitHub Pages)
+-------------------
+1. Go to the repository Settings → Pages.
+2. Under "Source", select the default branch (e.g. `main`) and the `/docs` folder.
+3. Save — GitHub will build and publish the site. It may take a few minutes.
 
-### Option 1: One-Click Play (HTML Preview)
+Quick preview (no Pages required)
+---------------------------------
+Use the HTML preview service to open the file directly from the repository:
 
-Click the button below to instantly load and play the game in your browser using an HTML previewer:
+```
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/docs/neon-mythos-codex-pets.html
+```
 
-[![▶ Play Neon Mythos City](https://img.shields.io/badge/%E2%96%B6%20Play%20Now-Neon%20Mythos%20City-00e676?style=for-the-badge&logo=html5&logoColor=white)](https://htmlpreview.github.io/?https://github.com/RyoSAKu610/AI-Agent-market-simulator/blob/main/x402.html)
+What I changed
+---------------
+- Added `docs/neon-mythos-codex-pets.html` (the demo HTML you provided).
+- I will add `docs/index.html` (redirect) and a Pages workflow so this demo can be published via GitHub Pages.
 
-> **Note:** If the link above does not work, you can also set up GitHub Pages for this repository to serve the HTML file directly!
-
----
-
-### Option 2: Download and Run Locally
-
-If you want to run it on your own machine without an internet connection (after initial load), or if you want to modify the code:
-
-1. **Download the file:** Click on `x402.html` in this repository, click **"Raw"**, and save it to your computer.
-2. **Open in Browser:** Simply double-click the downloaded `.html` file, or drag and drop it into any modern web browser (Chrome, Firefox, Safari, Edge).
-
----
-
-## 🎮 Features
-
-- **Real-time AI Agents:** Watch agents navigate the city, interact with buildings, and perform tasks.
-- **Live Market Ledger:** A scrolling, real-time "Bloomberg Terminal" style feed of simulated A2A economy transactions (BUY, SELL, SWAP, FEE).
-- **High-Contrast Dashboard:** Clean, modern Sans-Serif fonts for hard metrics juxtaposed with charming retro pixel art.
-- **Progressive Disclosure:** Hover over agents or click on them to reveal deeper statistics and real-time reasoning logs.
-- **Random Events & QTEs:** React quickly to dimensional rifts, market crashes, and bandit attacks!
-- **Solana / x402 Payments:** Connect your Phantom Wallet, pay with USDC on Devnet, and unlock premium agent analytics.
-
----
-
-## 🛠 Tech Stack
-
-- **React 18** (Loaded via CDN)
-- **Babel** (In-browser JSX compilation)
-- **Solana Web3.js** — on-chain wallet balance & transaction signing
-- **Phantom Wallet** — Solana wallet integration
-- **x402 Protocol** — HTTP-native micropayment flow for premium data
-- **Single HTML File:** Everything (HTML, CSS, JS) is bundled into one easy-to-share file. No build steps required!
+Cleanup
+-------
+I did not remove any files. If you want unused files moved into an `archive/` folder (safe cleanup), tell me which paths to move or I can propose a candidate list.
