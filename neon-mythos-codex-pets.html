@@ -1436,6 +1436,22 @@ const CODEX_PETS = {
       review: { row: 8, frames: 6, fps: 6 }
     }
   },
+  kitsune: {
+    src: "character-pets/kitsune-x/spritesheet.webp",
+    cellW: 192,
+    cellH: 208,
+    animations: {
+      idle: { row: 0, frames: 6, fps: 6 },
+      runningRight: { row: 1, frames: 8, fps: 10 },
+      runningLeft: { row: 2, frames: 8, fps: 10 },
+      waving: { row: 3, frames: 4, fps: 6 },
+      jumping: { row: 4, frames: 5, fps: 8 },
+      failed: { row: 5, frames: 8, fps: 8 },
+      waiting: { row: 6, frames: 6, fps: 6 },
+      running: { row: 7, frames: 6, fps: 8 },
+      review: { row: 8, frames: 6, fps: 6 }
+    }
+  },
   neon: {
     src: "character-pets/neon/spritesheet.webp",
     cellW: 192,
@@ -1451,15 +1467,65 @@ const CODEX_PETS = {
       running: { row: 7, frames: 6, fps: 8 },
       review: { row: 8, frames: 6, fps: 6 }
     }
+  },
+  lira: {
+    src: "character-pets/lira/spritesheet.webp",
+    cellW: 192,
+    cellH: 208,
+    animations: {
+      idle: { row: 0, frames: 6, fps: 6 },
+      runningRight: { row: 1, frames: 8, fps: 10 },
+      runningLeft: { row: 2, frames: 8, fps: 10 },
+      waving: { row: 3, frames: 4, fps: 6 },
+      jumping: { row: 4, frames: 5, fps: 8 },
+      failed: { row: 5, frames: 8, fps: 8 },
+      waiting: { row: 6, frames: 6, fps: 6 },
+      running: { row: 7, frames: 6, fps: 8 },
+      review: { row: 8, frames: 6, fps: 6 }
+    }
+  },
+  goldjack: {
+    src: "character-pets/gold-jack/spritesheet.webp",
+    cellW: 192,
+    cellH: 208,
+    animations: {
+      idle: { row: 0, frames: 6, fps: 6 },
+      runningRight: { row: 1, frames: 8, fps: 10 },
+      runningLeft: { row: 2, frames: 8, fps: 10 },
+      waving: { row: 3, frames: 4, fps: 6 },
+      jumping: { row: 4, frames: 5, fps: 8 },
+      failed: { row: 5, frames: 8, fps: 8 },
+      waiting: { row: 6, frames: 6, fps: 6 },
+      running: { row: 7, frames: 6, fps: 8 },
+      review: { row: 8, frames: 6, fps: 6 }
+    }
   }
 };
-const getCodexPetAnimation = (pet, state, expression) => {
+const getCodexPetAnimation = (pet, state, expression, spriteId) => {
   if (!pet) return null;
-  if (expression === "joy") return pet.animations.waving;
-  if (expression === "worried" || expression === "sleepy") return pet.animations.failed;
-  if (state === "walk") return pet.animations.runningRight;
-  if (state === "work") return pet.animations.review;
-  return pet.animations.idle;
+  const a = pet.animations;
+  const fallback = a.idle;
+  if (expression === "joy") return a.waving || fallback;
+  if (expression === "worried") return a.failed || fallback;
+  if (expression === "sleepy") return a.waiting || a.failed || fallback;
+  if (state === "walk") return a.runningRight || fallback;
+  if (state === "work") {
+    const activeLoop = {
+      lira: a.running,
+      kitsune: a.running,
+      neon: a.running,
+      goldjack: a.running,
+      eyevoid: a.review,
+      pixel: a.running
+    }[spriteId];
+    return activeLoop || a.review || a.running || fallback;
+  }
+  return a.waiting || fallback;
+};
+const getCodexPetFrame = (tick, animation) => {
+  if (!animation) return 0;
+  const step = Math.max(1, Math.round(12 / (animation.fps || 6)));
+  return Math.floor(tick / step) % animation.frames;
 };
 const MATERIAL_PORTRAITS = {
   sage: { image: "character-assets/sage-boy.png", zoom: "250%", x: "52%", y: "14%" },
@@ -1559,7 +1625,7 @@ function CutIn({
       transformOrigin: "50% 100%",
       backgroundImage: `url('${pet.src}')`,
       backgroundRepeat: "no-repeat",
-      backgroundPosition: `-${Math.floor(t / 2) % petAnimation.frames * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
+      backgroundPosition: `-${getCodexPetFrame(t, petAnimation) * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
       imageRendering: "pixelated",
       filter: `drop-shadow(0 0 14px ${spec.color})`
     }
@@ -1726,8 +1792,8 @@ const PixelChar = ({
   const material = pet ? null : MATERIAL_PORTRAITS[spriteId];
   if (!spr && !pet && !material) return null;
   const frame = state === "walk" && t % 4 < 2 ? "walk" : "idle";
-  const petAnimation = getCodexPetAnimation(pet, state, expression);
-  const petFrame = petAnimation ? Math.floor(t / 2) % petAnimation.frames : 0;
+  const petAnimation = getCodexPetAnimation(pet, state, expression, spriteId);
+  const petFrame = petAnimation ? getCodexPetFrame(t, petAnimation) : 0;
   const spec = specialty ? SPECIALTIES[specialty] : null;
   const txHash = useMemo(() => "0x" + Math.random().toString(16).substr(2, 8) + "...", []);
   const glowFilter = isSpecialtyActive && spec ? `drop-shadow(0 0 6px ${spec.color}) drop-shadow(0 0 12px ${spec.color})` : isSelected ? `drop-shadow(0 0 4px ${color})` : "none";
@@ -3876,7 +3942,7 @@ function NeonMythosCity() {
           transformOrigin: "50% 100%",
           backgroundImage: `url('${pet.src}')`,
           backgroundRepeat: "no-repeat",
-          backgroundPosition: `-${Math.floor(tick / 2) % petAnimation.frames * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
+          backgroundPosition: `-${getCodexPetFrame(tick, petAnimation) * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
           imageRendering: "pixelated",
           filter: `drop-shadow(0 0 6px ${r.color}88)`
         }
@@ -4320,7 +4386,7 @@ function NeonMythosCity() {
           transformOrigin: "50% 100%",
           backgroundImage: `url('${pet.src}')`,
           backgroundRepeat: "no-repeat",
-          backgroundPosition: `-${Math.floor(tick / 2) % petAnimation.frames * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
+          backgroundPosition: `-${getCodexPetFrame(tick, petAnimation) * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
           imageRendering: "pixelated",
           filter: c.specActive && spec ? `brightness(1.3) drop-shadow(0 0 4px ${spec.color})` : "none"
         }
@@ -4841,7 +4907,7 @@ function NeonMythosCity() {
     if (!c) return null;
     const pet = CODEX_PETS[c.spriteId];
     const material = pet ? null : MATERIAL_PORTRAITS[c.spriteId];
-    const petAnimation = pet ? getCodexPetAnimation(pet, c.state, c.expression) : null;
+    const petAnimation = pet ? getCodexPetAnimation(pet, c.state, c.expression, c.spriteId) : null;
     const spec = c.specialty ? SPECIALTIES[c.specialty] : null;
     const face = c.expression === "joy" ? "≧▽≦" : c.expression === "focus" ? "◕_◕" : c.expression === "worried" ? "•́︿•̀" : "•ᴗ•";
     return /*#__PURE__*/React.createElement("div", {
@@ -4902,7 +4968,7 @@ function NeonMythosCity() {
         transformOrigin: "50% 100%",
         backgroundImage: `url('${pet.src}')`,
         backgroundRepeat: "no-repeat",
-        backgroundPosition: `-${Math.floor(tick / 2) % petAnimation.frames * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
+        backgroundPosition: `-${getCodexPetFrame(tick, petAnimation) * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
         imageRendering: "pixelated",
         filter: `drop-shadow(0 0 10px ${c.color}88)`
       }
@@ -5257,7 +5323,7 @@ function NeonMythosCity() {
         transformOrigin: "50% 100%",
         backgroundImage: `url('${pet.src}')`,
         backgroundRepeat: "no-repeat",
-        backgroundPosition: `-${Math.floor(tick / 2) % petAnimation.frames * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
+        backgroundPosition: `-${getCodexPetFrame(tick, petAnimation) * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
         imageRendering: "pixelated"
       }
     }) : material ? /*#__PURE__*/React.createElement("div", {
