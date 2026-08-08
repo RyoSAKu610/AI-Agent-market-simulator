@@ -9,17 +9,26 @@ Play Now
 
 Every build is live on GitHub Pages — click a button to play, no install required.
 
-[![Play Neon Mythos City](https://img.shields.io/badge/PLAY-NEON%20MYTHOS%20CITY-00E5FF?style=for-the-badge&logo=html5&logoColor=white)](https://ryosaku610.github.io/AI-Agent-market-simulator/)
+[![Play Neon Mythos](https://img.shields.io/badge/PLAY-NEON%20MYTHOS-00E5FF?style=for-the-badge&logo=html5&logoColor=white)](https://ryosaku610.github.io/AI-Agent-market-simulator/)
 
-[![Play Codex Pets](https://img.shields.io/badge/PLAY-CODEX%20PETS-FF1493?style=for-the-badge&logo=html5&logoColor=white)](https://ryosaku610.github.io/AI-Agent-market-simulator/neon-mythos-codex-pets.html)
+[![Play Districts build](https://img.shields.io/badge/PLAY-DISTRICTS%20%2B%20BGM-FF1493?style=for-the-badge&logo=musicbrainz&logoColor=white)](https://ryosaku610.github.io/AI-Agent-market-simulator/neon-mythos-districts.html)
 
 [![Play x402 build](https://img.shields.io/badge/PLAY-x402%20%2F%20SOLANA-9945FF?style=for-the-badge&logo=solana&logoColor=white)](https://ryosaku610.github.io/AI-Agent-market-simulator/NeonMythosCity_Start.html)
 
+### Main builds
+
 | Button | Path | What it is |
 | --- | --- | --- |
-| NEON MYTHOS CITY | [`/`](https://ryosaku610.github.io/AI-Agent-market-simulator/) | City simulation with the CSS pixel-sprite cast |
-| CODEX PETS | [`/neon-mythos-codex-pets.html`](https://ryosaku610.github.io/AI-Agent-market-simulator/neon-mythos-codex-pets.html) | 14 agents rendered from the drawn character art, 6 languages |
-| x402 / SOLANA | [`/NeonMythosCity_Start.html`](https://ryosaku610.github.io/AI-Agent-market-simulator/NeonMythosCity_Start.html) | City simulation plus the Solana / x402 payment layer |
+| NEON MYTHOS | [`/`](https://ryosaku610.github.io/AI-Agent-market-simulator/) | Full-colour tile city — building skins, parks, canals, crosswalks, elevation, street props, deal cut-ins. 14 agents in drawn art, 6 languages, BGM. |
+| DISTRICTS + BGM | [`/neon-mythos-districts.html`](https://ryosaku610.github.io/AI-Agent-market-simulator/neon-mythos-districts.html) | Dark neon variant — city districts, enterable building interiors, character spotlight cut-ins, and a 4-track BGM player with select / random / volume. |
+| x402 / SOLANA | [`/NeonMythosCity_Start.html`](https://ryosaku610.github.io/AI-Agent-market-simulator/NeonMythosCity_Start.html) | City simulation plus the Solana / x402 payment layer. |
+
+### Earlier builds (kept for reference)
+
+| Path | What it is |
+| --- | --- |
+| [`/neon-mythos-codex-pets.html`](https://ryosaku610.github.io/AI-Agent-market-simulator/neon-mythos-codex-pets.html) | First Codex Pets build — drawn character art, no tile city or BGM |
+| [`/neon-mythos-city.html`](https://ryosaku610.github.io/AI-Agent-market-simulator/neon-mythos-city.html) | Original city sim, CSS pixel sprites only (was the site root) |
 
 Deployment (GitHub Pages)
 -------------------------
@@ -51,9 +60,9 @@ backend — is still open work.
 
 Character assets
 ----------------
-`neon-mythos-codex-pets.html` loads all character art through relative paths.
-These folders must stay at the repository root, and must not be renamed or moved
-unless the paths inside the HTML are updated too:
+The builds load all character art and audio through relative paths. These folders
+must stay at the repository root, and must not be renamed or moved unless the
+paths inside the HTML are updated too:
 
 | Folder | Contents |
 | --- | --- |
@@ -61,6 +70,7 @@ unless the paths inside the HTML are updated too:
 | `character-pets/` | Codex pets: SAGE-BOY, DRONE-TAN, YAMI-NEKO, EYE-VOID, PIXEL, LIRA, KITSUNE-X, NEON, GOLD-JACK (`pet.json` + `spritesheet.webp`) |
 | `pet-portable-bundle/` | Main pets: KANE-KAMI, ZERO, NEGO-CHAN, 404-HUMAN |
 | `lumen-export/` | ORACLE-01 |
+| `music/` | BGM — `neon-myths-english.mp3` (used by `/`), plus `bgm-dropbox`, `city-loop`, `pynchon` for the Districts player |
 
 Pet spritesheets use the Codex atlas layout: 1536×1872, 192×208 cells, 8 columns,
 9 animation rows (idle, running-right, running-left, waving, jumping, failed,

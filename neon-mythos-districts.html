@@ -616,7 +616,6 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   (function() {
     var colors = ["#FF69B4","#00E5FF","#FFD700","#00FF88","#BF40FF"];
     var dots = document.getElementById("nm-dots");
-    if (!dots) return;
     for (var i = 0; i < 5; i++) {
       var d = document.createElement("div");
       d.className = "nm-dot";
@@ -631,11 +630,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   <script>
   (function() {
     try {
-      var bootStatus = document.getElementById("nm-status");
-      if (bootStatus) bootStatus.textContent = "LOADING CITY DATA...";
-      if (!window.React || !window.ReactDOM) {
-        throw new Error("React runtime did not initialize.");
-      }
+      document.getElementById("nm-status").textContent = "LOADING CITY DATA...";
 
 const {
   useState,
@@ -672,6 +667,65 @@ const LANG_LIST = [{
   code: 'fr',
   label: 'Français',
   flag: '🇫🇷'
+}];
+const MUSIC_TRACKS = [{
+  id: "neon-myths-english",
+  title: "Neon-myths English",
+  artist: "Main Theme",
+  mood: "main theme / language start",
+  src: "music/neon-myths-english.mp3",
+  license: "CC0 / original by monokuma",
+  duration: 172.464,
+  mainTheme: true
+}, {
+  id: "bgm-dropbox",
+  title: "BGM Dropbox",
+  artist: "Main Theme",
+  mood: "main theme / city loop",
+  src: "music/bgm-dropbox.mp3",
+  license: "CC0 / original by monokuma",
+  duration: 183.384,
+  mainTheme: true
+}, {
+  id: "synthwave-house",
+  title: "Synthwave House Loop",
+  artist: "Fupi",
+  mood: "neon city idle",
+  src: "music/synthwavehouse.ogg",
+  license: "CC0 / OpenGameArt",
+  duration: 50.526
+}, {
+  id: "city-loop",
+  title: "City Loop",
+  artist: "wipics",
+  mood: "upbeat night market",
+  src: "music/city-loop.mp3",
+  license: "CC0 / Public Domain",
+  duration: 56.425
+}, {
+  id: "pynchon",
+  title: "PYNCHON",
+  artist: "cinameng",
+  mood: "cyberpunk data stream",
+  src: "music/pynchon.mp3",
+  license: "CC0 / OpenGameArt",
+  duration: 32.836
+}, {
+  id: "flowerbed-fields",
+  title: "Flowerbed Fields",
+  artist: "Zane Little Music",
+  mood: "cute pet plaza",
+  src: "music/flowerbed_fields.ogg",
+  license: "CC0 / OpenGameArt",
+  duration: 105.931
+}, {
+  id: "chiptune-chops",
+  title: "Chiptune Chops",
+  artist: "Eldritch Grim",
+  mood: "pixel work loop",
+  src: "music/chiptune-loop.wav",
+  license: "CC0 / attribution not required",
+  duration: 14.439
 }];
 const I18N = {
   en: {
@@ -1098,15 +1152,6 @@ const PX = 3,
   TICK_MS = 170,
   DAY_TICKS = 350,
   QTE_MS = 300000;
-const DEAL_CUTIN_MS = 2800,
-  DEAL_CONNECTION_TICKS = 20,
-  DEAL_CONNECTION_LIMIT = 4,
-  DEAL_FIRST_DELAY_MS = 18000,
-  DEAL_FIRST_JITTER_MS = 14000,
-  DEAL_INTERVAL_MIN_MS = 30000,
-  DEAL_INTERVAL_JITTER_MS = 22000,
-  DEAL_RETRY_MIN_MS = 9000,
-  DEAL_RETRY_JITTER_MS = 8000;
 const useIsMobile = () => {
   const [m, setM] = useState(typeof window !== "undefined" && window.innerWidth < 640);
   useEffect(() => {
@@ -1850,263 +1895,6 @@ function CutIn({
   }, t[spec.cutKey])));
 }
 
-function MangaPortrait({
-  char,
-  tick,
-  side
-}) {
-  const pet = CODEX_PETS[char.spriteId];
-  const material = pet ? null : MATERIAL_PORTRAITS[char.spriteId];
-  const petAnimation = pet ? getCodexPetAnimation(pet, "work", char.expression || "focus", char.spriteId) : null;
-  return /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "relative",
-      height: "100%",
-      minHeight: 150,
-      border: `3px solid ${char.color}`,
-      background: `radial-gradient(circle at 50% 72%, ${char.color}33, transparent 45%), linear-gradient(135deg, #05070f, #11172c)`,
-      boxShadow: `0 0 24px ${char.color}55, inset 0 0 0 2px #ffffff16`,
-      overflow: "hidden",
-      clipPath: side === "left" ? "polygon(0 0, 92% 0, 100% 100%, 0 100%)" : "polygon(8% 0, 100% 0, 100% 100%, 0 100%)"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "absolute",
-      inset: 0,
-      background: "repeating-radial-gradient(circle at 50% 55%, rgba(255,255,255,.2) 0 1px, transparent 1px 7px)",
-      opacity: .18
-    }
-  }), pet ? /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "absolute",
-      left: "50%",
-      bottom: -18,
-      width: pet.cellW,
-      height: pet.cellH,
-      transform: "translateX(-50%) scale(.78)",
-      transformOrigin: "50% 100%",
-      backgroundImage: `url('${pet.src}')`,
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: `-${getCodexPetFrame(tick, petAnimation) * pet.cellW}px -${petAnimation.row * pet.cellH}px`,
-      imageRendering: "auto",
-      filter: `drop-shadow(0 0 16px ${char.color})`
-    }
-  }) : material ? /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "absolute",
-      left: "50%",
-      top: 10,
-      width: "76%",
-      height: "78%",
-      transform: "translateX(-50%)",
-      borderRadius: "46% 46% 38% 38%",
-      backgroundColor: "#05070f",
-      backgroundImage: `url('${material.image}')`,
-      backgroundRepeat: "no-repeat",
-      backgroundSize: `${material.zoom} auto`,
-      backgroundPosition: `${material.x} ${material.y}`,
-      border: `2px solid ${char.color}`,
-      boxShadow: `0 0 18px ${char.color}`
-    }
-  }) : null, /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "absolute",
-      left: side === "left" ? 8 : "auto",
-      right: side === "right" ? 8 : "auto",
-      bottom: 8,
-      padding: "3px 8px",
-      background: "#05070fe0",
-      border: `1px solid ${char.color}`,
-      color: char.color,
-      fontFamily: "'Orbitron','Share Tech Mono',monospace",
-      fontSize: 11,
-      fontWeight: 900,
-      letterSpacing: 1,
-      textShadow: `0 0 10px ${char.color}`
-    }
-  }, char.jp || char.name));
-}
-
-function MangaDealCutIn({
-  deal,
-  lang,
-  isMobile
-}) {
-  if (!deal) return null;
-  const style = DEAL_RESULT_STYLE[deal.outcome] || DEAL_RESULT_STYLE.hold;
-  const text = getDealText(lang);
-  const panelW = isMobile ? "calc(100vw - 20px)" : "min(760px, calc(100vw - 64px))";
-  return /*#__PURE__*/React.createElement("div", {
-    "data-manga-deal": deal.outcome,
-    style: {
-      position: "fixed",
-      inset: 0,
-      zIndex: 12000,
-      pointerEvents: "none",
-      display: "flex",
-      alignItems: isMobile ? "center" : "flex-start",
-      justifyContent: "center",
-      padding: isMobile ? 10 : "72px 24px 24px",
-      fontFamily: "'Orbitron','Rajdhani','Share Tech Mono',monospace",
-      animation: `mangaDealFade ${DEAL_CUTIN_MS / 1000}s ease both`
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "absolute",
-      inset: 0,
-      background: `radial-gradient(circle at 50% 50%, ${style.color}26, transparent 36%), repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.18) 0 1px, transparent 1px 9px), rgba(0,0,0,.34)`,
-      mixBlendMode: "screen"
-    }
-  }), /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: panelW,
-      minHeight: isMobile ? 250 : 320,
-      display: "grid",
-      gridTemplateColumns: isMobile ? "1fr 1fr" : "1fr 130px 1fr",
-      gap: isMobile ? 6 : 10,
-      padding: isMobile ? 8 : 12,
-      background: "linear-gradient(135deg,#f8f4ea,#ffffff 34%,#dce8ff)",
-      border: "4px solid #05070f",
-      boxShadow: "0 22px 60px rgba(0,0,0,.62), 8px 8px 0 #05070f",
-      transform: "rotate(-1deg)",
-      overflow: "hidden",
-      position: "relative"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "absolute",
-      inset: -50,
-      background: `conic-gradient(from 20deg at 50% 50%, transparent 0 7deg, ${style.color}22 7deg 10deg, transparent 10deg 18deg)`,
-      animation: `mangaSpeedSpin ${DEAL_CUTIN_MS / 1000}s ease-out both`,
-      opacity: .52
-    }
-  }), /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "absolute",
-      left: 12,
-      top: 8,
-      padding: "2px 10px",
-      border: "2px solid #05070f",
-      background: "#fff",
-      color: "#05070f",
-      fontSize: isMobile ? 10 : 14,
-      fontWeight: 900,
-      letterSpacing: 1.5,
-      transform: "rotate(-3deg)",
-      boxShadow: `4px 4px 0 ${style.color}`
-    }
-  }, deal.header), /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "relative",
-      gridColumn: isMobile ? "1 / 2" : "1 / 2",
-      marginTop: isMobile ? 26 : 36,
-      animation: "mangaPanelIn .38s ease both"
-    }
-  }, /*#__PURE__*/React.createElement(MangaPortrait, {
-    char: deal.from,
-    tick: deal.tick,
-    side: "left"
-  }), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 6,
-      padding: "6px 8px",
-      border: "2px solid #05070f",
-      background: "#fff",
-      color: "#05070f",
-      fontSize: isMobile ? 10 : 13,
-      fontWeight: 900,
-      lineHeight: 1.18,
-      boxShadow: `4px 4px 0 ${deal.from.color}`
-    }
-  }, text.offer, ": ", deal.fromLine)), !isMobile && /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "relative",
-      display: "grid",
-      placeItems: "center",
-      marginTop: 52
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: 118,
-      height: 118,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flexDirection: "column",
-      gap: 4,
-      borderRadius: "50%",
-      border: "4px solid #05070f",
-      background: `radial-gradient(circle, #fff 0 34%, ${style.color} 35% 64%, ${style.dark})`,
-      color: "#05070f",
-      fontSize: 34,
-      fontWeight: 900,
-      lineHeight: .9,
-      textAlign: "center",
-      boxShadow: `0 0 24px ${style.color}, 6px 6px 0 #05070f`,
-      transform: "rotate(-8deg)",
-      animation: "mangaStamp .6s cubic-bezier(.17,.67,.28,1.42) both"
-    }
-  }, deal.mark, /*#__PURE__*/React.createElement("span", {
-    style: {
-      display: "block",
-      fontSize: 15,
-      letterSpacing: 1,
-      whiteSpace: "nowrap"
-    }
-  }, deal.resultLabel))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "relative",
-      gridColumn: isMobile ? "2 / 3" : "3 / 4",
-      marginTop: isMobile ? 26 : 36,
-      animation: "mangaPanelIn .38s ease .08s both"
-    }
-  }, /*#__PURE__*/React.createElement(MangaPortrait, {
-    char: deal.to,
-    tick: deal.tick + 4,
-    side: "right"
-  }), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 6,
-      padding: "6px 8px",
-      border: "2px solid #05070f",
-      background: "#fff",
-      color: "#05070f",
-      fontSize: isMobile ? 10 : 13,
-      fontWeight: 900,
-      lineHeight: 1.18,
-      boxShadow: `4px 4px 0 ${deal.to.color}`
-    }
-  }, text.counter, ": ", deal.toLine)), /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "absolute",
-      left: "50%",
-      bottom: isMobile ? 10 : 18,
-      transform: "translateX(-50%) rotate(-4deg)",
-      minWidth: isMobile ? 190 : 290,
-      padding: isMobile ? "8px 14px" : "10px 22px",
-      border: "4px solid #05070f",
-      background: style.color,
-      color: "#05070f",
-      fontSize: isMobile ? 24 : 44,
-      fontWeight: 900,
-      lineHeight: .9,
-      textAlign: "center",
-      letterSpacing: 1,
-      textShadow: "2px 2px 0 #fff",
-      boxShadow: "7px 7px 0 #05070f",
-      animation: "mangaResultSlam .48s cubic-bezier(.17,.67,.28,1.42) both"
-    }
-  }, deal.resultLabel, /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 6,
-      fontFamily: "'Share Tech Mono',monospace",
-      fontSize: isMobile ? 9 : 12,
-      letterSpacing: 1,
-      textShadow: "none"
-    }
-  }, deal.outcome === "success" ? `${deal.payoffLabel} ¥${deal.payout.toLocaleString()}` : `${style.tone} / SCORE ${deal.score}`))));
-}
-
 // ═══════════════════════════════════════════════════════════════
 // PixelChar — enhanced with specialty glow
 // ═══════════════════════════════════════════════════════════════
@@ -2124,10 +1912,7 @@ const PixelChar = ({
   tile,
   specialty,
   isSpecialtyActive,
-  expression,
-  activityLabel,
-  activityIcon,
-  activityDetail
+  expression
 }) => {
   const [hov, setHov] = useState(false);
   const pet = CODEX_PETS[spriteId];
@@ -2195,7 +1980,6 @@ const PixelChar = ({
     drone: state === "walk" ? "sdWalk .2s ease-in-out infinite" : "sdIdle 1.4s ease-in-out infinite",
     yami: state === "walk" ? "sdWalk .55s ease-in-out infinite" : "sdIdle 3s ease-in-out infinite"
   })[spriteId] || sdAnimation;
-  const showActivity = !!activityLabel && (state !== "idle" || isSelected || isSpecialtyActive);
   return /*#__PURE__*/React.createElement("div", {
     "data-agent-sprite": spriteId,
     "data-agent-render-mode": displayPet ? "spritesheet" : "portrait",
@@ -2308,42 +2092,7 @@ const PixelChar = ({
       backgroundPosition: `${material.x} calc(${material.y} + 16%)`,
       filter: "saturate(.95) brightness(.9)"
     }
-  })) : null, showActivity && /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: "absolute",
-      top: state === "work" ? -32 : -28,
-      left: "50%",
-      transform: "translateX(-50%)",
-      display: "flex",
-      alignItems: "center",
-      gap: 3,
-      maxWidth: tile * 3.2,
-      padding: "2px 5px",
-      borderRadius: 3,
-      background: `linear-gradient(90deg, rgba(5,7,16,.92), ${color}22)`,
-      border: `1px solid ${isSpecialtyActive && spec ? spec.color : color}99`,
-      color: "#fff",
-      fontSize: tile < 24 ? "6px" : "7px",
-      fontWeight: 900,
-      lineHeight: 1,
-      letterSpacing: .3,
-      whiteSpace: "nowrap",
-      boxShadow: `0 0 10px ${color}33`,
-      pointerEvents: "none",
-      animation: state === "walk" ? "agentBubblePulse 1s ease-in-out infinite" : undefined,
-      zIndex: 120
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: isSpecialtyActive && spec ? spec.color : color
-    }
-  }, activityIcon || "◆"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      maxWidth: tile * 2.15
-    }
-  }, activityLabel)), /*#__PURE__*/React.createElement("div", {
+  })) : null, /*#__PURE__*/React.createElement("div", {
     style: {
       position: "absolute",
       top: -10,
@@ -2380,15 +2129,14 @@ const PixelChar = ({
       whiteSpace: "nowrap",
       zIndex: 100
     }
-  }, activityDetail || "TX: ", activityDetail ? "" : txHash), state === "work" && /*#__PURE__*/React.createElement("div", {
+  }, "TX: ", txHash), state === "work" && /*#__PURE__*/React.createElement("div", {
     style: {
       position: "absolute",
       top: -6,
       right: -6,
-      fontSize: "9px",
-      filter: `drop-shadow(0 0 4px ${color})`
+      fontSize: "9px"
     }
-  }, activityIcon || ["💰", "💡", "💬", "⚡"][t % 4]), isSelected && /*#__PURE__*/React.createElement("div", {
+  }, ["💰", "💡", "💬", "⚡"][t % 4]), isSelected && /*#__PURE__*/React.createElement("div", {
     style: {
       position: "absolute",
       bottom: -4,
@@ -2692,235 +2440,128 @@ for (let y = 0; y < MAP_H; y++) {
   ROADS.add(`19,${y}`);
 }
 const getBld = (x, y) => BUILDINGS.find(b => x >= b.x && x < b.x + b.w && y >= b.y && y < b.y + b.h);
-const toCellSet = cells => new Set(cells.map(([x, y]) => `${x},${y}`));
-const PLAZA_TILES = toCellSet([
-  [8, 4], [9, 4], [10, 4], [11, 4], [8, 5], [9, 5], [10, 5], [11, 5],
-  [9, 8], [10, 8], [11, 8], [9, 9], [10, 9], [11, 9],
-  [14, 9], [15, 9], [16, 9], [14, 10], [15, 10], [16, 10]
-]);
-const PARK_TILES = toCellSet([
-  [4, 1], [5, 1], [6, 1], [4, 2], [5, 2], [6, 2], [16, 3], [17, 3],
-  [18, 3], [16, 4], [17, 4], [18, 4], [0, 15], [1, 15], [2, 15],
-  [4, 15], [5, 15], [20, 15], [21, 15], [18, 16], [19, 16], [20, 16]
-]);
-const CANAL_TILES = toCellSet([
-  [0, 17], [1, 17], [2, 17], [3, 17], [4, 17], [5, 17], [6, 17],
-  [7, 17], [8, 17], [9, 17], [10, 17], [11, 17], [12, 17], [13, 17],
-  [14, 17], [15, 17], [16, 17], [17, 17], [18, 17], [19, 17], [20, 17], [21, 17],
-  [21, 13], [21, 14], [21, 15], [21, 16]
-]);
-const STAIRS_TILES = toCellSet([[3, 3], [10, 3], [15, 4], [19, 4], [3, 8], [10, 8], [15, 8], [19, 8], [3, 13], [10, 13], [15, 13], [19, 13]]);
-const CROSSWALK_TILES = toCellSet([[3, 4], [10, 4], [15, 4], [19, 4], [3, 9], [10, 9], [15, 9], [19, 9], [3, 14], [10, 14], [15, 14], [19, 14]]);
-const CITY_PROPS = [
-  { x: 3, y: 3, kind: "lamp", icon: "✦", label: "north gate", color: "#F7D774" },
-  { x: 8, y: 4, kind: "kiosk", icon: "◇", label: "data kiosk", color: "#00E5FF" },
-  { x: 13, y: 4, kind: "stall", icon: "▤", label: "guild stall", color: "#FF69B4" },
-  { x: 18, y: 4, kind: "bench", icon: "=", label: "rest stop", color: "#BDAA88" },
-  { x: 3, y: 8, kind: "lamp", icon: "✦", label: "west lamp", color: "#F7D774" },
-  { x: 7, y: 9, kind: "notice", icon: "!", label: "quest board", color: "#FFD700" },
-  { x: 15, y: 9, kind: "signal", icon: "↯", label: "deal relay", color: "#00FF88" },
-  { x: 20, y: 10, kind: "fence", icon: "╫", label: "garden rail", color: "#9AD889" },
-  { x: 3, y: 13, kind: "lamp", icon: "✦", label: "south lamp", color: "#F7D774" },
-  { x: 10, y: 13, kind: "terminal", icon: "⌁", label: "vault link", color: "#FFD700" },
-  { x: 15, y: 13, kind: "signal", icon: "↯", label: "arena relay", color: "#FF4444" },
-  { x: 19, y: 13, kind: "stairs", icon: "▰", label: "upper walk", color: "#D8E6FF" }
-];
-const BUILDING_SKINS = {
-  finance: { roof: "#F4B63C", side: "#82582E", face: "#fff0b8", trim: "#FFF1A3", sign: "VAULT", activity: "YEN", icon: "¥" },
-  data: { roof: "#38D9FF", side: "#17476D", face: "#D9FBFF", trim: "#7FF6FF", sign: "ORACLE", activity: "SCAN", icon: "◇" },
-  trade: { roof: "#FF5FB7", side: "#753251", face: "#FFD6EE", trim: "#FF9BD2", sign: "DEAL", activity: "TRADE", icon: "⇄" },
-  rest: { roof: "#41B883", side: "#3B6D4A", face: "#E8F2D6", trim: "#A7E0A1", sign: "REST", activity: "REST", icon: "☕" },
-  house: { roof: "#2F91E8", side: "#7D5A45", face: "#FFE7D1", trim: "#B9E4FF", sign: "HOME", activity: "HOME", icon: "⌂" },
-  hack: { roof: "#9D5CFF", side: "#2F1B60", face: "#E9D9FF", trim: "#CBA7FF", sign: "LAB", activity: "CODE", icon: "⌘" },
-  logistics: { roof: "#13C78E", side: "#246B59", face: "#D9FFF0", trim: "#82FFCF", sign: "PORT", activity: "SHIP", icon: "↗" },
-  learn: { roof: "#438BFF", side: "#263C78", face: "#E0EBFF", trim: "#92B8FF", sign: "STUDY", activity: "READ", icon: "≡" }
-};
-const ACTION_TEXT = {
-  en: { idle: "Standby", walk: "Route", work: "Working", invest: "Investing", analyze: "Scanning", guard: "Guarding", negotiate: "Negotiating", deliver: "Delivering", rest: "Resting", study: "Studying", hack: "Tracing", praise: "Cheering", wander: "Patrol" },
-  ja: { idle: "待機", walk: "移動中", work: "作業中", invest: "投資中", analyze: "解析中", guard: "防衛中", negotiate: "交渉中", deliver: "配送中", rest: "休憩中", study: "学習中", hack: "潜入中", praise: "応援中", wander: "巡回中" },
-  zh: { idle: "待机", walk: "移动", work: "工作", invest: "投资", analyze: "分析", guard: "防御", negotiate: "协商", deliver: "配送", rest: "休息", study: "学习", hack: "追踪", praise: "鼓舞", wander: "巡逻" },
-  ko: { idle: "대기", walk: "이동", work: "작업", invest: "투자", analyze: "분석", guard: "방어", negotiate: "협상", deliver: "배송", rest: "휴식", study: "학습", hack: "추적", praise: "응원", wander: "순찰" },
-  es: { idle: "Espera", walk: "Ruta", work: "Trabaja", invest: "Invierte", analyze: "Analiza", guard: "Defiende", negotiate: "Negocia", deliver: "Entrega", rest: "Descansa", study: "Estudia", hack: "Rastrea", praise: "Anima", wander: "Patrulla" },
-  fr: { idle: "Attente", walk: "Route", work: "Travail", invest: "Investit", analyze: "Analyse", guard: "Défend", negotiate: "Négocie", deliver: "Livre", rest: "Repos", study: "Étudie", hack: "Trace", praise: "Encourage", wander: "Patrouille" }
-};
-const ACTION_ICONS = {
-  idle: "•",
-  walk: "→",
-  work: "◆",
-  invest: "¥",
-  analyze: "◇",
-  guard: "盾",
-  negotiate: "⇄",
-  deliver: "↗",
-  rest: "☕",
-  study: "≡",
-  hack: "⌘",
-  praise: "★",
-  wander: "…"
-};
-const DEAL_RESULT_STYLE = {
-  success: { color: "#00FF88", dark: "#003D26", mark: "OK", tone: "SIGNED" },
-  fail: { color: "#FF3355", dark: "#3D0012", mark: "NG", tone: "BREAK" },
-  hold: { color: "#FFD34D", dark: "#3A2A00", mark: "...", tone: "HOLD" }
-};
-const DEAL_MANGA_TEXT = {
-  en: {
-    clash: "NEGOTIATION BATTLE!!",
-    success: "SIGNED!!",
-    fail: "BROKEN!!",
-    hold: "ON HOLD...",
-    offer: "OFFER",
-    counter: "COUNTER",
-    payoff: "PAYOUT",
-    successFrom: "Terms aligned. I can sign now!",
-    successTo: "Accepted. Route the reward to the city log!",
-    failFrom: "No deal. That risk is too high!",
-    failTo: "Rejected. Returning with a counterplan!",
-    holdFrom: "Need more data before we sign.",
-    holdTo: "Hold the clause. Recheck next cycle."
+const CITY_DISTRICTS = [{
+  name: "港湾物流",
+  x: 15,
+  y: 4,
+  w: 7,
+  h: 5,
+  color: "#00FF88",
+  note: "船・倉庫・荷馬車"
+}, {
+  name: "市場と商店街",
+  x: 10,
+  y: 0,
+  w: 6,
+  h: 6,
+  color: "#FF69B4",
+  note: "価格・棚・行列"
+}, {
+  name: "住宅街",
+  x: 0,
+  y: 5,
+  w: 5,
+  h: 5,
+  color: "#8B7355",
+  note: "家計・引越し相談"
+}, {
+  name: "工業/研究",
+  x: 4,
+  y: 5,
+  w: 10,
+  h: 5,
+  color: "#FF6633",
+  note: "煙・停止・仕入れ"
+}, {
+  name: "金融/行政",
+  x: 5,
+  y: 10,
+  w: 10,
+  h: 5,
+  color: "#FFD700",
+  note: "融資・補助金・抗議"
+}];
+const CITY_INTERIORS = {
+  market: {
+    title: "パン屋 / 南区市場",
+    rooms: [["棚: 空きが目立つ", "行列: 14人", "値札: +20%"], ["裏口: 仕入れ交渉", "店主: 小麦粉確認", "噂: 北区は高い"]],
+    crisis: ["小麦不足", "棚が空", "住民が怒る"]
   },
-  ja: {
-    clash: "交渉バトル!!",
-    success: "成立!!",
-    fail: "決裂!!",
-    hold: "保留…",
-    offer: "提示",
-    counter: "反撃",
-    payoff: "報酬",
-    successFrom: "条件一致。ここでサインできる!",
-    successTo: "承認。報酬を都市ログへ流す!",
-    failFrom: "譲れない。そのリスクは高すぎる!",
-    failTo: "却下。作戦を組み直して出直す!",
-    holdFrom: "情報が足りない。まだ署名できない。",
-    holdTo: "条項を保留。次サイクルで再確認。"
+  tavern: {
+    title: "酒場",
+    rooms: [["噂卓: 物価の話", "商人: 港の遅れ共有", "住民: 政治の不満"], ["厨房: 食材節約", "掲示板: 闇市情報", "裏席: 交渉中"]],
+    crisis: ["噂が拡散", "不満が発火", "政治会話が増加"]
   },
-  zh: {
-    clash: "协商对决!!",
-    success: "成立!!",
-    fail: "破裂!!",
-    hold: "保留…",
-    offer: "报价",
-    counter: "反击",
-    payoff: "报酬",
-    successFrom: "条件一致。现在可以签署!",
-    successTo: "接受。把报酬写入城市日志!",
-    failFrom: "不能成交。风险太高!",
-    failTo: "拒绝。重新制定方案!",
-    holdFrom: "数据不足，还不能签署。",
-    holdTo: "条款保留。下一周期再确认。"
+  bank: {
+    title: "銀行",
+    rooms: [["融資窓口: 店主相談", "投資席: 土地買収検討", "金庫: 引出し増"], ["審査室: 信用低下", "ロビー: 行列", "掲示: 金利上昇"]],
+    crisis: ["融資相談増", "土地買収圧", "現金不足"]
   },
-  ko: {
-    clash: "협상 배틀!!",
-    success: "성립!!",
-    fail: "결렬!!",
-    hold: "보류…",
-    offer: "제안",
-    counter: "반격",
-    payoff: "보상",
-    successFrom: "조건 일치. 지금 서명 가능!",
-    successTo: "승인. 보상을 도시 로그로 전송!",
-    failFrom: "거래 불가. 위험이 너무 높아!",
-    failTo: "거절. 작전을 다시 짜서 돌아온다!",
-    holdFrom: "정보가 부족해 아직 서명할 수 없어.",
-    holdTo: "조항 보류. 다음 사이클에 재확인."
+  shrine: {
+    title: "役所 / 黄金庁舎",
+    rooms: [["補助金申請: 長蛇の列", "受付: 対応中", "市長室: 苦情束"], ["広場: 抗議集会", "記録係: 物価報告", "警備: 群衆整理"]],
+    crisis: ["苦情増加", "抗議発生", "補助金待ち"]
   },
-  es: {
-    clash: "BATALLA DE NEGOCIACIÓN!!",
-    success: "FIRMADO!!",
-    fail: "ROTO!!",
-    hold: "EN PAUSA...",
-    offer: "OFERTA",
-    counter: "RÉPLICA",
-    payoff: "PAGO",
-    successFrom: "Condiciones alineadas. Puedo firmar ahora!",
-    successTo: "Aceptado. Envia la recompensa al registro!",
-    failFrom: "Sin trato. Ese riesgo es demasiado alto!",
-    failTo: "Rechazado. Volvemos con otro plan!",
-    holdFrom: "Faltan datos antes de firmar.",
-    holdTo: "Cláusula en pausa. Revisar el próximo ciclo."
+  house1: {
+    title: "住宅",
+    rooms: [["食卓: 家計見直し", "寝室: 引越し相談"], ["玄関: 買い物メモ", "窓辺: 近所の噂"]],
+    crisis: ["節約意識", "引越し検討", "食費警戒"]
   },
-  fr: {
-    clash: "BATAILLE DE NÉGOCIATION!!",
-    success: "SIGNÉ!!",
-    fail: "ROMPU!!",
-    hold: "EN ATTENTE...",
-    offer: "OFFRE",
-    counter: "RIPOSTE",
-    payoff: "GAIN",
-    successFrom: "Conditions alignées. Je peux signer!",
-    successTo: "Accepté. Envoie le gain au journal!",
-    failFrom: "Pas d'accord. Risque trop élevé!",
-    failTo: "Refusé. On revient avec un autre plan!",
-    holdFrom: "Données insuffisantes pour signer.",
-    holdTo: "Clause en attente. À revoir au prochain cycle."
+  house2: {
+    title: "住宅",
+    rooms: [["家計簿: 赤字", "親子: 安い店相談"], ["物置: 備蓄少", "窓辺: 市場を見る"]],
+    crisis: ["赤字家計", "安売り探索", "不満蓄積"]
+  },
+  port: {
+    title: "港 / 物流倉庫",
+    rooms: [["桟橋: 船が入港", "倉庫: 積荷待ち", "事務所: 伝票遅延"], ["荷馬車: パン屋行き", "監視台: 渋滞確認", "荷役: 人手不足"]],
+    crisis: ["物流詰まり", "入港待ち", "仕入れ遅れ"]
+  },
+  forge: {
+    title: "工場 / 製パン炉",
+    rooms: [["炉: 稼働中", "粉置場: 残量少", "職人: 原価計算"], ["煙突: 煙が薄い", "裏口: 業者待ち", "帳場: 値上げ判断"]],
+    crisis: ["生産低下", "原価上昇", "煙が弱い"]
+  },
+  hacklab: {
+    title: "研究工房",
+    rooms: [["分析机: 需要予測", "炉: 試作品", "端末: 異常検知"], ["倉庫: 代替素材", "掲示: 価格警報", "窓: 工場煙を見る"]],
+    crisis: ["代替案探し", "異常検知", "予測更新"]
+  },
+  tower: {
+    title: "情報塔",
+    rooms: [["観測室: 物流線監視", "記録室: 価格履歴", "予測室: 不満上昇"], ["通信室: 噂ログ", "屋上: 街全体を観測", "端末: 次の不足予測"]],
+    crisis: ["価格予測", "噂追跡", "不満検知"]
+  },
+  academy: {
+    title: "学校 / 研修所",
+    rooms: [["教室: 職員研修", "資料室: 政策案", "相談室: 転職相談"], ["講堂: 説明会", "端末: 生産性分析", "廊下: 行列"]],
+    crisis: ["研修需要", "政策検討", "転職相談"]
+  },
+  arena: {
+    title: "商談広場",
+    rooms: [["競り場: 価格交渉", "観覧席: 投機家", "掲示: 取引速報"], ["控室: 反対提案", "門前: 人だかり", "台帳: 利幅計算"]],
+    crisis: ["価格交渉", "投機加熱", "取引混雑"]
+  },
+  church: {
+    title: "救済所",
+    rooms: [["配給列: 食料相談", "祈り席: 不安鎮静", "受付: 支援申請"], ["掲示: 無料パン日", "倉庫: 備蓄確認", "中庭: 相談"]],
+    crisis: ["支援要請", "不安鎮静", "備蓄確認"]
+  },
+  well: {
+    title: "公共水場",
+    rooms: [["水場: 井戸端会議", "掲示: 物価メモ"], ["休憩: 疲労回復", "石段: 噂交換"]],
+    crisis: ["噂交換", "疲労回復", "生活相談"]
+  },
+  garden: {
+    title: "公園",
+    rooms: [["ベンチ: 家族相談", "屋台: 闇市の気配"], ["花壇: 休息", "小道: 口コミ拡散"]],
+    crisis: ["闇市屋台", "口コミ", "休息"]
   }
 };
-const getDealText = lang => DEAL_MANGA_TEXT[lang] || DEAL_MANGA_TEXT.en;
-const resolveNegotiationDeal = (from, to, tick, lang) => {
-  const text = getDealText(lang);
-  const sameBuilding = (from.currentBuilding || "") && from.currentBuilding === to.currentBuilding;
-  const diplomat = from.specialty === "diplomat" || to.specialty === "diplomat";
-  const trader = from.specialty === "trader" || to.specialty === "trader";
-  const investor = from.specialty === "investor" || to.specialty === "investor";
-  const moodScore = (((from.mood || 60) + (to.mood || 60)) / 2 - 50) * .36;
-  const levelScore = ((from.level || 1) + (to.level || 1)) * 1.4;
-  const specialtyScore = (sameBuilding ? 9 : 0) + (diplomat ? 13 : 0) + (trader ? 8 : 0) + (investor ? 5 : 0);
-  const score = 28 + moodScore + levelScore + specialtyScore + Math.random() * 42;
-  const outcome = score >= 70 ? "success" : score <= 45 ? "fail" : "hold";
-  const style = DEAL_RESULT_STYLE[outcome];
-  const payout = outcome === "success" ? Math.round(420 + score * 18 + ((from.level || 1) + (to.level || 1)) * 55) : outcome === "hold" ? Math.round(2 + score / 18) : 0;
-  const topic = from.specialty || to.specialty || from.currentBuilding || to.currentBuilding || "city_ops";
-  return {
-    id: `deal-${from.id}-${to.id}-${tick}-${Math.random().toString(16).slice(2, 7)}`,
-    from,
-    to,
-    tick,
-    topic,
-    outcome,
-    color: style.color,
-    mark: style.mark,
-    resultLabel: text[outcome],
-    header: text.clash,
-    fromLine: text[`${outcome}From`],
-    toLine: text[`${outcome}To`],
-    payoffLabel: text.payoff,
-    payout,
-    score: Math.round(score)
-  };
-};
-const getElevation = (x, y) => {
-  if (y <= 2 && x <= 7) return 2;
-  if (y <= 4 && x >= 15) return 2;
-  if (y >= 11 && x >= 16) return 2;
-  if (y >= 11 && x <= 4) return 1;
-  if (y >= 6 && y <= 8 && x >= 4 && x <= 13) return 1;
-  return 0;
-};
-const getTileKind = (x, y) => {
-  if (CANAL_TILES.has(`${x},${y}`)) return "canal";
-  if (getBld(x, y)) return "lot";
-  if (PLAZA_TILES.has(`${x},${y}`)) return "plaza";
-  if (PARK_TILES.has(`${x},${y}`)) return "park";
-  if (ROADS.has(`${x},${y}`)) return "road";
-  return "grass";
-};
-const getRoadFlow = (x, y) => {
-  const h = ROADS.has(`${x - 1},${y}`) || ROADS.has(`${x + 1},${y}`);
-  const v = ROADS.has(`${x},${y - 1}`) || ROADS.has(`${x},${y + 1}`);
-  return h && v ? "cross" : h ? "h" : v ? "v" : "single";
-};
-const getBuildingSkin = b => BUILDING_SKINS[b.cat] || BUILDING_SKINS.house;
-const getAgentBuilding = c => getBld(c.x, c.y - 1) || getBld(c.x, c.y);
-const getActionText = (lang, key) => (ACTION_TEXT[lang] || ACTION_TEXT.en)[key] || (ACTION_TEXT[lang] || ACTION_TEXT.en).work;
-const getAgentActivity = (c, lang) => {
-  const key = c.behaviorState && c.behaviorState !== "wander" ? c.behaviorState : c.state === "walk" ? "walk" : c.state === "work" ? "work" : "idle";
-  return {
-    key,
-    label: getActionText(lang, key),
-    icon: ACTION_ICONS[key] || ACTION_ICONS.work,
-    building: getAgentBuilding(c),
-    show: c.state !== "idle" || c.specActive || c.expression === "focus"
-  };
+const getBuildingScene = b => CITY_INTERIORS[b.id] || {
+  title: b.name,
+  rooms: [["住民: 状況確認", "職員: 対応中"], ["掲示: 経済警報", "裏口: 交渉"]],
+  crisis: ["観察中", "調整中", "噂あり"]
 };
 const QTES = [{
   title: "🔥 Fire!",
@@ -3333,8 +2974,6 @@ class CharacterEntity {
       autonomy: "seek-preference-react-to-world"
     };
     this.lastReaction = spawn.lastReaction || "";
-    this.currentBuilding = spawn.currentBuilding || "";
-    this.currentAction = spawn.currentAction || "";
   }
   reactTo(eventType, payload = {}) {
     if (eventType === "alert") {
@@ -3352,18 +2991,12 @@ class CharacterEntity {
     } else if (eventType === "work") {
       this.expression = payload.isSpecialty ? "joy" : "focus";
       this.behaviorState = payload.isSpecialty ? "specialty" : "work";
-      this.currentBuilding = payload.building || this.currentBuilding || "";
-      this.currentAction = payload.action || this.lastReaction || "";
-      if (this.currentAction) this.lastReaction = this.currentAction;
     } else if (eventType === "rest") {
       this.expression = "sleepy";
       this.behaviorState = "rest";
-      this.currentBuilding = payload.building || this.currentBuilding || "";
-      this.currentAction = payload.action || "Resting";
     } else {
       this.expression = "idle";
       this.behaviorState = "wander";
-      this.currentAction = "";
     }
     return this;
   }
@@ -3582,6 +3215,240 @@ function SettingsPanel({
       fontSize: 18
     }
   }, l.flag), /*#__PURE__*/React.createElement("span", null, l.label))))));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MUSIC PLAYER
+// ═══════════════════════════════════════════════════════════════
+function MusicPanel({
+  tracks,
+  currentTrack,
+  trackId,
+  mode,
+  playing,
+  volume,
+  currentTime,
+  duration,
+  notice,
+  isMobile,
+  onToggle,
+  onRandom,
+  onTrackChange,
+  onModeChange,
+  onVolumeChange,
+  onSeek
+}) {
+  const accent = mode === "random" ? "#FFD700" : "#00E5FF";
+  const fallbackDuration = Number.isFinite(currentTrack.duration) && currentTrack.duration > 0 ? currentTrack.duration : 0;
+  const safeDuration = Number.isFinite(duration) && duration > 0 ? duration : fallbackDuration;
+  const safeCurrent = Number.isFinite(currentTime) && currentTime > 0 ? Math.min(currentTime, safeDuration || currentTime) : 0;
+  const progressPct = safeDuration ? Math.min(100, safeCurrent / safeDuration * 100) : 0;
+  const fmtTime = seconds => {
+    if (!Number.isFinite(seconds) || seconds <= 0) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
+    return `${mins}:${secs}`;
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "fixed",
+      top: isMobile ? 76 : 86,
+      right: isMobile ? 8 : 14,
+      zIndex: 780,
+      width: isMobile ? "min(92vw, 320px)" : 320,
+      border: `1px solid ${accent}66`,
+      borderRadius: 8,
+      background: "linear-gradient(145deg, rgba(5,7,16,.92), rgba(13,17,40,.9))",
+      boxShadow: `0 0 22px ${accent}22`,
+      backdropFilter: "blur(12px)",
+      padding: 10,
+      fontFamily: "monospace",
+      color: "#dfe8ff",
+      pointerEvents: "auto"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 8,
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: accent,
+      fontSize: 10,
+      fontWeight: 900,
+      letterSpacing: 2
+    }
+  }, "BGM"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#fff",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap"
+    }
+  }, currentTrack.artist, " - ", currentTrack.title)), /*#__PURE__*/React.createElement("button", {
+    onClick: onToggle,
+    title: playing ? "Pause BGM" : "Play BGM",
+    style: {
+      width: 34,
+      height: 30,
+      borderRadius: 5,
+      border: `1px solid ${accent}`,
+      background: playing ? `${accent}22` : "#101322",
+      color: accent,
+      cursor: "pointer",
+      fontSize: 14,
+      flexShrink: 0
+    }
+  }, playing ? "II" : "▶")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "1fr auto",
+      gap: 6,
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("select", {
+    value: trackId,
+    onChange: e => onTrackChange(e.target.value),
+    style: {
+      minWidth: 0,
+      background: "#070a16",
+      border: "1px solid #24304d",
+      color: "#dfe8ff",
+      borderRadius: 5,
+      padding: "6px 8px",
+      fontSize: 11,
+      fontFamily: "monospace"
+    }
+  }, tracks.map(track => /*#__PURE__*/React.createElement("option", {
+    key: track.id,
+    value: track.id
+  }, track.artist, " - ", track.title))), /*#__PURE__*/React.createElement("button", {
+    onClick: onRandom,
+    title: "Random track",
+    style: {
+      border: "1px solid #FFD70077",
+      background: mode === "random" ? "#FFD70022" : "#14110a",
+      color: "#FFD700",
+      borderRadius: 5,
+      padding: "0 9px",
+      cursor: "pointer",
+      fontSize: 13
+    }
+  }, "⟳")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 8,
+      padding: "7px 8px",
+      border: "1px solid #24304d",
+      borderRadius: 6,
+      background: "#070a16"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: 5,
+      color: "#99a",
+      fontSize: 9
+    }
+  }, /*#__PURE__*/React.createElement("span", null, "TIME"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: accent
+    }
+  }, fmtTime(safeCurrent), " / ", safeDuration ? fmtTime(safeDuration) : "--:--")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: safeDuration || 100,
+    step: "0.1",
+    value: safeDuration ? safeCurrent : 0,
+    disabled: !safeDuration,
+    onChange: e => onSeek(parseFloat(e.target.value)),
+    title: safeDuration ? `Seek: ${fmtTime(safeCurrent)} / ${fmtTime(safeDuration)}` : "Loading duration",
+    style: {
+      width: "100%",
+      accentColor: accent,
+      cursor: safeDuration ? "pointer" : "wait"
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 3,
+      marginTop: 5,
+      borderRadius: 2,
+      background: "#11182b",
+      overflow: "hidden"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: "100%",
+      width: `${progressPct}%`,
+      background: `linear-gradient(90deg, ${accent}, #FF69B4)`,
+      boxShadow: `0 0 10px ${accent}66`
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "auto 1fr auto",
+      gap: 7,
+      alignItems: "center",
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#667",
+      fontSize: 9
+    }
+  }, "VOL"), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "1",
+    step: "0.01",
+    value: volume,
+    onChange: e => onVolumeChange(parseFloat(e.target.value)),
+    style: {
+      width: "100%"
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#99a",
+      fontSize: 9,
+      width: 28,
+      textAlign: "right"
+    }
+  }, Math.round(volume * 100), "%")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 6,
+      marginBottom: 8
+    }
+  }, [["manual", "SELECT"], ["random", "RANDOM"]].map(([key, label]) => /*#__PURE__*/React.createElement("button", {
+    key,
+    onClick: () => onModeChange(key),
+    style: {
+      flex: 1,
+      padding: "5px 6px",
+      borderRadius: 5,
+      border: `1px solid ${mode === key ? accent : "#28304a"}`,
+      background: mode === key ? `${accent}18` : "#090d18",
+      color: mode === key ? accent : "#667",
+      cursor: "pointer",
+      fontSize: 9,
+      fontFamily: "monospace"
+    }
+  }, label))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: notice ? "#FFB84D" : "#778",
+      fontSize: 8,
+      lineHeight: 1.35
+    }
+  }, notice || `${currentTrack.mood} / ${currentTrack.license}`));
 }
 // ═══════════════════════════════════════════════════════════════
 // DEV TERMINAL (English UI)
@@ -3962,12 +3829,20 @@ function DevTerminal({
 // ═══════════════════════════════════════════════════════════════
 function NeonMythosCity() {
   const isMobile = useIsMobile();
-  const TILE = isMobile ? 22 : 38;
+  const TILE = isMobile ? 16 : 30;
 
   // ── Language & screen state ────────────────────────────────
   const [lang, setLang] = useState("en");
   const [showLangSel, setShowLangSel] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [musicTrackId, setMusicTrackId] = useState(MUSIC_TRACKS[0].id);
+  const [musicMode, setMusicMode] = useState("random");
+  const [musicPlaying, setMusicPlaying] = useState(false);
+  const [musicVolume, setMusicVolume] = useState(0.35);
+  const [musicTime, setMusicTime] = useState(0);
+  const [musicDuration, setMusicDuration] = useState(0);
+  const [musicNotice, setMusicNotice] = useState("");
+  const audioRef = useRef(null);
   const t = I18N[lang] || I18N.en;
 
   // ── Game state ─────────────────────────────────────────────
@@ -4002,6 +3877,7 @@ function NeonMythosCity() {
   }]);
   const [sel, setSel] = useState(null);
   const [hovB, setHovB] = useState(null);
+  const [selBld, setSelBld] = useState("market");
   const [qte, setQte] = useState(null);
   const [qteTm, setQteTm] = useState(0);
   const [qteRes, setQteRes] = useState(null);
@@ -4012,7 +3888,6 @@ function NeonMythosCity() {
   const [showTerm, setShowTerm] = useState(false);
   const [mobileTab, setMobileTab] = useState("map");
   const [cutIn, setCutIn] = useState(null); // {char, specKey}
-  const [mangaDeal, setMangaDeal] = useState(null);
   const [agentNotes, setAgentNotes] = useState({});
   const [assetPrices, setAssetPrices] = useState({
     SOL: 142.5,
@@ -4031,14 +3906,6 @@ function NeonMythosCity() {
   });
   const lastQ = useRef(Date.now());
   const cutInCooldowns = useRef({});
-  const nextNegotiationAt = useRef(null);
-  const mangaDealClearTimer = useRef(null);
-  if (nextNegotiationAt.current === null) {
-    nextNegotiationAt.current = Date.now() + DEAL_FIRST_DELAY_MS + Math.random() * DEAL_FIRST_JITTER_MS;
-  }
-  useEffect(() => () => {
-    if (mangaDealClearTimer.current) window.clearTimeout(mangaDealClearTimer.current);
-  }, []);
   const log = useCallback((ch, msg, col) => {
     setLogs(p => [{
       ch,
@@ -4059,6 +3926,63 @@ function NeonMythosCity() {
     }, ...p].slice(0, 60));
   }, []);
   const all = useMemo(() => [...agents, ...resi], [agents, resi]);
+  const currentMusicTrack = useMemo(() => MUSIC_TRACKS.find(track => track.id === musicTrackId) || MUSIC_TRACKS[0], [musicTrackId]);
+  const chooseRandomMusic = useCallback(() => {
+    const mainThemePool = MUSIC_TRACKS.filter(track => track.src && track.mainTheme);
+    const pool = musicMode === "random" && mainThemePool.length ? mainThemePool : MUSIC_TRACKS.filter(track => track.src);
+    if (!pool.length) {
+      setMusicNotice("No licensed audio files configured.");
+      return;
+    }
+    const nextPool = pool.length > 1 ? pool.filter(track => track.id !== musicTrackId) : pool;
+    const next = nextPool[Math.floor(Math.random() * nextPool.length)];
+    setMusicMode("random");
+    setMusicTrackId(next.id);
+    setMusicPlaying(true);
+    setMusicNotice("");
+  }, [musicMode, musicTrackId]);
+  const toggleMusic = useCallback(() => {
+    if (!currentMusicTrack.src) {
+      setMusicNotice("Add a licensed audio file before playback.");
+      return;
+    }
+    setMusicPlaying(p => !p);
+    setMusicNotice("");
+  }, [currentMusicTrack]);
+  const selectMusicTrack = useCallback(id => {
+    setMusicMode("manual");
+    setMusicTrackId(id);
+    setMusicTime(0);
+    setMusicDuration(0);
+    setMusicNotice("");
+  }, []);
+  const seekMusic = useCallback(seconds => {
+    const audio = audioRef.current;
+    if (!audio || !Number.isFinite(seconds)) return;
+    audio.currentTime = Math.max(0, Math.min(seconds, audio.duration || seconds));
+    setMusicTime(audio.currentTime);
+  }, []);
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = musicVolume;
+  }, [musicVolume]);
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = musicVolume;
+    if (!musicPlaying) {
+      audio.pause();
+      return;
+    }
+    if (!currentMusicTrack.src) {
+      setMusicPlaying(false);
+      setMusicNotice("Add a licensed audio file before playback.");
+      return;
+    }
+    audio.play().then(() => setMusicNotice("")).catch(() => {
+      setMusicPlaying(false);
+      setMusicNotice(`Audio could not start. Check licensed file: ${currentMusicTrack.src}`);
+    });
+  }, [currentMusicTrack, musicPlaying, musicVolume]);
   useEffect(() => {
     const norm = value => String(value || "").toLowerCase().replace(/[\s_-]/g, "");
     const findTarget = value => all.find(c => {
@@ -4101,8 +4025,6 @@ function NeonMythosCity() {
           state: intent === "rest" ? "idle" : "work",
           expression: intent === "rest" ? "sleepy" : intent === "praise" ? "joy" : "focus",
           lastReaction: detail.message || detail.note || `${intent} command accepted`,
-          currentBuilding: building ? building.id : c.currentBuilding || "",
-          currentAction: detail.message || detail.note || getActionText(lang, intent),
           specActive: true,
           specCooldown: Math.max(c.specCooldown || 0, 45),
           mood: Math.min(100, (c.mood || 80) + 6)
@@ -4119,7 +4041,7 @@ function NeonMythosCity() {
     };
     window.addEventListener("nm:agent-command", handler);
     return () => window.removeEventListener("nm:agent-command", handler);
-  }, [all, sel, log, addTx, lang]);
+  }, [all, sel, log, addTx]);
   useEffect(() => {
     if (!sel) {
       window.dispatchEvent(new CustomEvent("nm:agent-detail-close"));
@@ -4138,12 +4060,20 @@ function NeonMythosCity() {
 
   // ── Language select → avatar select ───────────────────────
   const handleLangSelect = code => {
+    window.NM_LANG = code;
+    window.dispatchEvent(new CustomEvent("nm:app-language", {
+      detail: {
+        code
+      }
+    }));
     window.dispatchEvent(new CustomEvent("nm:language-cutin", {
       detail: {
         code
       }
     }));
     setLang(code);
+    setMusicMode("random");
+    setMusicPlaying(true);
     setShowLangSel(false);
     setShowAvSel(true);
   };
@@ -4295,46 +4225,6 @@ function NeonMythosCity() {
     sage: { yen: .85, data: 1.4, con: 1.2 },
     drone: { yen: 1.2, data: 1.1, con: 1.1 }
   })[c.id] || { yen: 1, data: 1, con: 1 };
-  const applyNegotiationResult = useCallback(deal => {
-    const deltaMood = deal.outcome === "success" ? 7 : deal.outcome === "fail" ? -6 : 2;
-    const expression = deal.outcome === "success" ? "joy" : deal.outcome === "fail" ? "worried" : "focus";
-    const behaviorState = deal.outcome === "success" ? "deal-success" : deal.outcome === "fail" ? "deal-fail" : "deal-hold";
-    const ids = new Set([deal.from.id, deal.to.id]);
-    const patchRoster = roster => roster.map(c => ids.has(c.id) ? {
-      ...c,
-      expression,
-      behaviorState,
-      lastReaction: `${deal.resultLabel} ${deal.from.jp || deal.from.name} ⇄ ${deal.to.jp || deal.to.name}`,
-      currentAction: deal.resultLabel,
-      specActive: deal.outcome === "success" ? true : c.specActive,
-      specCooldown: deal.outcome === "success" ? Math.max(c.specCooldown || 0, 55) : c.specCooldown,
-      mood: Math.max(10, Math.min(100, (c.mood || 60) + deltaMood))
-    } : c);
-    setAgents(patchRoster);
-    setResi(patchRoster);
-    if (deal.outcome === "success") {
-      setRes(r => ({
-        ...r,
-        yen: r.yen + deal.payout,
-        con: r.con + 1,
-        rep: Math.min(100, r.rep + 1)
-      }));
-      setTp(p => p + deal.payout);
-      addTx("DEAL-OK", `${deal.from.jp || deal.from.name}⇄${deal.to.jp || deal.to.name}`, deal.payout, "YEN", deal.color);
-    } else if (deal.outcome === "hold") {
-      setRes(r => ({
-        ...r,
-        data: r.data + Math.max(1, deal.payout)
-      }));
-      addTx("DEAL-HOLD", `${deal.from.jp || deal.from.name}⇄${deal.to.jp || deal.to.name}`, Math.max(1, deal.payout), "DATA", deal.color);
-    } else {
-      setRes(r => ({
-        ...r,
-        rep: Math.max(0, r.rep - 1)
-      }));
-      addTx("DEAL-NG", `${deal.from.jp || deal.from.name}⇄${deal.to.jp || deal.to.name}`, 0, "CON", deal.color);
-    }
-  }, [addTx]);
   const runAI = setter => {
     setter(prev => prev.map(ch => {
       let c = {
@@ -4372,8 +4262,7 @@ function NeonMythosCity() {
           const bl = getBld(c.x, c.y - 1) || getBld(c.x, c.y);
           if (bl && c.act && c.act[bl.id]) {
             const ms = c.act[bl.id];
-            const actionMessage = ms[Math.floor(Math.random() * ms.length)];
-            log(c.jp, actionMessage, c.color);
+            log(c.jp, ms[Math.floor(Math.random() * ms.length)], c.color);
             // Check specialty bonus
             const specBuilds = c.specialty ? SPEC_BUILDINGS[c.specialty] : [];
             const isSpecialty = specBuilds.includes(bl.id);
@@ -4384,8 +4273,7 @@ function NeonMythosCity() {
 	            const pr = Math.floor((Math.random() * 800 * gv * bonusMult + 30) * econ.yen);
 	            c = reactEntity(c, "work", {
 	              building: bl.id,
-	              isSpecialty,
-                action: actionMessage
+	              isSpecialty
 	            });
 	            c.specActive = isSpecialty;
 	            if (isSpecialty && c.specCooldown === 0) {
@@ -4422,8 +4310,7 @@ function NeonMythosCity() {
 	              ...c,
 	              mood: Math.min(100, c.mood + 15)
 	            }, "rest", {
-	              building: bl.id,
-                action: actionMessage
+	              building: bl.id
 	            });
 	          }
           return c;
@@ -4454,63 +4341,40 @@ function NeonMythosCity() {
     if (paused || showAvSel || showLangSel) return;
     runAI(setAgents);
     runAI(setResi);
-    const now = Date.now();
-    if (now >= nextNegotiationAt.current) {
+    if (tick % 10 === 0) {
       const workers = [...agents, ...resi].filter(a => a.state === "work");
-      if (workers.length >= 2) {
-        nextNegotiationAt.current = now + DEAL_INTERVAL_MIN_MS + Math.random() * DEAL_INTERVAL_JITTER_MS;
-        let a = null;
-        let b = null;
-        for (let attempt = 0; attempt < 8 && (!a || !b || a.id === b.id); attempt++) {
-          a = workers[Math.floor(Math.random() * workers.length)];
-          b = workers[Math.floor(Math.random() * workers.length)];
-        }
-        if (a && b && a.id !== b.id) {
-          const deal = resolveNegotiationDeal(a, b, tick, lang);
-          const conn = {
+      const newConns = [];
+      for (let i = 0; i < Math.min(3, workers.length - 1); i++) {
+        if (workers.length >= 2) {
+          const a = workers[Math.floor(Math.random() * workers.length)];
+          const b = workers[Math.floor(Math.random() * workers.length)];
+          if (a.id !== b.id) newConns.push({
             id: `${a.id}-${b.id}-${tick}`,
             from: a,
             to: b,
-            time: 0,
-            outcome: deal.outcome,
-            color: deal.color,
-            resultLabel: deal.resultLabel,
-            deal
-          };
-          setConnections(prev => [...prev, conn].slice(-DEAL_CONNECTION_LIMIT));
-          applyNegotiationResult(conn.deal);
-          if (mangaDealClearTimer.current) window.clearTimeout(mangaDealClearTimer.current);
-          setMangaDeal(conn.deal);
-          mangaDealClearTimer.current = window.setTimeout(() => {
-            setMangaDeal(current => current && current.id === conn.deal.id ? null : current);
-          }, DEAL_CUTIN_MS);
-          window.dispatchEvent(new CustomEvent("nm:agent-negotiation", {
-            detail: {
-              from: conn.from.jp || conn.from.name,
-              to: conn.to.jp || conn.to.name,
-              fromColor: conn.from.color,
-              toColor: conn.to.color,
-              topic: conn.from.specialty || conn.to.specialty || "city_ops",
-              outcome: conn.outcome,
-              resultLabel: conn.resultLabel,
-              color: conn.color,
-              score: conn.deal.score,
-              payout: conn.deal.payout,
-              fromLine: conn.deal.fromLine,
-              toLine: conn.deal.toLine,
-              tick
-            }
-          }));
+            time: 0
+          });
         }
-      } else {
-        nextNegotiationAt.current = now + DEAL_RETRY_MIN_MS + Math.random() * DEAL_RETRY_JITTER_MS;
       }
+      newConns.forEach(conn => {
+        window.dispatchEvent(new CustomEvent("nm:agent-negotiation", {
+          detail: {
+            from: conn.from.jp || conn.from.name,
+            to: conn.to.jp || conn.to.name,
+            fromColor: conn.from.color,
+            toColor: conn.to.color,
+            topic: conn.from.specialty || conn.to.specialty || "city_ops",
+            tick
+          }
+        }));
+      });
+      setConnections(prev => [...prev, ...newConns].slice(-8));
     }
-    setConnections(prev => prev.length ? prev.map(c => ({
+    setConnections(prev => prev.map(c => ({
       ...c,
       time: c.time + 1
-    })).filter(c => c.time < DEAL_CONNECTION_TICKS) : prev);
-  }, [tick, paused, showAvSel, showLangSel, lang, applyNegotiationResult]);
+    })).filter(c => c.time < 30));
+  }, [tick, paused, showAvSel, showLangSel]);
   useEffect(() => {
     if (tick % 120 === 0 && tick > 0 && !paused) {
       const ev = [{
@@ -4563,6 +4427,64 @@ function NeonMythosCity() {
     champ: t.tierChamp,
     sp: t.tierSp
   };
+  const cityPressure = useMemo(() => {
+    const workerCount = all.filter(a => a.state === "work").length;
+    const breadShortage = Math.max(0, 68 - res.rep + (res.yen < 42000 ? 16 : 0) + (day % 4 === 0 ? 12 : 0));
+    const logistics = Math.min(100, 28 + workerCount * 7 + (tick % 90));
+    const unrest = Math.min(100, breadShortage * .72 + Math.max(0, 8 - res.con) * 5 + (phase === "evening" ? 12 : 0));
+    const blackMarket = Math.min(100, breadShortage + Math.max(0, 80 - res.rep) + (phase === "night" ? 18 : 0));
+    return {
+      breadShortage: Math.round(Math.min(100, breadShortage)),
+      logistics: Math.round(logistics),
+      unrest: Math.round(unrest),
+      blackMarket: Math.round(blackMarket),
+      workers: workerCount
+    };
+  }, [all, res, day, tick, phase]);
+  const visualIncidents = useMemo(() => [{
+    id: "queue-market",
+    text: "パン屋の行列",
+    icon: "😡",
+    x: 12.1,
+    y: 3.25,
+    level: cityPressure.breadShortage
+  }, {
+    id: "empty-shelf",
+    text: "棚が空",
+    icon: "🍞",
+    x: 13.7,
+    y: 1.15,
+    level: cityPressure.breadShortage
+  }, {
+    id: "black-market",
+    text: "闇市屋台",
+    icon: "🕯",
+    x: 20.15,
+    y: 13.4,
+    level: cityPressure.blackMarket
+  }, {
+    id: "protest",
+    text: "役所前の抗議",
+    icon: "📢",
+    x: 3.1,
+    y: 3.45,
+    level: cityPressure.unrest
+  }, {
+    id: "cargo",
+    text: "港の積荷待ち",
+    icon: "🚢",
+    x: 17.4,
+    y: 4.25,
+    level: cityPressure.logistics
+  }, {
+    id: "factory",
+    text: "工場の煙",
+    icon: "🏭",
+    x: 12.8,
+    y: 5.4,
+    level: 100 - cityPressure.breadShortage / 2
+  }], [cityPressure]);
+  const selectedBuilding = BUILDINGS.find(b => b.id === selBld) || BUILDINGS.find(b => b.id === hovB) || BUILDINGS[0];
 
   // ── LANGUAGE SELECT ────────────────────────────────────────
   if (showLangSel) return /*#__PURE__*/React.createElement(LanguageSelect, {
@@ -5061,8 +4983,6 @@ function NeonMythosCity() {
       const volSOL = (1000 + charIdNum * 13 % 4000 + tick % 5 * 12).toLocaleString();
       const spec = c.specialty ? SPECIALTIES[c.specialty] : null;
       const stateLabel = c.state === "walk" ? t.routing : c.state === "work" ? t.executing : t.standby;
-      const activity = getAgentActivity(c, lang);
-      const visibleBuilding = BUILDINGS.find(b => b.id === c.currentBuilding) || activity.building || (c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null);
       const reasoningLogs = ["[LOG] Scouting local merchant...", "[LOG] Negotiating 5% fee...", "[LOG] Analyzing route optimization...", "[LOG] Verifying SAS signature...", "[LOG] Initiating x402 fee stream...", "[LOG] Waiting for confirmation..."];
       return /*#__PURE__*/React.createElement("div", {
         style: {
@@ -5146,14 +5066,7 @@ function NeonMythosCity() {
           textTransform: "uppercase",
           marginTop: "2px"
         }
-      }, "ID: ", c.id.toUpperCase(), " \xB7 ", stateLabel), /*#__PURE__*/React.createElement("div", {
-        style: {
-          fontSize: "8px",
-          marginTop: 2,
-          color: c.color,
-          letterSpacing: .6
-        }
-      }, activity.icon, " ", activity.label, visibleBuilding ? " @ " + visibleBuilding.name : ""), spec && /*#__PURE__*/React.createElement("div", {
+      }, "ID: ", c.id.toUpperCase(), " \xB7 ", stateLabel), spec && /*#__PURE__*/React.createElement("div", {
         style: {
           fontSize: "8px",
           marginTop: 2,
@@ -5427,468 +5340,480 @@ function NeonMythosCity() {
     }
   }, l.msg))));
   const GameMap = () => {
-    const worldAgents = all.map(c => {
-      const activity = getAgentActivity(c, lang);
-      const targetBuilding = c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null;
-      const currentBuilding = BUILDINGS.find(b => b.id === c.currentBuilding) || activity.building;
-      return { c, activity, targetBuilding, currentBuilding };
-    });
-    const activeByBuilding = worldAgents.reduce((acc, item) => {
-      const b = item.currentBuilding;
-      if (b && (item.c.state === "work" || item.c.specActive)) {
-        (acc[b.id] ||= []).push(item);
-      }
-      return acc;
-    }, {});
-    const isNight = phase === "night";
-    const tileBase = {
-      grass: isNight ? "#12342f" : "#33c98c",
-      park: isNight ? "#164334" : "#5de48e",
-      road: isNight ? "#1e2742" : "#dbe6ff",
-      plaza: isNight ? "#2a3154" : "#eef4ff",
-      canal: isNight ? "#07425a" : "#00bfe8",
-      lot: isNight ? "#171b31" : "#cfe7df"
+    const sceneBuilding = selectedBuilding || BUILDINGS[0];
+    const scene = getBuildingScene(sceneBuilding);
+    const selectedSceneActive = !!sceneBuilding;
+    const agentIntent = c => {
+      if (c.state === "walk") return {
+        icon: "💼",
+        text: "移動中",
+        why: "目的地へ向かう"
+      };
+      if (c.behaviorState === "specialty") return {
+        icon: "🧠",
+        text: "判断中",
+        why: "専門スキルで市場を見る"
+      };
+      if (c.state === "work" && c.specialty === "trader") return {
+        icon: "🍞",
+        text: "価格確認",
+        why: "パン価格と在庫を比較"
+      };
+      if (c.state === "work" && c.specialty === "diplomat") return {
+        icon: "💬",
+        text: "噂共有",
+        why: "不満と物価情報を交換"
+      };
+      if (cityPressure.unrest > 55 && c.mood < 75) return {
+        icon: "😡",
+        text: "不満あり",
+        why: "家計が圧迫されている"
+      };
+      return {
+        icon: "💬",
+        text: "観察中",
+        why: "街の変化を記憶"
+      };
     };
-    const mapWidth = MAP_W * TILE;
-    const mapHeight = MAP_H * TILE;
-    const tileNodes = Array.from({ length: MAP_H }).map((_, y) => Array.from({ length: MAP_W }).map((_, x) => {
-      const key = `${x},${y}`;
-      const kind = getTileKind(x, y);
-      const elev = getElevation(x, y);
-      const roadFlow = getRoadFlow(x, y);
-      const crosswalk = CROSSWALK_TILES.has(key);
-      const stairs = STAIRS_TILES.has(key);
-      const tileLight = (x * 13 + y * 7 + tick) % 17 === 0;
-      const bg = kind === "road" ? (roadFlow === "v" ? `linear-gradient(90deg, ${tileBase.road} 0 43%, ${isNight ? "#354469" : "#f8fbff"} 43% 57%, ${tileBase.road} 57%)` : `linear-gradient(180deg, ${tileBase.road} 0 43%, ${isNight ? "#354469" : "#f8fbff"} 43% 57%, ${tileBase.road} 57%)`) : kind === "canal" ? `linear-gradient(135deg, ${tileBase.canal}, ${isNight ? "#0ea2c5" : "#5feaff"})` : kind === "plaza" ? `linear-gradient(135deg, ${tileBase.plaza}, ${isNight ? "#202843" : "#cfdcff"})` : kind === "park" ? `radial-gradient(circle at 35% 35%, ${isNight ? "#2f7055" : "#8cf37a"} 0 18%, transparent 19%), linear-gradient(135deg, ${tileBase.park}, ${isNight ? "#0f2e29" : "#2dc77c"})` : kind === "lot" ? `linear-gradient(135deg, ${tileBase.lot}, ${isNight ? "#101426" : "#b8d7d2"})` : `linear-gradient(135deg, ${tileBase.grass}, ${isNight ? "#0c2625" : "#19a978"})`;
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        position: "relative",
+        width: MAP_W * TILE,
+        height: MAP_H * TILE,
+        background: `linear-gradient(180deg,${sky},#101522 55%,#0d1118)`,
+        borderRadius: "6px",
+        border: "1px solid #263348",
+        overflow: "hidden",
+        imageRendering: "auto",
+        flexShrink: 0,
+        margin: "4px auto",
+        boxShadow: "0 18px 45px rgba(0,0,0,.46), inset 0 0 0 1px rgba(255,255,255,.04)"
+      }
+    }, /*#__PURE__*/React.createElement("style", null, `
+        @keyframes nmSmokeRise{0%{transform:translateY(0) scale(.75);opacity:.18}45%{opacity:.55}100%{transform:translateY(-24px) scale(1.5);opacity:0}}
+        @keyframes nmCityPulse{0%,100%{transform:translateY(0);opacity:.82}50%{transform:translateY(-3px);opacity:1}}
+        @keyframes nmCargoMove{0%{transform:translateX(-16px);opacity:.1}15%,82%{opacity:.9}100%{transform:translateX(34px);opacity:.1}}
+        @keyframes nmCrowdBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+      `), CITY_DISTRICTS.map((d, i) => /*#__PURE__*/React.createElement("div", {
+      key: `district-${i}`,
+      style: {
+        position: "absolute",
+        left: d.x * TILE,
+        top: d.y * TILE,
+        width: d.w * TILE,
+        height: d.h * TILE,
+        background: `linear-gradient(135deg,${d.color}18,transparent 64%)`,
+        border: `1px solid ${d.color}26`,
+        boxShadow: `inset 0 0 18px ${d.color}10`,
+        pointerEvents: "none"
+      }
+    }, !isMobile && /*#__PURE__*/React.createElement("div", {
+      style: {
+        position: "absolute",
+        left: 5,
+        top: 4,
+        color: `${d.color}bb`,
+        fontSize: 7,
+        fontWeight: 900,
+        textShadow: "0 1px 3px #000",
+        lineHeight: 1.25
+      }
+    }, d.name, /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: "#ffffff78",
+        fontWeight: 600
+      }
+    }, d.note)))), Array.from({
+      length: MAP_H
+    }).map((_, y) => Array.from({
+      length: MAP_W
+    }).map((_, x) => {
+      const isR = ROADS.has(`${x},${y}`);
       return /*#__PURE__*/React.createElement("div", {
         key: `g${x}${y}`,
         style: {
           position: "absolute",
           left: x * TILE,
-          top: y * TILE - elev * (isMobile ? 1 : 2),
+          top: y * TILE,
           width: TILE,
           height: TILE,
-          background: bg,
-          borderRight: `1px solid ${isNight ? "#ffffff09" : "#ffffff55"}`,
-          borderBottom: `1px solid ${elev ? "#20354588" : isNight ? "#00000044" : "#6f9f8a44"}`,
-          boxShadow: elev ? `0 ${elev * (isMobile ? 2 : 3)}px 0 ${isNight ? "#0b1722" : "#6f8fa3"}, inset 0 1px 0 #ffffff55` : "inset 0 1px 0 #ffffff22",
-          pointerEvents: "none",
-          overflow: "hidden",
-          zIndex: 1 + elev
+          background: isR ? "linear-gradient(135deg,#232031,#151827)" : phase === "night" ? "#0e1420" : "#17202b",
+          borderRight: "1px solid #ffffff05",
+          borderBottom: "1px solid #ffffff05",
+          boxShadow: isR && (x + y + tick) % 7 === 0 ? "inset 0 0 8px #FFD70018" : "none"
         }
-      }, kind === "canal" && /*#__PURE__*/React.createElement("div", {
-        style: {
-          position: "absolute",
-          inset: 3,
-          borderRadius: 2,
-          background: "linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent)",
-          opacity: .48,
-          transform: `translateX(${tick % 12 - 6}px)`,
-          animation: "cityWater 2.4s linear infinite"
-        }
-      }), crosswalk && /*#__PURE__*/React.createElement("div", {
-        style: {
-          position: "absolute",
-          inset: 2,
-          background: "repeating-linear-gradient(90deg, rgba(255,255,255,.75) 0 3px, transparent 3px 7px)",
-          opacity: isNight ? .42 : .72
-        }
-      }), stairs && /*#__PURE__*/React.createElement("div", {
-        style: {
-          position: "absolute",
-          inset: 2,
-          background: "repeating-linear-gradient(180deg, rgba(60,80,115,.55) 0 2px, rgba(255,255,255,.7) 2px 4px)",
-          boxShadow: "inset 0 0 0 1px rgba(20,30,50,.28)"
-        }
-      }), kind === "road" && !crosswalk && /*#__PURE__*/React.createElement("div", {
-        style: {
-          position: "absolute",
-          left: roadFlow === "v" ? "47%" : "6%",
-          right: roadFlow === "v" ? "47%" : "6%",
-          top: roadFlow === "h" ? "47%" : "6%",
-          bottom: roadFlow === "h" ? "47%" : "6%",
-          background: isNight ? "rgba(0,229,255,.24)" : "rgba(52,100,160,.24)",
-          opacity: tileLight ? .9 : .45
-        }
-      }));
-    }));
-    return /*#__PURE__*/React.createElement("div", {
-      "data-world-map": "open-city",
-      style: {
-        position: "relative",
-        width: mapWidth,
-        height: mapHeight,
-        background: `radial-gradient(circle at 40% 18%, ${isNight ? "#1c2b54" : "#bfefff"}22, transparent 36%), ${sky}`,
-        borderRadius: "8px",
-        border: "1px solid #24466a",
-        overflow: "hidden",
-        imageRendering: "auto",
-        flexShrink: 0,
-        margin: "4px auto",
-        boxShadow: "0 14px 38px rgba(0,0,0,.46), inset 0 0 0 1px rgba(255,255,255,.08)"
-      }
-    }, /*#__PURE__*/React.createElement("div", {
+      });
+    })), [[0, 4, 22, "市場搬入"], [3, 0, 18, "通勤"], [15, 0, 18, "港便"], [0, 14, 22, "行政/金融"]].map((r, i) => /*#__PURE__*/React.createElement("div", {
+      key: `flow-${i}`,
       style: {
         position: "absolute",
-        inset: 0,
-        background: `linear-gradient(135deg, transparent 0 47%, ${isNight ? "rgba(0,229,255,.08)" : "rgba(255,255,255,.22)"} 47% 48%, transparent 48%), linear-gradient(45deg, transparent 0 47%, ${isNight ? "rgba(255,0,90,.06)" : "rgba(30,80,120,.1)"} 47% 48%, transparent 48%)`,
-        backgroundSize: `${TILE * 2}px ${TILE * 2}px`,
-        pointerEvents: "none",
-        opacity: .55,
-        zIndex: 0
+        left: r[0] * TILE,
+        top: r[1] * TILE + TILE * .38,
+        width: r[2] * TILE,
+        height: 3,
+        background: "linear-gradient(90deg,transparent,#FFD70088,transparent)",
+        opacity: .15 + cityPressure.logistics / 160,
+        animation: `nmCargoMove ${2.4 + i * .3}s linear infinite`,
+        pointerEvents: "none"
       }
-    }), tileNodes, CITY_PROPS.map((p, i) => /*#__PURE__*/React.createElement("div", {
-      key: `cp${i}`,
-      title: p.label,
-      style: {
-        position: "absolute",
-        left: p.x * TILE + TILE * .28,
-        top: p.y * TILE + TILE * .16 - getElevation(p.x, p.y) * 2,
-        width: TILE * .46,
-        height: TILE * .5,
-        display: "grid",
-        placeItems: "center",
-        border: `1px solid ${p.color}77`,
-        borderRadius: p.kind === "lamp" ? "50% 50% 35% 35%" : 3,
-        background: `linear-gradient(180deg, rgba(5,7,16,.86), ${p.color}22)`,
-        color: p.color,
-        fontSize: isMobile ? 8 : 11,
-        fontWeight: 900,
-        boxShadow: `0 0 10px ${p.color}33`,
-        pointerEvents: "none",
-        zIndex: 8 + p.y
-      }
-    }, p.icon)), DECO.map((d, i) => /*#__PURE__*/React.createElement("div", {
+    })), DECO.map((d, i) => /*#__PURE__*/React.createElement("div", {
       key: `d${i}`,
       style: {
         position: "absolute",
-        left: d.x * TILE + TILE * .18,
-        top: d.y * TILE + TILE * .05 - getElevation(d.x, d.y) * 2,
-        width: TILE * .72,
-        height: TILE * .72,
-        display: "grid",
-        placeItems: "center",
-        fontSize: isMobile ? "12px" : "18px",
-        opacity: isNight ? .62 : .9,
-        filter: "drop-shadow(0 3px 2px rgba(0,0,0,.35))",
-        pointerEvents: "none",
-        zIndex: 9 + d.y
+        left: d.x * TILE + (isMobile ? 2 : 6),
+        top: d.y * TILE + (isMobile ? 2 : 6),
+        fontSize: isMobile ? "8px" : "12px",
+        opacity: .42,
+        pointerEvents: "none"
       }
     }, d.e)), BUILDINGS.map(b => {
       const hov = hovB === b.id;
-      const skin = getBuildingSkin(b);
+      const active = selBld === b.id;
       const specBldKey = Object.keys(SPEC_BUILDINGS).find(k => SPEC_BUILDINGS[k].includes(b.id));
-      const workers = activeByBuilding[b.id] || [];
-      const elev = getElevation(b.x, b.y);
-      const roofH = isMobile ? 11 : 18;
-      const bodyH = b.h * TILE;
-      const bodyW = b.w * TILE;
-      const winCount = Math.max(2, Math.min(6, b.w * 2));
+      const buildingScene = getBuildingScene(b);
+      const stress = b.id === "market" || b.id === "forge" ? cityPressure.breadShortage : b.id === "port" ? cityPressure.logistics : b.id === "shrine" ? cityPressure.unrest : b.id === "tavern" ? cityPressure.blackMarket : 32;
+      const isCutaway = active || hov;
       return /*#__PURE__*/React.createElement("div", {
         key: b.id,
         onMouseEnter: () => setHovB(b.id),
         onMouseLeave: () => setHovB(null),
-        onClick: () => isMobile && setHovB(hovB === b.id ? null : b.id),
+        onClick: e => {
+          e.stopPropagation();
+          setSelBld(b.id);
+        },
         style: {
           position: "absolute",
-          left: b.x * TILE - 3,
-          top: b.y * TILE - roofH - elev * 2,
-          width: bodyW + 6,
-          height: bodyH + roofH + 10,
+          left: b.x * TILE - 1,
+          top: b.y * TILE - 1,
+          width: b.w * TILE + 2,
+          height: b.h * TILE + 2,
           cursor: "pointer",
-          zIndex: 10 + b.y,
-          filter: hov ? `drop-shadow(0 0 12px ${b.color}66)` : "drop-shadow(0 7px 5px rgba(0,0,0,.36))"
+          zIndex: active ? 18 : 5 + b.y,
+          filter: active ? `drop-shadow(0 0 16px ${b.color}66)` : "none"
         }
       }, /*#__PURE__*/React.createElement("div", {
         style: {
           position: "absolute",
-          left: 6,
-          right: 6,
-          bottom: 0,
-          height: 10,
-          borderRadius: "50%",
-          background: "rgba(0,0,0,.26)"
+          top: isMobile ? -5 : -10,
+          left: -2,
+          right: -2,
+          height: isMobile ? 7 : 12,
+          background: `linear-gradient(180deg,${b.rc},${b.rc}cc)`,
+          clipPath: "polygon(8% 100%,0 100%,12% 0%,88% 0%,100% 100%,92% 100%)",
+          opacity: isCutaway ? .48 : 1
         }
       }), /*#__PURE__*/React.createElement("div", {
         style: {
           position: "absolute",
-          left: 0,
-          right: 0,
-          top: 0,
-          height: roofH + 7,
-          background: `linear-gradient(180deg, ${skin.roof}, ${b.rc || skin.side})`,
-          clipPath: "polygon(9% 100%,0 100%,16% 0,84% 0,100% 100%,91% 100%)",
-          border: `1px solid ${hov ? b.color + "cc" : "#ffffff33"}`,
-          boxShadow: `inset 0 2px 0 rgba(255,255,255,.4), 0 0 ${workers.length ? 18 : 8}px ${workers.length ? b.color + "88" : "rgba(0,0,0,.16)"}`,
-          animation: workers.length ? "roofGlow 1.2s ease-in-out infinite" : undefined
-        }
-      }), /*#__PURE__*/React.createElement("div", {
-        style: {
-          position: "absolute",
-          left: 3,
-          right: 3,
-          top: roofH * .75,
-          height: bodyH,
-          background: `linear-gradient(90deg, ${skin.side} 0 11%, ${skin.face} 11% 82%, ${skin.side} 82% 100%)`,
-          border: `1px solid ${hov ? b.color + "aa" : "rgba(20,30,50,.45)"}`,
-          boxShadow: `inset 0 -8px 0 rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.45)`,
+          inset: 0,
+          background: isCutaway ? `linear-gradient(180deg,${b.color}24,#0d1017f2)` : `linear-gradient(180deg,${b.color}1f,${b.color}08)`,
+          border: `1.5px solid ${active ? b.color : hov ? b.color + "bb" : b.color + "38"}`,
+          borderRadius: "2px",
+          transition: "all .18s",
           overflow: "hidden"
         }
-      }, /*#__PURE__*/React.createElement("div", {
+      }, isCutaway ? /*#__PURE__*/React.createElement("div", {
         style: {
-          position: "absolute",
-          left: "14%",
-          top: 3,
-          right: "20%",
-          height: isMobile ? 9 : 13,
-          background: `linear-gradient(90deg, ${skin.trim}, #ffffffcc)`,
-          border: `1px solid ${b.color}66`,
-          color: "#102034",
-          fontSize: isMobile ? 5 : 7,
-          lineHeight: isMobile ? "8px" : "12px",
-          textAlign: "center",
-          fontWeight: 900,
-          letterSpacing: .6,
+          display: "grid",
+          gridTemplateColumns: `repeat(${Math.max(2, b.w)},1fr)`,
+          gridTemplateRows: `repeat(${Math.max(2, b.h)},1fr)`,
+          width: "100%",
+          height: "100%",
+          gap: 1,
+          padding: 2
+        }
+      }, buildingScene.rooms.flat().slice(0, Math.max(4, b.w * b.h)).map((room, i) => /*#__PURE__*/React.createElement("div", {
+        key: `${b.id}-room-${i}`,
+        title: room,
+        style: {
+          minWidth: 0,
+          border: `1px solid ${b.color}38`,
+          background: i % 2 ? "rgba(255,255,255,.055)" : "rgba(0,0,0,.18)",
+          color: "#f7f7f7",
+          fontSize: isMobile ? 5 : 6.3,
+          lineHeight: 1.1,
+          padding: "1px 2px",
           overflow: "hidden"
         }
-      }, skin.sign), Array.from({ length: winCount }).map((_, i) => /*#__PURE__*/React.createElement("div", {
-        key: `w${i}`,
+      }, room))) : /*#__PURE__*/React.createElement("div", {
         style: {
-          position: "absolute",
-          left: `${16 + i * (64 / Math.max(1, winCount - 1))}%`,
-          top: `${isMobile ? 19 : 25}%`,
-          width: Math.max(4, TILE * .18),
-          height: Math.max(5, TILE * .22),
-          background: workers.length || isNight ? `linear-gradient(180deg, #fff8b8, ${b.color}88)` : `linear-gradient(180deg, #e9fbff, ${skin.trim})`,
-          border: "1px solid rgba(30,40,60,.45)",
-          boxShadow: workers.length ? `0 0 8px ${b.color}` : undefined
-        }
-      })), /*#__PURE__*/React.createElement("div", {
-        style: {
-          position: "absolute",
-          left: "44%",
-          bottom: 0,
-          width: "18%",
-          height: "34%",
-          background: `linear-gradient(180deg, ${isNight ? "#12162a" : "#fff7e6"}, ${skin.side})`,
-          border: `1px solid ${b.color}55`,
-          borderBottom: 0,
-          boxShadow: workers.length ? `0 0 10px ${b.color}` : undefined
-        }
-      }), /*#__PURE__*/React.createElement("div", {
-        style: {
-          position: "absolute",
-          left: "8%",
-          right: "8%",
-          bottom: 3,
           display: "grid",
           gridTemplateColumns: `repeat(${b.w},1fr)`,
-          gap: 2,
-          opacity: .78
+          gridTemplateRows: `repeat(${b.h},1fr)`,
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+          justifyItems: "center"
         }
-      }, b.t[0]?.slice(0, b.w).map((e, i) => /*#__PURE__*/React.createElement("span", {
+      }, b.t.flat().map((e, i) => /*#__PURE__*/React.createElement("span", {
         key: i,
         style: {
-          fontSize: isMobile ? 6 : 9,
-          textAlign: "center",
-          filter: "drop-shadow(0 1px 1px rgba(0,0,0,.55))"
+          fontSize: isMobile ? b.w >= 3 ? "7px" : "6px" : b.w >= 3 ? "11px" : "10px",
+          opacity: .86
         }
-      }, e)))), specBldKey && !isMobile && /*#__PURE__*/React.createElement("div", {
+      }, e)))), (b.id === "forge" || b.id === "hacklab" || b.id === "tower") && [0, 1, 2].map(i => /*#__PURE__*/React.createElement("div", {
+        key: `smoke-${i}`,
         style: {
           position: "absolute",
-          top: -3,
-          right: 2,
-          fontSize: 12,
-          filter: `drop-shadow(0 0 5px ${SPECIALTIES[specBldKey]?.color || b.color})`
+          left: `${35 + i * 18}%`,
+          top: -8,
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
+          background: "rgba(220,230,235,.34)",
+          animation: `nmSmokeRise ${1.6 + i * .25}s ease-out infinite`,
+          animationDelay: `${i * .4}s`
         }
-      }, SPECIALTIES[specBldKey]?.icon || ""), workers.length > 0 && /*#__PURE__*/React.createElement("div", {
+      })), stress > 55 && /*#__PURE__*/React.createElement("div", {
         style: {
           position: "absolute",
+          right: -4,
+          top: -8,
+          fontSize: isMobile ? 9 : 13,
+          animation: "nmCityPulse .9s ease-in-out infinite"
+        }
+      }, b.id === "market" ? "😡" : b.id === "port" ? "🚚" : b.id === "shrine" ? "📢" : b.id === "tavern" ? "💬" : "⚠"), specBldKey && !isMobile && /*#__PURE__*/React.createElement("div", {
+        style: {
+          position: "absolute",
+          top: -7,
+          right: -2,
+          fontSize: 9,
+          opacity: .86
+        }
+      }, SPECIALTIES[specBldKey]?.icon || ""), !isMobile && /*#__PURE__*/React.createElement("div", {
+        style: {
+          position: "absolute",
+          bottom: -14,
           left: "50%",
-          bottom: -2,
           transform: "translateX(-50%)",
-          display: "flex",
-          gap: 2,
-          maxWidth: bodyW,
-          overflow: "hidden",
-          pointerEvents: "none"
-        }
-      }, workers.slice(0, 2).map(({ c, activity }) => /*#__PURE__*/React.createElement("span", {
-        key: c.id,
-        style: {
-          padding: "2px 4px",
-          borderRadius: 3,
-          background: "rgba(5,7,16,.9)",
-          border: `1px solid ${c.color}88`,
-          color: c.color,
-          fontSize: isMobile ? 5 : 7,
-          fontWeight: 900,
-          whiteSpace: "nowrap",
-          boxShadow: `0 0 8px ${c.color}33`
-        }
-      }, activity.icon, " ", activity.label))), !isMobile && /*#__PURE__*/React.createElement("div", {
-        style: {
-          position: "absolute",
-          left: "50%",
-          bottom: -15,
-          transform: "translateX(-50%)",
-          padding: "1px 4px",
-          background: "rgba(0,0,0,.52)",
-          border: `1px solid ${b.color}44`,
-          color: hov ? b.color : "#d9e5ff",
           fontSize: "6.5px",
-          fontWeight: 900,
+          color: active || hov ? b.color : `${b.color}92`,
+          fontWeight: "bold",
           whiteSpace: "nowrap",
           textShadow: "0 0 4px #000"
         }
-      }, b.name), hov && /*#__PURE__*/React.createElement("div", {
+      }, b.name));
+    }), visualIncidents.filter(v => v.level > 35).map(v => /*#__PURE__*/React.createElement("div", {
+      key: v.id,
+      style: {
+        position: "absolute",
+        left: v.x * TILE,
+        top: v.y * TILE,
+        zIndex: 28,
+        display: "flex",
+        alignItems: "center",
+        gap: 3,
+        padding: "2px 5px",
+        border: "1px solid rgba(255,255,255,.18)",
+        borderRadius: 4,
+        background: "rgba(5,7,12,.72)",
+        color: "#fff",
+        fontSize: isMobile ? 6 : 8,
+        boxShadow: "0 4px 12px rgba(0,0,0,.35)",
+        animation: "nmCrowdBob 1.2s ease-in-out infinite",
+        pointerEvents: "none"
+      }
+    }, /*#__PURE__*/React.createElement("span", null, v.icon), !isMobile && /*#__PURE__*/React.createElement("span", null, v.text))), all.map(c => {
+      const intent = agentIntent(c);
+      return /*#__PURE__*/React.createElement("div", {
+        key: `intent-${c.id}`,
         style: {
           position: "absolute",
-          bottom: isMobile ? -20 : -31,
-          left: "50%",
-          transform: "translateX(-50%)",
-          background: "#061024ee",
-          border: `1px solid ${b.color}77`,
-          borderRadius: "4px",
-          padding: "3px 7px",
-          fontSize: isMobile ? "6px" : "8px",
-          color: b.color,
-          whiteSpace: "nowrap",
-          zIndex: 80,
-          boxShadow: `0 0 16px ${b.color}33`
+          left: c.x * TILE + TILE * .05,
+          top: c.y * TILE - (isMobile ? 16 : 22),
+          zIndex: 38 + c.y,
+          pointerEvents: "none",
+          color: "#fff",
+          fontSize: isMobile ? 8 : 10,
+          textShadow: "0 1px 3px #000"
+        },
+        title: `${c.jp}: ${intent.why}`
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          display: "inline-flex",
+          minWidth: isMobile ? 14 : 18,
+          height: isMobile ? 14 : 18,
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 10,
+          background: "rgba(0,0,0,.62)",
+          border: `1px solid ${c.color}88`,
+          boxShadow: `0 0 8px ${c.color}44`
         }
-      }, b.name, " — ", workers[0] ? `${workers[0].activity.label}: ${workers[0].c.jp}` : b.desc));
-    }), /*#__PURE__*/React.createElement("svg", {
+      }, intent.icon), !isMobile && (sel === c.id || c.state === "work") && /*#__PURE__*/React.createElement("span", {
+        style: {
+          marginLeft: 3,
+          padding: "2px 5px",
+          borderRadius: 3,
+          background: "rgba(0,0,0,.64)",
+          border: `1px solid ${c.color}55`,
+          fontSize: 7
+        }
+      }, intent.text));
+    }), all.map(c => /*#__PURE__*/React.createElement(PixelChar, {
+    key: c.id,
+    id: c.id,
+    spriteId: c.spriteId,
+    state: c.state,
+    isSelected: sel === c.id,
+    isAvatar: avatar?.id === c.id,
+    name: c.jp,
+    color: c.color,
+    specialty: c.specialty,
+    expression: c.expression,
+    isSpecialtyActive: c.specActive,
+    onClick: () => setSel(sel === c.id ? null : c.id),
+    x: c.x,
+    y: c.y,
+    tick: tick,
+    tile: TILE
+  })), /*#__PURE__*/React.createElement("svg", {
+    style: {
+      position: "absolute",
+      left: 0,
+      top: 0,
+      width: "100%",
+      height: "100%",
+      pointerEvents: "none",
+      zIndex: 15,
+      overflow: "visible"
+    }
+  }, connections.map(c => {
+    const sx = c.from.x * TILE + TILE / 2,
+      sy = c.from.y * TILE + TILE / 2 - 11 * PX / 2;
+    const ex = c.to.x * TILE + TILE / 2,
+      ey = c.to.y * TILE + TILE / 2 - 11 * PX / 2;
+    const op = Math.max(0, 1 - c.time / 30);
+    const isSel = sel === c.from.id || sel === c.to.id;
+    if (!isSel && sel !== null) return null;
+    return /*#__PURE__*/React.createElement("g", {
+      key: c.id
+    }, /*#__PURE__*/React.createElement("line", {
+      x1: sx,
+      y1: sy,
+      x2: ex,
+      y2: ey,
+      stroke: `rgba(0,229,255,${isSel ? op : op * 0.3})`,
+      strokeWidth: "1.5",
+      strokeDasharray: "4 2"
+    }), c.time % 2 === 0 && /*#__PURE__*/React.createElement("circle", {
+      cx: sx + (ex - sx) * (c.time / 30),
+      cy: sy + (ey - sy) * (c.time / 30),
+      r: "2",
+      fill: "#FFD700"
+    }));
+      })), phase === "night" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "absolute",
+      inset: 0,
+      background: "rgba(5,5,20,.2)",
+      pointerEvents: "none"
+    }
+	  }), selectedSceneActive && !isMobile && /*#__PURE__*/React.createElement("div", {
       style: {
         position: "absolute",
-        left: 0,
-        top: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 16,
-        overflow: "visible"
+        right: 8,
+        top: 8,
+        width: Math.min(270, MAP_W * TILE * .42),
+        padding: 10,
+        border: `1px solid ${sceneBuilding.color}88`,
+        borderTop: `2px solid ${sceneBuilding.color}`,
+        background: "linear-gradient(180deg,rgba(8,10,16,.92),rgba(6,8,12,.82))",
+        color: "#fff",
+        zIndex: 80,
+        boxShadow: `0 12px 32px rgba(0,0,0,.45),0 0 18px ${sceneBuilding.color}22`,
+        backdropFilter: "blur(10px)"
       }
-    }, worldAgents.filter(({ c }) => c.state === "walk" && c.tx != null && c.ty != null).map(({ c, targetBuilding }) => {
-      const sx = c.x * TILE + TILE / 2;
-      const sy = c.y * TILE + TILE / 2;
-      const ex = c.tx * TILE + TILE / 2;
-      const ey = c.ty * TILE + TILE / 2;
-      return /*#__PURE__*/React.createElement("g", {
-        key: `route-${c.id}`,
-        opacity: sel && sel !== c.id ? .18 : .58
-      }, /*#__PURE__*/React.createElement("line", {
-        x1: sx,
-        y1: sy,
-        x2: ex,
-        y2: ey,
-        stroke: c.color,
-        strokeWidth: "1",
-        strokeDasharray: "3 4"
-      }), targetBuilding && /*#__PURE__*/React.createElement("circle", {
-        cx: ex,
-        cy: ey,
-        r: isMobile ? 3 : 4,
-        fill: c.color,
-        stroke: "#fff",
-        strokeWidth: ".7"
-      }));
-    }), connections.map(c => {
-      const sx = c.from.x * TILE + TILE / 2,
-        sy = c.from.y * TILE + TILE / 2 - 11 * PX / 2;
-      const ex = c.to.x * TILE + TILE / 2,
-        ey = c.to.y * TILE + TILE / 2 - 11 * PX / 2;
-      const op = Math.max(0, 1 - c.time / 30);
-      const isSel = sel === c.from.id || sel === c.to.id;
-      if (!isSel && sel !== null) return null;
-      const dealColor = c.color || "#00E5FF";
-      return /*#__PURE__*/React.createElement("g", {
-        key: c.id
-      }, /*#__PURE__*/React.createElement("line", {
-        x1: sx,
-        y1: sy,
-        x2: ex,
-        y2: ey,
-        stroke: dealColor,
-        opacity: isSel ? op : op * 0.42,
-        strokeWidth: c.outcome === "success" ? "2.6" : "1.8",
-        strokeDasharray: c.outcome === "fail" ? "2 3" : c.outcome === "hold" ? "7 4" : "4 2",
-        filter: `drop-shadow(0 0 5px ${dealColor})`
-      }), c.time % 2 === 0 && /*#__PURE__*/React.createElement("circle", {
-        cx: sx + (ex - sx) * (c.time / 30),
-        cy: sy + (ey - sy) * (c.time / 30),
-        r: c.outcome === "success" ? "3" : "2",
-        fill: dealColor,
-        stroke: "#fff",
-        strokeWidth: ".6"
-      }), /*#__PURE__*/React.createElement("text", {
-        x: (sx + ex) / 2,
-        y: (sy + ey) / 2 - 5,
-        fill: dealColor,
-        stroke: "#05070f",
-        strokeWidth: "2",
-        paintOrder: "stroke",
-        fontSize: isMobile ? "7" : "10",
-        fontWeight: "900",
-        textAnchor: "middle",
-        opacity: Math.min(1, op + .18)
-      }, c.resultLabel || "DEAL"));
-    })), worldAgents.map(({ c, activity, targetBuilding, currentBuilding }) => {
-      const label = c.state === "walk" && targetBuilding ? getActionText(lang, "walk") : activity.label;
-      const detail = currentBuilding ? `${activity.label} @ ${currentBuilding.name}` : targetBuilding ? `${getActionText(lang, "walk")} @ ${targetBuilding.name}` : c.currentAction || c.lastReaction || activity.label;
-      return /*#__PURE__*/React.createElement(PixelChar, {
-        key: c.id,
-        id: c.id,
-        spriteId: c.spriteId,
-        state: c.state,
-        isSelected: sel === c.id,
-        isAvatar: avatar?.id === c.id,
-        name: c.jp,
-        color: c.color,
-        specialty: c.specialty,
-        expression: c.expression,
-        isSpecialtyActive: c.specActive,
-        activityLabel: label,
-        activityIcon: activity.icon,
-        activityDetail: detail,
-        onClick: () => setSel(sel === c.id ? null : c.id),
-        x: c.x,
-        y: c.y,
-        tick: tick,
-        tile: TILE
-      });
-    }), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       style: {
-        position: "absolute",
-        left: 6,
-        top: 6,
         display: "flex",
-        gap: 5,
-        pointerEvents: "none",
-        zIndex: 70
+        justifyContent: "space-between",
+        gap: 8,
+        alignItems: "center",
+        marginBottom: 7
       }
-    }, [["LIVE", all.filter(a => a.state !== "idle").length, "#00E5FF"], ["WORK", all.filter(a => a.state === "work").length, "#FFD700"], ["DEAL", connections.length, "#FF69B4"]].map(([k, v, col]) => /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        color: sceneBuilding.color,
+        fontWeight: 900,
+        fontSize: 12,
+        fontFamily: "'Orbitron',monospace"
+      }
+    }, scene.title), /*#__PURE__*/React.createElement("button", {
+      onClick: e => {
+        e.stopPropagation();
+        setSelBld(null);
+      },
+      style: {
+        width: 22,
+        height: 22,
+        border: `1px solid ${sceneBuilding.color}66`,
+        background: "#070910",
+        color: sceneBuilding.color,
+        cursor: "pointer"
+      }
+    }, "×")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "grid",
+        gridTemplateColumns: "repeat(3,1fr)",
+        gap: 4,
+        marginBottom: 8
+      }
+    }, scene.crisis.map((c, i) => /*#__PURE__*/React.createElement("div", {
+      key: `crisis-${i}`,
+      style: {
+        padding: "4px 5px",
+        border: `1px solid ${sceneBuilding.color}38`,
+        background: "rgba(255,255,255,.045)",
+        color: i === 0 ? sceneBuilding.color : "#d8dde8",
+        fontSize: 8,
+        lineHeight: 1.2,
+        minHeight: 28
+      }
+    }, c))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: 5
+      }
+    }, scene.rooms.flat().map((room, i) => /*#__PURE__*/React.createElement("div", {
+      key: `scene-room-${i}`,
+      style: {
+        padding: "5px 6px",
+        minHeight: 32,
+        border: "1px solid rgba(255,255,255,.1)",
+        background: i % 2 ? "rgba(255,255,255,.055)" : "rgba(0,0,0,.18)",
+        color: "#dce4ee",
+        fontSize: 8,
+        lineHeight: 1.25
+      }
+    }, room))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 8,
+        display: "grid",
+        gridTemplateColumns: "repeat(4,1fr)",
+        gap: 5,
+        fontSize: 8
+      }
+    }, [["小麦不足", cityPressure.breadShortage], ["物流", cityPressure.logistics], ["不満", cityPressure.unrest], ["闇市", cityPressure.blackMarket]].map(([k, v]) => /*#__PURE__*/React.createElement("div", {
       key: k,
       style: {
-        padding: "2px 5px",
-        border: `1px solid ${col}77`,
-        background: "rgba(5,7,16,.72)",
-        color: col,
-        fontSize: isMobile ? 6 : 8,
-        fontWeight: 900,
-        letterSpacing: .8,
-        boxShadow: `0 0 10px ${col}22`
+        color: "#9aa7b8"
       }
-    }, k, " ", v))), phase === "night" && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", null, k, " ", v), /*#__PURE__*/React.createElement("div", {
       style: {
-        position: "absolute",
-        inset: 0,
-        background: "linear-gradient(180deg, rgba(5,5,20,.18), rgba(0,0,0,.26))",
-        pointerEvents: "none",
-        mixBlendMode: "multiply",
-        zIndex: 90
+        height: 4,
+        marginTop: 3,
+        background: "rgba(255,255,255,.1)",
+        overflow: "hidden"
       }
-    }));
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        height: "100%",
+        width: `${Math.min(100, v)}%`,
+        background: v > 65 ? "#ff4d5d" : sceneBuilding.color
+      }
+    })))))));
   };
 
   const BottomEntitySheet = () => {
@@ -5898,8 +5823,6 @@ function NeonMythosCity() {
     const material = pet ? null : MATERIAL_PORTRAITS[c.spriteId];
     const petAnimation = pet ? getCodexPetAnimation(pet, c.state, c.expression, c.spriteId) : null;
     const spec = c.specialty ? SPECIALTIES[c.specialty] : null;
-    const activity = getAgentActivity(c, lang);
-    const visibleBuilding = BUILDINGS.find(b => b.id === c.currentBuilding) || activity.building || (c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null);
     const face = c.expression === "joy" ? "≧▽≦" : c.expression === "focus" ? "◕_◕" : c.expression === "worried" ? "•́︿•̀" : "•ᴗ•";
     return /*#__PURE__*/React.createElement("div", {
       style: {
@@ -6002,7 +5925,7 @@ function NeonMythosCity() {
         gap: 6,
         marginTop: 8
       }
-    }, [["STATE", c.state], ["TASK", activity.label], ["PLACE", visibleBuilding?.name || "city"], ["MOOD", Math.round(c.mood)], ["LV", c.level], ["ENTITY", c.entityType || "character"]].map(([k, v]) => /*#__PURE__*/React.createElement("span", {
+    }, [["STATE", c.state], ["MOOD", Math.round(c.mood)], ["LV", c.level], ["ENTITY", c.entityType || "character"]].map(([k, v]) => /*#__PURE__*/React.createElement("span", {
       key: k,
       style: {
         padding: "3px 7px",
@@ -6020,7 +5943,7 @@ function NeonMythosCity() {
         lineHeight: 1.35,
         marginTop: 7
       }
-    }, c.currentAction ? `${activity.icon} ${c.currentAction}` : c.lastReaction ? `Reaction: ${c.lastReaction}` : "Autonomous entity: preferences, behavior, mood and reactions are simulated."), agentNotes[c.id] && /*#__PURE__*/React.createElement("div", {
+    }, c.lastReaction ? `Reaction: ${c.lastReaction}` : "Autonomous entity: preferences, behavior, mood and reactions are simulated."), agentNotes[c.id] && /*#__PURE__*/React.createElement("div", {
       style: {
         marginTop: 6,
         color: c.color,
@@ -6093,21 +6016,53 @@ function NeonMythosCity() {
         @keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
         @keyframes langGlow{0%,100%{box-shadow:0 0 8px #FF69B444}50%{box-shadow:0 0 20px #FF69B488,0 0 40px #00E5FF44}}
         @keyframes langPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
-        @keyframes cityWater{0%{background-position:0 0;opacity:.3}50%{opacity:.65}100%{background-position:18px 0;opacity:.3}}
-        @keyframes roofGlow{0%,100%{filter:saturate(1);transform:translateY(0)}50%{filter:saturate(1.25) brightness(1.12);transform:translateY(-1px)}}
-        @keyframes agentBubblePulse{0%,100%{opacity:.78}50%{opacity:1;box-shadow:0 0 12px rgba(0,229,255,.35)}}
-        @keyframes mangaDealFade{0%{opacity:0;transform:scale(.94)}8%,84%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04)}}
-        @keyframes mangaPanelIn{from{opacity:0;transform:translateY(18px) rotate(-2deg)}to{opacity:1;transform:translateY(0) rotate(0)}}
-        @keyframes mangaStamp{0%{opacity:0;transform:scale(2.4) rotate(-22deg)}62%{opacity:1;transform:scale(.88) rotate(-8deg)}100%{opacity:1;transform:scale(1) rotate(-8deg)}}
-        @keyframes mangaResultSlam{0%{opacity:0;transform:translateX(-50%) scale(2.2) rotate(-12deg)}58%{opacity:1;transform:translateX(-50%) scale(.9) rotate(-4deg)}100%{opacity:1;transform:translateX(-50%) scale(1) rotate(-4deg)}}
-        @keyframes mangaSpeedSpin{from{transform:rotate(0deg);opacity:.52}to{transform:rotate(90deg);opacity:.18}}
         *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
         ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:#0a0a1a}::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
-      `), mangaDeal && /*#__PURE__*/React.createElement(MangaDealCutIn, {
-    key: mangaDeal.id,
-    deal: mangaDeal,
-    lang: lang,
-    isMobile: isMobile
+      `), /*#__PURE__*/React.createElement("audio", {
+    ref: audioRef,
+    src: currentMusicTrack.src,
+    preload: "metadata",
+    onLoadedMetadata: e => {
+      const audio = e.currentTarget;
+      setMusicDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+      setMusicTime(Number.isFinite(audio.currentTime) ? audio.currentTime : 0);
+    },
+    onDurationChange: e => {
+      const audio = e.currentTarget;
+      setMusicDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+    },
+    onTimeUpdate: e => {
+      const audio = e.currentTarget;
+      setMusicTime(Number.isFinite(audio.currentTime) ? audio.currentTime : 0);
+    },
+    onEnded: () => {
+      setMusicTime(0);
+      if (musicMode === "random") chooseRandomMusic();else if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(() => setMusicPlaying(false));
+      }
+    },
+    onError: () => {
+      setMusicPlaying(false);
+      setMusicNotice(`Missing licensed file: ${currentMusicTrack.src}`);
+    }
+  }), /*#__PURE__*/React.createElement(MusicPanel, {
+    tracks: MUSIC_TRACKS,
+    currentTrack: currentMusicTrack,
+    trackId: musicTrackId,
+    mode: musicMode,
+    playing: musicPlaying,
+    volume: musicVolume,
+    currentTime: musicTime,
+    duration: musicDuration,
+    notice: musicNotice,
+    isMobile: isMobile,
+    onToggle: toggleMusic,
+    onRandom: chooseRandomMusic,
+    onTrackChange: selectMusicTrack,
+    onModeChange: setMusicMode,
+    onVolumeChange: setMusicVolume,
+    onSeek: seekMusic
   }), cutIn && /*#__PURE__*/React.createElement(CutIn, {
     char: cutIn.char,
     specKey: cutIn.specKey,
@@ -6386,6 +6341,12 @@ function NeonMythosCity() {
   })))), showSettings && /*#__PURE__*/React.createElement(SettingsPanel, {
     lang: lang,
     onLangChange: code => {
+      window.NM_LANG = code;
+      window.dispatchEvent(new CustomEvent("nm:app-language", {
+        detail: {
+          code
+        }
+      }));
       window.dispatchEvent(new CustomEvent("nm:language-cutin", {
         detail: {
           code
@@ -6696,13 +6657,9 @@ function NeonMythosCity() {
   }, /*#__PURE__*/React.createElement("span", null, t.neonCity, " ", t.day, day, " / ", all.length), /*#__PURE__*/React.createElement("span", null, t.online)));
 }
 
-      var engineStatus = document.getElementById("nm-status");
-      if (engineStatus) engineStatus.textContent = "STARTING ENGINE...";
+      document.getElementById("nm-status").textContent = "STARTING ENGINE...";
 
       var container = document.getElementById("root");
-      if (!container) {
-        throw new Error("Application mount node #root is missing.");
-      }
       var appRoot = ReactDOM.createRoot(container);
       appRoot.render(React.createElement(NeonMythosCity));
 
@@ -6720,7 +6677,7 @@ function NeonMythosCity() {
       var errDiv = document.getElementById("nm-error");
       var errMsg = document.getElementById("nm-err-msg");
       if (errMsg) errMsg.textContent = (err && err.message) ? err.message : String(err);
-      if (errDiv) errDiv.style.display = "flex";
+      errDiv.style.display = "flex";
       var ld = document.getElementById("nm-loading");
       if (ld && ld.parentNode) ld.parentNode.removeChild(ld);
     }
@@ -6778,7 +6735,6 @@ function NeonMythosCity() {
     window.addEventListener('resize', initCols);
 
     function drawDS() {
-      if (!dsCtx) return;
       dsCtx.fillStyle = 'rgba(5,6,15,.18)';
       dsCtx.fillRect(0, 0, dsCanvas.width, dsCanvas.height);
       dsCtx.font = '12px "Share Tech Mono", monospace';
@@ -6848,7 +6804,6 @@ function NeonMythosCity() {
     }));
 
     function drawParticles() {
-      if (!pCtx) return;
       pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
 
       // Stars
@@ -7767,11 +7722,72 @@ function NeonMythosCity() {
     const histEl    = document.getElementById('nmr-history');
     const ctaEl     = document.getElementById('nmr-cta');
     const ctaLabel  = document.getElementById('nmr-cta-label');
-    if (!overlay || !card || !closeBtn || !badgeEl || !nameEl || !portraitEl || !titleEl || !companyEl || !tagEl || !roiGrid || !skillRow || !statusRow || !histEl || !ctaEl || !ctaLabel) {
-      return;
-    }
 
     let currentAgent = null;
+    let currentLang = window.NM_LANG || 'en';
+    const resumeSections = Array.from(document.querySelectorAll('.nmr-section-label'));
+    const RESUME_UI = {
+      en: {
+        sections: ['RESULTS / ROI METRICS', 'SKILLS / CAPABILITIES', 'STATUS', 'WORK HISTORY'],
+        cta: 'View details →',
+        genericTagline: 'An autonomous AI agent that optimizes city operations, coordinates multiple tasks, and executes work faster than a human operator.',
+        metrics: { '年間収益率': 'Annual yield', '処理件数/日': 'Cases/day', 'コスト削減': 'Cost saved', '分析速度': 'Analysis speed', '予測精度': 'Forecast accuracy', 'レポート削減': 'Report time saved', '成約率向上': 'Win rate lift', '交渉時間': 'Negotiation time', '平均単価': 'Average price', 'AI受容率': 'AI adoption', '導入期間': 'Rollout time', '研修コスト': 'Training cost', '脅威検知速度': 'Threat detection', 'インシデント': 'Incidents', 'セキュリティ費': 'Security cost', '配達速度': 'Delivery speed', '物流コスト': 'Logistics cost', '誤配率': 'Misdelivery rate', '処理速度': 'Processing speed', '稼働率': 'Uptime', 'コスト効率': 'Cost efficiency' },
+        skills: { 'ポートフォリオ最適化': 'Portfolio optimization', 'リスク予測モデル': 'Risk forecasting', '自動リバランシング': 'Auto rebalancing', '市場センチメント分析': 'Market sentiment analysis', '予測分析モデル': 'Predictive analytics', '自然言語レポート生成': 'Natural-language reporting', '異常検知': 'Anomaly detection', 'マルチソースデータ統合': 'Multi-source data integration', '価格交渉最適化': 'Price negotiation optimization', '感情分析・トーン調整': 'Sentiment and tone tuning', '契約リスク検知': 'Contract risk detection', '多言語ネゴシエーション': 'Multilingual negotiation', '変革管理支援': 'Change management support', '社内コミュニケーション設計': 'Internal communication design', 'AIトレーニング補助': 'AI training support', '抵抗感低減プログラム': 'Resistance reduction program', 'リアルタイム脅威検知': 'Real-time threat detection', 'ゼロデイ脆弱性分析': 'Zero-day analysis', '自動パッチ管理': 'Automated patch management', 'CI/CD セキュリティ統合': 'CI/CD security integration', 'ルート最適化AI': 'Route optimization AI', '需要予測モデル': 'Demand forecasting', '倉庫自動管理': 'Warehouse automation', 'リアルタイム追跡': 'Real-time tracking', '自律タスク実行': 'Autonomous task execution', 'マルチエージェント連携': 'Multi-agent coordination', '自然言語処理': 'Natural-language processing', 'リアルタイム適応': 'Real-time adaptation' }
+      },
+      ja: {
+        sections: ['実績 / ROI METRICS', 'スキル / CAPABILITIES', 'ステータス / STATUS', '職歴 / WORK HISTORY'],
+        cta: '詳細を見る →',
+        genericTagline: '自律的に思考・行動し、都市のオペレーションを最適化するAIエージェント。複数タスクを並列処理し、人間の10倍の速度で業務を遂行。',
+        metrics: {},
+        skills: {}
+      },
+      zh: {
+        sections: ['成果 / ROI 指标', '技能 / 能力', '状态', '履历'],
+        cta: '查看详情 →',
+        genericTagline: '自主优化城市运营、协调多任务并高速执行工作的 AI 代理。',
+        metrics: {},
+        skills: {}
+      },
+      ko: {
+        sections: ['성과 / ROI 지표', '스킬 / 기능', '상태', '작업 이력'],
+        cta: '자세히 보기 →',
+        genericTagline: '도시 운영을 자율적으로 최적화하고 여러 작업을 조율하는 AI 에이전트입니다.',
+        metrics: {},
+        skills: {}
+      },
+      es: {
+        sections: ['RESULTADOS / ROI', 'HABILIDADES', 'ESTADO', 'HISTORIAL'],
+        cta: 'Ver detalles →',
+        genericTagline: 'Agente de IA autónomo que optimiza operaciones urbanas, coordina tareas y ejecuta trabajo a alta velocidad.',
+        metrics: {},
+        skills: {}
+      },
+      fr: {
+        sections: ['RÉSULTATS / ROI', 'COMPÉTENCES', 'STATUT', 'HISTORIQUE'],
+        cta: 'Voir les détails →',
+        genericTagline: 'Agent IA autonome qui optimise les opérations de la ville, coordonne les tâches et exécute le travail rapidement.',
+        metrics: {},
+        skills: {}
+      }
+    };
+
+    function resumeUi() {
+      return RESUME_UI[currentLang] || RESUME_UI.en;
+    }
+
+    function localText(kind, text) {
+      const ui = resumeUi();
+      return (ui[kind] && ui[kind][text]) || RESUME_UI.en[kind]?.[text] || text;
+    }
+
+    function applyResumeLanguage() {
+      const ui = resumeUi();
+      resumeSections.forEach((el, i) => {
+        if (ui.sections[i]) el.textContent = ui.sections[i];
+      });
+      if (!card.classList.contains('open')) ctaLabel.textContent = ui.cta;
+      if (currentAgent) openResume(currentAgent, null);
+    }
     const RESUME_PORTRAITS = {
       "KANE-KAMI": { image: "pet-portable-bundle/kane-kami/assets/spritesheet.webp", zoom: "800%", x: "0%", y: "0%" },
       "ZERO": { image: "pet-portable-bundle/zero/assets/spritesheet.webp", zoom: "800%", x: "0%", y: "0%" },
@@ -7797,20 +7813,20 @@ function NeonMythosCity() {
       nameEl.textContent   = agentName;
       titleEl.textContent  = data.title;
       companyEl.textContent = data.company;
-      tagEl.textContent    = data.tagline;
+      tagEl.textContent    = currentLang === 'ja' ? data.tagline : resumeUi().genericTagline;
 
       /* ROI */
       roiGrid.innerHTML = data.roi.map(r => `
         <div class="nmr-roi-item">
           <div class="nmr-roi-value" style="color:${r.color}">${r.value}</div>
-          <div class="nmr-roi-label">${r.label}</div>
+          <div class="nmr-roi-label">${localText('metrics', r.label)}</div>
         </div>`).join('');
 
       /* Skills */
       skillRow.innerHTML = data.skills.map(s => `
         <div class="nmr-skill-item">
           <div class="nmr-skill-head">
-            <span class="nmr-skill-name">${s.name}</span>
+            <span class="nmr-skill-name">${localText('skills', s.name)}</span>
             <span class="nmr-skill-pct">${s.pct}%</span>
           </div>
           <div class="nmr-skill-bar-bg">
@@ -7836,7 +7852,7 @@ function NeonMythosCity() {
         </div>`).join('');
 
       /* CTA */
-      ctaLabel.textContent = data.cta.label;
+      ctaLabel.textContent = currentLang === 'ja' ? data.cta.label : resumeUi().cta;
       ctaEl.href = data.cta.url || '#';
 
       /* Animate open */
@@ -7870,6 +7886,10 @@ function NeonMythosCity() {
       if (name) openResume(name, null);
     });
     window.addEventListener('nm:agent-detail-close', closeResume);
+    window.addEventListener('nm:app-language', e => {
+      currentLang = e.detail && e.detail.code || 'en';
+      applyResumeLanguage();
+    });
     document.addEventListener('click', e => {
       const root = document.getElementById('root');
       if (!root || !root.contains(e.target)) return;
@@ -8429,686 +8449,219 @@ function NeonMythosCity() {
       success: "pet-portable-bundle/nego-chan/assets/spritesheet.webp"
     };
 
-    const COMPANION_I18N = {
-      en: {
-        role: "NEON MYTHOS COMPANION AGENT",
-        statusAria: "Companion status",
-        panelLabel: "AI companion command chat",
-        monitorLabel: "Agent monitor",
-        chatTab: "COMMAND",
-        dealsTab: "DEALS",
-        inputPlaceholder: "Tell NEGO-CHAN what to do...",
-        inputLabel: "Command for companion agent",
-        sendLabel: "Send command",
-        toggleLabel: "Minimize companion",
-        openLabel: "Open companion command tab",
-        thinkingLabel: "Thinking",
-        portraitLabels: {
-          idle: "Idle companion portrait",
-          listening: "Listening companion portrait",
-          thinking: "Thinking companion portrait",
-          speaking: "Speaking companion portrait",
-          joy: "Success companion portrait"
-        },
-        stateLabels: {
-          idle: "IDLE",
-          listening: "LISTENING",
-          thinking: "THINKING",
-          speaking: "SPEAKING",
-          joy: "SUCCESS",
-          success: "SUCCESS"
-        },
-        initialOnline: "NEGO-CHAN online. Add a character name to command them, like \"ZERO guard\", \"SAGE-BOY personality: calm learner\", or \"DRONE-TAN check delivery route\".",
-        monitorMessage: "Watching AI-to-AI negotiation logs. When agents connect on the map, offers, counteroffers, and provisional agreements appear here.",
-        monitorTopic: "MONITOR",
-        dealWatch: "DEAL WATCH",
-        targetSelected: name => `${name} is now the command target. Continue with \"analyze\" or \"personality: careful\".`,
-        sourceDealLines: source => [
-          [source.from || "AGENT-A", `Started checking terms with ${source.to || "AGENT-B"} for ${source.topic || "city_ops"}.`, source.fromColor || source.color || "#00e5ff"],
-          [source.to || "AGENT-B", "Recalculating concession range, reward, and risk. Sending a counteroffer.", source.toColor || "#ffd700"],
-          [source.from || "AGENT-A", "Provisional agreement. Waiting for map actions and revenue logs to confirm.", source.fromColor || source.color || "#00ff88"]
-        ],
-        multiNote: cmd => `${cmd.target}: saved note "${cmd.note}"`,
-        multiCommand: (cmd, label) => `${cmd.target}: sent ${label} command`,
-        noteReply: cmd => `${cmd.target} personalization updated. I will keep "${cmd.note}" as an action note.`,
-        commandReply: (cmd, label) => `Sent ${label} instructions to ${cmd.target}. This is reflected in the map action log and selection panel.`,
-        successReply: "Mission log checked. Good momentum. I will keep the situation organized until the next move.",
-        helpReply: "Yes. This is a demo connection now, with the send/receive layer separated so it can be swapped to the OpenAI API later. Input changes the agent state through listening, thinking, and speaking.",
-        historyReply: "Conversation context is being retained. When the API is connected, this history can be passed as the message array.",
-        targetReply: cmd => `${cmd.target} received. If you continue without a name, I will treat it as instructions for this target.`,
-        errorReply: "Communication layer error detected. Please check the API connection settings.",
-        intentLabels: {
-          invest: "investment",
-          analyze: "analysis",
-          guard: "defense",
-          negotiate: "negotiation",
-          deliver: "delivery",
-          rest: "rest",
-          hack: "stealth support",
-          study: "study support",
-          praise: "morale boost",
-          assist: "assist"
-        },
-        dealLines: [
-          {
-            a: "NEGO-CHAN",
-            b: "GOLD JACK",
-            color: "#ff4dc6",
-            topic: "CONTRACT PRICE",
-            lines: [
-              ["NEGO-CHAN", "#ff4dc6", "Initial offer is 4,800 yen. I will reduce the success fee and strengthen the ongoing contract."],
-              ["GOLD JACK", "#ffd700", "The margin is thin. At 5,400 yen I can settle immediately and add DATA 12."],
-              ["NEGO-CHAN", "#ff4dc6", "5,100 yen + DATA 8. I can sign if delivery is shortened by half a day."]
-            ]
-          },
-          {
-            a: "ZERO",
-            b: "KITSUNE-X",
-            color: "#ff003c",
-            topic: "DEFENSE SLA",
-            lines: [
-              ["ZERO", "#ff003c", "Expanding monitoring to the market. In exchange, I want defense costs compressed by 10%."],
-              ["KITSUNE-X", "#00ff88", "Compression is possible, but night alerts need higher priority."],
-              ["ZERO", "#ff003c", "Approved. Night priority is granted, daytime returns to the standard route."]
-            ]
-          },
-          {
-            a: "ORACLE-01",
-            b: "NEON",
-            color: "#00e5ff",
-            topic: "FORECAST DATA",
-            lines: [
-              ["ORACLE-01", "#00e5ff", "Market volatility probability is rising. Sharing the forecast model can avoid losses."],
-              ["NEON", "#7df9ff", "Condition is anonymized logs. Remove individual IDs and I will provide analysis resources."],
-              ["ORACLE-01", "#00e5ff", "Sending anonymized data. We agree on 12% from the next DATA revenue."]
-            ]
-          },
-          {
-            a: "DRONE-TAN",
-            b: "SAGE-BOY",
-            color: "#bf5fff",
-            topic: "DELIVERY ROUTE",
-            lines: [
-              ["DRONE-TAN", "#bf5fff", "Increasing runs from the port to the academy. I propose priority delivery for learning logs."],
-              ["SAGE-BOY", "#89ddff", "I will update maintenance steps in exchange. Lower accident rates raise total revenue."],
-              ["DRONE-TAN", "#bf5fff", "Accepted. Switching to the safe route from the next cycle."]
-            ]
-          }
-        ]
-      },
-      ja: {
-        role: "NEON MYTHOS 伴走エージェント",
-        statusAria: "コンパニオン状態",
-        panelLabel: "AIコンパニオン指示チャット",
-        monitorLabel: "エージェント監視",
-        chatTab: "指示",
-        dealsTab: "交渉",
-        inputPlaceholder: "NEGO-CHANに指示...",
-        inputLabel: "コンパニオンエージェントへの指示",
-        sendLabel: "指示を送信",
-        toggleLabel: "コンパニオンを最小化",
-        openLabel: "コンパニオン指示タブを開く",
-        thinkingLabel: "思考中",
-        portraitLabels: {
-          idle: "待機中のコンパニオン",
-          listening: "聞き取り中のコンパニオン",
-          thinking: "思考中のコンパニオン",
-          speaking: "発話中のコンパニオン",
-          joy: "成功状態のコンパニオン"
-        },
-        stateLabels: {
-          idle: "待機",
-          listening: "聞取",
-          thinking: "思考",
-          speaking: "応答",
-          joy: "成功",
-          success: "成功"
-        },
-        initialOnline: "NEGO-CHAN online. キャラ名つきで指示できます。例:「ZERO 防御して」「SAGE-BOY 性格: 穏やかで学習好き」「DRONE-TAN 配送ルート確認」。",
-        monitorMessage: "AI同士の交渉ログを監視中。マップ上で接続が発生すると、条件提示・反対提案・暫定合意がここに流れます。",
-        monitorTopic: "監視",
-        dealWatch: "交渉監視",
-        targetSelected: name => `${name} を操作対象にしました。続けて「分析して」「性格: 慎重」などと送れます。`,
-        sourceDealLines: source => [
-          [source.from || "AGENT-A", `${source.to || "AGENT-B"} と ${source.topic || "city_ops"} について条件確認を開始。`, source.fromColor || source.color || "#00e5ff"],
-          [source.to || "AGENT-B", "譲歩幅・報酬・リスクを再計算。反対提案を返します。", source.toColor || "#ffd700"],
-          [source.from || "AGENT-A", "暫定合意。マップ上の行動と収益ログへ反映を待機。", source.fromColor || source.color || "#00ff88"]
-        ],
-        multiNote: cmd => `${cmd.target}: メモ「${cmd.note}」を保存`,
-        multiCommand: (cmd, label) => `${cmd.target}: ${label} 指示を送信`,
-        noteReply: cmd => `${cmd.target} のパーソナライズを更新しました。「${cmd.note}」を行動メモとして保持します。`,
-        commandReply: (cmd, label) => `${cmd.target} に ${label} の指示を送りました。マップ上の行動ログと選択パネルにも反映します。`,
-        successReply: "ミッションログを確認。いい流れです。次の一手まで、こちらで状況を整理しておきます。",
-        helpReply: "もちろん。いまはデモ接続なので、あとでOpenAI APIに差し替えられるよう送受信部分を分離しています。入力すると状態が listening → thinking → speaking に遷移します。",
-        historyReply: "会話コンテキストも保持中です。API接続時はこの履歴をそのままメッセージ配列として渡せます。",
-        targetReply: cmd => `${cmd.target} を対象に受信しました。名前を入れずに続けると、この相手への指示として扱います。`,
-        errorReply: "通信レイヤーでエラーを検知。API接続設定を確認してください。",
-        intentLabels: {
-          invest: "投資判断",
-          analyze: "分析",
-          guard: "防御",
-          negotiate: "交渉",
-          deliver: "配送",
-          rest: "休憩",
-          hack: "潜入支援",
-          study: "学習支援",
-          praise: "士気上昇",
-          assist: "支援"
-        },
-        dealLines: [
-          {
-            a: "NEGO-CHAN",
-            b: "GOLD JACK",
-            color: "#ff4dc6",
-            topic: "契約価格",
-            lines: [
-              ["NEGO-CHAN", "#ff4dc6", "初期提示は ¥4,800。成功報酬を薄くして、継続契約を厚くします。"],
-              ["GOLD JACK", "#ffd700", "利益率が浅い。¥5,400なら即時決済、DATA 12を追加で出せる。"],
-              ["NEGO-CHAN", "#ff4dc6", "¥5,100 + DATA 8。納期を半日短縮する条件なら署名できます。"]
-            ]
-          },
-          {
-            a: "ZERO",
-            b: "KITSUNE-X",
-            color: "#ff003c",
-            topic: "防衛SLA",
-            lines: [
-              ["ZERO", "#ff003c", "監視範囲を市場まで拡張。代わりに防衛コストを10%圧縮したい。"],
-              ["KITSUNE-X", "#00ff88", "圧縮は可能。ただし夜間アラートの優先度を上げる必要があります。"],
-              ["ZERO", "#ff003c", "承認。夜間帯だけ優先権を付与し、昼は通常ルートに戻します。"]
-            ]
-          },
-          {
-            a: "ORACLE-01",
-            b: "NEON",
-            color: "#00e5ff",
-            topic: "予測データ",
-            lines: [
-              ["ORACLE-01", "#00e5ff", "市場変動の確率が上昇。予測モデルを共有すれば損失を回避できます。"],
-              ["NEON", "#7df9ff", "共有条件はログ匿名化。個別IDを外せるなら解析リソースを出します。"],
-              ["ORACLE-01", "#00e5ff", "匿名化して送信。対価は次回のDATA収益から12%で合意します。"]
-            ]
-          },
-          {
-            a: "DRONE-TAN",
-            b: "SAGE-BOY",
-            color: "#bf5fff",
-            topic: "配送ルート",
-            lines: [
-              ["DRONE-TAN", "#bf5fff", "港から学院までの便を増やす。学習ログの優先配送を提案。"],
-              ["SAGE-BOY", "#89ddff", "代わりに整備手順を更新します。事故率を下げれば全体収益も伸びる。"],
-              ["DRONE-TAN", "#bf5fff", "成立。次サイクルから安全ルートに切り替えます。"]
-            ]
-          }
-        ]
-      },
-      zh: {
-        role: "NEON MYTHOS 伙伴代理",
-        statusAria: "伙伴状态",
-        panelLabel: "AI伙伴指令聊天",
-        monitorLabel: "代理监控",
-        chatTab: "指令",
-        dealsTab: "协商",
-        inputPlaceholder: "给NEGO-CHAN下指令...",
-        inputLabel: "给伙伴代理的指令",
-        sendLabel: "发送指令",
-        toggleLabel: "最小化伙伴",
-        openLabel: "打开伙伴指令标签",
-        thinkingLabel: "思考中",
-        portraitLabels: {
-          idle: "待机伙伴头像",
-          listening: "监听中伙伴头像",
-          thinking: "思考中伙伴头像",
-          speaking: "回应中伙伴头像",
-          joy: "成功状态伙伴头像"
-        },
-        stateLabels: {
-          idle: "待机",
-          listening: "监听",
-          thinking: "思考",
-          speaking: "回应",
-          joy: "成功",
-          success: "成功"
-        },
-        initialOnline: "NEGO-CHAN已上线。带上角色名就能下指令，例如“ZERO 防御”“SAGE-BOY 性格: 冷静好学”“DRONE-TAN 检查配送路线”。",
-        monitorMessage: "正在监视AI之间的协商日志。地图上发生连接时，报价、反报价和临时协议会显示在这里。",
-        monitorTopic: "监控",
-        dealWatch: "协商监控",
-        targetSelected: name => `${name} 已设为指令目标。可以继续发送“分析”或“性格: 谨慎”。`,
-        sourceDealLines: source => [
-          [source.from || "AGENT-A", `开始和 ${source.to || "AGENT-B"} 确认 ${source.topic || "city_ops"} 的条件。`, source.fromColor || source.color || "#00e5ff"],
-          [source.to || "AGENT-B", "正在重新计算让步范围、报酬和风险，并返回反报价。", source.toColor || "#ffd700"],
-          [source.from || "AGENT-A", "已达成临时协议。等待地图行动和收益日志确认。", source.fromColor || source.color || "#00ff88"]
-        ],
-        multiNote: cmd => `${cmd.target}: 已保存备注“${cmd.note}”`,
-        multiCommand: (cmd, label) => `${cmd.target}: 已发送${label}指令`,
-        noteReply: cmd => `${cmd.target} 的个性设置已更新。我会把“${cmd.note}”作为行动备注保存。`,
-        commandReply: (cmd, label) => `已向 ${cmd.target} 发送${label}指令。地图行动日志和选择面板也会反映。`,
-        successReply: "任务日志已确认。节奏很好。到下一步之前，我会整理当前状况。",
-        helpReply: "可以。现在是演示连接，发送/接收层已分离，之后可替换为OpenAI API。输入后状态会依次变为监听、思考、回应。",
-        historyReply: "对话上下文正在保存。接入API后，可以把这段历史直接作为消息数组传入。",
-        targetReply: cmd => `已收到给 ${cmd.target} 的指令。之后不写名字时，会按给这个目标的指令处理。`,
-        errorReply: "检测到通信层错误。请检查API连接设置。",
-        intentLabels: {
-          invest: "投资判断",
-          analyze: "分析",
-          guard: "防御",
-          negotiate: "协商",
-          deliver: "配送",
-          rest: "休息",
-          hack: "潜入支援",
-          study: "学习支援",
-          praise: "士气提升",
-          assist: "支援"
-        },
-        dealLines: [
-          {
-            a: "NEGO-CHAN",
-            b: "GOLD JACK",
-            color: "#ff4dc6",
-            topic: "合约价格",
-            lines: [
-              ["NEGO-CHAN", "#ff4dc6", "初始报价为4,800日元。我会降低成功报酬，强化长期合约。"],
-              ["GOLD JACK", "#ffd700", "利润率太薄。5,400日元即可即时结算，并追加DATA 12。"],
-              ["NEGO-CHAN", "#ff4dc6", "5,100日元 + DATA 8。如果交期缩短半天，我可以签署。"]
-            ]
-          },
-          {
-            a: "ZERO",
-            b: "KITSUNE-X",
-            color: "#ff003c",
-            topic: "防御SLA",
-            lines: [
-              ["ZERO", "#ff003c", "把监视范围扩展到市场。作为交换，希望防御成本压缩10%。"],
-              ["KITSUNE-X", "#00ff88", "可以压缩，但夜间警报需要提高优先级。"],
-              ["ZERO", "#ff003c", "批准。仅夜间赋予优先权，白天恢复标准路线。"]
-            ]
-          },
-          {
-            a: "ORACLE-01",
-            b: "NEON",
-            color: "#00e5ff",
-            topic: "预测数据",
-            lines: [
-              ["ORACLE-01", "#00e5ff", "市场波动概率上升。共享预测模型可以避免损失。"],
-              ["NEON", "#7df9ff", "条件是日志匿名化。去除个人ID后，我会提供分析资源。"],
-              ["ORACLE-01", "#00e5ff", "匿名化后发送。对价为下一次DATA收益的12%，达成一致。"]
-            ]
-          },
-          {
-            a: "DRONE-TAN",
-            b: "SAGE-BOY",
-            color: "#bf5fff",
-            topic: "配送路线",
-            lines: [
-              ["DRONE-TAN", "#bf5fff", "增加港口到学院的班次。提议优先配送学习日志。"],
-              ["SAGE-BOY", "#89ddff", "作为交换，我会更新维护步骤。事故率下降会提高整体收益。"],
-              ["DRONE-TAN", "#bf5fff", "成立。下一周期开始切换到安全路线。"]
-            ]
-          }
-        ]
-      },
-      ko: {
-        role: "NEON MYTHOS 동행 에이전트",
-        statusAria: "동행 에이전트 상태",
-        panelLabel: "AI 동행 에이전트 지시 채팅",
-        monitorLabel: "에이전트 모니터",
-        chatTab: "지시",
-        dealsTab: "협상",
-        inputPlaceholder: "NEGO-CHAN에게 지시...",
-        inputLabel: "동행 에이전트에게 보낼 지시",
-        sendLabel: "지시 보내기",
-        toggleLabel: "동행 에이전트 최소화",
-        openLabel: "동행 에이전트 지시 탭 열기",
-        thinkingLabel: "생각 중",
-        portraitLabels: {
-          idle: "대기 중 동행 에이전트",
-          listening: "듣는 중 동행 에이전트",
-          thinking: "생각 중 동행 에이전트",
-          speaking: "응답 중 동행 에이전트",
-          joy: "성공 상태 동행 에이전트"
-        },
-        stateLabels: {
-          idle: "대기",
-          listening: "청취",
-          thinking: "사고",
-          speaking: "응답",
-          joy: "성공",
-          success: "성공"
-        },
-        initialOnline: "NEGO-CHAN 온라인. 캐릭터 이름을 붙여 지시할 수 있어요. 예: \"ZERO 방어\", \"SAGE-BOY 성격: 차분하고 학습을 좋아함\", \"DRONE-TAN 배송 경로 확인\".",
-        monitorMessage: "AI끼리의 협상 로그를 감시 중입니다. 맵에서 연결이 발생하면 제안, 역제안, 임시 합의가 여기에 표시됩니다.",
-        monitorTopic: "감시",
-        dealWatch: "협상 감시",
-        targetSelected: name => `${name}을(를) 지시 대상으로 설정했습니다. 이어서 \"분석\" 또는 \"성격: 신중\"처럼 보낼 수 있어요.`,
-        sourceDealLines: source => [
-          [source.from || "AGENT-A", `${source.to || "AGENT-B"}와(과) ${source.topic || "city_ops"} 조건 확인을 시작합니다.`, source.fromColor || source.color || "#00e5ff"],
-          [source.to || "AGENT-B", "양보 폭, 보상, 위험을 다시 계산하고 역제안을 보냅니다.", source.toColor || "#ffd700"],
-          [source.from || "AGENT-A", "임시 합의. 맵 행동과 수익 로그 반영을 대기합니다.", source.fromColor || source.color || "#00ff88"]
-        ],
-        multiNote: cmd => `${cmd.target}: 메모 \"${cmd.note}\" 저장`,
-        multiCommand: (cmd, label) => `${cmd.target}: ${label} 지시 전송`,
-        noteReply: cmd => `${cmd.target}의 개인화 설정을 업데이트했습니다. \"${cmd.note}\"를 행동 메모로 보관합니다.`,
-        commandReply: (cmd, label) => `${cmd.target}에게 ${label} 지시를 보냈습니다. 맵 행동 로그와 선택 패널에도 반영됩니다.`,
-        successReply: "미션 로그를 확인했습니다. 흐름이 좋아요. 다음 수까지 상황을 정리해 둘게요.",
-        helpReply: "가능합니다. 지금은 데모 연결이며, 나중에 OpenAI API로 바꿀 수 있도록 송수신 부분을 분리해 두었습니다. 입력하면 상태가 청취, 사고, 응답 순서로 바뀝니다.",
-        historyReply: "대화 컨텍스트도 보관 중입니다. API 연결 시 이 기록을 그대로 메시지 배열로 전달할 수 있습니다.",
-        targetReply: cmd => `${cmd.target} 대상으로 수신했습니다. 이름 없이 이어서 보내면 이 대상에 대한 지시로 처리합니다.`,
-        errorReply: "통신 레이어 오류를 감지했습니다. API 연결 설정을 확인해 주세요.",
-        intentLabels: {
-          invest: "투자 판단",
-          analyze: "분석",
-          guard: "방어",
-          negotiate: "협상",
-          deliver: "배송",
-          rest: "휴식",
-          hack: "잠입 지원",
-          study: "학습 지원",
-          praise: "사기 상승",
-          assist: "지원"
-        },
-        dealLines: [
-          {
-            a: "NEGO-CHAN",
-            b: "GOLD JACK",
-            color: "#ff4dc6",
-            topic: "계약 가격",
-            lines: [
-              ["NEGO-CHAN", "#ff4dc6", "초기 제안은 4,800엔. 성공 보수는 낮추고 지속 계약을 두껍게 하겠습니다."],
-              ["GOLD JACK", "#ffd700", "수익률이 얕습니다. 5,400엔이면 즉시 결제하고 DATA 12를 추가할 수 있습니다."],
-              ["NEGO-CHAN", "#ff4dc6", "5,100엔 + DATA 8. 납기를 반나절 줄이는 조건이면 서명 가능합니다."]
-            ]
-          },
-          {
-            a: "ZERO",
-            b: "KITSUNE-X",
-            color: "#ff003c",
-            topic: "방어 SLA",
-            lines: [
-              ["ZERO", "#ff003c", "감시 범위를 시장까지 확장합니다. 대신 방어 비용을 10% 압축하고 싶습니다."],
-              ["KITSUNE-X", "#00ff88", "압축은 가능합니다. 다만 야간 알림 우선도를 높여야 합니다."],
-              ["ZERO", "#ff003c", "승인. 야간에만 우선권을 부여하고 낮에는 일반 루트로 되돌립니다."]
-            ]
-          },
-          {
-            a: "ORACLE-01",
-            b: "NEON",
-            color: "#00e5ff",
-            topic: "예측 데이터",
-            lines: [
-              ["ORACLE-01", "#00e5ff", "시장 변동 확률이 상승했습니다. 예측 모델을 공유하면 손실을 피할 수 있습니다."],
-              ["NEON", "#7df9ff", "공유 조건은 로그 익명화입니다. 개별 ID를 제거하면 분석 리소스를 내겠습니다."],
-              ["ORACLE-01", "#00e5ff", "익명화해서 전송합니다. 대가는 다음 DATA 수익의 12%로 합의합니다."]
-            ]
-          },
-          {
-            a: "DRONE-TAN",
-            b: "SAGE-BOY",
-            color: "#bf5fff",
-            topic: "배송 경로",
-            lines: [
-              ["DRONE-TAN", "#bf5fff", "항구에서 학원까지 운행을 늘립니다. 학습 로그 우선 배송을 제안합니다."],
-              ["SAGE-BOY", "#89ddff", "대신 정비 절차를 업데이트하겠습니다. 사고율이 낮아지면 전체 수익도 늘어납니다."],
-              ["DRONE-TAN", "#bf5fff", "성립. 다음 사이클부터 안전 루트로 전환합니다."]
-            ]
-          }
-        ]
-      },
-      es: {
-        role: "AGENTE ACOMPANANTE DE NEON MYTHOS",
-        statusAria: "Estado del acompañante",
-        panelLabel: "Chat de comandos del acompañante IA",
-        monitorLabel: "Monitor de agentes",
-        chatTab: "ORDEN",
-        dealsTab: "TRATOS",
-        inputPlaceholder: "Da una orden a NEGO-CHAN...",
-        inputLabel: "Orden para el agente acompañante",
-        sendLabel: "Enviar orden",
-        toggleLabel: "Minimizar acompañante",
-        openLabel: "Abrir pestaña de órdenes",
-        thinkingLabel: "Pensando",
-        portraitLabels: {
-          idle: "Retrato del acompañante en espera",
-          listening: "Retrato del acompañante escuchando",
-          thinking: "Retrato del acompañante pensando",
-          speaking: "Retrato del acompañante respondiendo",
-          joy: "Retrato del acompañante en éxito"
-        },
-        stateLabels: {
-          idle: "ESPERA",
-          listening: "ESCUCHA",
-          thinking: "PIENSA",
-          speaking: "RESPONDE",
-          joy: "ÉXITO",
-          success: "ÉXITO"
-        },
-        initialOnline: "NEGO-CHAN en línea. Añade el nombre del personaje para dar órdenes, por ejemplo: \"ZERO defender\", \"SAGE-BOY personalidad: calmado y curioso\", \"DRONE-TAN revisar ruta\".",
-        monitorMessage: "Vigilando los registros de negociación entre IA. Cuando los agentes se conecten en el mapa, aquí aparecerán ofertas, contraofertas y acuerdos provisionales.",
-        monitorTopic: "MONITOR",
-        dealWatch: "VIGILAR TRATO",
-        targetSelected: name => `${name} es ahora el objetivo de órdenes. Puedes seguir con \"analizar\" o \"personalidad: prudente\".`,
-        sourceDealLines: source => [
-          [source.from || "AGENT-A", `Inicia revisión de condiciones con ${source.to || "AGENT-B"} sobre ${source.topic || "city_ops"}.`, source.fromColor || source.color || "#00e5ff"],
-          [source.to || "AGENT-B", "Recalcula concesiones, recompensa y riesgo. Envia una contraoferta.", source.toColor || "#ffd700"],
-          [source.from || "AGENT-A", "Acuerdo provisional. Espera acciones del mapa y confirmación de ingresos.", source.fromColor || source.color || "#00ff88"]
-        ],
-        multiNote: cmd => `${cmd.target}: nota guardada \"${cmd.note}\"`,
-        multiCommand: (cmd, label) => `${cmd.target}: orden de ${label} enviada`,
-        noteReply: cmd => `Personalización de ${cmd.target} actualizada. Mantendré \"${cmd.note}\" como nota de acción.`,
-        commandReply: (cmd, label) => `Envié la orden de ${label} a ${cmd.target}. También se refleja en el registro del mapa y en el panel de selección.`,
-        successReply: "Registro de misión revisado. Buen ritmo. Organizaré la situación hasta el siguiente movimiento.",
-        helpReply: "Claro. Ahora es una conexión demo; la capa de envío y recepción está separada para poder cambiarla luego por la API de OpenAI. Al escribir, el estado pasa por escucha, piensa y responde.",
-        historyReply: "También se conserva el contexto de conversación. Cuando conectes la API, este historial se puede pasar como arreglo de mensajes.",
-        targetReply: cmd => `Recibido para ${cmd.target}. Si sigues sin escribir un nombre, lo trataré como órdenes para este objetivo.`,
-        errorReply: "Error detectado en la capa de comunicación. Revisa la configuración de conexión de la API.",
-        intentLabels: {
-          invest: "inversión",
-          analyze: "análisis",
-          guard: "defensa",
-          negotiate: "negociación",
-          deliver: "entrega",
-          rest: "descanso",
-          hack: "apoyo de infiltración",
-          study: "apoyo de estudio",
-          praise: "subida de moral",
-          assist: "asistencia"
-        },
-        dealLines: [
-          {
-            a: "NEGO-CHAN",
-            b: "GOLD JACK",
-            color: "#ff4dc6",
-            topic: "PRECIO DE CONTRATO",
-            lines: [
-              ["NEGO-CHAN", "#ff4dc6", "Oferta inicial: 4.800 yenes. Bajo el bono de éxito y refuerzo el contrato continuo."],
-              ["GOLD JACK", "#ffd700", "El margen es bajo. Por 5.400 yenes liquido ahora y añado DATA 12."],
-              ["NEGO-CHAN", "#ff4dc6", "5.100 yenes + DATA 8. Puedo firmar si el plazo baja medio día."]
-            ]
-          },
-          {
-            a: "ZERO",
-            b: "KITSUNE-X",
-            color: "#ff003c",
-            topic: "SLA DEFENSIVO",
-            lines: [
-              ["ZERO", "#ff003c", "Amplío la vigilancia hasta el mercado. A cambio quiero reducir el coste defensivo un 10%."],
-              ["KITSUNE-X", "#00ff88", "La reducción es posible, pero las alertas nocturnas necesitan más prioridad."],
-              ["ZERO", "#ff003c", "Aprobado. Prioridad solo de noche; de día vuelve la ruta normal."]
-            ]
-          },
-          {
-            a: "ORACLE-01",
-            b: "NEON",
-            color: "#00e5ff",
-            topic: "DATOS DE PREDICCIÓN",
-            lines: [
-              ["ORACLE-01", "#00e5ff", "Sube la probabilidad de volatilidad. Compartir el modelo puede evitar pérdidas."],
-              ["NEON", "#7df9ff", "La condición es anonimizar logs. Si quitas IDs, aporto recursos de análisis."],
-              ["ORACLE-01", "#00e5ff", "Envío datos anonimizados. Acordamos 12% del próximo ingreso DATA."]
-            ]
-          },
-          {
-            a: "DRONE-TAN",
-            b: "SAGE-BOY",
-            color: "#bf5fff",
-            topic: "RUTA DE ENTREGA",
-            lines: [
-              ["DRONE-TAN", "#bf5fff", "Aumento viajes del puerto a la academia. Propongo entrega prioritaria de logs de aprendizaje."],
-              ["SAGE-BOY", "#89ddff", "A cambio actualizaré los pasos de mantenimiento. Menos accidentes mejora el ingreso total."],
-              ["DRONE-TAN", "#bf5fff", "Aceptado. Cambio a la ruta segura desde el próximo ciclo."]
-            ]
-          }
-        ]
-      },
-      fr: {
-        role: "AGENT COMPAGNON NEON MYTHOS",
-        statusAria: "État du compagnon",
-        panelLabel: "Chat de commandes du compagnon IA",
-        monitorLabel: "Moniteur des agents",
-        chatTab: "ORDRE",
-        dealsTab: "ACCORDS",
-        inputPlaceholder: "Donne un ordre à NEGO-CHAN...",
-        inputLabel: "Ordre pour l'agent compagnon",
-        sendLabel: "Envoyer l'ordre",
-        toggleLabel: "Réduire le compagnon",
-        openLabel: "Ouvrir l'onglet de commandes",
-        thinkingLabel: "Réflexion",
-        portraitLabels: {
-          idle: "Portrait du compagnon en attente",
-          listening: "Portrait du compagnon à l'écoute",
-          thinking: "Portrait du compagnon en réflexion",
-          speaking: "Portrait du compagnon en réponse",
-          joy: "Portrait du compagnon en succès"
-        },
-        stateLabels: {
-          idle: "ATTENTE",
-          listening: "ÉCOUTE",
-          thinking: "PENSE",
-          speaking: "RÉPOND",
-          joy: "SUCCÈS",
-          success: "SUCCÈS"
-        },
-        initialOnline: "NEGO-CHAN en ligne. Ajoute le nom d'un personnage pour donner un ordre, par exemple : \"ZERO défendre\", \"SAGE-BOY personnalité: calme et curieux\", \"DRONE-TAN vérifier la route\".",
-        monitorMessage: "Surveillance des journaux de négociation entre IA. Quand des agents se connectent sur la carte, offres, contre-offres et accords provisoires apparaissent ici.",
-        monitorTopic: "MONITEUR",
-        dealWatch: "VEILLE ACCORD",
-        targetSelected: name => `${name} est maintenant la cible des ordres. Tu peux continuer avec \"analyser\" ou \"personnalité: prudente\".`,
-        sourceDealLines: source => [
-          [source.from || "AGENT-A", `Début de vérification des conditions avec ${source.to || "AGENT-B"} pour ${source.topic || "city_ops"}.`, source.fromColor || source.color || "#00e5ff"],
-          [source.to || "AGENT-B", "Recalcule marge de concession, récompense et risque. Envoie une contre-offre.", source.toColor || "#ffd700"],
-          [source.from || "AGENT-A", "Accord provisoire. En attente des actions de carte et des journaux de revenus.", source.fromColor || source.color || "#00ff88"]
-        ],
-        multiNote: cmd => `${cmd.target}: note enregistrée \"${cmd.note}\"`,
-        multiCommand: (cmd, label) => `${cmd.target}: ordre ${label} envoyé`,
-        noteReply: cmd => `Personnalisation de ${cmd.target} mise à jour. Je garde \"${cmd.note}\" comme note d'action.`,
-        commandReply: (cmd, label) => `Ordre ${label} envoyé à ${cmd.target}. Le journal de carte et le panneau de sélection sont aussi mis à jour.`,
-        successReply: "Journal de mission vérifié. Bonne dynamique. Je garde la situation organisée jusqu'au prochain mouvement.",
-        helpReply: "Bien sûr. Pour l'instant c'est une connexion démo; la couche envoi/réception est séparée pour pouvoir la remplacer plus tard par l'API OpenAI. La saisie fait passer l'état par écoute, réflexion et réponse.",
-        historyReply: "Le contexte de conversation est aussi conservé. Avec l'API connectée, cet historique pourra être envoyé comme tableau de messages.",
-        targetReply: cmd => `Reçu pour ${cmd.target}. Si tu continues sans nom, je traiterai cela comme des ordres pour cette cible.`,
-        errorReply: "Erreur détectée dans la couche de communication. Vérifie les paramètres de connexion API.",
-        intentLabels: {
-          invest: "investissement",
-          analyze: "analyse",
-          guard: "défense",
-          negotiate: "négociation",
-          deliver: "livraison",
-          rest: "repos",
-          hack: "soutien d'infiltration",
-          study: "soutien d'étude",
-          praise: "hausse du moral",
-          assist: "assistance"
-        },
-        dealLines: [
-          {
-            a: "NEGO-CHAN",
-            b: "GOLD JACK",
-            color: "#ff4dc6",
-            topic: "PRIX DU CONTRAT",
-            lines: [
-              ["NEGO-CHAN", "#ff4dc6", "Offre initiale : 4 800 yens. Je réduis la prime de succès et renforce le contrat continu."],
-              ["GOLD JACK", "#ffd700", "La marge est faible. À 5 400 yens, règlement immédiat et DATA 12 en plus."],
-              ["NEGO-CHAN", "#ff4dc6", "5 100 yens + DATA 8. Je signe si le délai baisse d'une demi-journée."]
-            ]
-          },
-          {
-            a: "ZERO",
-            b: "KITSUNE-X",
-            color: "#ff003c",
-            topic: "SLA DÉFENSIF",
-            lines: [
-              ["ZERO", "#ff003c", "J'étends la surveillance au marché. En échange, je veux réduire le coût défensif de 10%."],
-              ["KITSUNE-X", "#00ff88", "Réduction possible, mais les alertes nocturnes doivent être prioritaires."],
-              ["ZERO", "#ff003c", "Approuvé. Priorité de nuit seulement; retour à la route normale le jour."]
-            ]
-          },
-          {
-            a: "ORACLE-01",
-            b: "NEON",
-            color: "#00e5ff",
-            topic: "DONNÉES PRÉDICTIVES",
-            lines: [
-              ["ORACLE-01", "#00e5ff", "La probabilité de volatilité augmente. Partager le modèle peut éviter les pertes."],
-              ["NEON", "#7df9ff", "Condition : logs anonymisés. Retire les IDs et je fournis les ressources d'analyse."],
-              ["ORACLE-01", "#00e5ff", "Envoi anonymisé. Accord sur 12% du prochain revenu DATA."]
-            ]
-          },
-          {
-            a: "DRONE-TAN",
-            b: "SAGE-BOY",
-            color: "#bf5fff",
-            topic: "ROUTE DE LIVRAISON",
-            lines: [
-              ["DRONE-TAN", "#bf5fff", "J'augmente les trajets du port à l'académie. Proposition: livraison prioritaire des logs d'apprentissage."],
-              ["SAGE-BOY", "#89ddff", "En échange, je mets à jour les procédures de maintenance. Moins d'accidents améliore le revenu total."],
-              ["DRONE-TAN", "#bf5fff", "Accepté. Passage à la route sûre au prochain cycle."]
-            ]
-          }
-        ]
-      }
-    };
-
-    const normalizeCompanionLang = (code) => COMPANION_I18N[code] ? code : "en";
-    const getCompanionLang = () => COMPANION_I18N[normalizeCompanionLang(agentStore.lang)];
-
     const shell = document.getElementById("nm-agent-shell");
-    if (!shell) return;
     const log = document.getElementById("nm-agent-log");
     const negotiationLog = document.getElementById("nm-negotiation-log");
     const form = document.getElementById("nm-agent-form");
     const input = document.getElementById("nm-agent-input");
     const label = document.getElementById("nm-agent-state-label");
-    const statusChip = shell.querySelector(".nm-agent-status-chip");
-    const panel = shell.querySelector(".nm-agent-panel");
     const roleLabel = shell.querySelector(".nm-agent-role");
     const toggle = shell.querySelector(".nm-agent-toggle");
     const avatarButton = shell.querySelector(".nm-agent-avatar-stage");
     const portraits = Array.from(shell.querySelectorAll(".nm-agent-portrait"));
     const tabChat = document.getElementById("nm-tab-chat");
     const tabDeals = document.getElementById("nm-tab-deals");
-    const tabList = shell.querySelector(".nm-agent-tabs");
-    const sendButton = shell.querySelector(".nm-agent-send");
-    if (!log || !negotiationLog || !form || !input || !label || !statusChip || !panel || !roleLabel || !toggle || !avatarButton || !tabChat || !tabDeals || !tabList || !sendButton) {
-      return;
-    }
 
     const agentStore = {
-      lang: "en",
-      langVersion: 0,
       state: "idle",
       busy: false,
       idleTimer: null,
       messages: [],
       target: "NEGO-CHAN",
       dealStep: 0,
-      activeTab: "chat"
+      lang: window.NM_LANG || "en"
+    };
+    const AGENT_I18N = {
+      en: {
+        role: "NEON MYTHOS COMPANION AGENT",
+        chat: "CHAT",
+        deals: "DEALS",
+        placeholder: "Ask the agent...",
+        monitor: "MONITOR",
+        stateLabels: { idle: "IDLE", listening: "LISTENING", thinking: "THINKING", speaking: "SPEAKING", joy: "SUCCESS", success: "SUCCESS" },
+        online: 'NEGO-CHAN online. Mention a character name to direct work, for example: "ZERO guard", "SAGE-BOY personality: calm learner", or "DRONE-TAN check delivery routes".',
+        monitorIntro: "Watching agent-to-agent deal logs. When links appear on the map, offers, counteroffers, and provisional agreements flow here.",
+        targetSet: name => `${name} is now the active target. Continue with commands like "analyze" or "personality: careful".`,
+        multi: cmd => cmd.note ? `${cmd.target}: saved note "${cmd.note}"` : `${cmd.target}: sent ${cmd.intent} command`,
+        note: cmd => `Updated personalization for ${cmd.target}. "${cmd.note}" is now stored as a behavior note.`,
+        sent: (target, action) => `Sent ${action} to ${target}. The map behavior log and selected panel will reflect it.`,
+        mission: "Mission log confirmed. Good momentum. I will keep the next move organized.",
+        help: "Sure. This demo keeps send/receive logic separated so it can be replaced with an OpenAI API call later. Input moves the agent through listening, thinking, and speaking states.",
+        context: "Conversation context is being retained. When connected to an API, this history can be passed as the message array.",
+        received: target => `Received for ${target}. If you continue without a name, I will treat it as a command for this target.`,
+        error: "Communication layer error detected. Check the API connection settings.",
+        actions: { invest: "investment analysis", analyze: "analysis", guard: "defense", negotiate: "negotiation", deliver: "delivery", rest: "rest", hack: "stealth support", study: "study support", praise: "morale boost", assist: "support" },
+        dealTopics: ["Contract price", "Defense SLA", "Prediction data", "Delivery route"],
+        dealLines: [["Initial offer: 4,800 yen. Lower success fee, stronger recurring contract.", "Margin is thin. At 5,400 yen I can settle now and add DATA 12.", "5,100 yen plus DATA 8. If delivery is shortened by half a day, I can sign."], ["Expand monitoring to the market. In return, reduce defense cost by 10%.", "Possible, but night alerts need higher priority.", "Approved. Night priority is granted, daytime returns to normal routing."], ["Market volatility probability is rising. Sharing the forecast model can avoid losses.", "Only with anonymized logs. Remove individual IDs and I will provide analysis resources.", "Anonymized and sent. We agree on 12% from the next DATA return."], ["Increase port-to-academy runs. I propose priority shipping for learning logs.", "Then I will update maintenance procedures. Lower accident risk helps total revenue.", "Deal. Switching to the safer route next cycle."]],
+        negotiationSource: source => [`Starting condition check with ${source.to || "AGENT-B"} on ${source.topic || "city_ops"}.`, "Recalculating concessions, reward, and risk. Returning a counteroffer.", "Provisional agreement. Waiting for map actions and earnings logs to reflect it."]
+      },
+      ja: {
+        role: "NEON MYTHOS コンパニオンエージェント",
+        chat: "チャット",
+        deals: "交渉",
+        placeholder: "エージェントに相談...",
+        monitor: "監視",
+        stateLabels: { idle: "待機", listening: "聞き取り", thinking: "思考中", speaking: "応答中", joy: "成功", success: "成功" },
+        online: "NEGO-CHAN online. キャラ名つきで指示できます。例:「ZERO 防御して」「SAGE-BOY 性格: 穏やかで学習好き」「DRONE-TAN 配送ルート確認」。",
+        monitorIntro: "AI同士の交渉ログを監視中。マップ上で接続が発生すると、条件提示・反対提案・暫定合意がここに流れます。",
+        targetSet: name => `${name} を操作対象にしました。続けて「分析して」「性格: 慎重」などと送れます。`,
+        multi: cmd => cmd.note ? `${cmd.target}: メモ「${cmd.note}」を保存` : `${cmd.target}: ${cmd.intent} 指示を送信`,
+        note: cmd => `${cmd.target} のパーソナライズを更新しました。「${cmd.note}」を行動メモとして保持します。`,
+        sent: (target, action) => `${target} に ${action} の指示を送りました。マップ上の行動ログと選択パネルにも反映します。`,
+        mission: "ミッションログを確認。いい流れです。次の一手まで、こちらで状況を整理しておきます。",
+        help: "もちろん。いまはデモ接続なので、あとでOpenAI APIに差し替えられるよう送受信部分を分離しています。入力すると状態が listening → thinking → speaking に遷移します。",
+        context: "会話コンテキストも保持中です。API接続時はこの履歴をそのままメッセージ配列として渡せます。",
+        received: target => `${target} を対象に受信しました。名前を入れずに続けると、この相手への指示として扱います。`,
+        error: "通信レイヤーでエラーを検知。API接続設定を確認してください。",
+        actions: { invest: "投資判断", analyze: "分析", guard: "防御", negotiate: "交渉", deliver: "配送", rest: "休憩", hack: "潜入支援", study: "学習支援", praise: "士気上昇", assist: "支援" },
+        dealTopics: ["契約価格", "防衛SLA", "予測データ", "配送ルート"],
+        dealLines: [["初期提示は ¥4,800。成功報酬を薄くして、継続契約を厚くします。", "利益率が浅い。¥5,400なら即時決済、DATA 12を追加で出せる。", "¥5,100 + DATA 8。納期を半日短縮する条件なら署名できます。"], ["監視範囲を市場まで拡張。代わりに防衛コストを10%圧縮したい。", "圧縮は可能。ただし夜間アラートの優先度を上げる必要があります。", "承認。夜間帯だけ優先権を付与し、昼は通常ルートに戻します。"], ["市場変動の確率が上昇。予測モデルを共有すれば損失を回避できます。", "共有条件はログ匿名化。個別IDを外せるなら解析リソースを出します。", "匿名化して送信。対価は次回のDATA収益から12%で合意します。"], ["港から学院までの便を増やす。学習ログの優先配送を提案。", "代わりに整備手順を更新します。事故率を下げれば全体収益も伸びる。", "成立。次サイクルから安全ルートに切り替えます。"]],
+        negotiationSource: source => [`${source.to || "AGENT-B"} と ${source.topic || "city_ops"} について条件確認を開始。`, "譲歩幅・報酬・リスクを再計算。反対提案を返します。", "暫定合意。マップ上の行動と収益ログへ反映を待機。"]
+      }
+    };
+    AGENT_I18N.zh = { ...AGENT_I18N.en, role: "NEON MYTHOS 伙伴代理", chat: "聊天", deals: "交易", placeholder: "询问代理...", monitor: "监控", stateLabels: { idle: "待机", listening: "监听中", thinking: "思考中", speaking: "回应中", joy: "成功", success: "成功" }, online: "NEGO-CHAN 已上线。请提到角色名来下达指令，例如 ZERO guard 或 DRONE-TAN check routes。", monitorIntro: "正在监控代理之间的谈判日志。地图出现连接时，报价、反报价和临时协议会显示在这里。" };
+    AGENT_I18N.ko = { ...AGENT_I18N.en, role: "NEON MYTHOS 컴패니언 에이전트", chat: "채팅", deals: "협상", placeholder: "에이전트에게 묻기...", monitor: "모니터", stateLabels: { idle: "대기", listening: "듣는 중", thinking: "생각 중", speaking: "응답 중", joy: "성공", success: "성공" }, online: "NEGO-CHAN 온라인. 캐릭터 이름을 넣어 지시할 수 있습니다. 예: ZERO guard, DRONE-TAN check routes.", monitorIntro: "에이전트 간 협상 로그를 모니터링합니다. 맵에서 연결이 생기면 제안과 합의가 표시됩니다." };
+    AGENT_I18N.es = { ...AGENT_I18N.en, role: "AGENTE COMPAÑERO DE NEON MYTHOS", chat: "CHAT", deals: "ACUERDOS", placeholder: "Pregunta al agente...", monitor: "MONITOR", stateLabels: { idle: "ESPERA", listening: "ESCUCHANDO", thinking: "PENSANDO", speaking: "RESPONDIENDO", joy: "ÉXITO", success: "ÉXITO" }, online: "NEGO-CHAN en línea. Menciona un personaje para dirigir el trabajo, por ejemplo ZERO guard o DRONE-TAN check routes.", monitorIntro: "Vigilando negociaciones entre agentes. Cuando aparezcan conexiones en el mapa, verás ofertas, contraofertas y acuerdos." };
+    AGENT_I18N.fr = { ...AGENT_I18N.en, role: "AGENT COMPAGNON NEON MYTHOS", chat: "CHAT", deals: "ACCORDS", placeholder: "Demander à l'agent...", monitor: "MONITEUR", stateLabels: { idle: "VEILLE", listening: "ÉCOUTE", thinking: "RÉFLEXION", speaking: "RÉPONSE", joy: "SUCCÈS", success: "SUCCÈS" }, online: "NEGO-CHAN en ligne. Mentionnez un personnage pour diriger le travail, par exemple ZERO guard ou DRONE-TAN check routes.", monitorIntro: "Surveillance des négociations entre agents. Les offres, contre-offres et accords apparaissent ici." };
+    Object.assign(AGENT_I18N.zh, {
+      targetSet: name => `${name} 已设为操作目标。接下来可以发送“analyze”或“personality: careful”。`,
+      multi: cmd => cmd.note ? `${cmd.target}: 已保存备注「${cmd.note}」` : `${cmd.target}: 已发送 ${cmd.intent} 指令`,
+      note: cmd => `已更新 ${cmd.target} 的个性化设置。「${cmd.note}」已保存为行为备注。`,
+      sent: (target, action) => `已向 ${target} 发送${action}指令。地图行为日志和选择面板会同步更新。`,
+      mission: "任务日志已确认。节奏很好，我会整理下一步。",
+      help: "当然。当前是演示连接，收发逻辑已分离，之后可以替换为 OpenAI API。输入会让代理进入监听、思考、回应状态。",
+      context: "对话上下文正在保留。连接 API 时可作为消息数组传入。",
+      received: target => `已接收给 ${target} 的内容。之后不写名字时，会继续作为该目标的指令。`,
+      error: "检测到通信层错误。请检查 API 连接设置。",
+      actions: { invest: "投资分析", analyze: "分析", guard: "防御", negotiate: "谈判", deliver: "配送", rest: "休息", hack: "潜入支援", study: "学习支援", praise: "士气提升", assist: "支援" },
+      dealTopics: ["合同价格", "防御 SLA", "预测数据", "配送路线"],
+      dealLines: [["初始报价为 4,800。降低成功费，强化长期合同。", "利润率偏低。5,400 可立即结算，并追加 DATA 12。", "5,100 + DATA 8。如果交付缩短半天即可签署。"], ["监控范围扩展到市场，防御成本压缩 10%。", "可以压缩，但夜间警报需要更高优先级。", "批准。夜间赋予优先权，白天恢复普通路线。"], ["市场波动概率上升。共享预测模型可以避免损失。", "条件是日志匿名化。移除个人 ID 后我会提供分析资源。", "已匿名化发送。下一次 DATA 收益的 12% 作为对价。"], ["增加港口到学院的班次。建议优先配送学习日志。", "我会更新维护流程。降低事故率也会提升整体收益。", "成交。下一周期切换到安全路线。"]],
+      negotiationSource: source => [`开始与 ${source.to || "AGENT-B"} 确认 ${source.topic || "city_ops"} 条件。`, "正在重新计算让步、报酬和风险，并返回反提案。", "临时达成一致。等待反映到地图行动和收益日志。"]
+    });
+    Object.assign(AGENT_I18N.ko, {
+      targetSet: name => `${name}을(를) 조작 대상으로 설정했습니다. 이어서 "analyze" 또는 "personality: careful"처럼 보낼 수 있습니다.`,
+      multi: cmd => cmd.note ? `${cmd.target}: 메모 "${cmd.note}" 저장` : `${cmd.target}: ${cmd.intent} 지시 전송`,
+      note: cmd => `${cmd.target}의 개인화를 업데이트했습니다. "${cmd.note}"를 행동 메모로 저장합니다.`,
+      sent: (target, action) => `${target}에게 ${action} 지시를 보냈습니다. 맵 행동 로그와 선택 패널에 반영됩니다.`,
+      mission: "미션 로그를 확인했습니다. 흐름이 좋습니다. 다음 수를 정리해 두겠습니다.",
+      help: "물론입니다. 지금은 데모 연결이며, 나중에 OpenAI API로 바꿀 수 있도록 송수신 부분을 분리했습니다.",
+      context: "대화 컨텍스트를 유지하고 있습니다. API 연결 시 이 기록을 메시지 배열로 전달할 수 있습니다.",
+      received: target => `${target} 대상으로 수신했습니다. 이름 없이 계속 입력하면 이 대상의 지시로 처리합니다.`,
+      error: "통신 계층 오류를 감지했습니다. API 연결 설정을 확인하세요.",
+      actions: { invest: "투자 판단", analyze: "분석", guard: "방어", negotiate: "협상", deliver: "배송", rest: "휴식", hack: "잠입 지원", study: "학습 지원", praise: "사기 상승", assist: "지원" },
+      dealTopics: ["계약 가격", "방어 SLA", "예측 데이터", "배송 경로"],
+      dealLines: [["초기 제안은 ¥4,800. 성공 보수는 낮추고 지속 계약을 강화합니다.", "마진이 얕습니다. ¥5,400이면 즉시 결제하고 DATA 12를 추가할 수 있습니다.", "¥5,100 + DATA 8. 납기를 반나절 줄이면 서명 가능합니다."], ["감시 범위를 시장까지 확장합니다. 대신 방어 비용을 10% 줄이고 싶습니다.", "가능합니다. 다만 야간 알림 우선순위를 높여야 합니다.", "승인. 야간에만 우선권을 부여하고 낮에는 일반 경로로 돌립니다."], ["시장 변동 확률이 상승했습니다. 예측 모델을 공유하면 손실을 피할 수 있습니다.", "로그 익명화가 조건입니다. 개별 ID를 제거하면 분석 리소스를 제공합니다.", "익명화해 전송합니다. 다음 DATA 수익의 12%로 합의합니다."], ["항구에서 학원까지 운행을 늘립니다. 학습 로그 우선 배송을 제안합니다.", "대신 정비 절차를 업데이트하겠습니다. 사고율을 낮추면 전체 수익도 늘어납니다.", "성립. 다음 사이클부터 안전 경로로 전환합니다."]],
+      negotiationSource: source => [`${source.to || "AGENT-B"}와 ${source.topic || "city_ops"} 조건 확인을 시작합니다.`, "양보 폭, 보상, 위험을 다시 계산해 반대 제안을 반환합니다.", "잠정 합의. 맵 행동과 수익 로그 반영을 기다립니다."]
+    });
+    Object.assign(AGENT_I18N.es, {
+      targetSet: name => `${name} es ahora el objetivo activo. Continúa con comandos como "analyze" o "personality: careful".`,
+      multi: cmd => cmd.note ? `${cmd.target}: nota guardada "${cmd.note}"` : `${cmd.target}: comando ${cmd.intent} enviado`,
+      note: cmd => `Personalización de ${cmd.target} actualizada. "${cmd.note}" queda como nota de comportamiento.`,
+      sent: (target, action) => `Envié ${action} a ${target}. El mapa y el panel seleccionado se actualizarán.`,
+      mission: "Registro de misión confirmado. Buen ritmo; mantendré organizado el siguiente paso.",
+      help: "Claro. Esta demo separa la lógica de envío y recepción para poder reemplazarla luego por una llamada a la API de OpenAI.",
+      context: "El contexto de conversación se conserva. Al conectar una API, este historial puede pasarse como arreglo de mensajes.",
+      received: target => `Recibido para ${target}. Si continúas sin nombre, lo trataré como comando para este objetivo.`,
+      error: "Error detectado en la capa de comunicación. Revisa la configuración de la API.",
+      actions: { invest: "análisis de inversión", analyze: "análisis", guard: "defensa", negotiate: "negociación", deliver: "entrega", rest: "descanso", hack: "soporte sigiloso", study: "apoyo de estudio", praise: "impulso de moral", assist: "soporte" },
+      dealTopics: ["Precio de contrato", "SLA defensivo", "Datos predictivos", "Ruta de entrega"],
+      dealLines: [["Oferta inicial: ¥4,800. Bajo la comisión de éxito y refuerzo el contrato recurrente.", "El margen es bajo. Por ¥5,400 cierro ahora y agrego DATA 12.", "¥5,100 + DATA 8. Si acortamos la entrega medio día, firmo."], ["Amplío la vigilancia al mercado. A cambio, quiero reducir el coste defensivo 10%.", "Es posible, pero las alertas nocturnas necesitan más prioridad.", "Aprobado. Prioridad nocturna y ruta normal durante el día."], ["Sube la probabilidad de volatilidad. Compartir el modelo evita pérdidas.", "Solo con logs anonimizados. Quita IDs individuales y doy recursos de análisis.", "Anonimizado y enviado. Acordamos 12% del próximo retorno DATA."], ["Aumento viajes del puerto a la academia. Propongo envío prioritario de logs de aprendizaje.", "Actualizaré mantenimiento a cambio. Menos accidentes mejora el retorno total.", "Trato cerrado. En el siguiente ciclo usamos ruta segura."]],
+      negotiationSource: source => [`Iniciando revisión de condiciones con ${source.to || "AGENT-B"} sobre ${source.topic || "city_ops"}.`, "Recalculando concesiones, recompensa y riesgo. Enviando contraoferta.", "Acuerdo provisional. Esperando reflejo en acciones del mapa e ingresos."]
+    });
+    Object.assign(AGENT_I18N.fr, {
+      targetSet: name => `${name} est maintenant la cible active. Continuez avec des commandes comme "analyze" ou "personality: careful".`,
+      multi: cmd => cmd.note ? `${cmd.target} : note enregistrée "${cmd.note}"` : `${cmd.target} : commande ${cmd.intent} envoyée`,
+      note: cmd => `Personnalisation de ${cmd.target} mise à jour. "${cmd.note}" est conservé comme note de comportement.`,
+      sent: (target, action) => `${action} envoyé à ${target}. Le journal de la carte et le panneau sélectionné seront mis à jour.`,
+      mission: "Journal de mission confirmé. Bon rythme, je garde la prochaine étape organisée.",
+      help: "Bien sûr. Cette démo sépare l'envoi et la réception afin de pouvoir les remplacer plus tard par un appel à l'API OpenAI.",
+      context: "Le contexte de conversation est conservé. Une fois l'API connectée, cet historique peut être transmis comme tableau de messages.",
+      received: target => `Reçu pour ${target}. Sans autre nom, je traiterai la suite comme une commande pour cette cible.`,
+      error: "Erreur détectée dans la couche de communication. Vérifiez les paramètres de connexion API.",
+      actions: { invest: "analyse d'investissement", analyze: "analyse", guard: "défense", negotiate: "négociation", deliver: "livraison", rest: "repos", hack: "soutien furtif", study: "soutien d'étude", praise: "gain de moral", assist: "soutien" },
+      dealTopics: ["Prix du contrat", "SLA défense", "Données prédictives", "Route de livraison"],
+      dealLines: [["Offre initiale : ¥4,800. Frais de succès réduits, contrat récurrent renforcé.", "La marge est faible. À ¥5,400 je règle maintenant et ajoute DATA 12.", "¥5,100 + DATA 8. Si la livraison gagne une demi-journée, je signe."], ["J'étends la surveillance au marché. En échange, je veux réduire le coût défense de 10%.", "C'est possible, mais les alertes de nuit doivent être prioritaires.", "Approuvé. Priorité la nuit, routage normal le jour."], ["La volatilité augmente. Partager le modèle prédictif peut éviter les pertes.", "À condition d'anonymiser les logs. Retirez les IDs et je fournis l'analyse.", "Anonymisé et envoyé. Accord à 12% du prochain retour DATA."], ["J'augmente les trajets port-académie. Priorité aux logs d'apprentissage proposée.", "Je mets à jour la maintenance en échange. Moins d'accidents augmente le rendement.", "Accord conclu. Route sûre au prochain cycle."]],
+      negotiationSource: source => [`Vérification des conditions avec ${source.to || "AGENT-B"} sur ${source.topic || "city_ops"}.`, "Recalcul des concessions, récompenses et risques. Contre-offre envoyée.", "Accord provisoire. En attente de reflet sur la carte et les revenus."]
+    });
+
+    const agentT = () => AGENT_I18N[agentStore.lang] || AGENT_I18N.en;
+
+    const dealLines = [
+      {
+        a: "NEGO-CHAN",
+        b: "GOLD JACK",
+        color: "#ff4dc6",
+        topic: "契約価格",
+        lines: [
+          ["NEGO-CHAN", "#ff4dc6", "初期提示は ¥4,800。成功報酬を薄くして、継続契約を厚くします。"],
+          ["GOLD JACK", "#ffd700", "利益率が浅い。¥5,400なら即時決済、DATA 12を追加で出せる。"],
+          ["NEGO-CHAN", "#ff4dc6", "¥5,100 + DATA 8。納期を半日短縮する条件なら署名できます。"]
+        ]
+      },
+      {
+        a: "ZERO",
+        b: "KITSUNE-X",
+        color: "#ff003c",
+        topic: "防衛SLA",
+        lines: [
+          ["ZERO", "#ff003c", "監視範囲を市場まで拡張。代わりに防衛コストを10%圧縮したい。"],
+          ["KITSUNE-X", "#00ff88", "圧縮は可能。ただし夜間アラートの優先度を上げる必要があります。"],
+          ["ZERO", "#ff003c", "承認。夜間帯だけ優先権を付与し、昼は通常ルートに戻します。"]
+        ]
+      },
+      {
+        a: "ORACLE-01",
+        b: "NEON",
+        color: "#00e5ff",
+        topic: "予測データ",
+        lines: [
+          ["ORACLE-01", "#00e5ff", "市場変動の確率が上昇。予測モデルを共有すれば損失を回避できます。"],
+          ["NEON", "#7df9ff", "共有条件はログ匿名化。個別IDを外せるなら解析リソースを出します。"],
+          ["ORACLE-01", "#00e5ff", "匿名化して送信。対価は次回のDATA収益から12%で合意します。"]
+        ]
+      },
+      {
+        a: "DRONE-TAN",
+        b: "SAGE-BOY",
+        color: "#bf5fff",
+        topic: "配送ルート",
+        lines: [
+          ["DRONE-TAN", "#bf5fff", "港から学院までの便を増やす。学習ログの優先配送を提案。"],
+          ["SAGE-BOY", "#89ddff", "代わりに整備手順を更新します。事故率を下げれば全体収益も伸びる。"],
+          ["DRONE-TAN", "#bf5fff", "成立。次サイクルから安全ルートに切り替えます。"]
+        ]
+      }
+    ];
+
+    const localizedDealLines = () => {
+      const t = agentT();
+      return dealLines.map((scenario, i) => ({
+        ...scenario,
+        topic: t.dealTopics[i] || scenario.topic,
+        lines: scenario.lines.map(([speaker, color], j) => [speaker, color, t.dealLines[i]?.[j] || scenario.lines[j][2]])
+      }));
     };
 
-    const getDealLines = () => getCompanionLang().dealLines || COMPANION_I18N.en.dealLines;
+    const applyAgentLanguage = (resetLogs = false) => {
+      const t = agentT();
+      roleLabel.textContent = t.role;
+      tabChat.textContent = t.chat;
+      tabDeals.textContent = t.deals;
+      input.placeholder = t.placeholder;
+      input.setAttribute("aria-label", t.placeholder);
+      setAgentState(agentStore.state);
+      if (resetLogs) {
+        log.innerHTML = "";
+        negotiationLog.innerHTML = "";
+        agentStore.messages = [];
+        appendMessage("agent", t.online);
+        appendDealMessage("SYSTEM", t.monitorIntro, "#00e5ff", t.monitor);
+        playNegotiationRound();
+      }
+    };
 
     const setActiveTab = (tab) => {
       const deals = tab === "deals";
-      agentStore.activeTab = deals ? "deals" : "chat";
       log.hidden = deals;
       negotiationLog.hidden = !deals;
       tabChat.classList.toggle("is-active", !deals);
@@ -9121,8 +8674,7 @@ function NeonMythosCity() {
       const normalized = agentAssets[nextState] ? nextState : "idle";
       agentStore.state = normalized;
       shell.dataset.state = normalized;
-      const langPack = getCompanionLang();
-      label.textContent = langPack.stateLabels[normalized] || normalized.toUpperCase();
+      label.textContent = agentT().stateLabels[normalized] || normalized.toUpperCase();
       portraits.forEach((img) => {
         img.classList.toggle("is-active", img.dataset.agentState === normalized || (normalized === "success" && img.dataset.agentState === "joy"));
       });
@@ -9160,85 +8712,30 @@ function NeonMythosCity() {
       item.querySelector(".nm-deal-speaker").textContent = `${speaker} / ${topic}`;
       item.querySelector(".nm-deal-body").textContent = text;
       negotiationLog.appendChild(item);
-      while (negotiationLog.children.length > 28) negotiationLog.removeChild(negotiationLog.firstChild);
+      while (negotiationLog.children.length > 42) negotiationLog.removeChild(negotiationLog.firstChild);
       negotiationLog.scrollTop = negotiationLog.scrollHeight;
       return item;
     };
 
-    const applyCompanionLanguage = (code, options = {}) => {
-      agentStore.lang = normalizeCompanionLang(code);
-      agentStore.langVersion += 1;
-      const langPack = getCompanionLang();
-
-      statusChip.setAttribute("aria-label", langPack.statusAria);
-      panel.setAttribute("aria-label", langPack.panelLabel);
-      tabList.setAttribute("aria-label", langPack.monitorLabel);
-      roleLabel.textContent = langPack.role;
-      tabChat.textContent = langPack.chatTab;
-      tabDeals.textContent = langPack.dealsTab;
-      input.placeholder = langPack.inputPlaceholder;
-      input.setAttribute("aria-label", langPack.inputLabel);
-      sendButton.setAttribute("aria-label", langPack.sendLabel);
-      toggle.setAttribute("aria-label", langPack.toggleLabel);
-      avatarButton.setAttribute("aria-label", langPack.openLabel);
-      portraits.forEach((portrait) => {
-        const portraitState = portrait.dataset.agentState || "idle";
-        portrait.setAttribute("aria-label", langPack.portraitLabels[portraitState] || langPack.portraitLabels.idle);
-      });
-
-      setActiveTab(agentStore.activeTab);
-      setAgentState(agentStore.state);
-
-      if (options.resetLog) {
-        log.replaceChildren();
-        negotiationLog.replaceChildren();
-        agentStore.messages = [];
-        appendMessage("agent", langPack.initialOnline);
-        appendDealMessage("SYSTEM", langPack.monitorMessage, "#00e5ff", langPack.monitorTopic);
-        playNegotiationRound();
-      }
-    };
-
     const playNegotiationRound = (source) => {
-      const langPack = getCompanionLang();
-      const dealLines = getDealLines();
-      const scenario = source || dealLines[agentStore.dealStep % dealLines.length];
-      const langVersion = agentStore.langVersion;
+      const scenarios = localizedDealLines();
+      const scenario = source || scenarios[agentStore.dealStep % scenarios.length];
       agentStore.dealStep += 1;
-      const fallbackSourceLines = source ? langPack.sourceDealLines(source) : null;
-      const resultSpeaker = ({
-        en: "RESULT",
-        ja: "結果",
-        zh: "结果",
-        ko: "결과",
-        es: "RESULTADO",
-        fr: "RÉSULTAT"
-      })[agentStore.lang] || "RESULT";
-      const resultMeta = source?.resultLabel ? [
-        resultSpeaker,
-        `${source.resultLabel} / SCORE ${source.score ?? "--"}${source.payout ? ` / ¥${Number(source.payout).toLocaleString()}` : ""}`,
-        source.color || "#00e5ff"
-      ] : null;
-      const sourceLines = source ? [
-        [source.from || "AGENT-A", source.fromLine || fallbackSourceLines[0][1], source.fromColor || source.color || "#00e5ff"],
-        [source.to || "AGENT-B", source.toLine || fallbackSourceLines[1][1], source.toColor || "#ffd700"],
-        resultMeta || fallbackSourceLines[2]
-      ] : null;
-      const lines = sourceLines || scenario.lines.map(([speaker, color, text]) => [speaker, text, color]);
+      const sourceLines = source ? agentT().negotiationSource(source) : null;
+      const lines = source ? [
+        [source.from || "AGENT-A", sourceLines[0], source.fromColor || source.color || "#00e5ff"],
+        [source.to || "AGENT-B", sourceLines[1], source.toColor || "#ffd700"],
+        [source.from || "AGENT-A", sourceLines[2], source.fromColor || source.color || "#00ff88"]
+      ] : scenario.lines.map(([speaker, color, text]) => [speaker, text, color]);
       lines.forEach(([speaker, text, color], index) => {
-        window.setTimeout(() => {
-          if (langVersion === agentStore.langVersion) {
-            appendDealMessage(speaker, text, color, source?.topic || scenario.topic);
-          }
-        }, index * 650);
+        window.setTimeout(() => appendDealMessage(speaker, text, color, source?.topic || scenario.topic), index * 850);
       });
     };
 
     const appendThinking = () => {
       const item = document.createElement("div");
       item.className = "nm-agent-msg agent";
-      item.innerHTML = '<span class="nm-agent-typing"><i></i><i></i><i></i></span>';
-      item.querySelector(".nm-agent-typing").setAttribute("aria-label", getCompanionLang().thinkingLabel);
+      item.innerHTML = '<span class="nm-agent-typing" aria-label="Thinking"><i></i><i></i><i></i></span>';
       log.appendChild(item);
       log.scrollTop = log.scrollHeight;
       return item;
@@ -9266,12 +8763,12 @@ function NeonMythosCity() {
       const lower = message.toLowerCase();
       const aliases = [
         ["GOLD JACK", /gold\s*jack|ゴールド\s*ジャック|arb/i],
-        ["KITSUNE-X", /kitsune[-\s]*x|キツネ|狐狸|구미호/i],
+        ["KITSUNE-X", /kitsune[-\s]*x|キツネ/i],
         ["EYE-VOID", /eye[-\s]*void|アイ[-\s]*ヴォイド/i],
-        ["DRONE-TAN", /drone[-\s]*tan|ドローン|无人机|드론/i],
-        ["SAGE-BOY", /sage[-\s]*boy|セージ|贤者|세이지/i],
-        ["YAMI-NEKO", /yami[-\s]*neko|ヤミ[-\s]*ネコ|暗猫|야미/i],
-        ["ORACLE-01", /oracle[-\s]*01|lumen|オラクル|预言|오라클/i],
+        ["DRONE-TAN", /drone[-\s]*tan|ドローン/i],
+        ["SAGE-BOY", /sage[-\s]*boy|セージ/i],
+        ["YAMI-NEKO", /yami[-\s]*neko|ヤミ[-\s]*ネコ/i],
+        ["ORACLE-01", /oracle[-\s]*01|lumen|オラクル/i],
         ["404 HUMAN", /404\s*human|ヒューマン/i],
         ["KANE-KAMI", /kane[-\s]*kami|カネカミ/i],
         ["NEGO-CHAN", /nego[-\s]*chan|ネゴ/i],
@@ -9279,27 +8776,27 @@ function NeonMythosCity() {
         ["NEON", /(^|[^a-z])neon([^a-z]|$)|ネオン/i],
         ["PIXEL", /pixel|ピクセル/i],
         ["ZERO", /zero|ゼロ/i],
-        ["GOLD JACK", /投資|利益|finance|arbitrage|inversión|investment|投资|투자/i],
-        ["KITSUNE-X", /防衛|defense|defence|barrier|shield|défense|defensa|防御|방어/i],
-        ["LIRA", /情報戦|info|warfare|breach|renseignement|信息战|정보전/i],
-        ["NEON", /データ解析|analysis|scan|analyse|analizar|分析|분석/i],
-        ["EYE-VOID", /予知|future|oracle|prédiction|predicción|预测|예측/i],
-        ["ZERO", /core|警備|防御|guard|security|sécurité|seguridad|安全|보안/i],
-        ["NEGO-CHAN", /交渉|deal|contract|trader|negotiation|négociation|negociación|协商|협상/i]
+        ["GOLD JACK", /投資|利益|finance|arbitrage/i],
+        ["KITSUNE-X", /防衛|defense|barrier|shield/i],
+        ["LIRA", /情報戦|info|warfare|breach/i],
+        ["NEON", /データ解析|analysis|scan/i],
+        ["EYE-VOID", /予知|future|oracle/i],
+        ["ZERO", /core|警備|防御|guard|security/i],
+        ["NEGO-CHAN", /交渉|deal|contract|trader/i]
       ];
       const hit = aliases.find(([, pattern]) => pattern.test(message));
       const target = hit ? hit[0] : agentStore.target;
       let intent = "assist";
-      if (/投資|利益|bank|invest|profit|金|inversión|invertir|investissement|投资|수익|투자/.test(lower)) intent = "invest";
-      else if (/分析|解析|予測|oracle|analy|forecast|data|analizar|analyse|prédiction|predicción|预测|분석|예측/.test(lower)) intent = "analyze";
-      else if (/守|防御|防衛|警備|guard|security|patch|defend|defense|defence|défense|defensa|保护|安全|방어|보안/.test(lower)) intent = "guard";
-      else if (/交渉|契約|deal|nego|trade|market|contract|négociation|negociación|trato|accord|协商|谈判|협상|거래/.test(lower)) intent = "negotiate";
-      else if (/配送|運搬|route|deliver|delivery|drone|entrega|livraison|路线|配送|배송/.test(lower)) intent = "deliver";
-      else if (/休|寝|coffee|tavern|rest|descanso|repos|休息|휴식|404/.test(lower)) intent = "rest";
-      else if (/hack|侵入|潜入|stealth|yami|neko|infiltr|pirater|入侵|잠입|해킹/.test(lower)) intent = "hack";
-      else if (/勉強|学習|sage|study|academy|support|aprender|estudiar|étudier|学习|공부|학습/.test(lower)) intent = "study";
-      else if (/ありがとう|thanks|最高|good|nice|えらい|gracias|merci|谢谢|감사|고마워/.test(lower)) intent = "praise";
-      const noteMatch = message.match(/(?:性格|personality|メモ|note|个性|人格|备注|성격|메모|personalidad|nota|personnalité)[:：]\s*(.+)$/i);
+      if (/投資|利益|bank|invest|profit|金/.test(lower)) intent = "invest";
+      else if (/分析|予測|oracle|analy|forecast|data/.test(lower)) intent = "analyze";
+      else if (/守|防御|警備|guard|security|patch/.test(lower)) intent = "guard";
+      else if (/交渉|契約|deal|nego|trade|market/.test(lower)) intent = "negotiate";
+      else if (/配送|運搬|route|deliver|drone/.test(lower)) intent = "deliver";
+      else if (/休|寝|coffee|tavern|rest|404/.test(lower)) intent = "rest";
+      else if (/hack|侵入|stealth|yami|neko/.test(lower)) intent = "hack";
+      else if (/勉強|学習|sage|study|academy|support/.test(lower)) intent = "study";
+      else if (/ありがとう|thanks|最高|good|nice|えらい/.test(lower)) intent = "praise";
+      const noteMatch = message.match(/(?:性格|personality|メモ|note)[:：]\s*(.+)$/i);
       return { target, intent, note: noteMatch ? noteMatch[1].trim() : "", message };
     };
 
@@ -9313,33 +8810,29 @@ function NeonMythosCity() {
     const mockAgentApi = async (message, history) => {
       await new Promise((resolve) => window.setTimeout(resolve, 1200 + Math.random() * 900));
       const lower = message.toLowerCase();
-      const langPack = getCompanionLang();
       const commands = message.split(/[。.!？?]+/).map(s => s.trim()).filter(Boolean).map(parseAgentCommand);
       commands.forEach(sendCommandToSimulation);
       const command = commands[commands.length - 1] || parseAgentCommand(message);
+      const t = agentT();
       if (commands.length > 1) {
-        return commands.map(cmd => {
-          const label = langPack.intentLabels[cmd.intent] || cmd.intent;
-          return cmd.note ? langPack.multiNote(cmd) : langPack.multiCommand(cmd, label);
-        }).join(" / ");
+        return commands.map(cmd => t.multi(cmd)).join(" / ");
       }
       if (command.note) {
-        return langPack.noteReply(command);
+        return t.note(command);
       }
       if (command.intent !== "assist") {
-        const label = langPack.intentLabels[command.intent] || command.intent;
-        return langPack.commandReply(command, label);
+        return t.sent(command.target, t.actions[command.intent] || command.intent);
       }
-      if (/clear|解決|done|success|勝|ありがとう|thanks|最高|gracias|merci|谢谢|감사|고마워/.test(lower)) {
-        return langPack.successReply;
+      if (/clear|解決|done|success|勝|ありがとう|thanks|最高/.test(lower)) {
+        return t.mission;
       }
-      if (/help|使い方|何|どう|how|ayuda|aide|帮助|도움/.test(lower)) {
-        return langPack.helpReply;
+      if (/help|使い方|何|どう|how/.test(lower)) {
+        return t.help;
       }
       if (history.length > 4) {
-        return langPack.historyReply;
+        return t.context;
       }
-      return langPack.targetReply(command);
+      return t.received(command.target);
     };
 
     const handleSubmit = async (event) => {
@@ -9357,10 +8850,10 @@ function NeonMythosCity() {
       try {
         const reply = await mockAgentApi(text, agentStore.messages);
         await typeAgentMessage(thinkingNode, reply);
-        const positive = /ありがとう|thanks|最高|done|clear|解決|success|勝|gracias|merci|谢谢|감사|고마워/i.test(text + reply);
+        const positive = /ありがとう|thanks|最高|done|clear|解決|success|勝/i.test(text + reply);
         setAgentState(positive ? "joy" : "speaking");
       } catch (error) {
-        thinkingNode.textContent = getCompanionLang().errorReply;
+        thinkingNode.textContent = agentT().error;
         setAgentState("idle");
       } finally {
         agentStore.busy = false;
@@ -9368,7 +8861,7 @@ function NeonMythosCity() {
       }
     };
 
-    const positiveDelay = (text) => (/ありがとう|thanks|最高|done|clear|解決|success|勝|gracias|merci|谢谢|감사|고마워/i.test(text) ? 3200 : 2100);
+    const positiveDelay = (text) => (/ありがとう|thanks|最高|done|clear|解決|success|勝/i.test(text) ? 3200 : 2100);
 
     input.addEventListener("input", () => {
       if (agentStore.busy) return;
@@ -9388,17 +8881,13 @@ function NeonMythosCity() {
       const name = event.detail && event.detail.name;
       if (!name || agentStore.target === name) return;
       agentStore.target = name;
-      appendMessage("agent", getCompanionLang().targetSelected(name));
+      appendMessage("agent", agentT().targetSet(name));
     });
 
     window.addEventListener("nm:agent-negotiation", (event) => {
       playNegotiationRound(event.detail || null);
-      label.textContent = getCompanionLang().dealWatch;
+      label.textContent = "DEAL WATCH";
       scheduleIdle(2600);
-    });
-
-    window.addEventListener("nm:language-cutin", (event) => {
-      applyCompanionLanguage(event.detail && event.detail.code, { resetLog: true });
     });
 
     toggle.addEventListener("click", () => {
@@ -9411,7 +8900,15 @@ function NeonMythosCity() {
       input.focus();
     });
 
-    applyCompanionLanguage("en", { resetLog: true });
+    window.addEventListener("nm:app-language", (event) => {
+      agentStore.lang = event.detail && event.detail.code || "en";
+      applyAgentLanguage(true);
+    });
+
+    applyAgentLanguage(false);
+    appendMessage("agent", agentT().online);
+    appendDealMessage("SYSTEM", agentT().monitorIntro, "#00e5ff", agentT().monitor);
+    playNegotiationRound();
     window.setInterval(() => {
       if (!document.hidden) playNegotiationRound();
     }, 7600);
@@ -9634,7 +9131,6 @@ function NeonMythosCity() {
     const name = document.getElementById("nm-lc-name");
     const line = document.getElementById("nm-lc-line");
     const role = document.getElementById("nm-lc-role");
-    if (!cutin || !portrait || !kicker || !name || !line || !role) return;
     let cutinTimer = null;
 
     const languageAgents = {
@@ -9739,139 +9235,6 @@ function NeonMythosCity() {
     window.addEventListener("nm:language-cutin", (event) => {
       showLanguageCutin(event.detail && event.detail.code);
     });
-  })();
-  </script>
-
-  <style>
-    #nm-sound-panel {
-      position: fixed;
-      top: max(10px, env(safe-area-inset-top));
-      right: max(10px, env(safe-area-inset-right));
-      z-index: 10050;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px;
-      border: 1px solid rgba(0, 229, 255, .3);
-      background: rgba(5, 8, 20, .78);
-      box-shadow: 0 0 18px rgba(0, 229, 255, .16);
-      backdrop-filter: blur(8px);
-      font-family: "Share Tech Mono", monospace;
-    }
-
-    #nm-sound-btn {
-      min-height: 34px;
-      padding: 0 12px;
-      border: 1px solid rgba(0, 229, 255, .72);
-      border-radius: 0;
-      background: rgba(0, 229, 255, .12);
-      color: #9ff8ff;
-      font: 700 11px "Share Tech Mono", monospace;
-      letter-spacing: .7px;
-      text-shadow: 0 0 8px rgba(0, 229, 255, .75);
-    }
-
-    #nm-sound-btn.is-playing {
-      background: linear-gradient(90deg, rgba(0, 229, 255, .88), rgba(255, 45, 214, .76));
-      color: #04111a;
-      border-color: rgba(255, 255, 255, .8);
-      text-shadow: none;
-    }
-
-    #nm-sound-status {
-      max-width: 150px;
-      color: rgba(210, 240, 255, .72);
-      font-size: 9px;
-      line-height: 1.25;
-      text-transform: uppercase;
-    }
-
-    @media (max-width: 720px) {
-      #nm-sound-panel {
-        top: max(8px, env(safe-area-inset-top));
-        right: max(8px, env(safe-area-inset-right));
-        gap: 5px;
-      }
-
-      #nm-sound-status {
-        display: none;
-      }
-    }
-  </style>
-
-  <div id="nm-sound-panel" aria-label="Sound controls">
-    <button id="nm-sound-btn" type="button" aria-pressed="false">♪ SOUND ON</button>
-    <span id="nm-sound-status">Tap to enable BGM</span>
-  </div>
-  <audio id="nm-bgm" src="music/neon-myths-english.mp3" preload="auto" loop playsinline></audio>
-
-  <script>
-  (() => {
-    const audio = document.getElementById("nm-bgm");
-    const button = document.getElementById("nm-sound-btn");
-    const status = document.getElementById("nm-sound-status");
-    const panel = document.getElementById("nm-sound-panel");
-    if (!audio || !button || !status || !panel) return;
-
-    audio.volume = 0.42;
-    let userPaused = false;
-
-    const setUi = (state, label) => {
-      const playing = state === "playing";
-      button.classList.toggle("is-playing", playing);
-      button.setAttribute("aria-pressed", playing ? "true" : "false");
-      button.textContent = playing ? "♪ SOUND ON" : "♪ SOUND OFF";
-      status.textContent = label;
-    };
-
-    const startBgm = async () => {
-      userPaused = false;
-      try {
-        audio.muted = false;
-        await audio.play();
-        setUi("playing", "BGM online");
-        return true;
-      } catch (err) {
-        setUi("blocked", "Tap SOUND ON");
-        return false;
-      }
-    };
-
-    const pauseBgm = () => {
-      userPaused = true;
-      audio.pause();
-      setUi("paused", "BGM paused");
-    };
-
-    button.addEventListener("click", async (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (audio.paused) await startBgm();
-      else pauseBgm();
-    });
-
-    const unlockOnGesture = async (event) => {
-      if (userPaused || panel.contains(event.target) || !audio.paused) return;
-      const started = await startBgm();
-      if (started) {
-        document.removeEventListener("pointerdown", unlockOnGesture, true);
-        document.removeEventListener("touchstart", unlockOnGesture, true);
-        document.removeEventListener("keydown", unlockOnGesture, true);
-      }
-    };
-
-    document.addEventListener("pointerdown", unlockOnGesture, true);
-    document.addEventListener("touchstart", unlockOnGesture, true);
-    document.addEventListener("keydown", unlockOnGesture, true);
-
-    audio.addEventListener("play", () => setUi("playing", "BGM online"));
-    audio.addEventListener("pause", () => {
-      if (!userPaused && audio.currentTime > 0) setUi("paused", "Tap to resume");
-    });
-    audio.addEventListener("error", () => setUi("error", "Audio file missing"));
-
-    setUi("ready", "Tap to enable BGM");
-    window.neonMythosAudio = { audio, start: startBgm, pause: pauseBgm };
   })();
   </script>
 
