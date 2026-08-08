@@ -3960,6 +3960,787 @@ function DevTerminal({
 // ═══════════════════════════════════════════════════════════════
 // MAIN GAME COMPONENT
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// LONG-TERM TASK ENGINE
+// A goal an agent keeps pursuing across many days and sessions.
+// Short-term acts ("work here now") stay in runAI; this layer holds
+// the goal, decomposes it, adapts it, remembers what worked, and
+// reports back — so one instruction keeps paying out over time.
+// ═══════════════════════════════════════════════════════════════
+
+const LTT_STORAGE_KEY = "neonMythos.ltt.v1";
+const LTT_EVAL_EVERY = 20;          // ticks between evaluations
+const LTT_REPORT_EVERY_DAYS = 1;    // autonomous progress report cadence
+const LTT_STALL_DAYS = 1.5;         // no milestone movement -> replan
+const LTT_SHOCK_PCT = 0.08;         // price move that counts as a shock
+const LTT_FX_TICKS = 26;            // how long a burst effect stays up
+const LTT_MASTERY_MAX = 5;
+
+const LTT_DISTRICTS = {
+  north: { key: "north", ids: ["shrine", "tower", "market", "tavern"] },
+  central: { key: "central", ids: ["house1", "hacklab", "well", "forge", "port", "house2"] },
+  south: { key: "south", ids: ["church", "bank", "arena", "academy", "garden"] }
+};
+const LTT_DISTRICT_OF = (() => {
+  const m = {};
+  Object.values(LTT_DISTRICTS).forEach(d => d.ids.forEach(id => { m[id] = d.key; }));
+  return m;
+})();
+
+const LTT_CAT_BUILDINGS = cats => BUILDINGS.filter(b => cats.includes(b.cat)).map(b => b.id);
+
+// ── Goal catalogue ──────────────────────────────────────────────
+// Each goal knows how to measure itself and how to split into
+// milestones, so decomposition is data rather than hand-written plans.
+const LTT_GOALS = {
+  wealth_x3: {
+    key: "wealth_x3",
+    icon: "💰",
+    color: "#FFD700",
+    horizonDays: 7,
+    cats: ["finance", "trade"],
+    // multiply the agent's own earnings
+    baseline: ctx => Math.max(8000, ctx.agent.earn || 0),
+    metric: ctx => ctx.agent.earn || 0,
+    target: base => Math.round(base * 3),
+    steps: ["accumulate", "compound", "secure"]
+  },
+  data_hegemony: {
+    key: "data_hegemony",
+    icon: "📡",
+    color: "#00E5FF",
+    horizonDays: 6,
+    cats: ["data", "hack", "learn"],
+    baseline: ctx => ctx.res.data || 0,
+    metric: ctx => ctx.res.data || 0,
+    target: base => Math.round(base + 2600),
+    steps: ["survey", "mine", "model"]
+  },
+  district_control: {
+    key: "district_control",
+    icon: "🏙",
+    color: "#FF69B4",
+    horizonDays: 8,
+    collective: true,
+    cats: ["trade", "finance", "logistics"],
+    baseline: () => 0,
+    // allies genuinely help hold a district, so they scale the count
+    metric: ctx => Math.round((ctx.districtVisits[ctx.ltt.districtKey] || 0) * (1 + 0.15 * (ctx.ltt.allies ? ctx.ltt.allies.length : 0))),
+    target: () => 520,
+    steps: ["scout", "occupy", "dominate"]
+  },
+  contract_network: {
+    key: "contract_network",
+    icon: "🤝",
+    color: "#B36BFF",
+    horizonDays: 6,
+    cats: ["trade", "logistics", "rest"],
+    baseline: ctx => ctx.res.con || 0,
+    metric: ctx => ctx.res.con || 0,
+    target: base => base + 190,
+    steps: ["approach", "negotiate", "lock-in"]
+  },
+  construction: {
+    key: "construction",
+    icon: "🏗",
+    color: "#FF8A3D",
+    horizonDays: 6,
+    cats: ["logistics", "trade", "house"],
+    baseline: () => 0,
+    metric: ctx => ctx.ltt.project ? ctx.ltt.project.progress : 0,
+    target: () => 160,
+    steps: ["survey", "foundation", "build", "open"]
+  },
+  arbitrage_cycle: {
+    key: "arbitrage_cycle",
+    icon: "📈",
+    color: "#00FF9C",
+    horizonDays: 7,
+    cats: ["trade", "finance", "data"],
+    baseline: () => 0,
+    metric: ctx => ctx.ltt.book ? ctx.ltt.book.realized : 0,
+    target: () => 12000,
+    steps: ["watch", "buy-dip", "hold", "sell-peak"]
+  }
+};
+const LTT_GOAL_ORDER = ["wealth_x3", "data_hegemony", "district_control", "contract_network", "construction", "arbitrage_cycle"];
+
+// ── Strategies: the part that actually evolves ──────────────────
+// Weights bias which building an agent walks to. Outcomes feed back,
+// so "what worked yesterday" is literally reused and refined today.
+const LTT_STRATEGIES = {
+  focus: { key: "focus", label: "FOCUS", desc: "concentrate on the single best-yielding site" },
+  spread: { key: "spread", label: "SPREAD", desc: "rotate sites to reduce shock exposure" },
+  patient: { key: "patient", label: "PATIENT", desc: "stockpile and wait for a better price" },
+  aggressive: { key: "aggressive", label: "AGGRESSIVE", desc: "trade often, accept drawdown" }
+};
+
+const lttNewId = (agentId, goalKey, seed) => `ltt-${agentId}-${goalKey}-${seed}`;
+
+const lttMilestones = (goalKey, baseline, target) => {
+  const g = LTT_GOALS[goalKey];
+  const steps = g.steps;
+  const span = target - baseline;
+  return steps.map((s, i) => ({
+    key: s,
+    idx: i,
+    // milestones are cumulative fractions of the whole goal
+    target: baseline + Math.round(span * ((i + 1) / steps.length)),
+    done: false,
+    doneDay: null,
+    doneTick: null
+  }));
+};
+
+const lttPlanFor = (goalKey, strategyKey, districtKey) => {
+  const g = LTT_GOALS[goalKey];
+  let ids = LTT_CAT_BUILDINGS(g.cats);
+  if (districtKey && LTT_DISTRICTS[districtKey]) {
+    const inDistrict = ids.filter(id => LTT_DISTRICT_OF[id] === districtKey);
+    if (inDistrict.length) ids = inDistrict;
+  }
+  if (strategyKey === "focus") ids = ids.slice(0, Math.max(1, Math.ceil(ids.length / 2)));
+  if (strategyKey === "patient") ids = ids.concat(LTT_CAT_BUILDINGS(["rest", "learn"]));
+  return ids;
+};
+
+const lttCreate = (agent, goalKey, ctx, opts = {}) => {
+  const g = LTT_GOALS[goalKey];
+  const districtKey = goalKey === "district_control"
+    ? (opts.districtKey || LTT_DISTRICT_OF[agent.pref && agent.pref[0]] || "north")
+    : null;
+  const scratch = { agent, res: ctx.res, districtVisits: ctx.districtVisits || {}, ltt: { districtKey, project: null, book: null } };
+  const baseline = Math.round(g.baseline(scratch));
+  const target = Math.round(g.target(baseline, scratch));
+  const strategy = opts.strategy || (agent.p && agent.p.g > 0.6 ? "aggressive" : agent.p && agent.p.c > 0.7 ? "focus" : "spread");
+  return {
+    id: lttNewId(agent.id, goalKey, ctx.day + "-" + ctx.tick),
+    agentId: agent.id,
+    agentName: agent.jp || agent.name,
+    color: agent.color,
+    goalKey,
+    districtKey,
+    status: "active",              // active | awaiting | done | failed
+    createdDay: ctx.day,
+    createdTick: ctx.tick,
+    deadlineDay: ctx.day + g.horizonDays,
+    baseline,
+    target,
+    value: baseline,
+    accum: 0,        // achieved so far, independent of world state
+    lastRaw: null,   // last raw metric reading; re-synced after a reload
+    progress: 0,
+    milestones: lttMilestones(goalKey, baseline, target),
+    milestoneIdx: 0,
+    plan: lttPlanFor(goalKey, strategy, districtKey),
+    planVersion: 1,
+    strategy,
+    weights: LTT_CAT_BUILDINGS(g.cats).reduce((a, id) => { a[id] = 1; return a; }, {}),
+    memory: { wins: [], losses: [], notes: [] },
+    mastery: 0,
+    allies: [],
+    betrayedBy: [],
+    project: goalKey === "construction" ? { kind: "depot", progress: 0, need: 160 } : null,
+    book: goalKey === "arbitrage_cycle" ? { asset: "NEON", qty: 0, avgCost: 0, realized: 0, waiting: true, ref: 0 } : null,
+    lastProgressDay: ctx.day,
+    lastReportDay: ctx.day,
+    confirmMode: !!opts.confirmMode,
+    pendingChoice: null,
+    fx: null,
+    history: []
+  };
+};
+
+const lttCtxFor = (ltt, ctx) => ({
+  agent: ctx.agentsById[ltt.agentId] || { earn: 0 },
+  res: ctx.res,
+  districtVisits: ctx.districtVisits,
+  ltt
+});
+
+// Adapt: a shock or a stall rewrites the plan instead of abandoning the goal.
+const lttReplan = (ltt, reason, ctx) => {
+  const order = ["spread", "patient", "focus", "aggressive"];
+  const cur = order.indexOf(ltt.strategy);
+  let next = ltt.strategy;
+  if (reason === "shock") next = ltt.strategy === "aggressive" ? "patient" : "spread";
+  else if (reason === "stall") next = order[(cur + 1) % order.length];
+  else if (reason === "rival") next = "focus";
+  const bestSite = Object.keys(ltt.weights).sort((a, b) => ltt.weights[b] - ltt.weights[a])[0];
+  const plan = lttPlanFor(ltt.goalKey, next, ltt.districtKey);
+  if (next === "focus" && bestSite && !plan.includes(bestSite)) plan.unshift(bestSite);
+  return {
+    ...ltt,
+    strategy: next,
+    plan,
+    planVersion: ltt.planVersion + 1,
+    lastProgressDay: ctx.day,
+    memory: { ...ltt.memory, notes: [{ day: ctx.day, reason, from: ltt.strategy, to: next }, ...ltt.memory.notes].slice(0, 12) },
+    fx: { kind: "replan", tick: ctx.tick, label: reason },
+    history: [{ day: ctx.day, kind: "replan", detail: `${ltt.strategy}→${next} (${reason})` }, ...ltt.history].slice(0, 24)
+  };
+};
+
+// Learn: yield observed at a site raises that site's weight; repeated
+// efficient milestones raise mastery, which is what the aura shows.
+const lttLearn = (ltt, siteId, yieldAmt, ctx) => {
+  const w = { ...ltt.weights };
+  const prev = w[siteId] != null ? w[siteId] : 1;
+  const good = yieldAmt > 0;
+  w[siteId] = Math.max(0.15, Math.min(4, prev + (good ? 0.12 : -0.06)));
+  const memory = { ...ltt.memory };
+  if (good && yieldAmt > 300) memory.wins = [{ day: ctx.day, siteId, yieldAmt }, ...memory.wins].slice(0, 16);
+  if (!good) memory.losses = [{ day: ctx.day, siteId }, ...memory.losses].slice(0, 16);
+  return { ...ltt, weights: w, memory };
+};
+
+const lttProgressPct = ltt => {
+  const span = ltt.target - ltt.baseline;
+  if (span <= 0) return ltt.status === "done" ? 100 : 0;
+  return Math.max(0, Math.min(100, Math.round(((ltt.value - ltt.baseline) / span) * 100)));
+};
+
+// Evaluate one task. Pure: returns the next task plus events for the caller
+// to turn into logs, effects and resource changes.
+const lttEvaluate = (ltt, ctx) => {
+  if (ltt.status === "done" || ltt.status === "failed") return { ltt, events: [] };
+  if (ltt.status === "awaiting") return { ltt, events: [] };
+  const events = [];
+  const g = LTT_GOALS[ltt.goalKey];
+  let next = { ...ltt };
+  const scoped = lttCtxFor(next, ctx);
+
+  // multi-tick construction advances only while its agent is working
+  if (next.project) {
+    const a = scoped.agent;
+    const onSite = a && a.state === "work";
+    if (onSite) next.project = { ...next.project, progress: Math.min(next.project.need, next.project.progress + 1.4) };
+  }
+
+  // patient arbitrage: buy the dip, hold across days, sell the peak
+  if (next.book) {
+    const px = ctx.assetPrices[next.book.asset] || 1;
+    const b = { ...next.book };
+    // Slow EMA of the price is the agent's own idea of "normal". Holding it
+    // on the task is what lets a position stay open across days.
+    b.ref = b.ref ? b.ref * 0.92 + px * 0.08 : px;
+    const patient = next.strategy === "patient";
+    const dipEdge = patient ? 0.978 : 0.988;
+    const peakEdge = patient ? 1.045 : 1.022;
+    if (b.waiting && b.ref && px < b.ref * dipEdge) {
+      const qty = 40000;
+      b.qty = qty; b.avgCost = px; b.waiting = false;
+      events.push({ kind: "trade", side: "BUY", asset: b.asset, px, qty });
+    } else if (!b.waiting && b.qty > 0 && px > b.avgCost * peakEdge) {
+      const gain = Math.round((px - b.avgCost) * b.qty);
+      b.realized += Math.max(0, gain); b.qty = 0; b.waiting = true;
+      events.push({ kind: "trade", side: "SELL", asset: b.asset, px, gain: Math.max(0, gain) });
+    }
+    next.book = b;
+  }
+
+  // Accumulate positive deltas instead of reading the raw metric directly,
+  // so a page reload re-syncs the reading without losing earned progress.
+  const raw = Math.round(g.metric(lttCtxFor(next, ctx)));
+  if (next.lastRaw == null) next.lastRaw = raw;
+  else if (raw > next.lastRaw) next.accum = (next.accum || 0) + (raw - next.lastRaw);
+  next.lastRaw = raw;
+  next.value = next.baseline + (next.accum || 0);
+  const pct = lttProgressPct(next);
+  const movedOn = pct > next.progress;
+  next.progress = pct;
+
+  // milestone completion
+  while (next.milestoneIdx < next.milestones.length && next.value >= next.milestones[next.milestoneIdx].target) {
+    const ms = { ...next.milestones[next.milestoneIdx], done: true, doneDay: ctx.day, doneTick: ctx.tick };
+    const list = next.milestones.slice();
+    list[next.milestoneIdx] = ms;
+    next.milestones = list;
+    next.milestoneIdx += 1;
+    next.lastProgressDay = ctx.day;
+    const fast = ctx.day - next.createdDay <= Math.max(1, Math.round(g.horizonDays / next.milestones.length));
+    if (fast && next.mastery < LTT_MASTERY_MAX) {
+      next.mastery += 1;
+      events.push({ kind: "evolve", mastery: next.mastery });
+    }
+    next.fx = { kind: "milestone", tick: ctx.tick, label: ms.key };
+    next.resumed = false;
+    next.history = [{ day: ctx.day, kind: "milestone", detail: ms.key }, ...next.history].slice(0, 24);
+    events.push({ kind: "milestone", milestone: ms, index: next.milestoneIdx });
+  }
+
+  if (movedOn) next.lastProgressDay = ctx.day;
+
+  // completion / failure
+  if (next.milestoneIdx >= next.milestones.length) {
+    next.status = "done";
+    next.fx = { kind: "done", tick: ctx.tick, label: "done" };
+    events.push({ kind: "done" });
+    return { ltt: next, events };
+  }
+  if (ctx.day > next.deadlineDay) {
+    next.status = "failed";
+    next.fx = { kind: "failed", tick: ctx.tick, label: "failed" };
+    events.push({ kind: "failed" });
+    return { ltt: next, events };
+  }
+
+  // adaptation triggers
+  const shockAsset = Object.keys(ctx.assetPrices).find(k => {
+    const p = ctx.assetPrices[k], q = ctx.prevPrices[k];
+    return q && Math.abs((p - q) / q) >= LTT_SHOCK_PCT;
+  });
+  const stalled = ctx.day - next.lastProgressDay >= LTT_STALL_DAYS;
+  const rival = ctx.goalCounts[next.goalKey] > 1 && next.strategy !== "focus";
+
+  const reason = shockAsset ? "shock" : stalled ? "stall" : rival && Math.random() < 0.25 ? "rival" : null;
+  if (reason) {
+    if (next.confirmMode && !next.pendingChoice) {
+      // major branch point: hand the call back to the user, keep running meanwhile
+      next.status = "awaiting";
+      next.pendingChoice = { reason, asset: shockAsset || null, day: ctx.day };
+      events.push({ kind: "await", reason });
+    } else {
+      next = lttReplan(next, reason, ctx);
+      events.push({ kind: "replan", reason, asset: shockAsset || null });
+    }
+  }
+
+  // periodic self-report — the user does not have to ask
+  if (ctx.day - next.lastReportDay >= LTT_REPORT_EVERY_DAYS) {
+    next.lastReportDay = ctx.day;
+    events.push({ kind: "report", pct: next.progress });
+  }
+  return { ltt: next, events };
+};
+
+// Which sites should this agent walk to right now?
+const lttPreferredSites = ltt => {
+  if (!ltt || ltt.status === "done" || ltt.status === "failed") return null;
+  const plan = ltt.plan && ltt.plan.length ? ltt.plan : null;
+  if (!plan) return null;
+  const scored = plan.slice().sort((a, b) => (ltt.weights[b] || 1) - (ltt.weights[a] || 1));
+  return scored;
+};
+
+// ── Persistence: the goal survives reload and session end ───────
+const lttSave = list => {
+  try {
+    window.localStorage.setItem(LTT_STORAGE_KEY, JSON.stringify({ v: 1, savedAt: Date.now(), list }));
+  } catch (e) { /* storage unavailable — run in-memory */ }
+};
+const lttLoad = () => {
+  try {
+    const raw = window.localStorage.getItem(LTT_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.list)) return [];
+    return parsed.list.filter(x => x && x.id && LTT_GOALS[x.goalKey]).map(x => ({
+      ...x,
+      fx: null,
+      resumed: true,
+      accum: x.accum || 0,
+      lastRaw: null,
+      weights: x.weights || {},
+      memory: x.memory || { wins: [], losses: [], notes: [] },
+      history: x.history || [],
+      allies: x.allies || [],
+      betrayedBy: x.betrayedBy || []
+    }));
+  } catch (e) { return []; }
+};
+const lttClear = () => { try { window.localStorage.removeItem(LTT_STORAGE_KEY); } catch (e) {} };
+
+// ── Localised copy ──────────────────────────────────────────────
+const LTT_I18N = {
+  en: {
+    panel: "🎯 LONG-TERM TASKS", issue: "ASSIGN", none: "No long-term task running.",
+    hint: "Assign once — the agent keeps working across days and sessions.",
+    agent: "AGENT", goal: "GOAL", confirm: "Ask me at major branch points", clearAll: "CLEAR ALL",
+    day: "D", deadline: "due", strategy: "STRATEGY", mastery: "MASTERY", allies: "ALLIES",
+    milestone: "MILESTONE", replan: "REPLAN", evolved: "EVOLVED", done: "COMPLETE", failed: "EXPIRED",
+    awaiting: "NEEDS YOU", approve: "REPLAN", keep: "KEEP PLAN",
+    report: "progress", resume: "restored from last session",
+    g_wealth_x3: "Triple my earnings", g_data_hegemony: "Data supremacy",
+    g_district_control: "Control a district", g_contract_network: "Build a contract network",
+    g_construction: "Finish a build project", g_arbitrage_cycle: "Run a long arbitrage",
+    ms_accumulate: "Accumulate", ms_compound: "Compound", ms_secure: "Secure",
+    ms_survey: "Survey", ms_mine: "Mine", ms_model: "Model",
+    ms_scout: "Scout", ms_occupy: "Occupy", ms_dominate: "Dominate",
+    ms_approach: "Approach", ms_negotiate: "Negotiate", "ms_lock-in": "Lock in",
+    ms_foundation: "Foundation", ms_build: "Build", ms_open: "Open",
+    ms_watch: "Watch", "ms_buy-dip": "Buy dip", ms_hold: "Hold", "ms_sell-peak": "Sell peak",
+    r_shock: "price shock", r_stall: "no progress", r_rival: "rival agent"
+  },
+  ja: {
+    panel: "🎯 長期タスク", issue: "指示する", none: "実行中の長期タスクはありません。",
+    hint: "一度指示すれば、あとは数日・複数セッションにまたがって自律的に進みます。",
+    agent: "エージェント", goal: "目標", confirm: "重大な分岐点だけ確認する", clearAll: "全消去",
+    day: "D", deadline: "期限", strategy: "戦略", mastery: "熟練度", allies: "同盟",
+    milestone: "中間目標達成", replan: "計画再調整", evolved: "進化", done: "達成", failed: "期限切れ",
+    awaiting: "確認待ち", approve: "再調整する", keep: "計画を維持",
+    report: "進捗", resume: "前回セッションから復元",
+    g_wealth_x3: "自分の収益を3倍にする", g_data_hegemony: "データ覇権を握る",
+    g_district_control: "地区を制圧する", g_contract_network: "契約網を構築する",
+    g_construction: "建設プロジェクトを完遂する", g_arbitrage_cycle: "長期アービトラージを回す",
+    ms_accumulate: "蓄積", ms_compound: "複利化", ms_secure: "確保",
+    ms_survey: "調査", ms_mine: "採掘", ms_model: "モデル化",
+    ms_scout: "偵察", ms_occupy: "占拠", ms_dominate: "制圧",
+    ms_approach: "接触", ms_negotiate: "交渉", "ms_lock-in": "締結",
+    ms_foundation: "基礎", ms_build: "建築", ms_open: "開業",
+    ms_watch: "監視", "ms_buy-dip": "押し目買い", ms_hold: "保有", "ms_sell-peak": "高値売り",
+    r_shock: "価格急落", r_stall: "進捗停滞", r_rival: "競合の参入"
+  },
+  zh: {
+    panel: "🎯 长期任务", issue: "下达", none: "没有正在执行的长期任务。",
+    hint: "只需下达一次，代理会跨越数日与多个会话持续推进。",
+    agent: "代理", goal: "目标", confirm: "仅在重大分歧点询问我", clearAll: "全部清除",
+    day: "D", deadline: "期限", strategy: "策略", mastery: "熟练度", allies: "同盟",
+    milestone: "阶段达成", replan: "重新规划", evolved: "进化", done: "完成", failed: "已过期",
+    awaiting: "等待确认", approve: "重新规划", keep: "维持计划",
+    report: "进度", resume: "已从上次会话恢复",
+    g_wealth_x3: "让收益翻三倍", g_data_hegemony: "数据霸权",
+    g_district_control: "控制一个地区", g_contract_network: "建立合约网络",
+    g_construction: "完成建设项目", g_arbitrage_cycle: "运行长期套利",
+    ms_accumulate: "积累", ms_compound: "复利", ms_secure: "锁定",
+    ms_survey: "勘察", ms_mine: "挖掘", ms_model: "建模",
+    ms_scout: "侦察", ms_occupy: "占据", ms_dominate: "支配",
+    ms_approach: "接洽", ms_negotiate: "协商", "ms_lock-in": "签约",
+    ms_foundation: "地基", ms_build: "建造", ms_open: "开业",
+    ms_watch: "观察", "ms_buy-dip": "低吸", ms_hold: "持有", "ms_sell-peak": "高抛",
+    r_shock: "价格冲击", r_stall: "进展停滞", r_rival: "竞争者进入"
+  },
+  ko: {
+    panel: "🎯 장기 태스크", issue: "지시", none: "진행 중인 장기 태스크가 없습니다.",
+    hint: "한 번만 지시하면 며칠·여러 세션에 걸쳐 자율적으로 진행됩니다.",
+    agent: "에이전트", goal: "목표", confirm: "중요한 분기점에서만 확인", clearAll: "전체 삭제",
+    day: "D", deadline: "기한", strategy: "전략", mastery: "숙련도", allies: "동맹",
+    milestone: "중간 목표 달성", replan: "계획 재조정", evolved: "진화", done: "완료", failed: "만료",
+    awaiting: "확인 대기", approve: "재조정", keep: "계획 유지",
+    report: "진척", resume: "이전 세션에서 복원됨",
+    g_wealth_x3: "수익을 3배로", g_data_hegemony: "데이터 패권",
+    g_district_control: "지구 장악", g_contract_network: "계약망 구축",
+    g_construction: "건설 프로젝트 완수", g_arbitrage_cycle: "장기 차익거래 운용",
+    ms_accumulate: "축적", ms_compound: "복리", ms_secure: "확보",
+    ms_survey: "조사", ms_mine: "채굴", ms_model: "모델링",
+    ms_scout: "정찰", ms_occupy: "점거", ms_dominate: "지배",
+    ms_approach: "접촉", ms_negotiate: "협상", "ms_lock-in": "체결",
+    ms_foundation: "기초", ms_build: "건축", ms_open: "개업",
+    ms_watch: "관찰", "ms_buy-dip": "저가 매수", ms_hold: "보유", "ms_sell-peak": "고가 매도",
+    r_shock: "가격 충격", r_stall: "진전 정체", r_rival: "경쟁자 진입"
+  },
+  es: {
+    panel: "🎯 TAREAS A LARGO PLAZO", issue: "ASIGNAR", none: "No hay tarea a largo plazo activa.",
+    hint: "Asigna una vez: el agente sigue trabajando durante días y sesiones.",
+    agent: "AGENTE", goal: "OBJETIVO", confirm: "Consúltame en puntos clave", clearAll: "BORRAR TODO",
+    day: "D", deadline: "límite", strategy: "ESTRATEGIA", mastery: "MAESTRÍA", allies: "ALIADOS",
+    milestone: "HITO", replan: "REPLANIFICAR", evolved: "EVOLUCIÓN", done: "COMPLETA", failed: "EXPIRADA",
+    awaiting: "TE NECESITA", approve: "REPLANIFICAR", keep: "MANTENER PLAN",
+    report: "progreso", resume: "restaurada de la sesión anterior",
+    g_wealth_x3: "Triplicar mis ganancias", g_data_hegemony: "Supremacía de datos",
+    g_district_control: "Controlar un distrito", g_contract_network: "Crear una red de contratos",
+    g_construction: "Terminar una obra", g_arbitrage_cycle: "Arbitraje de largo plazo",
+    ms_accumulate: "Acumular", ms_compound: "Componer", ms_secure: "Asegurar",
+    ms_survey: "Sondear", ms_mine: "Minar", ms_model: "Modelar",
+    ms_scout: "Explorar", ms_occupy: "Ocupar", ms_dominate: "Dominar",
+    ms_approach: "Acercarse", ms_negotiate: "Negociar", "ms_lock-in": "Cerrar",
+    ms_foundation: "Cimientos", ms_build: "Construir", ms_open: "Abrir",
+    ms_watch: "Observar", "ms_buy-dip": "Comprar caída", ms_hold: "Mantener", "ms_sell-peak": "Vender pico",
+    r_shock: "choque de precio", r_stall: "sin avance", r_rival: "agente rival"
+  },
+  fr: {
+    panel: "🎯 TÂCHES LONG TERME", issue: "ASSIGNER", none: "Aucune tâche long terme en cours.",
+    hint: "Assignez une fois : l'agent continue sur plusieurs jours et sessions.",
+    agent: "AGENT", goal: "OBJECTIF", confirm: "Me consulter aux points clés", clearAll: "TOUT EFFACER",
+    day: "J", deadline: "échéance", strategy: "STRATÉGIE", mastery: "MAÎTRISE", allies: "ALLIÉS",
+    milestone: "JALON", replan: "REPLANIFIER", evolved: "ÉVOLUTION", done: "TERMINÉE", failed: "EXPIRÉE",
+    awaiting: "VOTRE AVIS", approve: "REPLANIFIER", keep: "GARDER LE PLAN",
+    report: "progression", resume: "restaurée depuis la session précédente",
+    g_wealth_x3: "Tripler mes gains", g_data_hegemony: "Suprématie des données",
+    g_district_control: "Contrôler un quartier", g_contract_network: "Bâtir un réseau de contrats",
+    g_construction: "Achever un chantier", g_arbitrage_cycle: "Arbitrage longue durée",
+    ms_accumulate: "Accumuler", ms_compound: "Composer", ms_secure: "Sécuriser",
+    ms_survey: "Sonder", ms_mine: "Extraire", ms_model: "Modéliser",
+    ms_scout: "Reconnaître", ms_occupy: "Occuper", ms_dominate: "Dominer",
+    ms_approach: "Approcher", ms_negotiate: "Négocier", "ms_lock-in": "Verrouiller",
+    ms_foundation: "Fondations", ms_build: "Construire", ms_open: "Ouvrir",
+    ms_watch: "Observer", "ms_buy-dip": "Acheter le creux", ms_hold: "Conserver", "ms_sell-peak": "Vendre le pic",
+    r_shock: "choc de prix", r_stall: "aucun progrès", r_rival: "agent rival"
+  }
+};
+const lttT = lang => LTT_I18N[lang] || LTT_I18N.en;
+
+// ── Visual language for long-term tasks ─────────────────────────
+// The point of these effects is that the user can SEE that behaviour
+// changed: a plan rewrite flashes, a milestone bursts, mastery adds
+// a ring, and allies are wired together on the map.
+const LTT_CSS = `
+@keyframes lttPulse { 0%,100%{opacity:.35;transform:scale(1)} 50%{opacity:1;transform:scale(1.18)} }
+@keyframes lttBurst { 0%{opacity:0;transform:translateY(4px) scale(.7)} 22%{opacity:1;transform:translateY(-2px) scale(1.12)} 100%{opacity:0;transform:translateY(-16px) scale(1)} }
+@keyframes lttSweep { 0%{background-position:-160% 0} 100%{background-position:260% 0} }
+@keyframes lttSpin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+@keyframes lttShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-2px)} 75%{transform:translateX(2px)} }
+.ltt-burst{animation:lttBurst 1.35s ease-out forwards;pointer-events:none}
+.ltt-sweep{background-image:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.55) 50%,transparent 80%);background-size:220% 100%;animation:lttSweep 1.1s linear}
+.ltt-aura{animation:lttPulse 1.6s ease-in-out infinite}
+.ltt-ring{animation:lttSpin 7s linear infinite}
+.ltt-alert{animation:lttShake .5s ease-in-out 3}
+`;
+
+const LTT_FX_STYLE = {
+  milestone: { label: "milestone", color: "#00FF9C", icon: "✔" },
+  replan: { label: "replan", color: "#FFB020", icon: "⟳" },
+  evolve: { label: "evolved", color: "#FF69B4", icon: "★" },
+  done: { label: "done", color: "#00E5FF", icon: "🏁" },
+  failed: { label: "failed", color: "#FF3355", icon: "✖" },
+  ally: { label: "ally", color: "#B36BFF", icon: "🤝" },
+  betray: { label: "betray", color: "#FF3355", icon: "🗡" }
+};
+
+// Progress arc + mastery ring + burst, drawn above an agent on the map.
+const LttAgentOverlay = ({ ltt, x, y, tile, tick, lang, isMobile }) => {
+  if (!ltt) return null;
+  const L = lttT(lang);
+  const g = LTT_GOALS[ltt.goalKey];
+  const pct = ltt.progress;
+  const size = isMobile ? 20 : 26;
+  const left = x * tile + tile / 2 - size / 2;
+  const top = y * tile - (isMobile ? 30 : 42);
+  const fxActive = ltt.fx && tick - ltt.fx.tick < LTT_FX_TICKS ? ltt.fx : null;
+  const fxStyle = fxActive ? LTT_FX_STYLE[fxActive.kind] || LTT_FX_STYLE.milestone : null;
+  const r = size / 2 - 2.5;
+  const circ = 2 * Math.PI * r;
+  const barColor = ltt.status === "failed" ? "#FF3355" : ltt.status === "awaiting" ? "#FFB020" : g.color;
+  return /*#__PURE__*/React.createElement("div", {
+    style: { position: "absolute", left, top, width: size, zIndex: 66, pointerEvents: "none" }
+  },
+    fxStyle && /*#__PURE__*/React.createElement("div", {
+      className: "ltt-burst",
+      style: {
+        position: "absolute", left: "50%", top: -14, transform: "translateX(-50%)",
+        whiteSpace: "nowrap", fontSize: isMobile ? 7 : 9, fontWeight: 900, letterSpacing: .6,
+        color: fxStyle.color, textShadow: `0 0 8px ${fxStyle.color}`, fontFamily: "monospace"
+      }
+    }, fxStyle.icon, " ", (L[fxActive.kind === "evolve" ? "evolved" : fxActive.kind] || fxStyle.label).toUpperCase()),
+    /*#__PURE__*/React.createElement("svg", {
+      width: size, height: size, viewBox: `0 0 ${size} ${size}`,
+      style: { display: "block", filter: `drop-shadow(0 0 5px ${barColor}99)` }
+    },
+      /*#__PURE__*/React.createElement("circle", {
+        cx: size / 2, cy: size / 2, r, fill: "rgba(5,7,16,.78)", stroke: "#1d2440", strokeWidth: "2.5"
+      }),
+      /*#__PURE__*/React.createElement("circle", {
+        cx: size / 2, cy: size / 2, r, fill: "none", stroke: barColor, strokeWidth: "2.5",
+        strokeLinecap: "round", strokeDasharray: `${(circ * pct) / 100} ${circ}`,
+        transform: `rotate(-90 ${size / 2} ${size / 2})`
+      }),
+      /*#__PURE__*/React.createElement("text", {
+        x: size / 2, y: size / 2 + (isMobile ? 2.6 : 3.2), textAnchor: "middle",
+        fontSize: isMobile ? 8 : 10, fontWeight: 900, fill: "#fff", fontFamily: "monospace"
+      }, g.icon)
+    ),
+    ltt.mastery > 0 && /*#__PURE__*/React.createElement("div", {
+      className: "ltt-aura",
+      style: {
+        position: "absolute", left: "50%", top: "50%", width: size + 8, height: size + 8,
+        marginLeft: -(size + 8) / 2, marginTop: -(size + 8) / 2, borderRadius: "50%",
+        border: `1.5px solid ${g.color}`, boxShadow: `0 0 12px ${g.color}aa, inset 0 0 8px ${g.color}55`
+      }
+    }),
+    ltt.mastery > 0 && /*#__PURE__*/React.createElement("div", {
+      style: {
+        position: "absolute", left: "50%", top: size + 1, transform: "translateX(-50%)",
+        fontSize: isMobile ? 6 : 7, fontWeight: 900, color: g.color, letterSpacing: .5,
+        textShadow: "0 0 6px rgba(0,0,0,.9)", fontFamily: "monospace", whiteSpace: "nowrap"
+      }
+    }, "★".repeat(ltt.mastery))
+  );
+};
+
+// One row in the side panel.
+const LttRow = ({ ltt, lang, isMobile, onResolve, onDrop }) => {
+  const L = lttT(lang);
+  const g = LTT_GOALS[ltt.goalKey];
+  const pct = ltt.progress;
+  const doneCount = ltt.milestones.filter(m => m.done).length;
+  const statusColor = ltt.status === "done" ? "#00FF9C" : ltt.status === "failed" ? "#FF3355"
+    : ltt.status === "awaiting" ? "#FFB020" : g.color;
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      border: `1px solid ${statusColor}44`, borderRadius: 4, padding: "4px 5px", marginBottom: 4,
+      background: `linear-gradient(180deg, ${statusColor}0e, rgba(5,7,16,.6))`
+    }
+  },
+    /*#__PURE__*/React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 4 } },
+      /*#__PURE__*/React.createElement("span", { style: { fontSize: 10 } }, g.icon),
+      /*#__PURE__*/React.createElement("span", {
+        style: { color: ltt.color || statusColor, fontWeight: 900, fontSize: 8.5, letterSpacing: .4 }
+      }, ltt.agentName),
+      /*#__PURE__*/React.createElement("span", { style: { flex: 1 } }),
+      ltt.mastery > 0 && /*#__PURE__*/React.createElement("span", {
+        style: { fontSize: 7.5, color: g.color, letterSpacing: -.5 }
+      }, "★".repeat(ltt.mastery)),
+      ltt.resumed && /*#__PURE__*/React.createElement("span", {
+        title: L.resume,
+        style: {
+          fontSize: 6, fontWeight: 900, padding: "1px 3px", borderRadius: 2,
+          border: "1px solid #00E5FF66", color: "#00E5FF", background: "#00E5FF14"
+        }
+      }, "⟲"),
+      /*#__PURE__*/React.createElement("span", {
+        style: { fontSize: 7.5, color: statusColor, fontWeight: 900 }
+      }, ltt.status === "done" ? L.done : ltt.status === "failed" ? L.failed
+        : ltt.status === "awaiting" ? L.awaiting : pct + "%"),
+      /*#__PURE__*/React.createElement("span", {
+        onClick: () => onDrop(ltt.id),
+        style: { cursor: "pointer", color: "#556", fontSize: 9, padding: "0 2px" }
+      }, "×")
+    ),
+    /*#__PURE__*/React.createElement("div", {
+      style: { fontSize: 7.5, color: "#8c93ab", margin: "2px 0 3px" }
+    }, L["g_" + ltt.goalKey]),
+    /*#__PURE__*/React.createElement("div", {
+      style: { height: 4, background: "#141a2e", borderRadius: 3, overflow: "hidden", position: "relative" }
+    },
+      /*#__PURE__*/React.createElement("div", {
+        className: ltt.status === "active" ? "ltt-sweep" : "",
+        style: {
+          width: pct + "%", height: "100%", borderRadius: 3,
+          background: `linear-gradient(90deg, ${statusColor}, #fff8)`, transition: "width .4s ease"
+        }
+      })
+    ),
+    /*#__PURE__*/React.createElement("div", {
+      style: { display: "flex", gap: 2, marginTop: 3, flexWrap: "wrap" }
+    }, ltt.milestones.map(m => /*#__PURE__*/React.createElement("span", {
+      key: m.key,
+      style: {
+        fontSize: 6.5, padding: "1px 3px", borderRadius: 2, fontWeight: 700,
+        border: `1px solid ${m.done ? statusColor : "#222b45"}`,
+        background: m.done ? `${statusColor}22` : "transparent",
+        color: m.done ? statusColor : "#5a6280"
+      }
+    }, (m.done ? "✔ " : "") + (L["ms_" + m.key] || m.key)))),
+    /*#__PURE__*/React.createElement("div", {
+      style: { display: "flex", gap: 6, marginTop: 3, fontSize: 6.5, color: "#5a6280", flexWrap: "wrap" }
+    },
+      /*#__PURE__*/React.createElement("span", null, L.strategy, ": ",
+        /*#__PURE__*/React.createElement("b", { style: { color: "#9aa3bd" } }, LTT_STRATEGIES[ltt.strategy].label)),
+      /*#__PURE__*/React.createElement("span", null, "v", ltt.planVersion),
+      /*#__PURE__*/React.createElement("span", null, L.deadline, " ", L.day, ltt.deadlineDay),
+      ltt.allies.length > 0 && /*#__PURE__*/React.createElement("span", {
+        style: { color: "#B36BFF" }
+      }, "🤝", ltt.allies.length),
+      ltt.memory.wins.length > 0 && /*#__PURE__*/React.createElement("span", {
+        style: { color: "#00FF9C" }
+      }, "✔", ltt.memory.wins.length),
+      ltt.memory.losses.length > 0 && /*#__PURE__*/React.createElement("span", {
+        style: { color: "#FF6688" }
+      }, "✖", ltt.memory.losses.length)
+    ),
+    ltt.status === "awaiting" && ltt.pendingChoice && /*#__PURE__*/React.createElement("div", {
+      className: "ltt-alert",
+      style: { display: "flex", gap: 4, marginTop: 4, alignItems: "center" }
+    },
+      /*#__PURE__*/React.createElement("span", {
+        style: { fontSize: 7, color: "#FFB020", flex: 1 }
+      }, "⚠ ", L["r_" + ltt.pendingChoice.reason] || ltt.pendingChoice.reason),
+      /*#__PURE__*/React.createElement("button", {
+        onClick: () => onResolve(ltt.id, true),
+        style: {
+          fontSize: 6.5, padding: "2px 5px", borderRadius: 3, cursor: "pointer", fontWeight: 900,
+          border: "1px solid #FFB020", background: "#FFB02022", color: "#FFB020", fontFamily: "monospace"
+        }
+      }, L.approve),
+      /*#__PURE__*/React.createElement("button", {
+        onClick: () => onResolve(ltt.id, false),
+        style: {
+          fontSize: 6.5, padding: "2px 5px", borderRadius: 3, cursor: "pointer", fontWeight: 700,
+          border: "1px solid #2a3350", background: "transparent", color: "#8c93ab", fontFamily: "monospace"
+        }
+      }, L.keep)
+    )
+  );
+};
+
+// The panel where a task is issued once and then watched at leisure.
+const LttPanel = ({ ltts, agents, lang, isMobile, form, setForm, onAssign, onResolve, onDrop, onClearAll }) => {
+  const L = lttT(lang);
+  // Form state lives in the parent on purpose: this panel is rendered inside
+  // InfoPanel, which is re-created on every render, so local state would reset.
+  const agentId = form.agentId || (agents[0] ? agents[0].id : "");
+  const goalKey = form.goalKey;
+  const confirmMode = form.confirmMode;
+  const setAgentId = v => setForm(f => ({ ...f, agentId: v }));
+  const setGoalKey = v => setForm(f => ({ ...f, goalKey: v }));
+  const setConfirmMode = v => setForm(f => ({ ...f, confirmMode: v }));
+  const selStyle = {
+    flex: 1, minWidth: 0, fontSize: 7.5, padding: "2px 3px", borderRadius: 3,
+    background: "#0a0d1c", color: "#c9d1e4", border: "1px solid #222b45", fontFamily: "monospace"
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#0c0f1f", border: "1px solid #1a1a3e", borderRadius: 5, padding: 5,
+      maxHeight: isMobile ? 240 : 300, overflow: "auto"
+    }
+  },
+    /*#__PURE__*/React.createElement("div", {
+      style: { display: "flex", alignItems: "center", marginBottom: 3 }
+    },
+      /*#__PURE__*/React.createElement("span", {
+        style: { fontSize: 8, color: "#444", letterSpacing: 1.5, flex: 1 }
+      }, L.panel),
+      ltts.length > 0 && /*#__PURE__*/React.createElement("span", {
+        onClick: onClearAll,
+        style: { fontSize: 6.5, color: "#4a5170", cursor: "pointer" }
+      }, L.clearAll)
+    ),
+    /*#__PURE__*/React.createElement("div", { style: { display: "flex", gap: 3, marginBottom: 3 } },
+      /*#__PURE__*/React.createElement("select", {
+        value: agentId, onChange: e => setAgentId(e.target.value), style: selStyle
+      }, agents.map(a => /*#__PURE__*/React.createElement("option", { key: a.id, value: a.id }, a.jp))),
+      /*#__PURE__*/React.createElement("select", {
+        value: goalKey, onChange: e => setGoalKey(e.target.value), style: selStyle
+      }, LTT_GOAL_ORDER.map(k => /*#__PURE__*/React.createElement("option", { key: k, value: k },
+        LTT_GOALS[k].icon + " " + L["g_" + k])))
+    ),
+    /*#__PURE__*/React.createElement("div", {
+      style: { display: "flex", gap: 4, alignItems: "center", marginBottom: 4 }
+    },
+      /*#__PURE__*/React.createElement("label", {
+        style: { fontSize: 6.5, color: "#6b7391", display: "flex", alignItems: "center", gap: 3, flex: 1, cursor: "pointer" }
+      },
+        /*#__PURE__*/React.createElement("input", {
+          type: "checkbox", checked: confirmMode, onChange: e => setConfirmMode(e.target.checked),
+          style: { width: 9, height: 9, accentColor: "#FFB020" }
+        }), L.confirm),
+      /*#__PURE__*/React.createElement("button", {
+        onClick: () => agentId && onAssign(agentId, goalKey, confirmMode),
+        style: {
+          fontSize: 7, fontWeight: 900, padding: "3px 8px", borderRadius: 3, cursor: "pointer",
+          border: "1px solid #00E5FF", background: "#00E5FF1e", color: "#00E5FF",
+          letterSpacing: .8, fontFamily: "monospace"
+        }
+      }, L.issue)
+    ),
+    ltts.length === 0
+      ? /*#__PURE__*/React.createElement("div", {
+          style: { fontSize: 7, color: "#4a5170", lineHeight: 1.5 }
+        }, L.none, /*#__PURE__*/React.createElement("br"), L.hint)
+      : ltts.map(l => /*#__PURE__*/React.createElement(LttRow, {
+          key: l.id, ltt: l, lang, isMobile, onResolve, onDrop
+        }))
+  );
+};
+
+(function lttInjectStyle() {
+  if (document.getElementById("ltt-style")) return;
+  var el = document.createElement("style");
+  el.id = "ltt-style";
+  el.textContent = LTT_CSS;
+  document.head.appendChild(el);
+})();
+
 function NeonMythosCity() {
   const isMobile = useIsMobile();
   const TILE = isMobile ? 22 : 38;
@@ -4014,6 +4795,17 @@ function NeonMythosCity() {
   const [cutIn, setCutIn] = useState(null); // {char, specKey}
   const [mangaDeal, setMangaDeal] = useState(null);
   const [agentNotes, setAgentNotes] = useState({});
+  // ── Long-term tasks: survive reloads and keep running unattended ──
+  const [ltts, setLtts] = useState(lttLoad);
+  const [lttForm, setLttForm] = useState({ agentId: "", goalKey: LTT_GOAL_ORDER[0], confirmMode: false });
+  const lttObsRef = useRef([]);          // {agentId, siteId, yieldAmt} drained on evaluate
+  const districtVisitsRef = useRef({});  // collective progress for district goals
+  const lttResumedRef = useRef(false);
+  const lttByAgent = useMemo(() => {
+    const m = {};
+    ltts.forEach(l => { if (l.status === "active" || l.status === "awaiting") m[l.agentId] = l; });
+    return m;
+  }, [ltts]);
   const [assetPrices, setAssetPrices] = useState({
     SOL: 142.5,
     NEON: 0.85,
@@ -4347,15 +5139,26 @@ function NeonMythosCity() {
         if (c.timer <= 0) {
           const r = Math.random();
           let tb;
-          if (r < .55) {
-            const pid = c.pref[Math.floor(Math.random() * c.pref.length)];
-            tb = BUILDINGS.find(b => b.id === pid);
-          } else if (r < .85) tb = BUILDINGS[Math.floor(Math.random() * BUILDINGS.length)];else {
-            c.tx = Math.max(0, Math.min(MAP_W - 1, c.x + Math.floor(Math.random() * 9) - 4));
-            c.ty = Math.max(0, Math.min(MAP_H - 1, c.y + Math.floor(Math.random() * 7) - 3));
-            c.state = "walk";
-            c.specActive = false;
-            return c;
+          // A live long-term task overrides idle wandering: the agent walks to
+          // the site its current plan rates highest. This is what makes the
+          // behaviour change visible on the map.
+          const goalSites = lttPreferredSites(lttByAgent[c.id]);
+          if (goalSites && goalSites.length && r < .78) {
+            const pick = goalSites[Math.floor(Math.random() * Math.min(3, goalSites.length))];
+            tb = BUILDINGS.find(b => b.id === pick);
+          }
+          if (!tb) {
+            const r2 = Math.random();
+            if (r2 < .55) {
+              const pid = c.pref[Math.floor(Math.random() * c.pref.length)];
+              tb = BUILDINGS.find(b => b.id === pid);
+            } else if (r2 < .85) tb = BUILDINGS[Math.floor(Math.random() * BUILDINGS.length)];else {
+              c.tx = Math.max(0, Math.min(MAP_W - 1, c.x + Math.floor(Math.random() * 9) - 4));
+              c.ty = Math.max(0, Math.min(MAP_H - 1, c.y + Math.floor(Math.random() * 7) - 3));
+              c.state = "walk";
+              c.specActive = false;
+              return c;
+            }
           }
           if (tb) {
             c.tx = tb.x + Math.floor(Math.random() * tb.w);
@@ -4382,6 +5185,10 @@ function NeonMythosCity() {
 	            const bonusMult = isSpecialty ? SPECIALTIES[c.specialty]?.bonus || 1 : 1;
 	            const econ = agentEconomyBonus(c);
 	            const pr = Math.floor((Math.random() * 800 * gv * bonusMult + 30) * econ.yen);
+	            // Feed the outcome back to the long-term task: which site paid off.
+	            lttObsRef.current.push({ agentId: c.id, siteId: bl.id, yieldAmt: pr });
+	            const dk = LTT_DISTRICT_OF[bl.id];
+	            if (dk) districtVisitsRef.current[dk] = (districtVisitsRef.current[dk] || 0) + 1;
 	            c = reactEntity(c, "work", {
 	              building: bl.id,
 	              isSpecialty,
@@ -4450,6 +5257,136 @@ function NeonMythosCity() {
       return c;
     }));
   };
+  // ── Long-term task loop ─────────────────────────────────────
+  // Runs on its own cadence, independent of the per-tick agent AI.
+  useEffect(() => { lttSave(ltts); }, [ltts]);
+
+  useEffect(() => {
+    if (showLangSel || lttResumedRef.current) return;
+    lttResumedRef.current = true;
+    const live = ltts.filter(l => l.status === "active" || l.status === "awaiting");
+    if (live.length) log("LTT", `${live.length} × ${lttT(lang).resume}`, "#00E5FF");
+  }, [showLangSel, ltts, lang, log]);
+
+  const lttAssign = useCallback((agentId, goalKey, confirmMode) => {
+    const agent = [...agents, ...resi].find(a => a.id === agentId);
+    if (!agent) return;
+    setLtts(prev => {
+      const ctx = { day, tick, res, districtVisits: districtVisitsRef.current };
+      const created = lttCreate(agent, goalKey, ctx, { confirmMode });
+      const L = lttT(lang);
+      log(agent.jp, `🎯 ${L["g_" + goalKey]}`, agent.color);
+      return [created, ...prev.filter(l => !(l.agentId === agentId && l.status === "active"))].slice(0, 12);
+    });
+  }, [agents, resi, day, tick, res, lang, log]);
+
+  const lttResolveChoice = useCallback((id, approve) => {
+    setLtts(prev => prev.map(l => {
+      if (l.id !== id || l.status !== "awaiting") return l;
+      const ctx = { day, tick };
+      if (!approve) {
+        return { ...l, status: "active", pendingChoice: null, lastProgressDay: day,
+          fx: { kind: "milestone", tick, label: "keep" } };
+      }
+      const replanned = lttReplan({ ...l, status: "active" }, l.pendingChoice.reason, ctx);
+      return { ...replanned, pendingChoice: null };
+    }));
+  }, [day, tick]);
+
+  const lttDrop = useCallback(id => setLtts(prev => prev.filter(l => l.id !== id)), []);
+  const lttClearAll = useCallback(() => { setLtts([]); lttClear(); }, []);
+
+  useEffect(() => {
+    if (paused || showAvSel || showLangSel) return;
+    if (tick % LTT_EVAL_EVERY !== 0) return;
+    const observations = lttObsRef.current;
+    lttObsRef.current = [];
+    setLtts(prev => {
+      if (!prev.length) return prev;
+      const roster = [...agents, ...resi];
+      const agentsById = roster.reduce((a, c) => { a[c.id] = c; return a; }, {});
+      const goalCounts = prev.reduce((a, l) => {
+        if (l.status === "active") a[l.goalKey] = (a[l.goalKey] || 0) + 1;
+        return a;
+      }, {});
+      const ctx = {
+        day, tick, res, assetPrices, prevPrices: prevPricesRef.current,
+        agentsById, districtVisits: districtVisitsRef.current, goalCounts
+      };
+      const L = lttT(lang);
+      let out = prev.map(l => {
+        let cur = l;
+        observations.filter(o => o.agentId === cur.agentId).forEach(o => {
+          cur = lttLearn(cur, o.siteId, o.yieldAmt, ctx);
+        });
+        const { ltt: nextLtt, events } = lttEvaluate(cur, ctx);
+        const who = nextLtt.agentName;
+        const col = nextLtt.color || LTT_GOALS[nextLtt.goalKey].color;
+        events.forEach(ev => {
+          if (ev.kind === "milestone") {
+            log(who, `✔ ${L.milestone}: ${L["ms_" + ev.milestone.key] || ev.milestone.key} (${ev.index}/${nextLtt.milestones.length})`, "#00FF9C");
+          } else if (ev.kind === "evolve") {
+            log(who, `★ ${L.evolved} — ${L.mastery} ${ev.mastery}/${LTT_MASTERY_MAX}`, "#FF69B4");
+          } else if (ev.kind === "replan") {
+            log(who, `⟳ ${L.replan}: ${L["r_" + ev.reason] || ev.reason}`, "#FFB020");
+          } else if (ev.kind === "await") {
+            log(who, `⚠ ${L.awaiting}: ${L["r_" + ev.reason] || ev.reason}`, "#FFB020");
+          } else if (ev.kind === "report") {
+            log(who, `${LTT_GOALS[nextLtt.goalKey].icon} ${L.report} ${ev.pct}% — ${L["g_" + nextLtt.goalKey]}`, col);
+          } else if (ev.kind === "done") {
+            log(who, `🏁 ${L.done}: ${L["g_" + nextLtt.goalKey]}`, "#00E5FF");
+            setRes(r => ({ ...r, rep: Math.min(100, r.rep + 4) }));
+          } else if (ev.kind === "failed") {
+            log(who, `✖ ${L.failed}: ${L["g_" + nextLtt.goalKey]}`, "#FF3355");
+          } else if (ev.kind === "trade") {
+            if (ev.side === "BUY") {
+              log(who, `📉 BUY ${ev.qty} ${ev.asset} @ ${ev.px.toFixed(3)}`, "#00E5FF");
+              addTx("LTT-BUY", who, ev.qty, ev.asset, "#00E5FF");
+            } else {
+              log(who, `📈 SELL ${ev.asset} +¥${ev.gain.toLocaleString()}`, "#00FF9C");
+              addTx("LTT-SELL", who, ev.gain, "YEN", "#00FF9C");
+              setRes(r => ({ ...r, yen: r.yen + ev.gain }));
+              setTp(p => p + ev.gain);
+            }
+          }
+        });
+        return nextLtt;
+      });
+
+      // ── Alliances: long-lived pacts, and the betrayals that end them ──
+      const active = out.filter(l => l.status === "active");
+      if (active.length >= 2 && tick % (LTT_EVAL_EVERY * 6) === 0) {
+        const a = active[Math.floor(Math.random() * active.length)];
+        const b = active[Math.floor(Math.random() * active.length)];
+        if (a.id !== b.id && a.agentId !== b.agentId && !a.allies.includes(b.agentId)) {
+          const soc = ((agentsById[a.agentId]?.p?.s || .5) + (agentsById[b.agentId]?.p?.s || .5)) / 2;
+          const compatible = a.goalKey === b.goalKey || LTT_GOALS[a.goalKey].cats.some(c => LTT_GOALS[b.goalKey].cats.includes(c));
+          if (compatible && Math.random() < soc) {
+            out = out.map(l => {
+              if (l.id === a.id) return { ...l, allies: [...l.allies, b.agentId], fx: { kind: "ally", tick, label: "ally" } };
+              if (l.id === b.id) return { ...l, allies: [...l.allies, a.agentId], fx: { kind: "ally", tick, label: "ally" } };
+              return l;
+            });
+            log(a.agentName, `🤝 ${L.allies}: ${b.agentName}`, "#B36BFF");
+          }
+        }
+      }
+      out = out.map(l => {
+        if (l.status !== "active" || !l.allies.length) return l;
+        const self = agentsById[l.agentId];
+        const loyalty = self?.p?.s != null ? self.p.s : .5;
+        if (Math.random() < (1 - loyalty) * 0.012) {
+          const victim = l.allies[Math.floor(Math.random() * l.allies.length)];
+          log(l.agentName, `🗡 ${agentsById[victim]?.jp || victim}`, "#FF3355");
+          return { ...l, allies: l.allies.filter(x => x !== victim), fx: { kind: "betray", tick, label: "betray" },
+            history: [{ day, kind: "betray", detail: victim }, ...l.history].slice(0, 24) };
+        }
+        return l;
+      });
+      return out;
+    });
+  }, [tick, paused, showAvSel, showLangSel, day, res, assetPrices, agents, resi, lang, log, addTx]);
+
   useEffect(() => {
     if (paused || showAvSel || showLangSel) return;
     runAI(setAgents);
@@ -5208,7 +6145,18 @@ function NeonMythosCity() {
           opacity: 1 - i * 0.4
         }
       }, lg))));
-    })(), /*#__PURE__*/React.createElement("div", {
+    })(), /*#__PURE__*/React.createElement(LttPanel, {
+      ltts,
+      agents: [...agents, ...resi],
+      lang,
+      isMobile,
+      form: lttForm,
+      setForm: setLttForm,
+      onAssign: lttAssign,
+      onResolve: lttResolveChoice,
+      onDrop: lttDrop,
+      onClearAll: lttClearAll
+    }), /*#__PURE__*/React.createElement("div", {
       style: {
         background: "#0c0f1f",
         border: "1px solid #1a1a3e",
@@ -5857,7 +6805,16 @@ function NeonMythosCity() {
         tick: tick,
         tile: TILE
       });
-    }), /*#__PURE__*/React.createElement("div", {
+    }), worldAgents.map(({ c }) => lttByAgent[c.id] ? /*#__PURE__*/React.createElement(LttAgentOverlay, {
+      key: "ltt-" + c.id,
+      ltt: lttByAgent[c.id],
+      x: c.x,
+      y: c.y,
+      tile: TILE,
+      tick,
+      lang,
+      isMobile
+    }) : null), /*#__PURE__*/React.createElement("div", {
       style: {
         position: "absolute",
         left: 6,

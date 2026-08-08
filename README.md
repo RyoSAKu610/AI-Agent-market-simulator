@@ -49,6 +49,50 @@ Codex Pets build — use the Pages buttons above for the full experience.
 [![Preview on githack](https://img.shields.io/badge/preview-githack-lightgrey?style=flat-square)](https://raw.githack.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html)
 [![Preview on htmlpreview](https://img.shields.io/badge/preview-htmlpreview-lightgrey?style=flat-square)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html)
 
+Long-term tasks
+---------------
+The site root ships a long-term task engine: you assign a goal **once**, and the
+agent keeps pursuing it across days and across browser sessions. It lives in the
+`🎯 LONG-TERM TASKS` panel at the top of the left column.
+
+**Six goals**, each with its own horizon, metric and decomposition:
+
+| Goal | Horizon | Reaches its target by |
+| --- | --- | --- |
+| 💰 Triple my earnings | 7 days | working finance / trade sites |
+| 📡 Data supremacy | 6 days | data, hack and learn sites |
+| 🏙 Control a district | 8 days | repeated presence in one district (allies count) |
+| 🤝 Build a contract network | 6 days | trade, logistics and rest sites |
+| 🏗 Finish a build project | 6 days | progress that only advances while on site |
+| 📈 Run a long arbitrage | 7 days | buying dips and selling peaks against its own EMA |
+
+**What the engine does on its own**
+
+- **Decomposes** each goal into 3–4 milestones and tracks them independently.
+- **Redirects movement.** An agent with a live task walks to the site its current
+  plan rates highest ~78% of the time instead of wandering — the behaviour change
+  is visible on the map.
+- **Learns.** Every payout is fed back as a per-site weight, so a site that paid
+  well is chosen more often. Wins and losses are kept in the task's memory.
+- **Replans instead of quitting.** A price shock (≥8%), a stall (no progress for
+  1.5 days) or a rival on the same goal rewrites the plan and switches strategy
+  (`SPREAD` / `FOCUS` / `PATIENT` / `AGGRESSIVE`). The plan version increments.
+- **Forms alliances** between agents whose goals share building categories, and
+  breaks them — low-sociability agents betray allies.
+- **Reports** progress into the live feed once per in-game day.
+- **Persists** to `localStorage` (`neonMythos.ltt.v1`). Progress accumulates on
+  the task itself, so reloading the page does not reset it; restored tasks carry
+  a `⟲` chip until their next milestone.
+
+**Staying out of your way.** Tick *"Ask me at major branch points"* when assigning
+and the task pauses at a replan decision with `REPLAN` / `KEEP PLAN` instead of
+deciding alone. Leave it unticked and it never interrupts you.
+
+**Seeing it happen.** Each agent under a task carries a progress ring on the map;
+milestones, replans, evolutions, alliances and betrayals fire a labelled burst
+above the agent; and mastery — earned by hitting milestones ahead of schedule —
+adds a pulsing aura plus ★ stars, up to 5.
+
 x402 / Solana build
 -------------------
 `NeonMythosCity_Start.html` carries the Solana integration: a `SolanaWalletPanel`
