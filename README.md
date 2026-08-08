@@ -46,11 +46,22 @@ or
 https://raw.githack.com/RyoSAKu610/AI-Agent-market-simulator/main/NeonMythosCity_Start.html
 ```
 
-Known gaps
-----------
-`neon-mythos-codex-pets.html` references `character-assets/*.png` and
-`pet-portable-bundle/*/assets/spritesheet.webp`, which are not committed to this
-repository. The page still loads and runs; those portraits/sprites simply render blank.
+Character assets
+----------------
+`neon-mythos-codex-pets.html` loads all character art through relative paths.
+These folders must stay at the repository root, and must not be renamed or moved
+unless the paths inside the HTML are updated too:
+
+| Folder | Contents |
+| --- | --- |
+| `character-assets/` | Cut-in portraits (9 PNG) |
+| `character-pets/` | Codex pets: SAGE-BOY, DRONE-TAN, YAMI-NEKO, EYE-VOID, PIXEL, LIRA, KITSUNE-X, NEON, GOLD-JACK (`pet.json` + `spritesheet.webp`) |
+| `pet-portable-bundle/` | Main pets: KANE-KAMI, ZERO, NEGO-CHAN, 404-HUMAN |
+| `lumen-export/` | ORACLE-01 |
+
+Pet spritesheets use the Codex atlas layout: 1536×1872, 192×208 cells, 8 columns,
+9 animation rows (idle, running-right, running-left, waving, jumping, failed,
+waiting, running, review).
 
 Cleanup
 -------

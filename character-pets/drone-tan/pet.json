@@ -1,0 +1,6 @@
+{
+  "id": "drone-tan",
+  "displayName": "DRONE-TAN",
+  "description": "A small courier android pet who scouts, delivers items, recharges, and moves with hover-assisted steps.",
+  "spritesheetPath": "spritesheet.webp"
+}
