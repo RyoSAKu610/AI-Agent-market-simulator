@@ -22,6 +22,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Verify experience layer
+        run: |
+          python3 -m py_compile scripts/apply-offline-actions.py
+          python3 -m json.tool manifest.webmanifest >/dev/null
+          node --check neon-mythos-experience.js
+          node --check sw.js
+
       - name: Stage site
         run: |
           mkdir -p _site
@@ -37,6 +44,14 @@ jobs:
 
       - name: Inject offline long-term actions
         run: python3 scripts/apply-offline-actions.py _site/index.html
+
+      - name: Verify staged integration
+        run: |
+          grep -q 'manifest.webmanifest' _site/index.html
+          grep -q 'neon-mythos-experience.js' _site/index.html
+          grep -q 'nm:ltt-command' _site/index.html
+          grep -q 'nm:create-companion' _site/index.html
+          grep -q 'nm:ltt-event' _site/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
