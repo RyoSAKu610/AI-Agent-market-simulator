@@ -23,10 +23,11 @@ jobs:
 
       - name: Verify experience layer
         run: |
-          python3 -m py_compile scripts/apply-offline-actions.py scripts/apply-errand-mode.py
+          python3 -m py_compile scripts/apply-offline-actions.py scripts/apply-errand-mode.py scripts/apply-route-fx.py
           python3 -m json.tool manifest.webmanifest >/dev/null
           node --check neon-mythos-experience.js
           node --check neon-mythos-errand.js
+          node --check neon-mythos-route-fx.js
           node --check sw.js
 
       - name: Stage site
@@ -46,18 +47,26 @@ jobs:
       - name: Wire AI errand mode
         run: python3 scripts/apply-errand-mode.py _site/index.html _site/neon-mythos-experience.js
 
+      - name: Wire head reactions and neon route FX
+        run: python3 scripts/apply-route-fx.py _site/index.html
+
       - name: Verify staged integration
         run: |
           node --check _site/neon-mythos-experience.js
           node --check _site/neon-mythos-errand.js
+          node --check _site/neon-mythos-route-fx.js
           grep -q 'manifest.webmanifest' _site/index.html
           grep -q 'neon-mythos-experience.js' _site/index.html
           grep -q 'neon-mythos-errand.js' _site/index.html
+          grep -q 'neon-mythos-route-fx.js' _site/index.html
+          grep -q 'data-agent-id' _site/index.html
           grep -q 'nm:ltt-command' _site/index.html
           grep -q 'nm:create-companion' _site/index.html
           grep -q 'nm:ltt-event' _site/index.html
           grep -q 'nm:route-agent' _site/index.html
           grep -q 'nm:agent-routed' _site/index.html
+          grep -q 'fromX: agent.x' _site/index.html
+          grep -q 'tile: TILE' _site/index.html
           grep -q 'nm:errand-request' _site/neon-mythos-experience.js
 
       - name: Setup Pages
