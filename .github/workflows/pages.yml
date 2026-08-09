@@ -35,6 +35,9 @@ jobs:
           touch _site/.nojekyll
           ls -la _site
 
+      - name: Inject offline long-term actions
+        run: python3 scripts/apply-offline-actions.py _site/index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
