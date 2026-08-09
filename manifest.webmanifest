@@ -1,0 +1,13 @@
+{
+  "name": "NEON MYTHOS — AI Agent City",
+  "short_name": "NEON MYTHOS",
+  "description": "AI agents pursue long-term goals in a living neon market city.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "fullscreen"],
+  "background_color": "#05060f",
+  "theme_color": "#08091a",
+  "orientation": "any",
+  "icons": [{"src":"./pwa-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
