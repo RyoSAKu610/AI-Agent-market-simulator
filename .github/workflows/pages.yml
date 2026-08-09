@@ -10,7 +10,6 @@ permissions:
   pages: write
   id-token: write
 
-# Allow one concurrent deployment, skipping queued runs in between.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -24,34 +23,42 @@ jobs:
 
       - name: Verify experience layer
         run: |
-          python3 -m py_compile scripts/apply-offline-actions.py
+          python3 -m py_compile scripts/apply-offline-actions.py scripts/apply-errand-mode.py
           python3 -m json.tool manifest.webmanifest >/dev/null
           node --check neon-mythos-experience.js
+          node --check neon-mythos-errand.js
           node --check sw.js
 
       - name: Stage site
         run: |
           mkdir -p _site
-          # Copy everything except VCS/CI metadata and the local Claude config.
           rsync -a --exclude '.git' \
                    --exclude '.github' \
                    --exclude '.claude' \
                    --exclude '_site' \
                    ./ _site/
-          # Serve the site raw — no Jekyll processing.
           touch _site/.nojekyll
           ls -la _site
 
       - name: Inject offline long-term actions
         run: python3 scripts/apply-offline-actions.py _site/index.html
 
+      - name: Wire AI errand mode
+        run: python3 scripts/apply-errand-mode.py _site/index.html _site/neon-mythos-experience.js
+
       - name: Verify staged integration
         run: |
+          node --check _site/neon-mythos-experience.js
+          node --check _site/neon-mythos-errand.js
           grep -q 'manifest.webmanifest' _site/index.html
           grep -q 'neon-mythos-experience.js' _site/index.html
+          grep -q 'neon-mythos-errand.js' _site/index.html
           grep -q 'nm:ltt-command' _site/index.html
           grep -q 'nm:create-companion' _site/index.html
           grep -q 'nm:ltt-event' _site/index.html
+          grep -q 'nm:route-agent' _site/index.html
+          grep -q 'nm:agent-routed' _site/index.html
+          grep -q 'nm:errand-request' _site/neon-mythos-experience.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
