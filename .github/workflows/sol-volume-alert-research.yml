@@ -1,0 +1,80 @@
+name: SOL volume-direction research
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "sol-volume-alert/**"
+      - ".github/workflows/sol-volume-alert-research.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sol-volume-alert
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: sol-volume-alert/requirements.txt
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Unit tests
+        env:
+          PYTHONPATH: src
+        run: pytest -q
+
+      - name: Determine latest six complete calendar months
+        id: months
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import pandas as pd
+          today = pd.Timestamp.utcnow().date()
+          first_this_month = pd.Timestamp(today.replace(day=1))
+          last_complete = (first_this_month - pd.offsets.MonthBegin(1)).to_period("M")
+          start = last_complete - 5
+          print(f"start={start}")
+          print(f"end={last_complete}")
+          PY
+
+      - name: Backtest and create report
+        id: research
+        continue-on-error: true
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m sol_volume_alert.research \
+            --start-month "${{ steps.months.outputs.start }}" \
+            --end-month "${{ steps.months.outputs.end }}" \
+            --fee-per-side 0.0005 \
+            --out reports
+
+      - name: Show report
+        if: always()
+        run: cat reports/REPORT.md || true
+
+      - name: Upload research report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-volume-alert-research
+          path: |
+            sol-volume-alert/reports/REPORT.md
+            sol-volume-alert/reports/candidate_scores.csv
+            sol-volume-alert/reports/best_config.json
+
+      - name: Enforce OOS gate
+        if: steps.research.outcome != 'success'
+        run: |
+          echo "Untouched out-of-sample period did not confirm a robust edge."
+          exit 1
