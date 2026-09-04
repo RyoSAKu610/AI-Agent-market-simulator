@@ -47,34 +47,34 @@ jobs:
           print(f"end={last_complete}")
           PY
 
-      - name: Phase 2 — actual taker flow and proxy agreement
-        id: research_v2
+      - name: Divergence / absorption research
+        id: research_divergence
         continue-on-error: true
         env:
           PYTHONPATH: src
         run: |
-          python -m sol_volume_alert.research_v2 \
+          python -m sol_volume_alert.research_divergence \
             --start-month "${{ steps.months.outputs.start }}" \
             --end-month "${{ steps.months.outputs.end }}" \
             --fee-per-side 0.0005 \
-            --out reports_v2
+            --out reports_divergence
 
-      - name: Show phase-2 report
+      - name: Show divergence report
         if: always()
-        run: cat reports_v2/REPORT_V2.md || true
+        run: cat reports_divergence/REPORT_DIVERGENCE.md || true
 
-      - name: Upload phase-2 research report
+      - name: Upload divergence report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sol-volume-alert-research-v2
+          name: sol-volume-alert-research-divergence
           path: |
-            sol-volume-alert/reports_v2/REPORT_V2.md
-            sol-volume-alert/reports_v2/candidate_scores_v2.csv
-            sol-volume-alert/reports_v2/best_config_v2.json
+            sol-volume-alert/reports_divergence/REPORT_DIVERGENCE.md
+            sol-volume-alert/reports_divergence/candidate_scores_divergence.csv
+            sol-volume-alert/reports_divergence/best_config_divergence.json
 
       - name: Enforce OOS gate
-        if: steps.research_v2.outcome != 'success'
+        if: steps.research_divergence.outcome != 'success'
         run: |
-          echo "Phase 2 did not confirm a robust edge in the untouched out-of-sample period."
+          echo "Divergence/absorption model did not confirm a robust edge in untouched OOS data."
           exit 1
