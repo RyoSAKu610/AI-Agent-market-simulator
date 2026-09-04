@@ -39,7 +39,7 @@ jobs:
         run: |
           python - <<'PY' >> "$GITHUB_OUTPUT"
           import pandas as pd
-          today = pd.Timestamp.utcnow().date()
+          today = pd.Timestamp.now('UTC').date()
           first_this_month = pd.Timestamp(today.replace(day=1))
           last_complete = (first_this_month - pd.offsets.MonthBegin(1)).to_period("M")
           start = last_complete - 5
@@ -47,34 +47,34 @@ jobs:
           print(f"end={last_complete}")
           PY
 
-      - name: Backtest and create report
-        id: research
+      - name: Phase 2 — actual taker flow and proxy agreement
+        id: research_v2
         continue-on-error: true
         env:
           PYTHONPATH: src
         run: |
-          python -m sol_volume_alert.research \
+          python -m sol_volume_alert.research_v2 \
             --start-month "${{ steps.months.outputs.start }}" \
             --end-month "${{ steps.months.outputs.end }}" \
             --fee-per-side 0.0005 \
-            --out reports
+            --out reports_v2
 
-      - name: Show report
+      - name: Show phase-2 report
         if: always()
-        run: cat reports/REPORT.md || true
+        run: cat reports_v2/REPORT_V2.md || true
 
-      - name: Upload research report
+      - name: Upload phase-2 research report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sol-volume-alert-research
+          name: sol-volume-alert-research-v2
           path: |
-            sol-volume-alert/reports/REPORT.md
-            sol-volume-alert/reports/candidate_scores.csv
-            sol-volume-alert/reports/best_config.json
+            sol-volume-alert/reports_v2/REPORT_V2.md
+            sol-volume-alert/reports_v2/candidate_scores_v2.csv
+            sol-volume-alert/reports_v2/best_config_v2.json
 
       - name: Enforce OOS gate
-        if: steps.research.outcome != 'success'
+        if: steps.research_v2.outcome != 'success'
         run: |
-          echo "Untouched out-of-sample period did not confirm a robust edge."
+          echo "Phase 2 did not confirm a robust edge in the untouched out-of-sample period."
           exit 1
