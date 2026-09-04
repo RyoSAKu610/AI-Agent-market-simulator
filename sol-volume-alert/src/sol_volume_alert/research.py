@@ -46,8 +46,7 @@ class Metrics:
 
 
 def month_range(start: str, end: str) -> list[str]:
-    p = pd.period_range(start=start, end=end, freq="M")
-    return [str(x) for x in p]
+    return [str(x) for x in pd.period_range(start=start, end=end, freq="M")]
 
 
 def fetch_month(symbol: str, month: str, cache: Path) -> pd.DataFrame:
@@ -55,13 +54,13 @@ def fetch_month(symbol: str, month: str, cache: Path) -> pd.DataFrame:
     zip_path = cache / f"{symbol}-1m-{month}.zip"
     url = f"{BINANCE_VISION}/{symbol}/1m/{symbol}-1m-{month}.zip"
     raw = None
+
     if not zip_path.exists():
         try:
             urllib.request.urlretrieve(url, zip_path)
         except Exception:
-            # A completed month can briefly be absent from Vision. Fall back to
-            # the public futures REST endpoint rather than changing the split.
             zip_path.unlink(missing_ok=True)
+
     if zip_path.exists():
         with zipfile.ZipFile(zip_path) as zf:
             members = [n for n in zf.namelist() if n.endswith(".csv")]
@@ -73,11 +72,8 @@ def fetch_month(symbol: str, month: str, cache: Path) -> pd.DataFrame:
         first = raw.splitlines()[0].decode("utf-8", errors="replace")
         has_header = not first.split(",", 1)[0].strip().isdigit()
         df = pd.read_csv(io.BytesIO(raw), header=0 if has_header else None)
-        if has_header:
-            df = df.iloc[:, :12]
-            df.columns = COLUMNS
-        else:
-            df.columns = COLUMNS
+        df = df.iloc[:, :12]
+        df.columns = COLUMNS
     else:
         period = pd.Period(month, freq="M")
         start_ms = int(period.start_time.tz_localize("UTC").timestamp() * 1000)
@@ -116,14 +112,13 @@ def fetch_month(symbol: str, month: str, cache: Path) -> pd.DataFrame:
 
 
 def load_months(symbol: str, months: Iterable[str], cache: Path) -> pd.DataFrame:
-    frames = [fetch_month(symbol, m, cache) for m in months]
-    out = pd.concat(frames, ignore_index=True)
-    out = out.drop_duplicates("open_time", keep="last").sort_values("open_time")
-    return out.reset_index(drop=True)
+    out = pd.concat([fetch_month(symbol, m, cache) for m in months], ignore_index=True)
+    return out.drop_duplicates("open_time", keep="last").sort_values("open_time").reset_index(drop=True)
 
 
 def candidate_grid() -> list[Candidate]:
-    # Search lattice, not a trading assumption. Values span short intraday horizons.
+    # These values are a measurement lattice over short intraday horizons, not
+    # claims that a particular horizon is profitable.
     windows = [2, 4, 8, 16, 32, 64]
     holds = [1, 2, 4, 8, 16, 32]
     quantiles = [0.50, 0.60, 0.70, 0.80, 0.90, 0.95]
@@ -131,43 +126,82 @@ def candidate_grid() -> list[Candidate]:
     return [Candidate(w, h, q, m) for w in windows for h in holds for q in quantiles for m in modes]
 
 
-def build_trades(
-    df: pd.DataFrame,
+def feature_cache(df: pd.DataFrame, months: list[str], windows: list[int]) -> dict[int, dict[str, pd.DataFrame]]:
+    """Compute each rolling feature exactly once per month/window.
+
+    Month-wise calculation prevents a rolling window from leaking observations
+    across a calendar split boundary.
+    """
+    cache: dict[int, dict[str, pd.DataFrame]] = {}
+    for w in windows:
+        cache[w] = {}
+        for month in months:
+            part = df[df["month"] == month].copy().reset_index(drop=True)
+            cache[w][month] = add_flow_features(part, w)
+    return cache
+
+
+def threshold_from_dev(dev_cache: dict[int, dict[str, pd.DataFrame]], candidate: Candidate) -> float:
+    arrays = [
+        f["imbalance"].abs().dropna().to_numpy(float)
+        for f in dev_cache[candidate.window].values()
+    ]
+    arrays = [x for x in arrays if x.size]
+    if not arrays:
+        return float("nan")
+    return float(np.quantile(np.concatenate(arrays), candidate.quantile))
+
+
+def build_trades_from_features(
+    x: pd.DataFrame,
     candidate: Candidate,
     threshold: float,
     fee_per_side: float,
 ) -> pd.DataFrame:
-    x = add_flow_features(df, candidate.window)
-    imb = x["imbalance"]
-    raw_side = np.where(imb >= threshold, 1, np.where(imb <= -threshold, -1, 0))
-    raw_side = raw_side * candidate.mode
+    """Greedy, non-overlapping trades without scanning every non-signal bar."""
+    imb = x["imbalance"].to_numpy(float)
+    raw_side = np.where(imb >= threshold, 1, np.where(imb <= -threshold, -1, 0)).astype(np.int8)
+    raw_side *= candidate.mode
+    signal_idx = np.flatnonzero(raw_side)
+    if signal_idx.size == 0:
+        return pd.DataFrame(columns=[
+            "signal_time", "entry_time", "exit_time", "side", "imbalance",
+            "entry", "exit", "gross_return", "net_return",
+        ])
 
-    entries: list[dict] = []
-    i = max(candidate.window, 1)
+    opens = x["open"].to_numpy(float)
+    times = x["ts"].to_numpy()
     n = len(x)
-    while i + 1 + candidate.hold < n:
-        side = int(raw_side[i])
-        if side == 0:
-            i += 1
-            continue
+    entries = []
+    pos = 0
+    minimum_signal = max(candidate.window, 1)
+    pos = int(np.searchsorted(signal_idx, minimum_signal, side="left"))
+
+    while pos < signal_idx.size:
+        i = int(signal_idx[pos])
         entry_i = i + 1
         exit_i = entry_i + candidate.hold
-        entry = float(x.iloc[entry_i]["open"])
-        exit_ = float(x.iloc[exit_i]["open"])
+        if exit_i >= n:
+            break
+        side = int(raw_side[i])
+        entry = float(opens[entry_i])
+        exit_ = float(opens[exit_i])
         gross = side * (exit_ / entry - 1.0)
         net = gross - (2.0 * fee_per_side)
         entries.append({
-            "signal_time": x.iloc[i]["ts"],
-            "entry_time": x.iloc[entry_i]["ts"],
-            "exit_time": x.iloc[exit_i]["ts"],
+            "signal_time": times[i],
+            "entry_time": times[entry_i],
+            "exit_time": times[exit_i],
             "side": side,
-            "imbalance": float(imb.iloc[i]),
+            "imbalance": float(imb[i]),
             "entry": entry,
             "exit": exit_,
             "gross_return": gross,
             "net_return": net,
         })
-        i = exit_i
+        # Original semantics allow a new signal at the prior exit bar.
+        pos = int(np.searchsorted(signal_idx, exit_i, side="left"))
+
     return pd.DataFrame(entries)
 
 
@@ -195,40 +229,33 @@ def metrics(trades: pd.DataFrame, fee_per_side: float) -> Metrics:
     )
 
 
-def infer_threshold(train: pd.DataFrame, candidate: Candidate) -> float:
-    feat = add_flow_features(train, candidate.window)
-    vals = feat["imbalance"].abs().dropna()
-    if vals.empty:
-        return float("nan")
-    return float(vals.quantile(candidate.quantile))
-
-
 def score_candidate(
-    train: pd.DataFrame,
+    dev_cache: dict[int, dict[str, pd.DataFrame]],
     dev_months: list[str],
     candidate: Candidate,
     fee_per_side: float,
 ) -> dict:
-    threshold = infer_threshold(train, candidate)
+    threshold = threshold_from_dev(dev_cache, candidate)
     if not np.isfinite(threshold):
         return {"candidate": candidate, "threshold": threshold, "median_expectancy": -np.inf, "months": []}
     month_metrics = []
-    for m in dev_months:
-        d = train[train["month"] == m].copy()
-        t = build_trades(d, candidate, threshold, fee_per_side)
+    for month in dev_months:
+        t = build_trades_from_features(dev_cache[candidate.window][month], candidate, threshold, fee_per_side)
         mm = metrics(t, fee_per_side)
-        month_metrics.append({"month": m, **asdict(mm)})
+        month_metrics.append({"month": month, **asdict(mm)})
     finite = [x["expectancy"] for x in month_metrics if np.isfinite(x["expectancy"])]
     med = float(np.median(finite)) if finite else -np.inf
     return {"candidate": candidate, "threshold": threshold, "median_expectancy": med, "months": month_metrics}
 
 
-def diagnostics(df: pd.DataFrame, window: int) -> dict:
-    f = add_flow_features(df, window)
-    pair = f[["imbalance", "actual_taker_imbalance"]].dropna()
+def diagnostics(feature_df: pd.DataFrame) -> dict:
+    pair = feature_df[["imbalance", "actual_taker_imbalance"]].dropna()
     corr = float(pair.corr().iloc[0, 1]) if len(pair) > 2 else float("nan")
-    directional = float((f["directional_volume"] > 0).mean())
-    flat_share = float(f["flat_volume"].sum() / f["volume"].sum()) if f["volume"].sum() else float("nan")
+    directional = float((feature_df["directional_volume"] > 0).mean())
+    flat_share = (
+        float(feature_df["flat_volume"].sum() / feature_df["volume"].sum())
+        if feature_df["volume"].sum() else float("nan")
+    )
     return {
         "proxy_vs_actual_taker_imbalance_corr": corr,
         "bars_with_directional_assignment_share": directional,
@@ -255,8 +282,7 @@ def write_report(
 ) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     lines = [
-        "# SOL/USDT Volume-Direction Research Report",
-        "",
+        "# SOL/USDT Volume-Direction Research Report", "",
         f"- Symbol: `{symbol}` USDⓈ-M perpetual",
         "- Base hypothesis: price up => all volume Vkb; price down => all volume Vks; unchanged => excluded.",
         "- Execution: signal on bar close, entry on next bar open; one position at a time.",
@@ -264,8 +290,7 @@ def write_report(
         f"- Development months: {', '.join(dev_months)}",
         f"- Validation month: {valid_month}",
         f"- Untouched test month: {test_month}",
-        f"- Result status: **{status}**",
-        "",
+        f"- Result status: **{status}**", "",
     ]
     if selected is not None:
         c: Candidate = selected["candidate"]
@@ -295,9 +320,9 @@ def write_report(
         ]
     lines += [
         "## Interpretation", "",
-        "The tool does not promote a parameter set merely because it wins in development data.",
-        "A rule must have positive expectancy and profit factor above 1 in the separate validation month before it is evaluated as a candidate for live alerts.",
-        "The final test month is never used to select parameters. If the untouched test fails, status is `NO_ROBUST_EDGE` and live alerts remain disabled by default.", "",
+        "A development winner is not promoted merely because it looks profitable in-sample.",
+        "A candidate must remain positive in a separate validation month before the untouched final month is inspected.",
+        "If the untouched test fails, status is `NO_ROBUST_EDGE` and live alerts remain disabled by default.", "",
         "This is research infrastructure, not a guarantee of profit. Market regime changes, latency, spread, slippage, funding, and venue differences can erase an observed edge.",
     ]
     (out_dir / "REPORT.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -332,11 +357,10 @@ def main() -> None:
     months = months[-6:]
     dev_months, valid_month, test_month = months[:4], months[4], months[5]
     df = load_months(args.symbol, months, Path(args.cache))
-    dev = df[df["month"].isin(dev_months)].copy()
-    valid = df[df["month"] == valid_month].copy()
-    test = df[df["month"] == test_month].copy()
 
-    rows = [score_candidate(dev, dev_months, c, args.fee_per_side) for c in candidate_grid()]
+    windows = sorted({c.window for c in candidate_grid()})
+    dev_cache = feature_cache(df, dev_months, windows)
+    rows = [score_candidate(dev_cache, dev_months, c, args.fee_per_side) for c in candidate_grid()]
     viable_dev = [r for r in rows if np.isfinite(r["median_expectancy"]) and r["median_expectancy"] > 0]
     viable_dev.sort(key=lambda r: r["median_expectancy"], reverse=True)
 
@@ -346,18 +370,26 @@ def main() -> None:
     diag = None
     status = "NO_ROBUST_EDGE"
 
+    valid_cache: dict[int, pd.DataFrame] = {}
     for r in viable_dev:
-        t = build_trades(valid, r["candidate"], r["threshold"], args.fee_per_side)
-        vm = metrics(t, args.fee_per_side)
+        c: Candidate = r["candidate"]
+        if c.window not in valid_cache:
+            valid_part = df[df["month"] == valid_month].copy().reset_index(drop=True)
+            valid_cache[c.window] = add_flow_features(valid_part, c.window)
+        trades = build_trades_from_features(valid_cache[c.window], c, r["threshold"], args.fee_per_side)
+        vm = metrics(trades, args.fee_per_side)
         if vm.trades and vm.expectancy > 0 and vm.profit_factor > 1:
             selected = r
             validation_metrics = vm
             break
 
     if selected is not None:
-        tt = build_trades(test, selected["candidate"], selected["threshold"], args.fee_per_side)
+        c = selected["candidate"]
+        test_part = df[df["month"] == test_month].copy().reset_index(drop=True)
+        test_feature = add_flow_features(test_part, c.window)
+        tt = build_trades_from_features(test_feature, c, selected["threshold"], args.fee_per_side)
         test_metrics = metrics(tt, args.fee_per_side)
-        diag = diagnostics(test, selected["candidate"].window)
+        diag = diagnostics(test_feature)
         if test_metrics.trades and test_metrics.expectancy > 0 and test_metrics.profit_factor > 1:
             status = "PROMISING_OOS"
 
@@ -388,8 +420,13 @@ def main() -> None:
             "test": asdict(test_metrics),
             "diagnostics": diag,
         })
-    (out / "best_config.json").write_text(json.dumps(json_safe(active), indent=2, allow_nan=False), encoding="utf-8")
-    write_report(out, args.symbol, dev_months, valid_month, test_month, selected, validation_metrics, test_metrics, diag, args.fee_per_side, status)
+    (out / "best_config.json").write_text(
+        json.dumps(json_safe(active), indent=2, allow_nan=False), encoding="utf-8"
+    )
+    write_report(
+        out, args.symbol, dev_months, valid_month, test_month, selected,
+        validation_metrics, test_metrics, diag, args.fee_per_side, status,
+    )
     print(json.dumps(json_safe(active), indent=2))
     if status != "PROMISING_OOS":
         raise SystemExit(2)
