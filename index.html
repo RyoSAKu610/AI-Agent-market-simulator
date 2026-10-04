@@ -2697,7 +2697,23 @@ for (let y = 0; y < MAP_H; y++) {
   ROADS.add(`15,${y}`);
   ROADS.add(`19,${y}`);
 }
-const getBld = (x, y) => BUILDINGS.find(b => x >= b.x && x < b.x + b.w && y >= b.y && y < b.y + b.h);
+// BUILDINGS never changes after load, so index it once: getBld runs for every
+// agent on every tick and in every render. First building listed wins a tile,
+// as with the linear search this replaces.
+const BUILDING_AT = new Array(MAP_W * MAP_H);
+for (const b of BUILDINGS) {
+  for (let y = Math.max(0, b.y); y < Math.min(MAP_H, b.y + b.h); y++) {
+    for (let x = Math.max(0, b.x); x < Math.min(MAP_W, b.x + b.w); x++) {
+      if (!BUILDING_AT[y * MAP_W + x]) BUILDING_AT[y * MAP_W + x] = b;
+    }
+  }
+}
+const BUILDING_BY_ID = new Map(BUILDINGS.map(b => [b.id, b]));
+const getBld = (x, y) => {
+  const tx = Math.floor(x),
+    ty = Math.floor(y);
+  return tx >= 0 && tx < MAP_W && ty >= 0 && ty < MAP_H ? BUILDING_AT[ty * MAP_W + tx] : undefined;
+};
 const toCellSet = cells => new Set(cells.map(([x, y]) => `${x},${y}`));
 const PLAZA_TILES = toCellSet([
   [8, 4], [9, 4], [10, 4], [11, 4], [8, 5], [9, 5], [10, 5], [11, 5],
@@ -4939,7 +4955,7 @@ function NeonMythosCity() {
       if (!target) return;
       const intent = detail.intent || "assist";
       const buildingId = commandToBuilding(intent) || target.pref?.[0];
-      const building = BUILDINGS.find(b => b.id === buildingId);
+      const building = BUILDING_BY_ID.get(buildingId);
       if (detail.note) {
         setAgentNotes(prev => ({
           ...prev,
@@ -5248,13 +5264,13 @@ function NeonMythosCity() {
           const goalSites = lttPreferredSites(lttByAgent[c.id]);
           if (goalSites && goalSites.length && r < .78) {
             const pick = goalSites[Math.floor(Math.random() * Math.min(3, goalSites.length))];
-            tb = BUILDINGS.find(b => b.id === pick);
+            tb = BUILDING_BY_ID.get(pick);
           }
           if (!tb) {
             const r2 = Math.random();
             if (r2 < .55) {
               const pid = c.pref[Math.floor(Math.random() * c.pref.length)];
-              tb = BUILDINGS.find(b => b.id === pid);
+              tb = BUILDING_BY_ID.get(pid);
             } else if (r2 < .85) tb = BUILDINGS[Math.floor(Math.random() * BUILDINGS.length)];else {
               c.tx = Math.max(0, Math.min(MAP_W - 1, c.x + Math.floor(Math.random() * 9) - 4));
               c.ty = Math.max(0, Math.min(MAP_H - 1, c.y + Math.floor(Math.random() * 7) - 3));
@@ -5409,7 +5425,7 @@ function NeonMythosCity() {
       const goalKey = LTT_GOALS[d.goalKey] ? d.goalKey : "district_control";
       if (!agent) return;
       const candidates = LTT_CAT_BUILDINGS(LTT_GOALS[goalKey].cats)
-        .map(id => BUILDINGS.find(b => b.id === id)).filter(Boolean)
+        .map(id => BUILDING_BY_ID.get(id)).filter(Boolean)
         .sort((a, b) => (Math.abs(a.x - agent.x) + Math.abs(a.y - agent.y)) - (Math.abs(b.x - agent.x) + Math.abs(b.y - agent.y)));
       if (!candidates.length) return;
       const dest = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
@@ -6168,7 +6184,7 @@ function NeonMythosCity() {
       const spec = c.specialty ? SPECIALTIES[c.specialty] : null;
       const stateLabel = c.state === "walk" ? t.routing : c.state === "work" ? t.executing : t.standby;
       const activity = getAgentActivity(c, lang);
-      const visibleBuilding = BUILDINGS.find(b => b.id === c.currentBuilding) || activity.building || (c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null);
+      const visibleBuilding = BUILDING_BY_ID.get(c.currentBuilding) || activity.building || (c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null);
       const reasoningLogs = ["[LOG] Scouting local merchant...", "[LOG] Negotiating 5% fee...", "[LOG] Analyzing route optimization...", "[LOG] Verifying SAS signature...", "[LOG] Initiating x402 fee stream...", "[LOG] Waiting for confirmation..."];
       return /*#__PURE__*/React.createElement("div", {
         style: {
@@ -6547,7 +6563,7 @@ function NeonMythosCity() {
     const worldAgents = all.map(c => {
       const activity = getAgentActivity(c, lang);
       const targetBuilding = c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null;
-      const currentBuilding = BUILDINGS.find(b => b.id === c.currentBuilding) || activity.building;
+      const currentBuilding = BUILDING_BY_ID.get(c.currentBuilding) || activity.building;
       return { c, activity, targetBuilding, currentBuilding };
     });
     const activeByBuilding = worldAgents.reduce((acc, item) => {
@@ -7025,7 +7041,7 @@ function NeonMythosCity() {
     const petAnimation = pet ? getCodexPetAnimation(pet, c.state, c.expression, c.spriteId) : null;
     const spec = c.specialty ? SPECIALTIES[c.specialty] : null;
     const activity = getAgentActivity(c, lang);
-    const visibleBuilding = BUILDINGS.find(b => b.id === c.currentBuilding) || activity.building || (c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null);
+    const visibleBuilding = BUILDING_BY_ID.get(c.currentBuilding) || activity.building || (c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null);
     const face = c.expression === "joy" ? "≧▽≦" : c.expression === "focus" ? "◕_◕" : c.expression === "worried" ? "•́︿•̀" : "•ᴗ•";
     return /*#__PURE__*/React.createElement("div", {
       style: {
