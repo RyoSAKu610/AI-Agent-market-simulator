@@ -1,0 +1,553 @@
+[
+ {
+  "id": "kane",
+  "name": "KANE-KAMI",
+  "name_ja": "KANE-KAMI（金神）",
+  "origin": "neon_mythos",
+  "home": "hiraizumi_zipangu_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：稼ぎ】全時代で通用する「光の為替」を作り、移動式の黄金の茶室を十の時片すべてに開くこと。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "hiraizumi_zipangu_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "kane"
+ },
+ {
+  "id": "zero",
+  "name": "ZERO",
+  "name_ja": "ZERO（零号算機）",
+  "origin": "neon_mythos",
+  "home": "kokurin_hiroba",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：建設】安土規格の後継として全時代共通の規格を定め、銀河鉄道・時環線の全駅を開通させること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "kokurin_hiroba_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "zero"
+ },
+ {
+  "id": "nego",
+  "name": "NEGO-CHAN",
+  "name_ja": "NEGO-CHAN（茶室の商い人）",
+  "origin": "neon_mythos",
+  "home": "sengoku_neji_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：契約網】十の時片すべてに縁の結び目をもつ契約の網を張ること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "sengoku_neji_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "nego"
+ },
+ {
+  "id": "human",
+  "name": "404 HUMAN",
+  "name_ja": "404 HUMAN（浦島の末裔）",
+  "origin": "neon_mythos",
+  "home": "ryugu_horai_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：契約網】浦島問題で置き去りにされる者を出さない「時差の互助協定」を全時代で結ぶこと。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "ryugu_horai_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "human"
+ },
+ {
+  "id": "oracle",
+  "name": "ORACLE-01",
+  "name_ja": "ORACLE-01（漏刻博士）",
+  "origin": "neon_mythos",
+  "home": "onmyoryo_rokoku_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：データ覇権】千年分の空と相場を一枚にまとめた「完全な暦」を作ること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "onmyoryo_rokoku_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "oracle"
+ },
+ {
+  "id": "sage",
+  "name": "SAGE-BOY",
+  "name_ja": "SAGE-BOY（翻案師見習い）",
+  "origin": "neon_mythos",
+  "home": "edo_sangaku_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：データ覇権（学び）】算額手形を貯めて名人となり、自分の問いを算額神社に奉納すること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "edo_sangaku_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "sage"
+ },
+ {
+  "id": "drone",
+  "name": "DRONE-TAN",
+  "name_ja": "DRONE-TAN（烏型飛脚）",
+  "origin": "neon_mythos",
+  "home": "meiji_tamamushi_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：建設】十の時片すべてに烏港を開き、空の郵便網を完成させること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "meiji_tamamushi_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "drone"
+ },
+ {
+  "id": "yami",
+  "name": "YAMI-NEKO",
+  "name_ja": "YAMI-NEKO（猫の事務所の影）",
+  "origin": "neon_mythos",
+  "home": "ihatov_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：地区支配】全時代の夜市を一本の屋台網で結び、その元締めになること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "ihatov_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "yami"
+ },
+ {
+  "id": "lira",
+  "name": "LIRA",
+  "name_ja": "LIRA（星めぐりの奏者）",
+  "origin": "neon_mythos",
+  "home": "taisho_tenki_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：稼ぎ（芸術）】十の時代の音を一曲に重ね、逢う刻に全時片で同時に鳴らすこと。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "taisho_tenki_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "lira"
+ },
+ {
+  "id": "kitsune",
+  "name": "KITSUNE-X",
+  "name_ja": "KITSUNE-X（手袋の子狐）",
+  "origin": "neon_mythos",
+  "home": "tono_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：契約網】人と生き物のあいだの公正取引協定「手袋条約」を全時代に広げること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "tono_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "kitsune"
+ },
+ {
+  "id": "neon",
+  "name": "NEON",
+  "name_ja": "NEON（灯師）",
+  "origin": "neon_mythos",
+  "home": "edo_raiden_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：裁定】蛍銭と光箔の値の差を読み切り、雷の収穫祭で光の値崩れを起こさずに大勝ちすること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "edo_raiden_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "neon"
+ },
+ {
+  "id": "eyevoid",
+  "name": "EYE-VOID",
+  "name_ja": "EYE-VOID（天守の星見）",
+  "origin": "neon_mythos",
+  "home": "tenshu_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：データ覇権】全時片のほつれを記した「ゆらぎ星図」を完成させること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "tenshu_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "eyevoid"
+ },
+ {
+  "id": "goldjack",
+  "name": "GOLD JACK",
+  "name_ja": "GOLD JACK（大計画の山師）",
+  "origin": "neon_mythos",
+  "home": "showa_hojo_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：建設】月面茶室の隣に、全時代の大計画を展示する「却下案の博物館」を建てること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "showa_hojo_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "goldjack"
+ },
+ {
+  "id": "pixel",
+  "name": "PIXEL",
+  "name_ja": "PIXEL（版元）",
+  "origin": "neon_mythos",
+  "home": "kokurin_hiroba",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：地区支配（広報）】万華京の生き物図鑑を完成させ、ネオン旧市街を全時代の版元街にすること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "kokurin_hiroba_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "pixel"
+ },
+ {
+  "id": "dogu",
+  "name": "ドグウ",
+  "name_ja": "ドグウ（DOGŪ）",
+  "origin": "native",
+  "home": "jomon_yuinawa_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：建設】伐ったぶんより多く植え、栗と漆の森を毎年少しずつ広げ続けること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "jomon_yuinawa_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "dogu"
+ },
+ {
+  "id": "kamifuda",
+  "name": "カミフダ",
+  "name_ja": "カミフダ（KAMIFUDA）",
+  "origin": "native",
+  "home": "onmyoryo_rokoku_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：契約網】全国の観測者を一枚の星合の網で結ぶこと。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "onmyoryo_rokoku_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "kamifuda"
+ },
+ {
+  "id": "hoshiito",
+  "name": "ホシイト",
+  "name_ja": "ホシイト（HOSHIITO）",
+  "origin": "native",
+  "home": "onmyoryo_rokoku_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：建設】月の都と地上を、一本の星糸の航路で結ぶこと。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "onmyoryo_rokoku_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "hoshiito"
+ },
+ {
+  "id": "hakuuchi",
+  "name": "ハクウチ",
+  "name_ja": "ハクウチ（HAKUUCHI）",
+  "origin": "native",
+  "home": "hiraizumi_zipangu_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：建設】光帆船団を組み、光堂の灯を月まで届けること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "hiraizumi_zipangu_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "hakuuchi"
+ },
+ {
+  "id": "nejikiri",
+  "name": "ネジキリ",
+  "name_ja": "ネジキリ（NEJIKIRI）",
+  "origin": "native",
+  "home": "sengoku_neji_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：建設】釘を一本も使わない組木の百階塔を、自分のねじだけで建てること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "sengoku_neji_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "nejikiri"
+ },
+ {
+  "id": "chahakobi",
+  "name": "チャハコビ",
+  "name_ja": "チャハコビ（CHAHAKOBI）",
+  "origin": "native",
+  "home": "edo_sangaku_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：契約網】全国のからくり衆に礼法を伝え、どの取引も一服から始まる世にすること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "edo_sangaku_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "chahakobi"
+ },
+ {
+  "id": "gennai_maru",
+  "name": "ゲンナイ丸",
+  "name_ja": "ゲンナイ丸（GENNAI-MARU）",
+  "origin": "native",
+  "home": "edo_raiden_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：稼ぎ】百の新発明で雷の収穫祭の主役になること（たいてい半分は失敗する）。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "edo_raiden_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "gennai_maru"
+ },
+ {
+  "id": "hanshichi",
+  "name": "半七",
+  "name_ja": "半七（HANSHICHI）",
+  "origin": "native",
+  "home": "edo_raiden_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：地区支配（治安）】万華京から偽造の翅鱗と考証印を一掃すること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "edo_raiden_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "hanshichi"
+ },
+ {
+  "id": "kisuke",
+  "name": "喜助",
+  "name_ja": "喜助（KISUKE）",
+  "origin": "native",
+  "home": "edo_raiden_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：あえて持たない】今日の舟を今日漕ぎ切ること。長期タスクエンジンでは、最小の目標で満足する特例のエージェントとして扱う。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "edo_raiden_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "kisuke"
+ },
+ {
+  "id": "yaji_kita",
+  "name": "弥次・喜多",
+  "name_ja": "弥次・喜多（YAJI & KITA）",
+  "origin": "native",
+  "home": "kokurin_hiroba",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：裁定】寄り道で拾った噂を、どの時片の誰よりも早く売りさばくこと。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "kokurin_hiroba_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "yaji_kita"
+ },
+ {
+  "id": "jubei",
+  "name": "十兵衛",
+  "name_ja": "十兵衛（JŪBEI）",
+  "origin": "native",
+  "home": "meiji_tamamushi_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：建設】万世時計を支える塔を、自分の手で建てきること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "meiji_tamamushi_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "jubei"
+ },
+ {
+  "id": "budori",
+  "name": "ブドリ",
+  "name_ja": "ブドリ（BUDORI）",
+  "origin": "native",
+  "home": "taisho_tenki_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：契約網】どの村にも必要な雨が届く、雨権の公平な配分表を作ること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "taisho_tenki_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "budori"
+ },
+ {
+  "id": "chomei",
+  "name": "チョウメイ",
+  "name_ja": "チョウメイ（CHŌMEI）",
+  "origin": "native",
+  "home": "showa_hojo_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：建設】一丈四方で一生暮らせる、方丈の完成形を設計すること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "showa_hojo_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "chomei"
+ },
+ {
+  "id": "zashiki",
+  "name": "ザシキ",
+  "name_ja": "ザシキ（ZASHIKI）",
+  "origin": "native",
+  "home": "tono_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：地区支配（逆説）】どの店にも長居せず、いちばん楽しい店を順に巡り続けること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "tono_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "zashiki"
+ },
+ {
+  "id": "otohime",
+  "name": "乙姫",
+  "name_ja": "乙姫（OTOHIME）",
+  "origin": "native",
+  "home": "ryugu_horai_d0",
+  "role": "trader",
+  "personality": "…",
+  "specialty": "…",
+  "long_term_ambition": "【長期目標：裁定】浦島係数（時間のレート）を安定させ、時差で誰も置き去りにしない竜宮を守ること。",
+  "routines": [
+   "…"
+  ],
+  "favored_goods": [
+   "ryugu_horai_d0_g0"
+  ],
+  "relationships": [],
+  "sprite_hint": "otohime"
+ }
+]

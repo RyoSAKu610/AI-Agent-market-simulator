@@ -1,0 +1,272 @@
+[
+ {
+  "id": "jomon_yuinawa_fest",
+  "name_ja": "縄文「結縄（ゆい祭",
+  "name_en": "festival",
+  "where": "jomon_yuinawa",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "meiji_tamamushi_d0_g1",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "onmyoryo_rokoku_fest",
+  "name_ja": "飛鳥〜平安「陰陽祭",
+  "name_en": "festival",
+  "where": "onmyoryo_rokoku",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "edo_sangaku_d0_g1",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "hiraizumi_zipangu_fest",
+  "name_ja": "平泉「光堂と光金祭",
+  "name_en": "festival",
+  "where": "hiraizumi_zipangu",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "sengoku_neji_d2_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "sengoku_neji_fest",
+  "name_ja": "戦国・桃山「螺子祭",
+  "name_en": "festival",
+  "where": "sengoku_neji",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "reiwa_mangekyo_d2_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "edo_sangaku_fest",
+  "name_ja": "江戸前期「算額と祭",
+  "name_en": "festival",
+  "where": "edo_sangaku",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "jomon_yuinawa_d0_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "edo_raiden_fest",
+  "name_ja": "江戸後期・幕末「祭",
+  "name_en": "festival",
+  "where": "edo_raiden",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "jomon_yuinawa_d0_g1",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "meiji_tamamushi_fest",
+  "name_ja": "明治「玉虫翼と雷祭",
+  "name_en": "festival",
+  "where": "meiji_tamamushi",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "showa_hojo_d2_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "taisho_tenki_fest",
+  "name_ja": "大正・昭和初期「祭",
+  "name_en": "festival",
+  "where": "taisho_tenki",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "edo_sangaku_d3_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "showa_hojo_fest",
+  "name_ja": "昭和「ペンシルロ祭",
+  "name_en": "festival",
+  "where": "showa_hojo",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "taisho_tenki_d1_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "reiwa_mangekyo_fest",
+  "name_ja": "もしもの令和「万祭",
+  "name_en": "festival",
+  "where": "reiwa_mangekyo",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "edo_sangaku_d1_g1",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "ginga_tetsudo_fest",
+  "name_ja": "銀河鉄道・時環線祭",
+  "name_en": "festival",
+  "where": "ginga_tetsudo",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "edo_raiden_d0_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "ihatov_fest",
+  "name_ja": "イーハトーヴ（I祭",
+  "name_en": "festival",
+  "where": "ihatov",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "ihatov_d0_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "tono_fest",
+  "name_ja": "遠野郷（Tōno祭",
+  "name_en": "festival",
+  "where": "tono",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "sengoku_neji_d3_g1",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "ryugu_horai_fest",
+  "name_ja": "竜宮・蓬莱（Ry祭",
+  "name_en": "festival",
+  "where": "ryugu_horai",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "taisho_tenki_d2_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "tsuki_no_miyako_fest",
+  "name_ja": "月の都（Capi祭",
+  "name_en": "festival",
+  "where": "tsuki_no_miyako",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "showa_hojo_d1_g1",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "tenshu_fest",
+  "name_ja": "天守の異界（Re祭",
+  "name_en": "festival",
+  "where": "tenshu",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "sengoku_neji_d3_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "yume_juya_fest",
+  "name_ja": "夢十夜回廊（Te祭",
+  "name_en": "festival",
+  "where": "yume_juya",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "showa_hojo_d3_g0",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ },
+ {
+  "id": "sakura_mori_fest",
+  "name_ja": "桜の森の満開の下祭",
+  "name_en": "festival",
+  "where": "sakura_mori",
+  "cadence": "seasonal",
+  "description": "…",
+  "effects": [
+   {
+    "good": "sengoku_neji_d3_g1",
+    "demand_multiplier": 1.8
+   }
+  ],
+  "creatures": []
+ }
+]

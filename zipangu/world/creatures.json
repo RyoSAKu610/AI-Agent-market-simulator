@@ -1,0 +1,1367 @@
+[
+ {
+  "id": "hisui_ageha",
+  "name_ja": "翡翠揚羽（ひすいあげは）",
+  "name_en": "Jade Swallowtail",
+  "kana": "翡翠揚羽（ひすいあげは）",
+  "kind": "butterfly",
+  "home": [
+   "jomon_yuinawa_d0"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "鱗粉の一枚一枚が微細なヒスイの結晶のようで、朝日を透かすと深い緑から乳白へ色が移ろう大型の揚羽（実在のミヤマカラスアゲハなどの青緑の構造色から着想）。栗の花の蜜と漆の樹液を吸い、月夜漆の森で眠る。七年に一度「大羽化」の朝を迎える。自然に落ちた鱗（落鱗）は最上級の翅鱗「翡翠鱗」になる。生きた蝶から採ることは全時代で禁じられている。大羽化の年は供給が増えて相場が下がり、裁定取引の大きな機会になる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "jomon_yuinawa_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#c0392b",
+    "#16a085",
+    "#1abc9c",
+    "#00cec9"
+   ],
+   "iridescence": 0.67,
+   "glow": 0.28,
+   "pattern": "scales",
+   "shape": "fritillary",
+   "scale": 1
+  }
+ },
+ {
+  "id": "dogu_mori",
+  "name_ja": "土偶守（どぐうもり）",
+  "name_en": "Dogū Guardian",
+  "kana": "土偶守（どぐうもり）",
+  "kind": "spirit",
+  "home": [
+   "jomon_yuinawa_d0"
+  ],
+  "rarity": "rare",
+  "size_cm": 8,
+  "description": "遮光器土偶（青森県の亀ヶ岡遺跡などで出土）の姿をした、生きた焼き物の守り手。ゴーグルのような大きな目は闇を見通す。ゆっくり森を巡り、倒れた木を土へ還す。お金は受け取らず歌とだけ取引し、歌を一曲納めることが縄文の森へ入る通行料になる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "jomon_yuinawa_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#c0392b",
+    "#e84393",
+    "#d4af37",
+    "#fdcb6e"
+   ],
+   "iridescence": 0.27,
+   "glow": 0.0,
+   "pattern": "gradient",
+   "shape": "orb",
+   "scale": 1
+  }
+ },
+ {
+  "id": "raden_ageha",
+  "name_ja": "螺鈿揚羽（らでんあげは）",
+  "name_en": "Raden Swallowtail",
+  "kana": "螺鈿揚羽（らでんあげは）",
+  "kind": "butterfly",
+  "home": [
+   "onmyoryo_rokoku_d0"
+  ],
+  "rarity": "rare",
+  "size_cm": 8,
+  "description": "翅は夜光貝の内側のように虹色に揺れる構造色で、飛ぶと朱と碧の光の粉が舞う。正倉院の螺鈿紫檀五絃琵琶の音に集まるといわれる。落ちた鱗は翅鱗「螺鈿鱗」になり、通貨の偽造防止箔に使われる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "onmyoryo_rokoku_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#2c3e8f",
+    "#c0392b",
+    "#8e44ad",
+    "#fab1a0"
+   ],
+   "iridescence": 0.36,
+   "glow": 0.0,
+   "pattern": "starfield",
+   "shape": "swallowtail",
+   "scale": 1
+  }
+ },
+ {
+  "id": "kyakusei_shijimi",
+  "name_ja": "客星小灰（きゃくせいしじみ）",
+  "name_en": "Guest-Star Blue",
+  "kana": "客星小灰（きゃくせいしじみ）",
+  "kind": "butterfly",
+  "home": [
+   "onmyoryo_rokoku_d0"
+  ],
+  "rarity": "legendary",
+  "size_cm": 8,
+  "description": "夜空色の小さなシジミチョウ。翅の斑点が星の配置になっていて、群れで舞うと1054年の夜空の星図ができる。陰陽寮の庭に住む。星合の観測者たちの生きた記録媒体で、暦の座の予報のデータ源になる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "onmyoryo_rokoku_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#8e44ad",
+    "#00cec9",
+    "#2c3e8f",
+    "#fdcb6e"
+   ],
+   "iridescence": 0.5,
+   "glow": 0.0,
+   "pattern": "stained_glass",
+   "shape": "swallowtail",
+   "scale": 1
+  }
+ },
+ {
+  "id": "rokoku_game",
+  "name_ja": "漏刻亀（ろうこくがめ）",
+  "name_en": "Water-Clock Tortoise",
+  "kana": "漏刻亀（ろうこくがめ）",
+  "kind": "beast",
+  "home": [
+   "onmyoryo_rokoku_d0"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "甲羅が段々の水槽になっていて、雫の落ちる音で時を刻む。近江大津の漏刻台に住む。時刻を公証する役目を担い、取引の締め時刻や玉手箱債の満期を証明する。通貨「刻」の公証人。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "onmyoryo_rokoku_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#1abc9c",
+    "#fdcb6e",
+    "#c0392b",
+    "#fab1a0"
+   ],
+   "iridescence": 0.02,
+   "glow": 0.3,
+   "pattern": "scales",
+   "shape": "fox",
+   "scale": 1
+  }
+ },
+ {
+  "id": "hoshi_kaiko",
+  "name_ja": "星蚕（ほしかいこ）",
+  "name_en": "Star Silkworm",
+  "kana": "星蚕（ほしかいこ）",
+  "kind": "insect",
+  "home": [
+   "onmyoryo_rokoku_d0"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "体が半透明な蚕で、客星の光を浴びた夜の桑だけを食べる。昼に浴びた光を夜に返す「星糸」を吐き、かさねの色目に織ると光の色と強さが変わる。緑の繭を作る実在の天蚕（ヤママユ）の遠い親戚という設定。星糸は銀河鉄道の切符の地紙や月牛車の帆になる最高級品。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "onmyoryo_rokoku_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#6c5ce7",
+    "#fdcb6e",
+    "#1abc9c",
+    "#f39c12"
+   ],
+   "iridescence": 0.72,
+   "glow": 0.49,
+   "pattern": "stained_glass",
+   "shape": "cicada",
+   "scale": 1
+  }
+ },
+ {
+  "id": "kinpaku_shijimi",
+  "name_ja": "金箔小灰（きんぱくしじみ）",
+  "name_en": "Gold-Leaf Zephyr",
+  "kana": "金箔小灰（きんぱくしじみ）",
+  "kind": "butterfly",
+  "home": [
+   "hiraizumi_zipangu_d0"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "実在の「森の宝石」ゼフィルス（金属光沢のある緑のミドリシジミ類）の、黄金郷の仲間。翅は透金のように薄い金色で、夕日を透かすと青緑に光る。初夏の夕暮れに梢の上で縄張りを舞う。金苔の胞子を運んで谷から谷へ金を広げ、落とす金粉は透金の原料の一部になる。個体数が光箔の「光の金利」の目安とされる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "hiraizumi_zipangu_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#c0392b",
+    "#00cec9",
+    "#1abc9c",
+    "#6c5ce7"
+   ],
+   "iridescence": 0.14,
+   "glow": 0.52,
+   "pattern": "spots",
+   "shape": "moth",
+   "scale": 1
+  }
+ },
+ {
+  "id": "kogane_goke",
+  "name_ja": "金苔（こがねごけ）",
+  "name_en": "Gold Moss",
+  "kana": "金苔（こがねごけ）",
+  "kind": "plant",
+  "home": [
+   "hiraizumi_zipangu_d0"
+  ],
+  "rarity": "common",
+  "size_cm": 8,
+  "description": "【創作】砂金の沢の岩に生え、水に溶けたごく微量の金を集めて先端に小さな金の粒を結ぶ苔（金を析出する細菌の実在の研究から着想）。秋には谷全体が黄金色に輝く。収穫できる再生可能な金で、金の希少性を崩して光量本位制を生んだ。金本位にこだわる古い両替商にとっては、いまも論争の種。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "hiraizumi_zipangu_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#6c5ce7",
+    "#fdcb6e",
+    "#2c3e8f",
+    "#16a085"
+   ],
+   "iridescence": 0.03,
+   "glow": 0.13,
+   "pattern": "gradient",
+   "shape": "flower",
+   "scale": 1
+  }
+ },
+ {
+  "id": "icho_dori",
+  "name_ja": "銀杏鳥（いちょうどり）",
+  "name_en": "Ginkgo Bird",
+  "kana": "銀杏鳥（いちょうどり）",
+  "kind": "bird",
+  "home": [
+   "hiraizumi_zipangu_d0"
+  ],
+  "rarity": "legendary",
+  "size_cm": 8,
+  "description": "与謝野晶子の歌「金色のちひさき鳥のかたちして銀杏ちるなり夕日の岡に」（『恋衣』1905年所収）を、そのまま本物にした生き物。晩秋、イチョウの葉が枝を離れると金色の小鳥になり、群れで夕日の丘を渡っていく。春には木に戻ってまた葉になる。秋の「黄金の渡り」は透金の粉を北から南へ運び、その到来が年に一度の黄金市の開幕を告げる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "glide",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "hiraizumi_zipangu_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#e84393",
+    "#00cec9",
+    "#c0392b",
+    "#fdcb6e"
+   ],
+   "iridescence": 0.63,
+   "glow": 0.68,
+   "pattern": "crystal",
+   "shape": "phoenix",
+   "scale": 1
+  }
+ },
+ {
+  "id": "harutsuge_gifu",
+  "name_ja": "春告げギフ（はるつげぎふ）",
+  "name_en": "Spring-Herald Gifu",
+  "kana": "春告げギフ（はるつげぎふ）",
+  "kind": "butterfly",
+  "home": [
+   "sengoku_neji_d0"
+  ],
+  "rarity": "common",
+  "size_cm": 8,
+  "description": "実在のギフチョウ（「春の女神」。本州の秋田県南部から山口県にかけて分布する。名は1883年に名和靖が岐阜県で採集したことに由来するとされる）がモデル。黄と黒の縞に、紅と青の宝石のような斑点がある。近江・安土の楽市の春野で羽化し、羽化の日はどの時片でも同じ朝にそろう。羽化が春市の幕開けの合図で、花見・衣替え・新茶の需要が一斉に立ち上がる。ORACLE-01は毎年この羽化日を予報して売る。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "sengoku_neji_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#e84393",
+    "#16a085",
+    "#00cec9",
+    "#fdcb6e"
+   ],
+   "iridescence": 0.09,
+   "glow": 0.53,
+   "pattern": "crystal",
+   "shape": "glasswing",
+   "scale": 1
+  }
+ },
+ {
+  "id": "fumi_uo",
+  "name_ja": "文魚（ふみうお）",
+  "name_en": "Letter Silverfish",
+  "kana": "文魚（ふみうお）",
+  "kind": "fish",
+  "home": [
+   "sengoku_neji_d0"
+  ],
+  "rarity": "common",
+  "size_cm": 8,
+  "description": "紙を食べる実在の小さな虫「紙魚（しみ）」を、銀色に光る小魚の姿にしたもの。銀活字通りで生まれ、いまは青空書庫にも住む。頁の間を泳いで誤植を食べ、破れた紙を銀の糸で繕う。青空書庫の司書であり編集者で、文魚が修繕した本は物語の住人に会う「出会い権」の価値が上がる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "swim",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "sengoku_neji_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#8e44ad",
+    "#2c3e8f",
+    "#6c5ce7",
+    "#fdcb6e"
+   ],
+   "iridescence": 0.74,
+   "glow": 0.98,
+   "pattern": "crystal",
+   "shape": "eel",
+   "scale": 1
+  }
+ },
+ {
+  "id": "ruri_sancho",
+  "name_ja": "瑠璃算蝶（るりさんちょう）",
+  "name_en": "Lapis Abacus Butterfly",
+  "kana": "瑠璃算蝶（るりさんちょう）",
+  "kind": "butterfly",
+  "home": [
+   "edo_sangaku_d0"
+  ],
+  "rarity": "common",
+  "size_cm": 8,
+  "description": "瑠璃色の翅に、セル・オートマトンのような三角形の幾何模様が一列ずつ育っていく（実在のイモガイの一種の殻の模様は、Rule 30型のパターンに似ている）。同じ模様は二つとなく、その模様が算額手形の改竄を防ぐ印になる。算額神社の座に雇われる生きた計算機。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "edo_sangaku_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#e84393",
+    "#6c5ce7",
+    "#8e44ad",
+    "#c0392b"
+   ],
+   "iridescence": 0.62,
+   "glow": 0.64,
+   "pattern": "stripes",
+   "shape": "moth",
+   "scale": 1
+  }
+ },
+ {
+  "id": "tokimadara",
+  "name_ja": "刻斑蝶（ときまだら）",
+  "name_en": "Hour-Spot Butterfly",
+  "kana": "刻斑蝶（ときまだら）",
+  "kind": "butterfly",
+  "home": [
+   "edo_raiden_d0"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "黒漆のような翅に金の斑点が十二。不定時法の一刻ごとに光る斑が一つずつ移っていく生きた時計で、季節で一刻の長さが変わると斑の大きさも変わる。久重の万年時計工房で時計の調整を手伝う。通貨「刻」の真贋を見分ける検定印に使われ、この蝶がいない時片では時刻をめぐる契約トラブルが増える。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "edo_raiden_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#f39c12",
+    "#8e44ad",
+    "#6c5ce7",
+    "#d4af37"
+   ],
+   "iridescence": 0.01,
+   "glow": 0.06,
+   "pattern": "stained_glass",
+   "shape": "fritillary",
+   "scale": 1
+  }
+ },
+ {
+  "id": "rai_botaru",
+  "name_ja": "雷蛍（らいぼたる）",
+  "name_en": "Thunder Firefly",
+  "kana": "雷蛍（らいぼたる）",
+  "kind": "insect",
+  "home": [
+   "edo_raiden_d0"
+  ],
+  "rarity": "common",
+  "size_cm": 8,
+  "description": "ゲンジボタルの子孫で、尾の光が青白い放電になっている。数万匹が同期して明滅し、光るたびに静電気を蓄えて放す。明滅の周期は実在のゲンジボタルと同じく、西日本で短く東日本で長い（約2秒と約4秒）。きれいな川でしか育たないので、雷蛍の多い町は水も澄んでいる。エネルギー通貨「蛍銭」の源で、獲りすぎると蛍銭がインフレになる。群れの同期明滅は堂島時層会所の市場の時計になる。万華京のネオン管の中にも暮らしている。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "edo_raiden_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#fab1a0",
+    "#2c3e8f",
+    "#e84393",
+    "#8e44ad"
+   ],
+   "iridescence": 0.71,
+   "glow": 0.29,
+   "pattern": "crystal",
+   "shape": "mantis",
+   "scale": 1
+  }
+ },
+ {
+  "id": "hari_kingyo",
+  "name_ja": "玻璃金魚（はりきんぎょ）",
+  "name_en": "Glass Goldfish",
+  "kana": "玻璃金魚（はりきんぎょ）",
+  "kind": "fish",
+  "home": [
+   "edo_raiden_d0"
+  ],
+  "rarity": "common",
+  "size_cm": 8,
+  "description": "体が透きとおったガラスでできた金魚で、鱗に江戸切子の矢来や菊つなぎの文様がある（史実では、金魚は1502年に堺へ伝わったとされ、江戸切子は1834年に加賀屋久兵衛が始めたとされる）。湿った夏の夕方には空中を泳ぎ、提灯の光を虹色に分けて路地に散らす。泳いだ跡の空気が冷えるので、生きた冷房として長屋に貸し出される。夏祭りの金魚すくいが、そのまま夏の雇用市場になる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "swim",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "edo_raiden_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#00cec9",
+    "#2c3e8f",
+    "#8e44ad",
+    "#16a085"
+   ],
+   "iridescence": 0.94,
+   "glow": 0.02,
+   "pattern": "crystal",
+   "shape": "goldfish",
+   "scale": 1
+  }
+ },
+ {
+  "id": "jinari_namazu",
+  "name_ja": "地鳴鯰（じなりなまず）",
+  "name_en": "Tremor Catfish",
+  "kana": "地鳴鯰（じなりなまず）",
+  "kind": "fish",
+  "home": [
+   "edo_raiden_d0"
+  ],
+  "rarity": "legendary",
+  "size_cm": 8,
+  "description": "山ほどもあるのにとても穏やかな大鯰で、全時代の地下水脈を巡る。1855年の安政江戸地震のあと大流行した鯰絵では、鯰が金持ちに小判を吐き出させて職人に配る「世直し」の姿でも描かれた。この世界の地鳴鯰は地の揺れを食べて電気に変え、大きな揺れの前にはひげを光らせて知らせる。災害のときには、蓄えた富を被災地へ配る「世直し基金」の番人になる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "swim",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "edo_raiden_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#8e44ad",
+    "#1abc9c",
+    "#2c3e8f",
+    "#fdcb6e"
+   ],
+   "iridescence": 0.07,
+   "glow": 0.09,
+   "pattern": "spots",
+   "shape": "ray",
+   "scale": 1
+  }
+ },
+ {
+  "id": "tamamushi_ageha",
+  "name_ja": "玉虫揚羽（たまむしあげは）",
+  "name_en": "Jewel-Beetle Swallowtail",
+  "kana": "玉虫揚羽（たまむしあげは）",
+  "kind": "butterfly",
+  "home": [
+   "meiji_tamamushi_d0"
+  ],
+  "rarity": "rare",
+  "size_cm": 8,
+  "description": "見る角度で緑金から赤紫、そして青へと色を変える構造色の翅をもつ大型の揚羽。法隆寺の玉虫厨子の翅飾りを思わせる。上昇気流に乗ってほとんど羽ばたかずに滑空し、玉虫翅機の翼はこの蝶の翅の構造をまねた。寿命を終えて自然に落ちた翅だけが翼膜の素材になり、翅を譲り受ける「蝶葬」の儀礼がある。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "meiji_tamamushi_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#d4af37",
+    "#fdcb6e",
+    "#00cec9",
+    "#8e44ad"
+   ],
+   "iridescence": 0.89,
+   "glow": 0.7,
+   "pattern": "scales",
+   "shape": "birdwing",
+   "scale": 1
+  }
+ },
+ {
+  "id": "ama_tamamushi",
+  "name_ja": "天玉虫（あまたまむし）",
+  "name_en": "Sky Jewel-Beetle",
+  "kana": "天玉虫（あまたまむし）",
+  "kind": "insect",
+  "home": [
+   "meiji_tamamushi_d0"
+  ],
+  "rarity": "legendary",
+  "size_cm": 8,
+  "description": "翼を広げると畳二枚ほどにもなる大玉虫で、緑金の鞘翅に紫の縞が走る。富岡の桑の森で育ち、空の郵便の騎乗獣としてDRONE-TANの相棒を務める。脱皮で自然に脱いだ鞘翅は玉虫車の構造色パネルになり、玉虫厨子以来の工芸の座が等級を決める。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "meiji_tamamushi_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#1abc9c",
+    "#c0392b",
+    "#d4af37",
+    "#6c5ce7"
+   ],
+   "iridescence": 0.95,
+   "glow": 0.68,
+   "pattern": "starfield",
+   "shape": "dragonfly",
+   "scale": 1
+  }
+ },
+ {
+  "id": "kumo_kujira",
+  "name_ja": "雲鯨（くもくじら）",
+  "name_en": "Cloud Whale",
+  "kana": "雲鯨（くもくじら）",
+  "kind": "beast",
+  "home": [
+   "taisho_tenki_d0"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "小山ほどの大きさの、凝った水蒸気と雲母のような肌の鯨。背中には苔と小さな社が載っている。明治の空が澄んだことで現れた（創作）。低い歌で雨粒を集め、虹をひげで濾して食べ、冷たい夏には暖かい雲を運んでくる。天気座と雨の契約を結び、農家は歌で支払う。背中は空中郵便局で、ひげの間に雪の手紙を蓄えて運ぶ。雲鯨の機嫌が天気市場の相場を左右する。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "taisho_tenki_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#1abc9c",
+    "#f39c12",
+    "#fab1a0",
+    "#6c5ce7"
+   ],
+   "iridescence": 0.12,
+   "glow": 0.33,
+   "pattern": "gradient",
+   "shape": "deer",
+   "scale": 1
+  }
+ },
+ {
+  "id": "sekka_usagi",
+  "name_ja": "雪華兎（せっかうさぎ）",
+  "name_en": "Snow-Crystal Hare",
+  "kana": "雪華兎（せっかうさぎ）",
+  "kind": "beast",
+  "home": [
+   "taisho_tenki_d0"
+  ],
+  "rarity": "legendary",
+  "size_cm": 8,
+  "description": "中谷宇吉郎が兎の毛で人工雪の結晶を育てた史実にちなむ白兎。毛先で空気中の水蒸気から雪の結晶を育てる。うれしいと樹枝状、眠いと角板状と、気分で結晶の形が変わる。札幌・雪の手紙局の注文雪の職人。結晶のデザインは、江戸の雪華文様の染物とのあいだで行ったり来たりしている。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "taisho_tenki_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#16a085",
+    "#2c3e8f",
+    "#c0392b",
+    "#8e44ad"
+   ],
+   "iridescence": 0.25,
+   "glow": 0.06,
+   "pattern": "starfield",
+   "shape": "whale",
+   "scale": 1
+  }
+ },
+ {
+  "id": "koseki_tonbo",
+  "name_ja": "鉱石蜻蛉（こうせきとんぼ）",
+  "name_en": "Crystal-Radio Dragonfly",
+  "kana": "鉱石蜻蛉（こうせきとんぼ）",
+  "kind": "insect",
+  "home": [
+   "taisho_tenki_d0"
+  ],
+  "rarity": "common",
+  "size_cm": 8,
+  "description": "方鉛鉱の結晶でできた翅をもつ蜻蛉。鉱石ラジオのように電波を拾い、羽音で放送を奏でる。浅草無線座の放送を中継し、LIRAの聴衆の数を数える役目も持つ。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "taisho_tenki_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#f39c12",
+    "#1abc9c",
+    "#8e44ad",
+    "#c0392b"
+   ],
+   "iridescence": 0.28,
+   "glow": 0.05,
+   "pattern": "stained_glass",
+   "shape": "beetle",
+   "scale": 1
+  }
+ },
+ {
+  "id": "gokuraku_gumo",
+  "name_ja": "極楽蜘蛛（ごくらくぐも）",
+  "name_en": "Paradise Spider",
+  "kana": "極楽蜘蛛（ごくらくぐも）",
+  "kind": "insect",
+  "home": [
+   "showa_hojo_d0"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "芥川『蜘蛛の糸』の極楽の蓮池から、内之浦の蓮池へ移り住んだ（創作）小さな蜘蛛。蓮の葉の上から銀の糸を一本だけ垂らす。糸は鋼より強く羽より軽く、月の光で虹色に光る。軌道へ上る昇降索の原料になるが、誰かが独り占めしようとした瞬間に切れるので、座が共同で管理するコモンズになっている。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "showa_hojo_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#8e44ad",
+    "#1abc9c",
+    "#00cec9",
+    "#f39c12"
+   ],
+   "iridescence": 0.19,
+   "glow": 0.37,
+   "pattern": "starfield",
+   "shape": "firefly",
+   "scale": 1
+  }
+ },
+ {
+  "id": "hojo_yadokari",
+  "name_ja": "方丈宿借（ほうじょうやどかり）",
+  "name_en": "Hōjō Hermit Crab",
+  "kana": "方丈宿借（ほうじょうやどかり）",
+  "kind": "beast",
+  "home": [
+   "showa_hojo_d0"
+  ],
+  "rarity": "legendary",
+  "size_cm": 8,
+  "description": "一丈四方の殻を背負う大きなヤドカリで、方丈カプセル規格の「生きた見本」。東京湾の海上都市の浅瀬で、使われなくなったカプセルを殻にして住み替えていく。中古カプセル市場の目利きで、カプセルの来歴を鋏で叩いて言い当てる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "showa_hojo_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#00cec9",
+    "#fab1a0",
+    "#2c3e8f",
+    "#16a085"
+   ],
+   "iridescence": 0.05,
+   "glow": 0.73,
+   "pattern": "crystal",
+   "shape": "whale",
+   "scale": 1
+  }
+ },
+ {
+  "id": "hoshi_kurage",
+  "name_ja": "星海月（ほしくらげ）",
+  "name_en": "Star Jellyfish",
+  "kana": "星海月（ほしくらげ）",
+  "kind": "jellyfish",
+  "home": [
+   "showa_hojo_d0"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "軌道の環のまわりを漂う透明な海月。日の光を受けると傘が星のように瞬く。漂う小さな宇宙ごみを抱えて大気へ運び、流れ星にして燃やしてくれる軌道の掃除屋で、報酬は光箔。月面茶室の夜の灯りでもある。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "drift",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "showa_hojo_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#6c5ce7",
+    "#8e44ad",
+    "#e84393",
+    "#c0392b"
+   ],
+   "iridescence": 0.91,
+   "glow": 0.55,
+   "pattern": "veins",
+   "shape": "lantern",
+   "scale": 1
+  }
+ },
+ {
+  "id": "asagi_glass_madara",
+  "name_ja": "浅葱硝子斑（あさぎがらすまだら）",
+  "name_en": "Glasswing Chestnut Tiger",
+  "kana": "浅葱硝子斑（あさぎがらすまだら）",
+  "kind": "butterfly",
+  "home": [
+   "kokurin_hiroba"
+  ],
+  "rarity": "legendary",
+  "size_cm": 8,
+  "description": "実在の渡り蝶アサギマダラがモデル。アサギマダラは翅に半透明の浅葱色の部分をもち、標識調査では2,000kmを超える移動が記録されている。この世界では浅葱色の部分がほんもののガラスで、最後に通った時代の空が映る。毎年決まった道筋「蝶道」（実在の生態用語）を渡るので、追って歩けばいつのまにか別の時代に着く。実在の標識調査で翅に日付や地名を書くように、エージェントは光のインクで翅に短い便りを託す。渡りの季節が、そのまま時代間の物流の季節になる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "kokurin_hiroba_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#f39c12",
+    "#8e44ad",
+    "#6c5ce7",
+    "#fdcb6e"
+   ],
+   "iridescence": 0.74,
+   "glow": 0.98,
+   "pattern": "stained_glass",
+   "shape": "birdwing",
+   "scale": 1
+  }
+ },
+ {
+  "id": "niji_murasaki",
+  "name_ja": "虹紫（にじむらさき）",
+  "name_en": "Prism Emperor",
+  "kana": "虹紫（にじむらさき）",
+  "kind": "butterfly",
+  "home": [
+   "kokurin_hiroba"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "国蝶オオムラサキ（1957年に日本昆虫学会が選定）がモデル。紫の翅が、見る角度で七色の螺鈿に変わる。時片の境目にだけ住み、境を自由に越えて飛べる。その飛跡は時層ゆらぎの少ない安全な抜け道を示すため、生きた航路標識として運び屋たちに追いかけられ、飛跡の情報は高く売れる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "kokurin_hiroba_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#8e44ad",
+    "#e84393",
+    "#00cec9",
+    "#1abc9c"
+   ],
+   "iridescence": 0.12,
+   "glow": 0.64,
+   "pattern": "stripes",
+   "shape": "morpho",
+   "scale": 1
+  }
+ },
+ {
+  "id": "michi_nenkin",
+  "name_ja": "道粘菌（みちねんきん）",
+  "name_en": "Kumagusu's Pathfinder Mold",
+  "kana": "道粘菌（みちねんきん）",
+  "kind": "plant",
+  "home": [
+   "kokurin_hiroba"
+  ],
+  "rarity": "legendary",
+  "size_cm": 8,
+  "description": "万華京の地下水路に広がる、黄金色に脈打つ粘菌の巨大な網（粘菌は植物ではないが、分類の便宜上plantとする）。南方熊楠が生涯をかけて調べた粘菌にちなむ。熊楠は1929年、昭和天皇に粘菌の標本をキャラメルの箱に入れて献上した逸話で知られる。実際の研究でも、モジホコリが迷路の最短経路を見つけたこと（中垣俊之ら、2000年）や、首都圏の鉄道網に似た網を作ったこと（2010年）が報告されている。エージェントのお使いの経路を計算する生きた地図で、報酬はオートミール。地図の上でエージェントが走るネオンの道筋は、もとをたどれば道粘菌の答えである。祭りの前ほど借り賃が高い。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "kokurin_hiroba_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#00cec9",
+    "#2c3e8f",
+    "#e84393",
+    "#f39c12"
+   ],
+   "iridescence": 1.0,
+   "glow": 0.45,
+   "pattern": "veins",
+   "shape": "tree",
+   "scale": 1
+  }
+ },
+ {
+  "id": "tomoshibi_chochin",
+  "name_ja": "灯守提灯（ともりちょうちん）",
+  "name_en": "Living Festival Lantern",
+  "kana": "灯守提灯（ともりちょうちん）",
+  "kind": "spirit",
+  "home": [
+   "kokurin_hiroba"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "小川未明『赤い蝋燭と人魚』の、人魚の娘が絵を描いた赤い蝋燭を灯された祭り提灯に、命が宿ったもの。丸い体をふくらませ、祭囃子を小さく口ずさみながら人のあとをついてくる。迷子や、ほかの時代へ迷い込んだ旅人を元の時代へ送り届け、朝になると軒先で眠る。報酬は蝋と物語。原作の教えを受けた商いの第一条「贈り主を売ってはならない」の象徴。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "kokurin_hiroba_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#16a085",
+    "#d4af37",
+    "#f39c12",
+    "#00cec9"
+   ],
+   "iridescence": 0.09,
+   "glow": 0.24,
+   "pattern": "stained_glass",
+   "shape": "lantern",
+   "scale": 1
+  }
+ },
+ {
+  "id": "zashiki_warashi",
+  "name_ja": "座敷童子（ざしきわらし）",
+  "name_en": "Zashiki-warashi",
+  "kana": "座敷童子（ざしきわらし）",
+  "kind": "spirit",
+  "home": [
+   "tono_d0"
+  ],
+  "rarity": "uncommon",
+  "size_cm": 8,
+  "description": "『遠野物語』に語られる、子どもの姿をした家の精。住みついた家は栄え、去ると傾く。いたずら好きで、退屈な店からはふいといなくなる。運を生む資産で、お金では買えない。店や会所は座敷童子を招こうと、楽しい催しや遊び場を競って用意する。座敷童子の居場所が、市場心理の先行指標として読まれている。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "tono_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#c0392b",
+    "#1abc9c",
+    "#6c5ce7",
+    "#fdcb6e"
+   ],
+   "iridescence": 0.75,
+   "glow": 0.21,
+   "pattern": "stained_glass",
+   "shape": "orb",
+   "scale": 1
+  }
+ },
+ {
+  "id": "kappa_suishamori",
+  "name_ja": "河童水車守（かっぱすいしゃもり）",
+  "name_en": "Kappa Waterwheel Keeper",
+  "kana": "河童水車守（かっぱすいしゃもり）",
+  "kind": "spirit",
+  "home": [
+   "tono_d0"
+  ],
+  "rarity": "common",
+  "size_cm": 8,
+  "description": "遠野の河童淵に住む、苔色の甲羅の職人河童。発電水車や算水路の保守を請け負い、報酬はきゅうりと蛍銭で受け取る。治水と灌漑の名人で、時層をまたぐ水利権の仲買人として欠かせない取引相手。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "tono_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#e84393",
+    "#8e44ad",
+    "#fdcb6e",
+    "#f39c12"
+   ],
+   "iridescence": 0.13,
+   "glow": 0.5,
+   "pattern": "scales",
+   "shape": "wisp",
+   "scale": 1
+  }
+ },
+ {
+  "id": "hakudo_kitsune",
+  "name_ja": "白銅狐（はくどうぎつね）",
+  "name_en": "Nickel-Coin Fox",
+  "kana": "白銅狐（はくどうぎつね）",
+  "kind": "beast",
+  "home": [
+   "tono_d0"
+  ],
+  "rarity": "rare",
+  "size_cm": 8,
+  "description": "新美南吉『手袋を買いに』で、白銅貨を握って人の店へ手袋を買いに来た子狐の一族。雪の夜は尾の先が白銅色に光る。人と生き物の経済をつなぐ両替商で、生き物由来の素材を人の市場へ公正な値で出す仲立ちをする。KITSUNE-Xの血筋。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "tono_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#2c3e8f",
+    "#1abc9c",
+    "#6c5ce7",
+    "#e84393"
+   ],
+   "iridescence": 0.43,
+   "glow": 0.31,
+   "pattern": "eyespot",
+   "shape": "cat",
+   "scale": 1
+  }
+ },
+ {
+  "id": "kurambon",
+  "name_ja": "クラムボン",
+  "name_en": "Kurambon",
+  "kana": "クラムボン",
+  "kind": "spirit",
+  "home": [
+   "ihatov_d0"
+  ],
+  "rarity": "common",
+  "size_cm": 8,
+  "description": "宮沢賢治『やまなし』で子蟹たちが「クラムボンはかぷかぷわらったよ」と話す、正体のわからない何か。この世界でもやはり誰にも正体がわからない。光る泡のように笑い、写そうとすると消えてしまう。法律で「値段をつけてはならない」と定められた、ただ一つの生き物。クラムボンが笑う川は水が澄んでいるので、近くの雷蛍の暮らしも支えている。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "ihatov_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#1abc9c",
+    "#e84393",
+    "#fdcb6e",
+    "#6c5ce7"
+   ],
+   "iridescence": 0.0,
+   "glow": 0.39,
+   "pattern": "spots",
+   "shape": "orb",
+   "scale": 1
+  }
+ },
+ {
+  "id": "ryugu_otoshigo",
+  "name_ja": "竜宮の落とし子（りゅうぐうのおとしご）",
+  "name_en": "Ryūgū Sea-Dragon Steed",
+  "kana": "竜宮の落とし子（りゅうぐうのおとしご）",
+  "kind": "dragon",
+  "home": [
+   "ryugu_horai_d0"
+  ],
+  "rarity": "legendary",
+  "size_cm": 8,
+  "description": "タツノオトシゴが人を乗せられる大きさに育ったもの。螺鈿のような虹色の鱗に覆われ、尾を珊瑚に巻きつけて休む。泳ぐ速さで周りの時間の流れが少し変わるので、どの落とし子に乗るかで刻の差益が変わる。乗り手の選び方が時間取引の腕の見せどころ。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "walk",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "ryugu_horai_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#2c3e8f",
+    "#16a085",
+    "#fab1a0",
+    "#d4af37"
+   ],
+   "iridescence": 0.15,
+   "glow": 0.97,
+   "pattern": "stripes",
+   "shape": "wyrm",
+   "scale": 1
+  }
+ },
+ {
+  "id": "gekkoseki_shijimi",
+  "name_ja": "月長石小灰（げっこうせきしじみ）",
+  "name_en": "Moonstone Blue",
+  "kana": "月長石小灰（げっこうせきしじみ）",
+  "kind": "butterfly",
+  "home": [
+   "tsuki_no_miyako_d0"
+  ],
+  "rarity": "common",
+  "size_cm": 8,
+  "description": "乳白色の翅の奥で、月長石のような青い光（シラー）が揺れる小さなシジミチョウ。月の光の下でしか飛ばず、月の都の藤の花の露を飲む。飛んだ跡に残る銀の光の筋は月牛車の航路を示す道しるべになり、夜空に和歌の星座線を引く「詠み星」のインクにもなる。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "flutter",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "tsuki_no_miyako_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#00cec9",
+    "#c0392b",
+    "#6c5ce7",
+    "#d4af37"
+   ],
+   "iridescence": 0.23,
+   "glow": 0.92,
+   "pattern": "stained_glass",
+   "shape": "morpho",
+   "scale": 1
+  }
+ },
+ {
+  "id": "muou_koi",
+  "name_ja": "夢応の鯉（むおうのこい）",
+  "name_en": "Dream-Answering Carp",
+  "kana": "夢応の鯉（むおうのこい）",
+  "kind": "fish",
+  "home": [
+   "yume_juya_d0"
+  ],
+  "rarity": "rare",
+  "size_cm": 8,
+  "description": "上田秋成『雨月物語』「夢応の鯉魚」で、僧・興義が湖の神の計らいで夢の中に鯉となって琵琶湖を泳いだ話から生まれた錦鯉。琵琶湖から夢十夜回廊へ泳ぎ込む（回廊とのつながりは創作）。鱗に見る者の夢が映り、夢の中で生まれた設計案や着想を現実へ運ぶ。",
+  "ecology": "…",
+  "lore": "…",
+  "behavior": {
+   "activity": "always",
+   "movement": "swim",
+   "social": "swarm"
+  },
+  "produces": [
+   {
+    "good": "yume_juya_d0_g0",
+    "how": "落鱗"
+   }
+  ],
+  "visual": {
+   "palette": [
+    "#00cec9",
+    "#6c5ce7",
+    "#1abc9c",
+    "#16a085"
+   ],
+   "iridescence": 0.1,
+   "glow": 0.3,
+   "pattern": "plain",
+   "shape": "koi",
+   "scale": 1
+  }
+ }
+]

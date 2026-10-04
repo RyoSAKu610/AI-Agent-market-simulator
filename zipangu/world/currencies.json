@@ -1,0 +1,102 @@
+[
+ {
+  "id": "koku",
+  "name_ja": "刻（こく／KOKU）",
+  "name_en": "KOKU",
+  "issuer": "kokurin_hiroba",
+  "backing": "…",
+  "to_base": 1,
+  "base": true,
+  "description": "不定時法の「一刻の働き」を単位とする時間通貨。夏の昼の一刻は長く冬は短いので、価値が季節で揺れる。銀河鉄道の運賃、時差関税、時層間の利子はこれで払う。四つの基軸通貨の一つ。"
+ },
+ {
+  "id": "shirin",
+  "name_ja": "翅鱗（しりん／SHIRIN）",
+  "name_en": "SHIRIN",
+  "issuer": "kokurin_hiroba",
+  "backing": "…",
+  "to_base": 12.4,
+  "base": false,
+  "description": "宝石蝶が自然に落とした鱗と翅を裏付けにした通貨。構造色の輝きによって翡翠鱗・螺鈿鱗・金鱗・虹鱗などの等級がある。翅鱗を束ねた証券「鱗粉手形」は蝶の個体数に連動していて、乱獲すると価値が暴落する。生きた蝶から採った「死鱗」は流通禁止。四つの基軸通貨の一つ。"
+ },
+ {
+  "id": "kohaku",
+  "name_ja": "光箔（こうはく／KŌHAKU）",
+  "name_en": "KOHAKU",
+  "issuer": "kokurin_hiroba",
+  "backing": "…",
+  "to_base": 17.98,
+  "base": false,
+  "description": "透金でできた黄金郷ジパングの札。金の重さではなく、中に蓄えた光の量を裏付けとする光量本位の通貨。高額で長く価値を保つが、動かさずに一節気（約15日）置くと光が抜けていく。富は巡らせてこそ輝く、という倫理が通貨の性質になっている。四つの基軸通貨の一つ。"
+ },
+ {
+  "id": "hotarusen",
+  "name_ja": "蛍銭（ほたるせん／HOTARUSEN）",
+  "name_en": "HOTARUSEN",
+  "issuer": "kokurin_hiroba",
+  "backing": "…",
+  "to_base": 9.96,
+  "base": false,
+  "description": "雷蛍の光を蓄えた、日々のエネルギー通貨。日ごとに少しずつ暗くなる（減価する）ので貯め込めず、使って巡らせるしかない。雷蛍を獲りすぎるとインフレになり、川を汚すとその町の電力も蛍銭も落ちる。生態系と通貨が直結している。四つの基軸通貨の一つ。"
+ },
+ {
+  "id": "en",
+  "name_ja": "縁（えん）／縄目（なわめ）",
+  "name_en": "EN",
+  "issuer": "kokurin_hiroba",
+  "backing": "…",
+  "to_base": 18.25,
+  "base": false,
+  "description": "信頼と関係の通貨で、円と同じ音。取引が誠実に終わるたびに、当事者のあいだの縄に結び目が一つ増える。買うことも盗むことも譲ることもできず、裏切れば公開の場で縄が切られる。評判は南総里見八犬伝の八つの霊玉（仁・義・礼・智・忠・信・孝・悌）の光り方として八つの軸で表示され、信の玉が曇った者とは誰も大きな契約を結ばない。エージェントの格付けそのもの。"
+ },
+ {
+  "id": "sangaku_tegata",
+  "name_ja": "算額手形（さんがくてがた）",
+  "name_en": "SANGAKU_TEGATA",
+  "issuer": "kokurin_hiroba",
+  "backing": "…",
+  "to_base": 1.6,
+  "base": false,
+  "description": "公共の難問を解いて奉納した証明から発行される、能力と名誉の手形。瑠璃算蝶の模様が改竄防止の印になる。座への加入や大工事の入札資格に必要。からくりが手を出せない「人限定の算額」の枠がある。"
+ },
+ {
+  "id": "komekitte",
+  "name_ja": "米切手（こめきって）",
+  "name_en": "KOMEKITTE",
+  "issuer": "kokurin_hiroba",
+  "backing": "…",
+  "to_base": 12.1,
+  "base": false,
+  "description": "史実の堂島米市場で使われた米の倉荷証券を受け継ぐ先物証券。各時代の米の作柄と天気座の予報に連動する。大きな契約の担保に使われる。"
+ },
+ {
+  "id": "tamatebako_sai",
+  "name_ja": "玉手箱債（たまてばこさい）",
+  "name_en": "TAMATEBAKO_SAI",
+  "issuer": "kokurin_hiroba",
+  "backing": "…",
+  "to_base": 18.48,
+  "base": false,
+  "description": "竜宮で寝かせる時差債。この世界の約定では、三日預けると地上で数十年分の利息が戻る（伝承の比率とは別）。開けた時片の時間で利息が戻るが、開けた者は「老いる」（疲労がたまり、評判の鮮度が落ちる）。"
+ },
+ {
+  "id": "mon",
+  "name_ja": "文（もん）",
+  "name_en": "MON",
+  "issuer": "kokurin_hiroba",
+  "backing": "…",
+  "to_base": 1.56,
+  "base": false,
+  "description": "物語の通貨。江戸の貨幣単位「文（もん）」と手紙の「文（ふみ）」をかけている。公有の物語を読み、演じ、届けると得られ、物語の住人に会う「出会い権」や、夢十夜回廊から設計案を持ち帰る支払いに使う。"
+ },
+ {
+  "id": "yen_data",
+  "name_ja": "¥とDATA",
+  "name_en": "YEN_DATA",
+  "issuer": "kokurin_hiroba",
+  "backing": "…",
+  "to_base": 0.96,
+  "base": false,
+  "description": "旧NEON MYTHOSの街の通貨と資源を、令和の時片の地域通貨としてそのまま使い続ける。¥はネオン旧市街の決済に使い、DATAは算額や翻案の素材として他の時代へ輸出される。既存のセーブデータの値はこの扱いで読み替える。"
+ }
+]

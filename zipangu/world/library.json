@@ -1,0 +1,392 @@
+[
+ {
+  "id": "work_0",
+  "title": "銀河鉄道の夜",
+  "author": "宮沢賢治",
+  "author_death_year": 1933,
+  "placed_in": "ginga_tetsudo",
+  "in_world_role": "時層間鉄道・時環線の原典。どこまでも行ける切符、白鳥の停車場、プリオシン海岸、鳥捕りの雁の菓子がこの世界に実在する。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_1",
+  "title": "グスコーブドリの伝記",
+  "author": "宮沢賢治",
+  "author_death_year": 1933,
+  "placed_in": "taisho_tenki",
+  "in_world_role": "天気座の創設神話。「誰も犠牲にならない冷害対策」が、この世界の気象工学の倫理になった。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_2",
+  "title": "どんぐりと山猫",
+  "author": "宮沢賢治",
+  "author_death_year": 1933,
+  "placed_in": "ihatov",
+  "in_world_role": "AI同士の紛争を和解させる裁定の作法の典拠。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_3",
+  "title": "やまなし",
+  "author": "宮沢賢治",
+  "author_death_year": 1933,
+  "placed_in": "ihatov",
+  "in_world_role": "イーハトーヴの谷川と、値段をつけてはならない生き物クラムボンの出典。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_4",
+  "title": "猫の事務所",
+  "author": "宮沢賢治",
+  "author_death_year": 1933,
+  "placed_in": "ihatov",
+  "in_world_role": "YAMI-NEKOが受け継ぐ「猫の歴史と地理をしらべる所」。時代間の情報屋の起源。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_5",
+  "title": "遠野物語",
+  "author": "柳田国男",
+  "author_death_year": 1962,
+  "placed_in": "tono",
+  "in_world_role": "遠野郷の迷い家・座敷童子・オシラサマ・河童淵の原典。運の経済の源。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_6",
+  "title": "夢十夜",
+  "author": "夏目漱石",
+  "author_death_year": 1916,
+  "placed_in": "yume_juya",
+  "in_world_role": "夢十夜回廊の十の部屋。第一夜の百年百合園（長期契約の誓い）と、第六夜の運慶（素材の中に形を見る職人哲学）。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_7",
+  "title": "蜘蛛の糸",
+  "author": "芥川龍之介",
+  "author_death_year": 1927,
+  "placed_in": "showa_hojo",
+  "in_world_role": "独り占めすれば切れる銀の糸。軌道への昇降索と、共有財（コモンズ）の掟の原理。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_8",
+  "title": "天守物語",
+  "author": "泉鏡花",
+  "author_death_year": 1939,
+  "placed_in": "tenshu",
+  "in_world_role": "天守の異界と美の取引所。侍女たちが白露を餌に秋草を釣る天守の宮。EYE-VOIDの故郷。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_9",
+  "title": "五重塔",
+  "author": "幸田露伴",
+  "author_death_year": 1947,
+  "placed_in": "meiji_tamamushi",
+  "in_world_role": "嵐にも倒れない塔を建てた大工・十兵衛の職人倫理。大工事を請け負う者の手本（構造の設計図ではなく、心構えの手本として使う）。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_10",
+  "title": "半七捕物帳",
+  "author": "岡本綺堂",
+  "author_death_year": 1939,
+  "placed_in": "edo_raiden",
+  "in_world_role": "江戸の町並みと暮らしの考証の源。偽造取引を足で追う半七の流儀。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_11",
+  "title": "手袋を買いに",
+  "author": "新美南吉",
+  "author_death_year": 1943,
+  "placed_in": "tono",
+  "in_world_role": "人と生き物の最初の公正な取引の物語。白銅狐とKITSUNE-Xの起源、手袋条約の典拠。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_12",
+  "title": "赤い蝋燭と人魚",
+  "author": "小川未明",
+  "author_death_year": 1961,
+  "placed_in": "reiwa_mangekyo",
+  "in_world_role": "灯守提灯を生む赤い蝋燭の出典。商いの第一条「贈り主を売ってはならない」の由来。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_13",
+  "title": "押絵と旅する男",
+  "author": "江戸川乱歩",
+  "author_death_year": 1965,
+  "placed_in": "meiji_tamamushi",
+  "in_world_role": "凌雲閣の遠眼鏡と押絵渡り。原作どおり、逆さの遠眼鏡で覗かれた者が縮んで押絵に入る。押絵の中は時間が止まった、傷まない倉庫として使われる。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_14",
+  "title": "お伽草紙",
+  "author": "太宰治",
+  "author_death_year": 1948,
+  "placed_in": "ryugu_horai",
+  "in_world_role": "「浦島さん」が竜宮時間銀行と玉手箱の解釈の物語上の源。浦島問題の寓話。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_15",
+  "title": "高瀬舟",
+  "author": "森鴎外",
+  "author_death_year": 1922,
+  "placed_in": "edo_raiden",
+  "in_world_role": "喜助の「足るを知る」経済観。拡大成長への対抗軸。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_16",
+  "title": "茶わんの湯",
+  "author": "寺田寅彦",
+  "author_death_year": 1935,
+  "placed_in": "taisho_tenki",
+  "in_world_role": "一杯の湯気から雲と天気を語る随筆。天気細工師の入門書であり、雲鯨の生まれ方を教える寺子屋の教科書。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_17",
+  "title": "雪",
+  "author": "中谷宇吉郎",
+  "author_death_year": 1962,
+  "placed_in": "taisho_tenki",
+  "in_world_role": "雪の結晶の研究の書。「雪は天から送られた手紙である」の言葉とともに、雪の手紙局と注文雪の思想的な源。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_18",
+  "title": "十二支考",
+  "author": "南方熊楠",
+  "author_death_year": 1941,
+  "placed_in": "reiwa_mangekyo",
+  "in_world_role": "動物と伝承の博物誌。万華京の生き物図鑑の総論であり、道粘菌を育てた博物学の祖の書。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_19",
+  "title": "植物知識",
+  "author": "牧野富太郎",
+  "author_death_year": 1957,
+  "placed_in": "jomon_yuinawa",
+  "in_world_role": "漆・栗・桑・蓮など、素材になる植物を見分ける図鑑の基準。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_20",
+  "title": "方丈記",
+  "author": "鴨長明",
+  "author_death_year": 1216,
+  "placed_in": "showa_hojo",
+  "in_world_role": "持ち運べる一丈四方の庵。方丈カプセル規格と、時層間の引っ越しの原点。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_21",
+  "title": "おくのほそ道",
+  "author": "松尾芭蕉",
+  "author_death_year": 1694,
+  "placed_in": "hiraizumi_zipangu",
+  "in_world_role": "「五月雨の降り残してや光堂」が黄金郷ジパングで実景になる。平泉の時片の案内書。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_22",
+  "title": "雨月物語（夢応の鯉魚）",
+  "author": "上田秋成",
+  "author_death_year": 1809,
+  "placed_in": "yume_juya",
+  "in_world_role": "夢の中で鯉になって琵琶湖を泳ぐ僧の話。夢応の鯉の起源。1776年、エレキテル復元と同じ年に刊行された縁で、雷電泰平の記念祭でも読まれる。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_23",
+  "title": "南総里見八犬伝",
+  "author": "曲亭馬琴",
+  "author_death_year": 1848,
+  "placed_in": "edo_raiden",
+  "in_world_role": "仁・義・礼・智・忠・信・孝・悌の八つの霊玉。売買できない評判を八つの軸で示す「縁」の表示の典拠。伏姫の籠もった富山は安房国の富山（とみさん、千葉県）で、富山県ではない。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_24",
+  "title": "東海道中膝栗毛",
+  "author": "十返舎一九",
+  "author_death_year": 1831,
+  "placed_in": "reiwa_mangekyo",
+  "in_world_role": "時層鳥居をゆく弥次・喜多の運送屋の珍道中。時代をめぐる旅の案内書。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_25",
+  "title": "風流志道軒伝",
+  "author": "平賀源内",
+  "author_death_year": 1780,
+  "placed_in": "edo_raiden",
+  "in_world_role": "巨人の国や小人の国を巡る和製ガリバー。品の大きさが値段の理屈になる「スケールの市場」の典拠。源内の没年は西暦で1780年（安永8年12月18日）。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_26",
+  "title": "十八時の音楽浴",
+  "author": "海野十三",
+  "author_death_year": 1949,
+  "placed_in": "reiwa_mangekyo",
+  "in_world_role": "音楽で人の心を操る社会を描いた警世の書。エージェント憲章「訪問者の心を操作しない」と、LIRAが守る一線の典拠。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_27",
+  "title": "桜の森の満開の下",
+  "author": "坂口安吾",
+  "author_death_year": 1955,
+  "placed_in": "sakura_mori",
+  "in_world_role": "どのエージェントも商いをしない、ただ一つの「値段のない場所」と、花見の夜の沈黙の市の由来。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_28",
+  "title": "恋衣（「金色のちひさき鳥のかたちして銀杏ちるなり夕日の岡に」所収）",
+  "author": "与謝野晶子（山川登美子・茅野雅子との合著。両名とも1967年以前に没）",
+  "author_death_year": 1942,
+  "placed_in": "hiraizumi_zipangu",
+  "in_world_role": "銀杏鳥の出典。秋の「黄金の渡り」と黄金市の開幕を告げる歌。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ },
+ {
+  "id": "work_29",
+  "title": "Kwaidan（怪談）所収 Insect-Studies「Butterflies」",
+  "author": "小泉八雲（Lafcadio Hearn）。英語原文（1904年）を使う。日本語訳を使うときは田部隆次（1957年没）や戸川明三（1939年没）など、1967年以前に没した訳者の版に限り、底本の訳者を必ず確認する",
+  "author_death_year": 1904,
+  "placed_in": "ryugu_horai",
+  "in_world_role": "蝶を魂の姿とする日本の言い伝えを集めた章。蝶守座の憲章、落鱗のみの掟、蝶葬の儀礼の思想的な源。",
+  "why": "…",
+  "extraction": {
+   "mode": "opening",
+   "max_chars": 400
+  }
+ }
+]
