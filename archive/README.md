@@ -1,14 +1,13 @@
-# Archive of legacy/unused files
+# Archive — frozen legacy files
 
-This folder contains archived copies of older demos, large binary assets, and helper scripts that are not required for the GitHub Pages demo. Files were copied from the repository root into this directory to keep the root clean while preserving history.
+Legacy files kept for history. Nothing here is maintained: do not optimize,
+refactor or security-patch these files. Work on the canonical build instead
+(see [`../AGENTS.md`](../AGENTS.md)).
 
-Contents:
-- NeonMythosCity_Start.html
-- ai-agent-economy.html
-- neon .jpg
-- assets/* (full assets folder)
-- bgm music/*
-- record_demo.py
-- tests/*
-
-If you want any archived file removed from the root later, I can do a safe `git rm` after you confirm.
+| File | What it was |
+| --- | --- |
+| `ai-agent-economy.html` | First prototype (resource-trading economy). Latest version, including the escapeHTML (#13) and RESOURCE_MAP (#22) fixes. |
+| `security_fix.test.js` | Unit test for that prototype's `escapeHTML`. Run with `node archive/security_fix.test.js`. |
+| `record_demo.py` | Playwright script that recorded the x402 build demo. |
+| `final_demo.mp4` | Demo video of the April 2026 x402 / Bloomberg-terminal build. |
+| `neon.jpg` | Early key visual, unreferenced by any build. |
