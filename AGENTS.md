@@ -137,5 +137,6 @@ python3 -m http.server 8000   # open http://localhost:8000/ and tap 「ワンタ
 
 A push to `main` runs `.github/workflows/pages.yml`, which runs
 `scripts/check.sh`, copies the repository into `_site/` and publishes it to
-https://ryosaku610.github.io/AI-Agent-market-simulator/. `netlify.toml` is
-left over from an earlier Netlify deploy.
+https://ryosaku610.github.io/AI-Agent-market-simulator/. The Netlify
+project `neonmyths` also publishes the repository root as is (`netlify.toml`)
+and posts deploy previews on pull requests; keep both working.
