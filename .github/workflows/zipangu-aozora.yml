@@ -1,0 +1,49 @@
+name: Zipangu — 青空文庫 excerpts
+
+# Run by hand from the Actions tab ("Run workflow", choose the branch).
+# Downloads the 青空文庫 index, keeps only works whose every person is
+# copyright-free, extracts the excerpts listed in zipangu/world/library.json
+# and commits zipangu/world/library.texts.json to the branch it ran on.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Optional: one library.json id to refresh'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Extract excerpts
+        working-directory: zipangu
+        run: |
+          node tools/aozora-extract.test.mjs
+          if [ -n "${{ inputs.only }}" ]; then
+            node tools/aozora-extract.mjs --only "${{ inputs.only }}"
+          else
+            node tools/aozora-extract.mjs
+          fi
+          node tools/validate.mjs
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add zipangu/world/library.texts.json
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "zipangu: refresh 青空文庫 excerpts"
+            git push
+          fi
