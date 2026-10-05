@@ -39,6 +39,7 @@
 ## Things to know
 
 - Rules: `AGENTS.md` (this folder) and the style guide in `docs/spine.json`.
-- Long workflows have been stopped twice by the account's usage limit. Run one
+- Subagents run on Sonnet (owner's request). Long workflows have been stopped by the
+  account's usage limit several times. Run one
   workflow at a time; a stopped run can be resumed and finished agents are reused.
 - Keep NEON MYTHOS (repository root) untouched from this branch.

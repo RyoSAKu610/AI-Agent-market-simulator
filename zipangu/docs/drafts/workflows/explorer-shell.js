@@ -34,7 +34,7 @@ YOUR TASK: build the explorer people will actually SEE and EXPERIENCE:
 - ${Z}/tools/build-single.mjs: writes ${Z}/dist/zipangu-single.html with every world/*.json inlined as window.__ZIPANGU_WORLD__ (library.texts.json → key "texts"), every chapter markdown inlined, every js module and the css inlined, so the whole explorer works from one file with no network (Google Fonts link may stay external). Add dist/ to ${Z}/.gitignore.
 - Start the economy on load (seed from ?seed= or 1) at a pleasant pace (one in-world day ≈ 4 real minutes; speed control 1×/4×/16×). Persist nothing that breaks if storage is unavailable.
 - Add js/map.js and js/app.js syntax to ${Z}/tools/check.sh only if not already covered (it checks js/*.js).
-${BROWSER} Use port 8812. Check every route at both sizes. Return a report with screenshot paths.`, { label: 'shell', phase: 'Shell', effort: 'high' })
+${BROWSER} Use port 8812. Check every route at both sizes. Return a report with screenshot paths.`, { label: 'shell', phase: 'Shell', effort: 'high', model: 'sonnet' })
 
 phase('QA')
 const FINDINGS = { type: 'object', required: ['findings'], properties: { findings: { type: 'array', items: { type: 'object', required: ['severity', 'area', 'problem', 'evidence', 'fix'], properties: {
@@ -43,10 +43,10 @@ const critics = await parallel([
   () => agent(`${COMMON}
 
 You are a demanding art director and UX critic. The explorer in ${Z} is built. Experience it as a first-time visitor on a phone (390×844, deviceScaleFactor 2) and on desktop (1280×800): every route, tap the map, open places, creatures, library, market, agents. ${BROWSER} Use port 8813.
-Judge against the visual direction and the owner's wish ("ロマンに溢れた", "ワンダーランドを見たり体験できる", "宝石のような美しい蝶", AI agents visibly running the economy on their own). Report concrete findings with screenshot evidence: anything ugly, cramped, illegible, confusing, empty-looking, off-palette, janky, or not beautiful enough; especially the map, the butterflies, and whether the autonomous economy is legible. Do NOT edit files.`, { label: 'critic:visual', phase: 'QA', schema: FINDINGS }),
+Judge against the visual direction and the owner's wish ("ロマンに溢れた", "ワンダーランドを見たり体験できる", "宝石のような美しい蝶", AI agents visibly running the economy on their own). Report concrete findings with screenshot evidence: anything ugly, cramped, illegible, confusing, empty-looking, off-palette, janky, or not beautiful enough; especially the map, the butterflies, and whether the autonomous economy is legible. Do NOT edit files.`, { label: 'critic:visual', phase: 'QA', schema: FINDINGS, model: 'sonnet' }),
   () => agent(`${COMMON}
 
-You are a meticulous QA engineer. Test the explorer in ${Z} for correctness and robustness: console/page errors on every route; broken links; data edge cases (every creature renders; works with and without texts; places with no books; empty lists); the sim running 10+ in-world days at 16× without NaN, stalls or runaway prices; frame time on the map with all agents and creatures; offscreen canvases not leaking when navigating between routes; keyboard navigation and focus; reduced motion; dist/zipangu-single.html (after node tools/build-single.mjs) working from a file:// URL with no network; bash tools/check.sh passing. ${BROWSER} Use port 8814. Report concrete findings with evidence. Do NOT edit files.`, { label: 'critic:qa', phase: 'QA', schema: FINDINGS }),
+You are a meticulous QA engineer. Test the explorer in ${Z} for correctness and robustness: console/page errors on every route; broken links; data edge cases (every creature renders; works with and without texts; places with no books; empty lists); the sim running 10+ in-world days at 16× without NaN, stalls or runaway prices; frame time on the map with all agents and creatures; offscreen canvases not leaking when navigating between routes; keyboard navigation and focus; reduced motion; dist/zipangu-single.html (after node tools/build-single.mjs) working from a file:// URL with no network; bash tools/check.sh passing. ${BROWSER} Use port 8814. Report concrete findings with evidence. Do NOT edit files.`, { label: 'critic:qa', phase: 'QA', schema: FINDINGS, model: 'sonnet' }),
 ])
 const findings = critics.filter(Boolean).flatMap(c => c.findings)
 log(`${findings.length} findings: ${findings.filter(f => f.severity === 'blocker').length} blocker, ${findings.filter(f => f.severity === 'major').length} major`)
@@ -59,6 +59,6 @@ ${ENGINES}
 Apply these QA findings to the explorer in ${Z}. Fix every blocker and major; fix minors when cheap. Never simplify the creature renderer or reduce visual richness to fix performance — make it faster instead. Re-verify each fix in the browser (${BROWSER} Use port 8815) and re-run bash tools/check.sh and node tools/build-single.mjs. Return what you fixed and anything you could not.
 
 Findings:
-${JSON.stringify(findings)}`, { label: 'fix', phase: 'Fix', effort: 'high' }) : 'no findings'
+${JSON.stringify(findings)}`, { label: 'fix', phase: 'Fix', effort: 'high', model: 'sonnet' }) : 'no findings'
 
 return { shell, findings, fix }

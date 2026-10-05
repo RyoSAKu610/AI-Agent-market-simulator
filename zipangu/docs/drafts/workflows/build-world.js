@@ -109,8 +109,8 @@ ${JSON.stringify(draft)}`
 phase('Write')
 const units = await pipeline(
   UNITS,
-  u => agent(authorPrompt(u), { label: `write:${u}`, phase: 'Write', schema: UNIT }),
-  (draft, u) => draft && agent(verifyPrompt(u, draft), { label: `verify:${u}`, phase: 'Verify', schema: VERIFIED, effort: 'high' }).then(v => v && ({ unit: u, ...v }))
+  u => agent(authorPrompt(u), { label: `write:${u}`, phase: 'Write', schema: UNIT, model: 'sonnet' }),
+  (draft, u) => draft && agent(verifyPrompt(u, draft), { label: `verify:${u}`, phase: 'Verify', schema: VERIFIED, effort: 'high', model: 'sonnet' }).then(v => v && ({ unit: u, ...v }))
 )
 const done = units.filter(Boolean)
 log(`${done.length}/${UNITS.length} units written and verified` + (done.length < UNITS.length ? `; missing: ${UNITS.filter(u => !done.find(d => d.unit === u)).join(', ')}` : ''))
@@ -152,6 +152,6 @@ Below is a digest of every district, good, agent and event that the unit authors
 Use ONLY ids that appear in the digest.
 
 Digest:
-${JSON.stringify(digest)}`, { label: 'integrate-economy', phase: 'Integrate', schema: ECON, effort: 'high' })
+${JSON.stringify(digest)}`, { label: 'integrate-economy', phase: 'Integrate', schema: ECON, effort: 'high', model: 'sonnet' })
 
 return { units: done, econ }
