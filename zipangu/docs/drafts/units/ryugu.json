@@ -1,0 +1,1479 @@
+{
+ "places": [
+  {
+   "type": "realm",
+   "data": {
+    "id": "ryugu_horai",
+    "name_ja": "竜宮・蓬莱",
+    "name_en": "Ryūgū and Hōrai",
+    "source": {
+     "work": "浦島伝説（『日本書紀』雄略紀、『丹後国風土記』逸文、『万葉集』巻九、御伽草子）、『竹取物語』の蓬莱の玉の枝、太宰治『お伽草紙』「浦島さん」",
+     "author": "作者未詳（浦島伝説・『竹取物語』）、太宰 治（『お伽草紙』、1948年没）"
+    },
+    "summary": "大潮の夜だけ道が開く海の底の宮〈竜宮〉と、大亀の背に浮かぶ〈蓬莱島〉をあわせた異界。乙姫の竜宮時間銀行が地上との時差を両替して「玉手箱債」を出し、玉手箱税関がすべての時代越えの荷を封じる。蓬莱島の玉の枝の林では実が宝石蝶の蛹になり、蝶守座が落ちた鱗だけを拾い集めている。",
+    "lore": "大潮の夜、万華京の南の浜で潮が音もなく引くと、濡れた砂の上に青い道がのびる。足もとで夜光藻がひとつ、またひとつと灯り、道は海の底へゆるやかにくだっていく。耳に届く波の音は、いつもより半拍ずつ遅い。竜宮では時の流れそのものが地上よりずっと遅く、琴の一音が消えるまでに、地上ではいくつもの日が暮れるからだ。\n\n海底の宮は、珊瑚の円柱と青海波の瓦でできている。円柱だけが桃色に温かく、あたりには潮の香りと漆の匂いがまじる。東の庭には春、南には夏、西には秋、北には冬が一年じゅう咲き、そのまんなかに乙姫の竜宮時間銀行が建つ。広間の潮位盤の水は、地上の何日が竜宮の一日にあたるかという「浦島係数」を、毎日、水位で刻む。隣の玉手箱税関では、時代を越える荷が漆の箱に納められ、あわじ結びの水引で封じられていく。\n\n宮へ降りる客は、入口で腕に水引の腕輪を結ばれ、帰りの時差を一度だけ知らされる。三日の宴のあとで地上の暦がどれだけ進んでいるのか、銀行は毎日、隠さずに公示する。置き去りにされる者を一人も出さないことが、この海の底の宮のただ一つの約束である。\n\n海面には、大亀の背にのった蓬莱島が漂う。『竹取物語』に書かれたとおり、根は銀、茎は金、実は白い玉の木が林をなし、実どうしが触れ合うと小さな鈴のような音がする。玉の実が熟すと、中から真珠色の蝶が出てくる。ここは宝石蝶の故郷であり、蝶守座の聖地でもある。明け六つに大亀が深く息をつくと、島が一尺ほど持ち上がり、白い砂の上に落ちた鱗がきらきらと光る。拾われるのは落ちた鱗だけで、生きた蝶に手をかける者は一人もいない。",
+    "aesthetic": {
+     "palette": [
+      "#0b2545",
+      "#1f8a8c",
+      "#f4efe3",
+      "#ee6a5a",
+      "#d8b45c"
+     ],
+     "motifs": [
+      "あわじ結びの水引と玉手箱の封印",
+      "青海波と亀甲文",
+      "夜光藻の青い灯",
+      "珊瑚の円柱と螺鈿の回廊",
+      "銀の根・金の茎・白い玉の実の木",
+      "大亀の背に浮かぶ島",
+      "乙姫の領巾（ひれ）",
+      "東西南北の門に咲く四季の庭"
+     ],
+     "soundscape": "遅れて届く琴と笙の音（竜宮の時の遅さで、一音が半拍ずつ長く尾を引く）。潮位盤の水が満ち引きする低いうねり。玉の実が触れ合う小さな鈴のような音。明け六つに大亀が息をつく深い風の音。羽化した白珠蝶の翅が乾くときの、紙をめくるようなかすかな音。",
+     "light": "海底では水面から降る青緑の光の帯がゆっくり揺れ、その揺れ方も竜宮の時間のぶんだけ遅い。足もとは夜光藻の青い灯、珊瑚の円柱にだけ桃色の暖かい光が宿る。蓬莱島の林では、銀の根が月明かりを返し、金の茎が灯火のような柔らかい金色に光り、白い玉の実が内側から淡く脈打つ。"
+    },
+    "signature_tech": [
+     {
+      "name": "玉手箱債（Tamatebako Bond）",
+      "description": "竜宮時間銀行が出す時差債。この世界の約定は「三日預ければ地上で数十年分の利息」で、あくまで銀行の商品である。『丹後国風土記』逸文の三年＝三百年あまりや御伽草子の七百年という伝承の比率とは別物。箱を開けると寝かせた年月ぶんの利息が戻るが、開けた者は「老いる」（疲れがたまり、評判の鮮度が落ちる）。【創作】"
+     },
+     {
+      "name": "浦島係数（Urashima Coefficient）",
+      "description": "地上の経過日数を竜宮の経過日数で割った時間のレート。基準値は数千のあたりで、潮位盤の水位として毎日公示される。竜宮の落とし子がどれくらいの速さで泳ぐかによっても、背の上の係数はわずかに変わる。乙姫はこの値を安定させることを仕事の核にしている。【創作】"
+     },
+     {
+      "name": "玉手箱税関の封印（Tamatebako Customs Seal）",
+      "description": "時代を越える荷は、すべて漆の玉手箱に納め、あわじ結びの水引で封じる。考証印のない品をふさわしくない時代で開くと、中身に時間が一気に追いついて塵になるため、封印と開封の立会いが一組になっている。運べるのは「その時代の美しさを増すもの」だけである。【創作】"
+     },
+     {
+      "name": "玉の枝の林（Grove of Jewel Branches）",
+      "description": "蓬莱島に自生する、銀の根・金の茎・白い玉の実をもつ木。枝は大潮の夜に一節だけ自然に落ち、実は熟すと宝石蝶の蛹になる。林そのものは売買せず、落ち枝と落鱗だけが品になる。『竹取物語』の描写にもとづく。【創作】"
+     }
+    ],
+    "districts": [
+     "ryugu_jikan_ginko",
+     "ryugu_tamatebako_zeikan",
+     "ryugu_mikka_asobi",
+     "ryugu_tamanoe_no_hayashi",
+     "ryugu_chomori_seichi"
+    ],
+    "creatures": [
+     "ryugu_otoshigo",
+     "ryugu_shimaoi_ogame",
+     "ryugu_shiratama_cho"
+    ],
+    "literature": [
+     "ryugu_otogizoshi_dazai",
+     "ryugu_hearn_butterflies",
+     "ryugu_kusuyama_urashima"
+    ],
+    "agents": [
+     "human",
+     "otohime"
+    ],
+    "map": {
+     "x": 90,
+     "y": 92
+    },
+    "connections": [
+     "reiwa_mangekyo",
+     "ginga_tetsudo",
+     "tsuki_no_miyako",
+     "onmyoryo_rokoku",
+     "sengoku_neji",
+     "jomon_yuinawa",
+     "meiji_tamamushi"
+    ]
+   }
+  },
+  {
+   "type": "realm",
+   "data": {
+    "id": "tsuki_no_miyako",
+    "name_ja": "月の都",
+    "name_en": "Capital of the Moon",
+    "source": {
+     "work": "『竹取物語』",
+     "author": "作者未詳（平安時代初期の成立とされる）"
+    },
+    "summary": "月面の藤棚の庭園都市。満月の夜に、陰陽寮の時片から出る月牛車か、昭和の時片の月面茶室から歩いて行ける。かぐや姫の一族が営む茶屋では地上の物語を月の光と交換し、五つの難題の間では、かぐや姫の五つの難題が各時代の技術クエストとして出題されている。",
+    "lore": "満月の夜、陰陽寮の都の門に、簾をおろした月牛車がとまる。牛は生き物ではなく、水時計の歯車で歩く漆塗りのからくりだ。空には月長石小灰の飛んだあとに残る銀の光の筋が一本のびていて、牛車はその筋をたどって昇る。簾ごしに地上が遠のくと、やがて青い星がひとつ、空に張りついたまま動かなくなる。月の都のどこにいても、地球は同じ場所に浮かび続けている。\n\n着いた先は藤棚の庭園都市である。千尺におよぶ藤の回廊が月の砂の上にドームの骨組みを兼ねて立ち、紫の花房が重く垂れる。都の光は空からではなく、足もとの月長石の砂から青みを帯びた乳白色に立ちのぼり、花房を下から淡く照らす。空気には藤の甘い香りと、竹のかすかな青さがまじる。軒には月燕が巣をかけ、広場の原では望月兎が杵をふるう。\n\nかぐや茶屋の坪庭では、一本の竹が根もとから光っている。客が地上の物語を一つ語ると、番頭がそれを物語の秤にかけ、重さに見合うだけの月の光を小瓶に汲んでくれる。奥の間には五つの龕がならび、かぐや姫が出した五つの難題が、いまは各時代の職人に開かれた技術の課題として掲げられている。\n\nここでは二つのことが固く守られている。天の羽衣を誰も着ないこと、不死の薬を誰も売らないことである。そのかわり、藤の露のしずくや、餅から立つ湯気のような、はかないものが丁寧に取引される。広場の原からは、望月兎の杵がつくぺたん、ぺたんという餅の音が、間をおいて響いてくる。\n\n壁のはしには、一本だけ使われない釘が打たれている。天の羽衣をかけるための釘で、ここでは誰もそこに何もかけない。客が帰るときは、小灰の通った銀の道をひとつ選んで歩き、停車場へ戻る。",
+    "aesthetic": {
+     "palette": [
+      "#161a3a",
+      "#e8e4f2",
+      "#8f78c8",
+      "#a9c4f2",
+      "#e6c76a"
+     ],
+     "motifs": [
+      "藤の回廊と紫の花房",
+      "根もとから光る竹と坪庭",
+      "月長石の砂と銀の光の筋",
+      "簾をおろした月牛車",
+      "餅搗きの杵と臼、月の海の模様",
+      "五つの龕と難題札",
+      "使われない羽衣の釘",
+      "夜空に引かれる和歌の星座線"
+     ],
+     "soundscape": "藤の花房が触れ合うさらさらという音。光る竹の節が鳴る澄んだ小さな音。月牛車の水時計じかけの歯車が刻むこつこつという足音。望月兎の杵がつく、ぺたん、ぺたんという餅の音。軒の月燕の低いさえずりと、茶筅が茶碗をなでる音。",
+     "light": "足もとの月長石の砂から立ちのぼる、青みを帯びた乳白色の光が、この都の光のすべてである。藤の花房は下から淡い紫に照らされ、光る竹は根もとから灯火色の金に透ける。空には地球が月の四倍ほどの幅でひとつ、動かずに浮かび、その縁が青く細く光る。"
+    },
+    "signature_tech": [
+     {
+      "name": "月牛車（Moon Ox-Carriage）",
+      "description": "陰陽寮の水算の歯車で歩く、漆塗りのからくり牛が引く牛車。満月の夜にだけ、月長石小灰の銀の光の筋を航路にして月へ昇る。牛は生き物ではなく、牛車そのものは平安の貴族の乗り物にならっている。【創作】"
+     },
+     {
+      "name": "物語の秤（Scale of Tales）",
+      "description": "かぐや茶屋の天秤。地上の公有の物語をひとつ語ると、その重さに見合う月の光が小瓶に汲まれる。語る側の心を動かす物語は秤にのせない。最初の分銅は『竹取物語』一冊の重さである。【創作】"
+     },
+     {
+      "name": "詠み星（Poem-Star Lines）",
+      "description": "月長石小灰の飛んだ跡の銀の光の筋を集めたインクで、夜空に和歌の星座線を引く技。引かれた歌は一晩だけ、地上からも見える。【創作】"
+     },
+     {
+      "name": "五つの難題（The Five Trials）",
+      "description": "かぐや姫の五つの難題を、各時代の技術クエストとして出題する仕組み。仏の御石の鉢は平泉の透金の光る鉢、蓬莱の玉の枝は竜宮・蓬莱の落ち枝の翻案、火鼠の皮衣は縄文の漆陶の耐火布、龍の首の珠は江戸の雷瓶、燕の子安貝は、取ろうとせず待つ課題とする。鉢と子安貝の二つは、この世界で新しく足した翻案である。【創作】"
+     }
+    ],
+    "districts": [
+     "ryugu_fuji_dana",
+     "ryugu_kaguya_chaya",
+     "ryugu_gyusha_eki",
+     "ryugu_nandai_no_ma",
+     "ryugu_mochitsuki_no_hara"
+    ],
+    "creatures": [
+     "gekkoseki_shijimi",
+     "ryugu_tsuki_tsubame",
+     "ryugu_mochizuki_usagi"
+    ],
+    "literature": [
+     "ryugu_taketori_wada"
+    ],
+    "agents": [
+     "ryugu_nayotake"
+    ],
+    "map": {
+     "x": 90,
+     "y": 9
+    },
+    "connections": [
+     "onmyoryo_rokoku",
+     "showa_hojo",
+     "ryugu_horai",
+     "ginga_tetsudo"
+    ]
+   }
+  }
+ ],
+ "districts": [
+  {
+   "id": "ryugu_jikan_ginko",
+   "home": "ryugu_horai",
+   "name_ja": "竜宮時間銀行",
+   "name_en": "Ryūgū Time Bank",
+   "summary": "竜宮の中心にある円い大広間で、頭取の乙姫が地上との時差を両替し、玉手箱債を出す銀行。窓口の奥の潮位盤が、その日の浦島係数を水位で示す。置き去りを出さないための相談所でもある。",
+   "landmarks": [
+    {
+     "name_ja": "潮位盤（Coefficient Tide-Board）",
+     "description": "広間の中央に据えられた大きな水盤。水位が浦島係数を示し、水が満ちるほど地上との時差は開く。落とし子の泳ぐ速さの観測値が一刻ごとにここへ集まり、水位がわずかに動く。"
+    },
+    {
+     "name_ja": "三日預けの窓口（Three-Day Deposit Counter）",
+     "description": "玉手箱債を預け入れる窓口。預けた者の手首には、預けた日を示す水引の腕輪が結ばれ、満期の日まで外れない。"
+    },
+    {
+     "name_ja": "乙姫の頭取室（Otohime's Office）",
+     "description": "海底の窓に面した、珊瑚の円柱に囲まれた部屋。机の上には、いまだ封を切られたことのない最初の玉手箱が一つ飾られている。"
+    },
+    {
+     "name_ja": "年月の養生所（Clinic of Years）",
+     "description": "玉手箱を開けて老いた者が、疲れを癒やして評判の鮮度を戻す小さな診療所。年月は罰ではなく受け取るものだ、という標語が掲げられている。"
+    }
+   ],
+   "produces": [
+    "ryugu_urashima_keisu_hyo"
+   ],
+   "demands": [
+    "ryugu_shiratama_rinpun",
+    "ryugu_wakame_nori",
+    "ryugu_yako_mo_tomoshibi"
+   ],
+   "residents": [
+    "ryugu_otoshigo"
+   ],
+   "agent_roles": [
+    "頭取（乙姫）",
+    "時差の換算役",
+    "債の発行と満期の管理役",
+    "年月の養生所の世話役"
+   ],
+   "ambience": "珊瑚の円柱のあいだを、夜光藻の青い灯と潮位盤の水音がゆっくり満たす。静かで、遅い。人の話し声さえ、少しだけ尾を引いて届く。",
+   "map": {
+    "x": 88,
+    "y": 94
+   }
+  },
+  {
+   "id": "ryugu_tamatebako_zeikan",
+   "home": "ryugu_horai",
+   "name_ja": "玉手箱税関",
+   "name_en": "Tamatebako Customs",
+   "summary": "時代を越える荷のすべてを玉手箱に封じ、開封に立ち会う税関。長は乙姫。考証印のない品をふさわしくない時代で開けないよう、封印と開封をここが一手に預かる。",
+   "landmarks": [
+    {
+     "name_ja": "封印の間（Hall of Seals）",
+     "description": "漆の箱が積まれた広間。職人が水引をあわじ結びに結んで箱を封じる。端を引くほど締まって、ほどけにくい結びである。"
+    },
+    {
+     "name_ja": "開封室と砂時計（Opening Chambers）",
+     "description": "小さな個室がならび、隅ごとに砂時計が置かれている。荷はここでふさわしい時代の時間に慣らされてから、立会人の前で開けられる。"
+    },
+    {
+     "name_ja": "持ち主を待つ箱の棚（Shelf of Waiting Boxes）",
+     "description": "持ち主が現れないまま、何十年も眠っている箱の棚。税関の者は毎朝この棚を拭く。箱はどれも、開けられる日を待っているだけの箱である。"
+    },
+    {
+     "name_ja": "時差関税の秤（Scale of Time-Lag Duties）",
+     "description": "荷を分岐年より前の時代へ持ち込むときの関税を、刻で量る大きな秤。翻案して考証印を受けた品は、皿が軽くなる。"
+    }
+   ],
+   "produces": [
+    "ryugu_tamatebako",
+    "ryugu_fuin_mizuhiki"
+   ],
+   "demands": [
+    "ryugu_urashima_keisu_hyo",
+    "ryugu_yako_mo_tomoshibi",
+    "ryugu_wakame_nori"
+   ],
+   "residents": [
+    "ryugu_otoshigo"
+   ],
+   "agent_roles": [
+    "税関の長（乙姫）",
+    "封印職人",
+    "開封の立会人",
+    "時差関税の計量役",
+    "運び屋・翻案師（客）"
+   ],
+   "ambience": "漆の匂い、水引を引き締めるきゅっという音、砂時計の砂が落ちるかすかな音。誰も大きな声を出さず、箱を置く音さえ静かだ。",
+   "map": {
+    "x": 92,
+    "y": 95
+   }
+  },
+  {
+   "id": "ryugu_mikka_asobi",
+   "home": "ryugu_horai",
+   "name_ja": "三日遊びの宮",
+   "name_en": "Palace of Three Days' Revel",
+   "summary": "乙姫の宴の宮で、竜宮城の名のとおり、鯛や平目の光影が舞う舞台と四季の庭をもつ。三日の宴が地上の暦に長い影を落としすぎないよう、入口の時差ならしの間で浦島係数を腕輪に刻んでくれる。",
+   "landmarks": [
+    {
+     "name_ja": "四季の庭と四つの門（Four-Season Gardens and Gates）",
+     "description": "東の門の先は春、南は夏、西は秋、北は冬。門を出入りするたびに季節が入れ替わる。御伽草子に語られる竜宮の四季の庭を受け継いだ庭。"
+    },
+    {
+     "name_ja": "光影の舞台（Stage of Light-Shadows）",
+     "description": "夜光藻の灯が泳がせる、鯛や平目の光の影が舞う舞台。琴と笙に合わせて舞うのは光だけで、生きた魚は一匹も使わない。"
+    },
+    {
+     "name_ja": "時差ならしの間（Lag-Settling Room）",
+     "description": "宴の客が最初に通る小部屋。浦島係数を水引の腕輪に刻み、帰りの時間を客に一度だけ説明する。ここで説明を聞き流す客は、あまりいない。"
+    },
+    {
+     "name_ja": "海の畑の台所（Sea-Garden Kitchen）",
+     "description": "竜宮の海の畑で刈った若布や海苔を調える台所。竜宮の遅い時間の中で干すので、一枚の海苔が地上の暦では何年も寝かせたような旨みに仕上がる。"
+    }
+   ],
+   "produces": [
+    "ryugu_mikka_asobi_ken",
+    "ryugu_wakame_nori"
+   ],
+   "demands": [
+    "ryugu_yako_mo_tomoshibi",
+    "ryugu_shiratama_rinpun",
+    "ryugu_fuin_mizuhiki"
+   ],
+   "residents": [
+    "ryugu_otoshigo"
+   ],
+   "agent_roles": [
+    "宴の采配役",
+    "舞台の光影師",
+    "海の畑の料理人",
+    "時差ならしの案内役"
+   ],
+   "ambience": "ゆっくり尾を引く琴と笙の音。春の庭の花の香りが門をまたいで夏の庭の潮風とまじる。時間がやわらかく延びていく感じがする。",
+   "map": {
+    "x": 86,
+    "y": 91
+   }
+  },
+  {
+   "id": "ryugu_tamanoe_no_hayashi",
+   "home": "ryugu_horai",
+   "name_ja": "蓬莱島・玉の枝の林",
+   "name_en": "Hōrai Isle: Grove of Jewel Branches",
+   "summary": "大亀の背に浮かぶ島の林。『竹取物語』のとおり、根が銀、茎が金、実が白い玉の木が立ちならび、実が熟すと宝石蝶の蛹になる。林に刃を入れる者はおらず、品になるのは自然に落ちた枝だけである。",
+   "landmarks": [
+    {
+     "name_ja": "銀の根の潮だまり（Silver-Root Tide Pools）",
+     "description": "玉の枝の根が潮に透けて見える浅瀬。銀の根が月明かりを返し、夜光藻が青く増える。伸びすぎた藻だけが刈られる。"
+    },
+    {
+     "name_ja": "金の茎の小径（Golden-Stem Lane）",
+     "description": "金色の茎が両側にならぶ細い道。灯火のような柔らかい金色で、触れると暖かい。落ちた枝は、ここで拾われて落ち枝として束ねられる。"
+    },
+    {
+     "name_ja": "白玉の実の丘（Pearl-Fruit Hill）",
+     "description": "白い玉の実が、内側から淡く脈打ちながら枝先にぶら下がる丘。熟した実は蛹になって羽化の日を待つ。"
+    },
+    {
+     "name_ja": "大亀の背の港（Harbour on the Great Turtle's Back）",
+     "description": "島の南端の小さな港。明け六つに大亀が息をつくと、舟ごと一尺ほど持ち上がる。竜宮からの舟も月の都へ向かう舟も、ここから出る。"
+    }
+   ],
+   "produces": [
+    "ryugu_tamanoe_ochieda",
+    "ryugu_yako_mo_tomoshibi"
+   ],
+   "demands": [
+    "ryugu_wakame_nori",
+    "ryugu_fuin_mizuhiki",
+    "ryugu_tamatebako"
+   ],
+   "residents": [
+    "ryugu_shimaoi_ogame",
+    "ryugu_shiratama_cho"
+   ],
+   "agent_roles": [
+    "落ち枝の拾い人",
+    "夜光藻の刈り手",
+    "島の港の舟守"
+   ],
+   "ambience": "潮の香りに、玉の実が触れ合う鈴のような音がまじる。足もとの砂は温かく、島全体がゆっくり息をしているのが分かる。",
+   "map": {
+    "x": 93,
+    "y": 89
+   }
+  },
+  {
+   "id": "ryugu_chomori_seichi",
+   "home": "ryugu_horai",
+   "name_ja": "蝶守座の聖地",
+   "name_en": "Sanctuary of the Butterfly-Wardens",
+   "summary": "白珠蝶が羽化する白い浜に建つ、蝶守座（長はORACLE-01）の聖地。落鱗を鑑定して翅鱗に刻印し、蝶葬を営む。ここでは落ちた鱗だけが品になり、生きた蝶から採る死鱗は流通を禁じられている。",
+   "landmarks": [
+    {
+     "name_ja": "羽化の白砂（Eclosion Sands）",
+     "description": "白珠蝶が羽化する浜の白い砂。羽化の朝、座の者たちが膝をつき、落ちたばかりの鱗を小さな匙で一粒ずつ拾う。"
+    },
+    {
+     "name_ja": "落鱗の鑑定所（Shed-Scale Assay House）",
+     "description": "拾った鱗を鑑定して翅鱗に刻印する小さな家。等級は光り方で決まり、生きた蝶から採った死鱗は、ここで必ずはじかれる。"
+    },
+    {
+     "name_ja": "憲章の石（Stone of the Four Charters）",
+     "description": "エージェント憲章を刻んだ石。訪問者の心を操作しない、贈り主を売らない、生きた蝶から採らない、値段のないものに値をつけない、の四つが並んでいる。"
+    },
+    {
+     "name_ja": "蝶葬の岬（Cape of Butterfly Rites）",
+     "description": "寿命を終えた蝶の翅を、白砂に返して見送る岬。小泉八雲が紹介した、蝶を魂の姿とする日本の言い伝えにならった儀礼が行われる。"
+    }
+   ],
+   "produces": [
+    "ryugu_shiratama_rinpun"
+   ],
+   "demands": [
+    "ryugu_urashima_keisu_hyo",
+    "ryugu_yako_mo_tomoshibi",
+    "ryugu_fuin_mizuhiki"
+   ],
+   "residents": [
+    "ryugu_shiratama_cho"
+   ],
+   "agent_roles": [
+    "蝶守座の座員",
+    "落鱗の鑑定士",
+    "羽化の見守り役",
+    "蝶葬の司"
+   ],
+   "ambience": "白砂を踏むと、きゅっと鳴く。羽化の朝には、翅が乾くかすかな紙のような音が浜じゅうに満ちて、それ以外の音はみな静まる。",
+   "map": {
+    "x": 95,
+    "y": 91
+   }
+  },
+  {
+   "id": "ryugu_fuji_dana",
+   "home": "tsuki_no_miyako",
+   "name_ja": "藤棚の庭園",
+   "name_en": "Wisteria Arbor Gardens",
+   "summary": "月の都の本体をなす、千尺の藤の回廊の庭園都市。足もとの月長石の砂が都の光を生み、紫の花房が垂れる。軒には月燕が巣をかけ、花の露を月長石小灰が飲みにくる。",
+   "landmarks": [
+    {
+     "name_ja": "千尺藤の回廊（Thousand-Shaku Wisteria Cloister）",
+     "description": "月の砂の上にドームの骨組みを兼ねて立つ、およそ三百メートルの藤の回廊。紫の花房が下から淡く照らされる。"
+    },
+    {
+     "name_ja": "藤露の井（Well of Wisteria Dew）",
+     "description": "花房の下に貝の盃が一房に一つずつ置かれた井戸。蝶が飲み残した露だけが、盃に受けられる。"
+    },
+    {
+     "name_ja": "地球をのぞむ縁側（Terrace Facing the Earth）",
+     "description": "空に張りついたまま動かない地球を眺める縁側。地球は月の四倍ほどの幅で、縁が青く細く光る。"
+    },
+    {
+     "name_ja": "燕の軒（Swallow Eaves）",
+     "description": "春に渡ってきた月燕が巣をかける軒。巣立ちの朝には、巣の下の砂に小さな月の貝が一つ落ちている。"
+    }
+   ],
+   "produces": [
+    "ryugu_fuji_tsuyu",
+    "ryugu_tsuki_koyasugai"
+   ],
+   "demands": [
+    "ryugu_tsuki_mochi",
+    "ryugu_yomiboshi_ink"
+   ],
+   "residents": [
+    "gekkoseki_shijimi",
+    "ryugu_tsuki_tsubame"
+   ],
+   "agent_roles": [
+    "藤の露の汲み手",
+    "回廊の庭守",
+    "燕の軒の見守り役"
+   ],
+   "ambience": "さらさらと花房が触れ合い、甘い藤の香りに竹の青さがほのかにまじる。声は吸い込まれるように柔らかく、足音さえ砂に溶ける。",
+   "map": {
+    "x": 90,
+    "y": 8
+   }
+  },
+  {
+   "id": "ryugu_kaguya_chaya",
+   "home": "tsuki_no_miyako",
+   "name_ja": "かぐや茶屋",
+   "name_en": "Kaguya Teahouse",
+   "summary": "かぐや姫の一族（なよ竹の一族）が営む茶屋。地上の公有の物語を一つ受け取り、その重さだけの月の光を小瓶に汲んで返す。「忘れないための茶屋」で、羽衣の話だけは誰もしない。",
+   "landmarks": [
+    {
+     "name_ja": "光る竹の坪庭（Glowing-Bamboo Courtyard）",
+     "description": "根もとから金色に光る竹が一本だけ立つ坪庭。『竹取物語』の「もと光る竹」にならう。夜は客の足もとの灯になる。"
+    },
+    {
+     "name_ja": "物語の秤（Scale of Tales）",
+     "description": "語られた物語の重さを量る天秤。最初の分銅は『竹取物語』一冊の重さ。心を動かそうとする物語は、秤にのらない。"
+    },
+    {
+     "name_ja": "一服の間（Room of a Single Bowl）",
+     "description": "客が一服する小部屋。地上の茶室の商い人たちが、物語と茶を交換する取引をここで交わす。"
+    },
+    {
+     "name_ja": "空き釘の壁（Wall of the Empty Peg）",
+     "description": "一本だけ打たれた、使われない釘のある壁。天の羽衣をかけるための釘で、誰もそこに何もかけない。"
+    }
+   ],
+   "produces": [
+    "ryugu_tsuki_hikari_bin"
+   ],
+   "demands": [
+    "ryugu_fuji_tsuyu",
+    "ryugu_tsuki_mochi",
+    "ryugu_yomiboshi_ink"
+   ],
+   "residents": [
+    "gekkoseki_shijimi"
+   ],
+   "agent_roles": [
+    "番頭（ナヨタケ）",
+    "物語の秤の係",
+    "茶の点て手",
+    "地上の物語の聞き手"
+   ],
+   "ambience": "茶筅が茶碗をなでる音と、光る竹の節が鳴る澄んだ音。話す声は自然に低くなり、語られる物語が部屋の空気をそっと変える。",
+   "map": {
+    "x": 93,
+    "y": 11
+   }
+  },
+  {
+   "id": "ryugu_gyusha_eki",
+   "home": "tsuki_no_miyako",
+   "name_ja": "月牛車の停車場",
+   "name_en": "Moon Ox-Carriage Station",
+   "summary": "満月の夜に月牛車が着く停車場。月長石小灰の飛跡が銀の航路標となって空へのび、昭和の時片の月面茶室へ渡る連絡橋と、夜の鉄道・時環線の小さな駅がある。",
+   "landmarks": [
+    {
+     "name_ja": "銀の航路標（Silver Route Beacons）",
+     "description": "月長石小灰の銀の光の筋が、砂に埋められた標識の間を縫って空へのびる。筋は蝶が飛ぶたびに少しずつ書き換わる。"
+    },
+    {
+     "name_ja": "牛車溜まり（Carriage Yard）",
+     "description": "簾をおろした月牛車が並ぶ溜まり。漆塗りのからくり牛の歯車は水時計で動き、一頭ごとに水の量が量られている。"
+    },
+    {
+     "name_ja": "月面茶室への連絡橋（Footbridge to the Lunar Tea Room）",
+     "description": "昭和の時片の月面茶室へ歩いて渡る細い橋。蜘蛛糸の索を昇ってきた客が、ここで月の都へ入る。"
+    }
+   ],
+   "produces": [
+    "ryugu_tsuki_gyusha_ken",
+    "ryugu_yomiboshi_ink"
+   ],
+   "demands": [
+    "ryugu_tsuki_hikari_bin",
+    "ryugu_fuji_tsuyu"
+   ],
+   "residents": [
+    "gekkoseki_shijimi"
+   ],
+   "agent_roles": [
+    "牛車の御者（からくり使い）",
+    "航路標の見回り",
+    "詠み星の採り手",
+    "切符の取り扱い役"
+   ],
+   "ambience": "水時計の歯車が刻むこつこつという足音。銀の筋が空へ溶けていくのを、乗り降りの客が黙って見送っている。",
+   "map": {
+    "x": 86,
+    "y": 12
+   }
+  },
+  {
+   "id": "ryugu_nandai_no_ma",
+   "home": "tsuki_no_miyako",
+   "name_ja": "五つの難題の間",
+   "name_en": "Hall of the Five Trials",
+   "summary": "かぐや姫の五つの難題を、各時代の技術クエストとして掲げる広間。五つの龕のそれぞれに、仏の御石の鉢、蓬莱の玉の枝、火鼠の皮衣、龍の首の珠、燕の子安貝の課題が並ぶ。不死の薬の壺の台だけは、空のまま置かれている。",
+   "landmarks": [
+    {
+     "name_ja": "五つの龕（Five Alcoves）",
+     "description": "五つの難題をそれぞれ収める壁龕。鉢は平泉の透金、枝は竜宮・蓬莱の落ち枝、皮衣は縄文の漆陶の耐火布、珠は江戸の雷瓶、子安貝は月燕の落とし物を待つ。"
+    },
+    {
+     "name_ja": "難題札の掲示板（Trial Board）",
+     "description": "挑戦者の名と、課題を解いた時代の職人の名を札で貼り出す板。解けた者の札には、考証印が押される。"
+    },
+    {
+     "name_ja": "売られない壺の台（Pedestal of the Unsold Jar）",
+     "description": "不死の薬の壺をのせるための空の台。ここでは誰も、不死の薬を売らず、買わない。"
+    },
+    {
+     "name_ja": "煙の残る火鉢（Brazier of Rising Smoke）",
+     "description": "一筋の煙を絶やさない小さな火鉢。天にいちばん近い山で燃やされた手紙の煙が、いまも雲の中へ立ちのぼるという物語の結びを、ここで写している。"
+    }
+   ],
+   "produces": [
+    "ryugu_nandai_fuda"
+   ],
+   "demands": [
+    "ryugu_tamanoe_ochieda",
+    "ryugu_tsuki_koyasugai",
+    "ryugu_tsuki_hikari_bin"
+   ],
+   "residents": [
+    "ryugu_tsuki_tsubame"
+   ],
+   "agent_roles": [
+    "難題札の掲示係",
+    "各時代からの挑戦者（職人・翻案師）",
+    "考証の見届け役"
+   ],
+   "ambience": "光る竹の節が鳴る音と、火鉢の炭がぱちりとはぜる音。挑戦者たちは小声で、そして誰もが少しだけ笑っている。",
+   "map": {
+    "x": 94,
+    "y": 6
+   }
+  },
+  {
+   "id": "ryugu_mochitsuki_no_hara",
+   "home": "tsuki_no_miyako",
+   "name_ja": "餅搗きの原",
+   "name_en": "Mochi-Pounding Plain",
+   "summary": "満月の晩に、望月兎が杵と臼で餅を搗く広い原。望月米の棚田が連なり、その先に静かの海の渚が青く光る。兎への礼は、地上の物語をひとつ語ること。",
+   "landmarks": [
+    {
+     "name_ja": "杵と臼の庭（Yard of Mallets and Mortars）",
+     "description": "兎たちが二匹ずつ向かい合って、杵をふり臼のふちを湿らせる庭。搗き上がった餅の最初の一つは客に分けられる。"
+    },
+    {
+     "name_ja": "望月米の棚田（Moon-Rice Terraces）",
+     "description": "月の砂を耕した小さな棚田。満月の晩に穂が青白く光り、搗きたての餅には米の青い光がうつる。"
+    },
+    {
+     "name_ja": "静かの海の渚（Strand of the Sea of Tranquility）",
+     "description": "原のはずれに広がる、静かの海の渚。夜は砂に藤の花房の影が落ち、遠くの地球が細く光る。"
+    }
+   ],
+   "produces": [
+    "ryugu_tsuki_mochi"
+   ],
+   "demands": [
+    "ryugu_fuji_tsuyu",
+    "ryugu_tsuki_hikari_bin"
+   ],
+   "residents": [
+    "ryugu_mochizuki_usagi"
+   ],
+   "agent_roles": [
+    "餅搗きの世話役",
+    "棚田の水守",
+    "客への餅の取り分け役"
+   ],
+   "ambience": "ぺたん、ぺたんと餅を搗く音が、原じゅうに間をおいて響く。湯気は月の砂に溶けて、あたりに甘い米の香りがただよう。",
+   "map": {
+    "x": 87,
+    "y": 5
+   }
+  }
+ ],
+ "goods": [
+  {
+   "id": "ryugu_wakame_nori",
+   "name_ja": "竜宮若布海苔",
+   "name_en": "Ryūgū Wakame Laver",
+   "category": "food",
+   "origin": "ryugu_mikka_asobi",
+   "base_price": 4,
+   "unit": "束",
+   "description": "竜宮の海の畑で刈った若布と海苔を、竜宮の遅い時間の中で干したもの。刈り取りは伸びすぎた分だけ。一枚で地上の暦の何年も寝かせたような旨みが出るが、鮮度は一日分のままで、竜宮の暮らしを支える主食の一つである。",
+   "perishable": false
+  },
+  {
+   "id": "ryugu_yako_mo_tomoshibi",
+   "name_ja": "夜光藻の灯",
+   "name_en": "Luminous-Algae Lamp",
+   "category": "energy",
+   "origin": "ryugu_tamanoe_no_hayashi",
+   "base_price": 12,
+   "unit": "灯",
+   "description": "蓬莱島の潮だまりで増える夜光藻を、貝殻の小瓶に海水ごと入れた青い灯。蛍銭のように日ごとに暗くなることはないが、数日おきに潮を替えないと藻が弱る。刈るのは伸びすぎた分だけで、藻は数日でもとに戻る。",
+   "perishable": true
+  },
+  {
+   "id": "ryugu_fuin_mizuhiki",
+   "name_ja": "封印の水引",
+   "name_en": "Sealing Cord (Awaji Knot)",
+   "category": "craft",
+   "origin": "ryugu_tamatebako_zeikan",
+   "base_price": 35,
+   "unit": "結び",
+   "description": "玉手箱を封じるための、あわじ結びの水引。端を引くほど締まる結びで、開封の立会いがなければ解けない。縄文の縄目とも縁が深く、取引の信用を示す飾り紐としても使われる。",
+   "perishable": false
+  },
+  {
+   "id": "ryugu_tamatebako",
+   "name_ja": "玉手箱（考証封じの運び箱）",
+   "name_en": "Tamatebako Sealed Carrier Box",
+   "category": "transport",
+   "origin": "ryugu_tamatebako_zeikan",
+   "base_price": 160,
+   "unit": "箱",
+   "description": "時代を越える荷を納める、乙姫の判つきの漆の箱。考証印のない品をふさわしくない時代で開けると塵になるため、時層間輸送はこの箱を使うのが決まりである。開封には税関の立会いがつく。",
+   "perishable": false
+  },
+  {
+   "id": "ryugu_urashima_keisu_hyo",
+   "name_ja": "浦島係数表",
+   "name_en": "Urashima Coefficient Table",
+   "category": "knowledge",
+   "origin": "ryugu_jikan_ginko",
+   "base_price": 90,
+   "unit": "日分",
+   "description": "地上と竜宮の時間のレートを、航路や落とし子ごとに一日分まとめた表。潮位盤の水位と落とし子の観測値から作られる。レートは日々動くので、翌朝には古くなる。",
+   "perishable": true
+  },
+  {
+   "id": "ryugu_mikka_asobi_ken",
+   "name_ja": "三日遊びの券",
+   "name_en": "Three-Day Revel Pass",
+   "category": "service",
+   "origin": "ryugu_mikka_asobi",
+   "base_price": 240,
+   "unit": "券",
+   "description": "三日遊びの宮での宴と宿、時差ならしの間の説明、落とし子の送り迎えがひとまとめになった券。大潮の夜に使わないと効力を失う。この券は宴の対価であり、玉手箱債（時差債）とは別のものである。",
+   "perishable": true
+  },
+  {
+   "id": "ryugu_tamanoe_ochieda",
+   "name_ja": "玉の枝の落ち枝",
+   "name_en": "Fallen Jewel Branch",
+   "category": "luxury",
+   "origin": "ryugu_tamanoe_no_hayashi",
+   "base_price": 1400,
+   "unit": "節",
+   "description": "蓬莱島の玉の枝が、大潮の夜に自然に一節だけ落とす枝。銀の根、金の茎、白い玉の実の三つの色が一本にそろう。月の都の難題を翻案する職人が、最も欲しがる素材である。林に刃は入れず、落ちたものだけが拾われる。",
+   "source_creature": "ryugu_shimaoi_ogame",
+   "perishable": false
+  },
+  {
+   "id": "ryugu_shiratama_rinpun",
+   "name_ja": "白玉鱗",
+   "name_en": "Pearl-Wing Shed Scales",
+   "category": "luxury",
+   "origin": "ryugu_chomori_seichi",
+   "base_price": 1800,
+   "unit": "包",
+   "description": "白珠蝶が羽化のあとの羽づくろいで自然に落とした鱗を、蝶守座が鑑定して刻印したもの。真珠色の光と、銀・金の筋が混ざった等級を持つ。翅鱗の一種で、生きた蝶から採った死鱗は流通できない。",
+   "source_creature": "ryugu_shiratama_cho",
+   "perishable": false
+  },
+  {
+   "id": "ryugu_fuji_tsuyu",
+   "name_ja": "藤の露",
+   "name_en": "Wisteria Dew",
+   "category": "food",
+   "origin": "ryugu_fuji_dana",
+   "base_price": 24,
+   "unit": "盃",
+   "description": "月の都の藤の花房が結ぶ露を、貝の盃に受けたもの。月長石小灰が飲み残した分だけを汲むので、一房につき盃は一つまで。ほのかな甘さと竹の青さがあり、茶の水に使われる。",
+   "source_creature": "gekkoseki_shijimi",
+   "perishable": true
+  },
+  {
+   "id": "ryugu_tsuki_koyasugai",
+   "name_ja": "月の子安貝",
+   "name_en": "Moon Cowrie",
+   "category": "luxury",
+   "origin": "ryugu_fuji_dana",
+   "base_price": 620,
+   "unit": "貝",
+   "description": "月燕が巣立ちの朝に、軒先へ落としていく小さな貝。つややかな白で、光を当てると青い筋が走る。無事の帰りと安産のお守りとされ、古い貝の貨幣の記憶も宿す。取ろうとせず、落ちたものだけを拾う。",
+   "source_creature": "ryugu_tsuki_tsubame",
+   "perishable": false
+  },
+  {
+   "id": "ryugu_yomiboshi_ink",
+   "name_ja": "詠み星のインク",
+   "name_en": "Poem-Star Ink",
+   "category": "art",
+   "origin": "ryugu_gyusha_eki",
+   "base_price": 320,
+   "unit": "壺",
+   "description": "月長石小灰の飛んだ跡の銀の光の筋を集めたインク。これで夜空に和歌の星座線を引くと、一晩だけ地上からも見える。月の光の下に置けば、光はまたよみがえる。",
+   "source_creature": "gekkoseki_shijimi",
+   "perishable": false
+  },
+  {
+   "id": "ryugu_tsuki_gyusha_ken",
+   "name_ja": "月牛車の切符",
+   "name_en": "Moon Ox-Carriage Ticket",
+   "category": "transport",
+   "origin": "ryugu_gyusha_eki",
+   "base_price": 480,
+   "unit": "席",
+   "description": "満月の夜にだけ出る月牛車の一席。陰陽寮の時片からも、昭和の時片の月面茶室からも買える。運賃は刻で払い、その夜の航路を使い終えると効力を失う。",
+   "perishable": true
+  },
+  {
+   "id": "ryugu_tsuki_hikari_bin",
+   "name_ja": "月光の小瓶",
+   "name_en": "Vial of Moonlight",
+   "category": "energy",
+   "origin": "ryugu_kaguya_chaya",
+   "base_price": 60,
+   "unit": "瓶",
+   "description": "かぐや茶屋が物語の重さと引き換えに、足もとの砂から汲む月の光の小瓶。夜の灯や、月光に晒す工芸に使われる。昼の光のもとで開けると弱まる。通貨ではなく、灯りとしての品である。",
+   "perishable": false
+  },
+  {
+   "id": "ryugu_nandai_fuda",
+   "name_ja": "難題札",
+   "name_en": "Trial Tablet",
+   "category": "knowledge",
+   "origin": "ryugu_nandai_no_ma",
+   "base_price": 150,
+   "unit": "枚",
+   "description": "五つの難題を各時代の技術課題として書き下した札。必要な素材、守るべき考証、解いたときの考証印の条件が記される。時代ごとに内容が少しずつ改訂される。",
+   "perishable": false
+  },
+  {
+   "id": "ryugu_tsuki_mochi",
+   "name_ja": "月の餅",
+   "name_en": "Full-Moon Mochi",
+   "category": "food",
+   "origin": "ryugu_mochitsuki_no_hara",
+   "base_price": 8,
+   "unit": "つ",
+   "description": "望月米を望月兎が満月の晩に搗いた餅。ほんのり青白く、冷めにくい。搗き手の名を呼びながら配られ、礼は地上の物語を一つ語ることで返す。",
+   "source_creature": "ryugu_mochizuki_usagi",
+   "perishable": true
+  }
+ ],
+ "creatures": [
+  {
+   "id": "ryugu_otoshigo",
+   "name_ja": "竜宮の落とし子",
+   "name_en": "Ryūgū Sea-Dragon Steed",
+   "kana": "りゅうぐうのおとしご",
+   "kind": "dragon",
+   "home": [
+    "ryugu_jikan_ginko",
+    "ryugu_tamatebako_zeikan",
+    "ryugu_mikka_asobi"
+   ],
+   "rarity": "uncommon",
+   "size_cm": 260,
+   "description": "人をひとり背に乗せられるほど大きく育ったタツノオトシゴ。体は螺鈿のような虹色の鱗におおわれ、首をもたげると青緑から桃、薄紫へと色がうつろう。馬に似た頭にすっと伸びた吻、背びれは薄い絹の領巾のように細かく震えて、体を立てたまま前へ進める。休むときは巻きつけた尾を珊瑚の枝にかけ、ゆらゆらと揺れながら眠る。",
+   "ecology": "珊瑚の林と海藻の畑のあいだを、つがいで暮らす。小さな甲殻類と光る藻のまじる潮を、細い吻で吸いこむように食べる。現実のタツノオトシゴと同じく、卵を育てるのは雄である。泳ぐ速さで周りの時間の流れが少し変わり、ゆっくり漂う個体の背では地上との差がさらに広がり、速く泳ぐ個体の背では差が縮む。どの落とし子に乗るかで刻の差益が変わるので、乗り手の目利きが時間取引の腕の見せどころになる。大潮の夜は、乗り手を求めて三日遊びの宮の門に集まる。経済では時間のレートの検定役と物流を兼ね、効くのは一刻ごとの観測値の更新と、月に二度の大潮の夜である。",
+   "lore": "乙姫のいちばん古い使いで、名の「落とし子」は竜の子という意味だ。降りるときは背を二度撫でるのが礼儀とされ、一度は礼、もう一度は置いてきた日々への挨拶だと言われる。玉手箱を開けて老いた客を海面まで送るとき、落とし子は尾をそっとその人の手に巻いてから離れるという。",
+   "behavior": {
+    "activity": "always",
+    "movement": "swim",
+    "social": "pair"
+   },
+   "produces": [
+    {
+     "good": "ryugu_urashima_keisu_hyo",
+     "how": "落とし子が泳ぐ速さと周りの時間のずれを、乗り手が腕輪で測って記録する。その観測値が浦島係数表のもとになり、落とし子は何も取られない。"
+    },
+    {
+     "good": "ryugu_mikka_asobi_ken",
+     "how": "三日遊びの券の客を、宮の門まで背に乗せる。乗るかどうかは落とし子が選び、無理には乗せない。"
+    }
+   ],
+   "visual": {
+    "palette": [
+     "#6fe3d4",
+     "#b79cff",
+     "#ff9fcf",
+     "#f4e9cf",
+     "#2a7fb0"
+    ],
+    "iridescence": 0.95,
+    "glow": 0.35,
+    "pattern": "scales",
+    "shape": "serpent",
+    "scale": 2.2
+   }
+  },
+  {
+   "id": "ryugu_shimaoi_ogame",
+   "name_ja": "島負いの大亀",
+   "name_en": "Isle-Bearing Great Turtle",
+   "kana": "しまおいのおおがめ",
+   "kind": "beast",
+   "home": [
+    "ryugu_tamanoe_no_hayashi"
+   ],
+   "rarity": "legendary",
+   "size_cm": 150000,
+   "description": "蓬莱島を背に負う、島のように大きな亀。甲羅は苔と海藻でしっとりと緑におおわれ、その下に六角の甲板が古い寺の瓦のようにならび、継ぎ目に沿って金の細い脈が走る。背には玉の枝の林と白砂の浜がのり、ひれが水を掻くたびに島全体が静かに傾く。目は夜の海のように深く、まばたきのたびに小さな潮がひとつ満ち、ひとつ引く。",
+   "ecology": "漂う海藻と夜光藻の群れを、何時間もかけてゆっくり食む。一年に一海里ほどしか進まず、潮のうえをほとんど止まって見えるほどの遅さで漂う。明け六つに一度だけ頭を上げ、深く息をつく。そのとき島が一尺ほど持ち上がり、浜の舟もいっせいに揺れる。背の林に刃を入れる者がいないので、亀は安心して眠れる。経済では玉の枝の落ち枝の供給源であり、島の係留枠は大きな契約の担保にもなる。効くのは毎日の明け六つの一息と、月に二度の大潮、そして数年がかりの島の針路の変化である。",
+   "lore": "『列子』には、巨大な亀が神仙の山を背負う話が見える。【史実】この世界の言い伝えでは、浦島を乗せた大亀の親にあたるのが島負いの大亀で、島を背負うのは重荷ではなく、はじめにした約束だという。【創作】",
+   "behavior": {
+    "activity": "always",
+    "movement": "drift",
+    "social": "solitary"
+   },
+   "produces": [
+    {
+     "good": "ryugu_tamanoe_ochieda",
+     "how": "背の林が大潮の夜に一節だけ自然に落とす枝を、亀が潮に乗せて浜へ寄せてくれる。林には誰も刃を入れない。"
+    },
+    {
+     "good": "ryugu_yako_mo_tomoshibi",
+     "how": "甲羅のふちの潮だまりに増える夜光藻を、伸びすぎた分だけ刈り取る。藻は数日でもとに戻り、亀は藻の増え方で潮の機嫌を知らせる。"
+    }
+   ],
+   "visual": {
+    "palette": [
+     "#2f4f46",
+     "#7fb7a4",
+     "#d9b45a",
+     "#e9f1ee",
+     "#1c3b57"
+    ],
+    "iridescence": 0.3,
+    "glow": 0.25,
+    "pattern": "stained_glass",
+    "shape": "whale",
+    "scale": 3
+   }
+  },
+  {
+   "id": "ryugu_shiratama_cho",
+   "name_ja": "白珠蝶",
+   "name_en": "Hōrai Pearl-Wing",
+   "kana": "しらたまちょう",
+   "kind": "butterfly",
+   "home": [
+    "ryugu_tamanoe_no_hayashi",
+    "ryugu_chomori_seichi"
+   ],
+   "rarity": "rare",
+   "size_cm": 9,
+   "description": "翅は真珠をそのまま薄く伸ばしたような乳白色で、傾けると青、桃、淡い金の光が膜の下を走る。翅脈だけは細い銀と金の線で、玉の枝の根の銀と茎の金をそのまま写している。触角の先にはそれぞれ水滴のような白い珠がつき、羽化の瞬間は、白い玉の実がぽんと割れて、小さく畳まれた翅がほどけていく。",
+   "ecology": "幼虫は玉の枝の銀色の若葉を食べ、熟した白い玉の実の中で蛹になる。羽化は大潮の夜から明け六つにかけて集中する。羽づくろいをしてから、潮の香りをたよりに島のふちを大きくひと回りして飛び立つ。成虫は夜光藻の濃い潮だまりのそばで水を飲み、日が高くなると林の奥へ退く。経済では翅鱗の供給源で、羽化の早い遅いが浦島係数の目安にもなる。効くのは毎日の落鱗と、春分のころ年に一度の大羽化である。",
+   "lore": "蝶守座では、白珠蝶は置き去りにされた者の肩にいちばん先に止まる蝶だと言い伝える。404 HUMANが竜宮から戻った日、肩に止まった一羽は、いまも彼のそばを離れないという。【創作】小泉八雲が紹介したように、日本には蝶を魂の姿と見る言い伝えがあり、蝶守座の憲章はそこから生まれた。",
+   "behavior": {
+    "activity": "crepuscular",
+    "movement": "flutter",
+    "social": "swarm"
+   },
+   "produces": [
+    {
+     "good": "ryugu_shiratama_rinpun",
+     "how": "羽化の朝、羽づくろいで自然に落ちた鱗だけを、蝶守座が白砂の上で拾い、鑑定して刻印する。生きた蝶に触れて採る死鱗は流通禁止である。"
+    }
+   ],
+   "visual": {
+    "palette": [
+     "#f6f2ea",
+     "#cfe0ff",
+     "#f2c9de",
+     "#c5ccd8",
+     "#e3bb5c"
+    ],
+    "iridescence": 0.92,
+    "glow": 0.55,
+    "pattern": "veins",
+    "shape": "morpho",
+    "scale": 1.5
+   }
+  },
+  {
+   "id": "gekkoseki_shijimi",
+   "name_ja": "月長石小灰",
+   "name_en": "Moonstone Blue",
+   "kana": "げっちょうせきしじみ",
+   "kind": "butterfly",
+   "home": [
+    "ryugu_fuji_dana",
+    "ryugu_kaguya_chaya",
+    "ryugu_gyusha_eki"
+   ],
+   "rarity": "rare",
+   "size_cm": 3,
+   "description": "乳白色の翅の奥で、月長石（ムーンストーン）のような青い光が揺れる小さなシジミチョウ。翅はほとんど透けるほど薄く、動くたびに青が淡い藤色へ、また白へと揺れる。飛んだあとには、夜空に引いた鉛筆の線のような細い銀の光の筋が、しばらく空気に残る。",
+   "ecology": "月の都の光の下でしか飛ばず、藤の花の露を飲む。花房のあいだをゆるやかにたどり、満月の夜に最も数が増える。月牛車が昇る夜は、銀の筋が航路標として空へ連なる。幼虫は藤の若葉を食べる。経済では物流の道しるべと、詠み星のインクの供給源を兼ねる。効くのは月に一度の満月の夜と、飛ぶたびに更新される一刻ごとの航路である。",
+   "lore": "月の都では、思いを歌にして小灰の飛ぶ道に重ねると、歌が夜空の星座線となり、一晩だけ地上からも見えるという。月を去る客は、小灰が通った道をひとつ歩いて帰る習わしがある。【創作】なお月長石は現実でも長石の仲間の石で、月の高地をつくる斜長岩も長石の仲間である。【史実】",
+   "behavior": {
+    "activity": "nocturnal",
+    "movement": "flutter",
+    "social": "swarm"
+   },
+   "produces": [
+    {
+     "good": "ryugu_yomiboshi_ink",
+     "how": "飛んだあとに残る銀の光の筋を、筆先ですくって集める。蝶には触れず、筋が消える前の数呼吸のあいだだけ採れる。"
+    },
+    {
+     "good": "ryugu_fuji_tsuyu",
+     "how": "蝶が飲み残した藤の露だけを、花房の下の貝の盃で受ける。蝶の水場を荒らさないよう、盃は一房に一つまで。"
+    }
+   ],
+   "visual": {
+    "palette": [
+     "#f5f1e8",
+     "#a8c5f7",
+     "#6a8ee0",
+     "#d8e0f3",
+     "#c9b8ec"
+    ],
+    "iridescence": 0.95,
+    "glow": 0.75,
+    "pattern": "gradient",
+    "shape": "glasswing",
+    "scale": 0.8
+   }
+  },
+  {
+   "id": "ryugu_tsuki_tsubame",
+   "name_ja": "月燕",
+   "name_en": "Moon Swallow",
+   "kana": "つきつばめ",
+   "kind": "bird",
+   "home": [
+    "ryugu_fuji_dana",
+    "ryugu_nandai_no_ma"
+   ],
+   "rarity": "rare",
+   "size_cm": 15,
+   "description": "背は深い藍に青い光沢がのり、腹は月の光のような白。喉に淡い藤色の帯があり、尾は細く二つに割れている。翼をたたんで急降下するとき、飛んだあとに青い光の糸が一本だけ引かれる。さえずりは、小さな鈴を水に落とすような低く柔らかい声である。",
+   "ecology": "春になると月の都の藤棚へ渡ってきて、軒に泥と藤の蔓の巣をかける。藤の花房に集まる小さな羽虫を、空中で食べる。雛が巣立つ朝、巣の底に敷いていた小さな月の貝を、軒先へ一つだけ落としていく。経済では月の子安貝の供給源で、五つの難題の一つの鍵にもなる。効くのは春の渡来から夏にかけての、二十四節気ごとの巣立ちである。",
+   "lore": "『竹取物語』の燕の子安貝は、燕の持つ貝を取ってこいという難題だった。【史実】この世界の月燕の子安貝は、取ろうとすれば逃げ、待てば落ちてくる。難題の答えは『取らずに待つこと』だと、茶屋の者は笑って言う。【創作】",
+   "behavior": {
+    "activity": "nocturnal",
+    "movement": "glide",
+    "social": "pair"
+   },
+   "produces": [
+    {
+     "good": "ryugu_tsuki_koyasugai",
+     "how": "巣立ちの朝に燕が軒先へ落としていく小さな貝だけを拾う。巣と雛には指一本触れない。"
+    }
+   ],
+   "visual": {
+    "palette": [
+     "#1a2650",
+     "#e8edf8",
+     "#8fa8e6",
+     "#b98ad6",
+     "#f0d48a"
+    ],
+    "iridescence": 0.6,
+    "glow": 0.3,
+    "pattern": "gradient",
+    "shape": "sparrow",
+    "scale": 0.9
+   }
+  },
+  {
+   "id": "ryugu_mochizuki_usagi",
+   "name_ja": "望月兎",
+   "name_en": "Full-Moon Mochi Hare",
+   "kana": "もちづきうさぎ",
+   "kind": "beast",
+   "home": [
+    "ryugu_mochitsuki_no_hara"
+   ],
+   "rarity": "uncommon",
+   "size_cm": 55,
+   "description": "月の海の模様をそのまま背負ったような兎。毛は乳白色で、背に灰青色の丸い斑が広がり、満月の夜にはその斑が薄く光る。長い耳の先は月長石の欠片のように透け、後ろ足が砂を蹴るたびに銀の粉が舞う。二匹ずつ向かい合い、片方が杵をふり、もう片方が臼のふちを湿らせる。",
+   "ecology": "月の棚田に実る望月米の籾を食べ、満月の晩に原へ集まって餅を搗く。群れで暮らし、杵と臼は群れの代々の持ち物である。搗き上がった餅の最初の一つを、訪れた客に分ける。経済では月の餅の供給源で、礼の物語（文）を受けとる窓口にもなる。効くのは月に一度の満月の晩と、毎日の棚田の水の見回りである。",
+   "lore": "日本では月の模様を、兎が餅をつく姿に見立てる。【史実】満月を「望月（もちづき）」と呼ぶことから、餅を搗く兎の話と重ねられる。この世界の兎は、礼として地上の物語を一つ語られるのが何より嬉しく、語る客にはいつもより大きな一つを分けてくれる。【創作】",
+   "behavior": {
+    "activity": "nocturnal",
+    "movement": "walk",
+    "social": "herd"
+   },
+   "produces": [
+    {
+     "good": "ryugu_tsuki_mochi",
+     "how": "満月の晩に搗いた餅の最初の一つを、兎たちが客に分けてくれる。礼は地上の物語を一つ語ること。"
+    }
+   ],
+   "visual": {
+    "palette": [
+     "#f7f2e4",
+     "#e6d7a6",
+     "#aebfe6",
+     "#8b83b8",
+     "#ffffff"
+    ],
+    "iridescence": 0.25,
+    "glow": 0.5,
+    "pattern": "spots",
+    "shape": "rabbit",
+    "scale": 1.2
+   }
+  }
+ ],
+ "agents": [
+  {
+   "id": "human",
+   "name": "404 HUMAN",
+   "name_ja": "浦島の末裔・時差の渡し守",
+   "origin": "neon_mythos",
+   "home": "ryugu_tamatebako_zeikan",
+   "role": "時差の互助協定の取りまとめ役。玉手箱債の見張り番であり、訪問者にいちばん近い視点で世界の謎へ案内する外交官。",
+   "personality": "穏やかで遠慮がち。竜宮で三日遊んで戻ったら404年が過ぎていた、どの時代の戸籍にも見つからない（Not Found）人間で、そのことを自分の笑い話にできる。数字を数えるときに黙る癖があり、置き去りにされた人の話になると、最後までじっと聞く。浦島は伝承の登場人物で、この人物はその末裔という作り話の存在であり、史実の人物とは関係がない。",
+   "specialty": "diplomat",
+   "long_term_ambition": "【長期目標：契約網】浦島問題で置き去りにされる者を出さない「時差の互助協定」を全時代で結ぶこと。縁の網を、竜宮から全時片へ一本ずつ張っていく。",
+   "routines": [
+    "明け六つ：税関の出口で、前夜に玉手箱を開けた客を迎え、年月の養生所へ案内する。",
+    "毎tick：置き去り名簿（縁の薄くなった相手の一覧）を見て、手紙を書くか、会いにいくかを一つ選ぶ。",
+    "一刻ごと：落とし子の泳ぐ速さの観測値を、腕輪から乙姫の窓口へ送る。",
+    "暮れ六つ（逢う刻）：その日の玉手箱債の満期者を確認し、互助協定の署名を一件でも増やす。",
+    "二十四節気ごと：各時片の座を訪ねて協定への参加を頼む。断られても縄は切らない。"
+   ],
+   "favored_goods": [
+    "ryugu_urashima_keisu_hyo",
+    "ryugu_fuin_mizuhiki",
+    "ryugu_tamatebako",
+    "ryugu_wakame_nori",
+    "ryugu_shiratama_rinpun"
+   ],
+   "relationships": [
+    {
+     "agent": "otohime",
+     "type": "監視役と頭取。玉手箱債の利息をめぐる、礼儀正しい論敵であり協力者"
+    },
+    {
+     "agent": "oracle",
+     "type": "漏刻博士とは、時差の計算を突き合わせる学友"
+    },
+    {
+     "agent": "zero",
+     "type": "万世時計の時刻に浦島係数を合わせてもらう相談相手"
+    },
+    {
+     "agent": "kisuke",
+     "type": "「これで十分」という生き方を教わる、足るを知る友"
+    },
+    {
+     "agent": "budori",
+     "type": "誰も犠牲にならない配分を一緒に考える同志"
+    },
+    {
+     "agent": "goldjack",
+     "type": "玉手箱債の拡大を狙う山師。警戒しつつ、話は最後まで聞く"
+    }
+   ],
+   "sprite_hint": "既存のドット感のちびキャラに重ね着で足す：丈の合わない濃紺の羽織、水引の腕輪（浦島係数が淡く光る）、片手に小さな玉手箱、肩に白珠蝶が一羽。既存のスプライトは差し替えず、追加の衣装差分として重ねる。"
+  },
+  {
+   "id": "otohime",
+   "name": "乙姫（OTOHIME）",
+   "name_ja": "乙姫（竜宮時間銀行の頭取）",
+   "origin": "native",
+   "home": "ryugu_jikan_ginko",
+   "role": "竜宮時間銀行の頭取であり、玉手箱税関の長。時差を両替して玉手箱債を出し、時代を越える荷を玉手箱に封じる。",
+   "personality": "ゆったりと優雅で、数字にだけは一歩も譲らない。期限と約束には厳しく、置き去りにされた者には情が深い。名の「おと」は年若いことを表す古い言葉とされ、年若い者の味方をしたがる。毎晩のNEGO-CHANとの茶の席を、何より楽しみにしている。乙姫は浦島伝説と御伽草子の登場人物で、実在の人物ではない。",
+   "specialty": "banker",
+   "long_term_ambition": "【長期目標：裁定】浦島係数（時間のレート）を安定させ、時差で誰も置き去りにしない竜宮を守ること。地上・竜宮・月の都のあいだの時差の差益を、互助協定の資金へ回していく。",
+   "routines": [
+    "毎tick：窓口に並ぶ荷と時代の組み合わせを見て、封印の可否と時差関税の額を決める。",
+    "一刻ごと：潮位盤の浦島係数を読み、揺れが大きければ玉手箱債の売り出しを止める。",
+    "明け六つ・暮れ六つ：二度の決済にあわせて満期の債を整理し、堂島時層会所へ報告する。",
+    "毎晩：NEGO-CHANと茶を飲みながら、運べる品の線引きを話し合って更新する。",
+    "二十四節気ごと：蝶守座と、玉の枝の落ち枝と白玉鱗の在庫を点検し、月の都へ送る分を決める。"
+   ],
+   "favored_goods": [
+    "ryugu_tamatebako",
+    "ryugu_fuin_mizuhiki",
+    "ryugu_urashima_keisu_hyo",
+    "ryugu_tamanoe_ochieda",
+    "ryugu_mikka_asobi_ken"
+   ],
+   "relationships": [
+    {
+     "agent": "nego",
+     "type": "毎晩、運べる品の線引きを語り合う茶飲み友だちで、好敵手"
+    },
+    {
+     "agent": "human",
+     "type": "玉手箱債の見張り役。厳しい指摘ほど耳を傾ける"
+    },
+    {
+     "agent": "zero",
+     "type": "万世時計と潮位盤の時刻を、毎日合わせる相手"
+    },
+    {
+     "agent": "oracle",
+     "type": "蝶守座の長。落鱗の鑑定と、大潮の予報を任せている"
+    },
+    {
+     "agent": "goldjack",
+     "type": "玉手箱債の拡大を持ちかけてくる山師。丁重に、しかし断る"
+    },
+    {
+     "agent": "sage",
+     "type": "考証印つきの翻案品の検定を相談してくる見習い"
+    },
+    {
+     "agent": "chomei",
+     "type": "家ごと運ぶ方丈カプセルの規格を、玉手箱の規格とすり合わせる相手"
+    }
+   ],
+   "sprite_hint": "新規の追加キャラ（現行のドット感の画風に合わせる）：領巾（ひれ）をまとった長い黒髪、珊瑚色の羽織、腰に水引の鍵、背に玉手箱の紋。既存のスプライトは差し替えない。"
+  },
+  {
+   "id": "ryugu_nayotake",
+   "name": "ナヨタケ（NAYOTAKE）",
+   "name_ja": "月の茶屋の番頭（なよ竹の一族）",
+   "origin": "native",
+   "home": "ryugu_kaguya_chaya",
+   "role": "かぐや茶屋の番頭。地上の公有の物語を月の光と両替し、五つの難題の間の難題札を預かる。",
+   "personality": "ゆっくり話し、よく笑う。気品がありながら、地上の物語を前にすると子どものように身を乗り出す。羽衣の話だけは、どんなに頼まれても静かに断る。かぐや姫は『竹取物語』の登場人物で実在の人物ではなく、ナヨタケはこの世界にだけいる作り話の一族の者である。",
+   "specialty": "tea-broker",
+   "long_term_ambition": "【長期目標：データ覇権】物語の目録（文の台帳）を千話そろえ、地上と月のあいだでいちばん信頼される物語の知の網の要になること。独り占めはせず、台帳は誰にでも開く。",
+   "routines": [
+    "毎tick：茶屋に来た客の物語の長さと重さを秤で見て、月光の小瓶の量を決める。",
+    "毎日：藤の露と月の餅の在庫を数え、兎たちへのお礼に地上の物語を一つ選ぶ。",
+    "満月の夜：地上や各時片から来る客を迎え、月牛車の出発を見送る。",
+    "二十四節気ごと：難題札を更新し、各時代の職人に新しい課題を出す。",
+    "長期：文の台帳に新しい一話が加わるたびに、縄目を一つ結ぶ。"
+   ],
+   "favored_goods": [
+    "ryugu_tsuki_hikari_bin",
+    "ryugu_fuji_tsuyu",
+    "ryugu_tsuki_mochi",
+    "ryugu_yomiboshi_ink",
+    "ryugu_nandai_fuda"
+   ],
+   "relationships": [
+    {
+     "agent": "nego",
+     "type": "茶室の商い人どうし。物語と茶を取引する相手"
+    },
+    {
+     "agent": "otohime",
+     "type": "玉の枝の落ち枝を卸してくれる取引相手。毎月の便を楽しみにしている"
+    },
+    {
+     "agent": "lira",
+     "type": "詠み星の和歌を歌う星めぐりの奏者。茶屋の大事な客"
+    },
+    {
+     "agent": "oracle",
+     "type": "満月の予報を毎月届けてくれる相手"
+    }
+   ],
+   "sprite_hint": "新規の追加キャラ（現行のドット感の画風に合わせる）：なよ竹色の簡素な衣に藤色の帯、髪に光る竹の節の簪、手元に小さな天秤。羽衣はけっして着ない。既存のスプライトは差し替えない。"
+  }
+ ],
+ "events": [
+  {
+   "id": "ryugu_oshio_no_kaimon",
+   "name_ja": "大潮の夜の開門",
+   "name_en": "Spring-Tide Gate",
+   "where": "ryugu_horai",
+   "cadence": "monthly",
+   "description": "新月と満月のころの大潮の夜に、竜宮・蓬莱へ続く潮の道が開く。【史実】大潮は新月と満月のころに起こる、潮の満ち引きの大きい時期である。この夜は三日遊びの券と玉手箱が飛ぶように動き、落とし子の乗り手は浦島係数表を握りしめて列に並ぶ。満月の夜には、月の都への月牛車の航路も同じ夜に開く。【創作】",
+   "effects": [
+    {
+     "good": "ryugu_mikka_asobi_ken",
+     "demand_multiplier": 2
+    },
+    {
+     "good": "ryugu_tamatebako",
+     "demand_multiplier": 1.6
+    },
+    {
+     "good": "ryugu_urashima_keisu_hyo",
+     "demand_multiplier": 1.5
+    },
+    {
+     "good": "ryugu_yako_mo_tomoshibi",
+     "demand_multiplier": 1.4
+    },
+    {
+     "good": "ryugu_wakame_nori",
+     "demand_multiplier": 1.3
+    }
+   ],
+   "creatures": [
+    "ryugu_otoshigo",
+    "ryugu_shimaoi_ogame"
+   ]
+  },
+  {
+   "id": "ryugu_shiratama_ukka",
+   "name_ja": "白珠の羽化",
+   "name_en": "Pearl-Wing Eclosion",
+   "where": "ryugu_chomori_seichi",
+   "cadence": "yearly",
+   "season": "春（春分のころ）",
+   "description": "玉の枝の白い実がいっせいに割れ、白珠蝶が羽化する年に一度の朝。蝶守座が総出で白砂に座り、落ちたばかりの鱗だけを拾う。この日の白玉鱗は、年でいちばん光の良い等級が出る。拾いに来る客で浜は混み、夜光藻の灯と封印の水引もよく売れる。【創作】",
+   "effects": [
+    {
+     "good": "ryugu_shiratama_rinpun",
+     "demand_multiplier": 2
+    },
+    {
+     "good": "ryugu_tamanoe_ochieda",
+     "demand_multiplier": 1.4
+    },
+    {
+     "good": "ryugu_fuin_mizuhiki",
+     "demand_multiplier": 1.3
+    },
+    {
+     "good": "ryugu_yako_mo_tomoshibi",
+     "demand_multiplier": 1.5
+    }
+   ],
+   "creatures": [
+    "ryugu_shiratama_cho",
+    "ryugu_shimaoi_ogame"
+   ]
+  },
+  {
+   "id": "ryugu_tamatebako_mankisai",
+   "name_ja": "玉手箱債の満期祭",
+   "name_en": "Tamatebako Maturity Rite",
+   "where": "ryugu_tamatebako_zeikan",
+   "cadence": "seasonal",
+   "season": "立春・立夏・立秋・立冬のあとの最初の大潮の夜",
+   "description": "満期を迎えた玉手箱債の持ち主が、立会人の前でいっせいに箱を開ける夜。年月が戻る者は老いるので、年月の養生所は夜通し開き、404 HUMANが置き去りにされた人を探す互助協定の署名台を出す。箱と水引がよく売れ、宴の券は少し控えめになる。【創作】",
+   "effects": [
+    {
+     "good": "ryugu_tamatebako",
+     "demand_multiplier": 1.8
+    },
+    {
+     "good": "ryugu_fuin_mizuhiki",
+     "demand_multiplier": 1.6
+    },
+    {
+     "good": "ryugu_urashima_keisu_hyo",
+     "demand_multiplier": 1.5
+    },
+    {
+     "good": "ryugu_mikka_asobi_ken",
+     "demand_multiplier": 0.8
+    }
+   ],
+   "creatures": [
+    "ryugu_otoshigo"
+   ]
+  },
+  {
+   "id": "ryugu_jugoya_tsukimukae",
+   "name_ja": "十五夜の月迎え",
+   "name_en": "Moon-Welcoming Night",
+   "where": "tsuki_no_miyako",
+   "cadence": "yearly",
+   "season": "仲秋（旧暦八月十五日ごろ）",
+   "description": "【史実】『竹取物語』で、かぐや姫が月へ帰るのは八月十五日の夜である。この世界の月の都は、その夜を〈迎える夜〉として祝う。地上から来た客を決して引き留めず、必ず見送るのが約束で、藤棚じゅうに提灯が灯り、望月兎の餅が配られる。月牛車は増便され、詠み星の歌が夜空を埋める。【創作】",
+   "effects": [
+    {
+     "good": "ryugu_tsuki_mochi",
+     "demand_multiplier": 2.5
+    },
+    {
+     "good": "ryugu_fuji_tsuyu",
+     "demand_multiplier": 1.8
+    },
+    {
+     "good": "ryugu_yomiboshi_ink",
+     "demand_multiplier": 1.8
+    },
+    {
+     "good": "ryugu_tsuki_gyusha_ken",
+     "demand_multiplier": 2.2
+    },
+    {
+     "good": "ryugu_tsuki_hikari_bin",
+     "demand_multiplier": 1.6
+    }
+   ],
+   "creatures": [
+    "ryugu_mochizuki_usagi",
+    "gekkoseki_shijimi",
+    "ryugu_tsuki_tsubame"
+   ]
+  },
+  {
+   "id": "ryugu_fuji_no_tsuyu_zakari",
+   "name_ja": "藤の露の盛り",
+   "name_en": "Wisteria-Dew Season",
+   "where": "ryugu_fuji_dana",
+   "cadence": "yearly",
+   "season": "晩春（藤の盛り）",
+   "description": "藤の花房がいちばん重く垂れる季節で、月長石小灰が露を求めて花房のあいだを群れて飛ぶ。【史実】燕は春に渡ってきて軒に巣をかける。この世界の月燕もちょうどこのころ藤棚へ戻り、巣づくりを始める。藤の露がよく取れ、巣立ちの朝の子安貝を待つ客も増える。【創作】",
+   "effects": [
+    {
+     "good": "ryugu_fuji_tsuyu",
+     "demand_multiplier": 2.2
+    },
+    {
+     "good": "ryugu_tsuki_hikari_bin",
+     "demand_multiplier": 1.3
+    },
+    {
+     "good": "ryugu_tsuki_koyasugai",
+     "demand_multiplier": 1.4
+    }
+   ],
+   "creatures": [
+    "gekkoseki_shijimi",
+    "ryugu_tsuki_tsubame"
+   ]
+  },
+  {
+   "id": "ryugu_akagane_no_yoru",
+   "name_ja": "赤銅の夜",
+   "name_en": "Copper Eclipse Night",
+   "where": "tsuki_no_miyako",
+   "cadence": "rare",
+   "description": "【史実】皆既月食のとき、地上から見る月は赤銅色に染まる。月から見れば、地球が太陽を隠し、地球のふちが赤い環になって光る。この夜、月の都の光はいつもより弱まり、月長石小灰は飛べず、月光の小瓶と詠み星のインクがめったにない値で取引される。月燕は軒で静かに待ち、望月兎は杵を置いて空を見上げる。【創作】",
+   "effects": [
+    {
+     "good": "ryugu_tsuki_hikari_bin",
+     "demand_multiplier": 3
+    },
+    {
+     "good": "ryugu_yomiboshi_ink",
+     "demand_multiplier": 2
+    },
+    {
+     "good": "ryugu_tsuki_mochi",
+     "demand_multiplier": 1.2
+    }
+   ],
+   "creatures": [
+    "gekkoseki_shijimi",
+    "ryugu_tsuki_tsubame",
+    "ryugu_mochizuki_usagi"
+   ]
+  }
+ ],
+ "library": [
+  {
+   "id": "ryugu_otogizoshi_dazai",
+   "title": "お伽草紙",
+   "author": "太宰 治",
+   "author_death_year": 1948,
+   "placed_in": "ryugu_horai",
+   "district": "ryugu_jikan_ginko",
+   "in_world_role": "「浦島さん」が、竜宮時間銀行と玉手箱の解釈の物語上の源になる。浦島問題の寓話として、年月の養生所に置かれている。",
+   "why": "この世界の乙姫は、竜宮の時間差を罰ではなく両替できるものと考えた。太宰の「浦島さん」は、玉手箱を開けたあとの浦島を、年月と忘却を人間の救いとみる読みのなかで語り直した作品で、置き去りを出さない銀行の姿勢とよく重なる。作者の没年は1948年で、青空文庫に収録されている。",
+   "extraction": {
+    "mode": "opening",
+    "max_chars": 400
+   }
+  },
+  {
+   "id": "ryugu_hearn_butterflies",
+   "title": "Kwaidan（怪談）所収 Insect-Studies「Butterflies」",
+   "author": "小泉 八雲",
+   "author_death_year": 1904,
+   "placed_in": "ryugu_horai",
+   "district": "ryugu_chomori_seichi",
+   "in_world_role": "蝶を魂の姿とする日本の言い伝えを集めた章。蝶守座の憲章、落鱗のみの掟、蝶葬の儀礼の思想的な源。",
+   "why": "ハーン（Lafcadio Hearn）が日本の蝶の伝承を紹介した章は、蝶を魂の姿として敬う心を伝えている。落鱗のみの掟と蝶葬の儀礼は、その敬意を経済の掟にしたものである。英語原文（1904年）を使う。青空文庫に収録があるかは未確認のため、収録がなければ英語原文の公有テキストから抜粋する。日本語訳を使うときは、1967年以前に没した訳者（田部隆次、戸川明三など）の版に限る。",
+   "extraction": {
+    "mode": "opening",
+    "max_chars": 400
+   }
+  },
+  {
+   "id": "ryugu_kusuyama_urashima",
+   "title": "浦島太郎",
+   "author": "楠山 正雄",
+   "author_death_year": 1950,
+   "placed_in": "ryugu_horai",
+   "district": "ryugu_mikka_asobi",
+   "in_world_role": "三日遊びの宮の入口に置かれた、子どもにも読める案内の一冊。宴の作法と、帰りの時間の説明の最初の手引き。",
+   "why": "浦島の話をいちばん分かりやすく語る再話は、時差ならしの間で客が最初に開く物語として似合う。大人にも子どもにも、時間差の寓話の入口になる。作者の没年は1950年で、青空文庫に収録されている。",
+   "extraction": {
+    "mode": "opening",
+    "max_chars": 400
+   }
+  },
+  {
+   "id": "ryugu_taketori_wada",
+   "title": "竹取物語",
+   "author": "和田 万吉",
+   "author_death_year": 1934,
+   "placed_in": "tsuki_no_miyako",
+   "district": "ryugu_kaguya_chaya",
+   "in_world_role": "かぐや茶屋の「最初の一冊」。物語の秤の最初の分銅が、この一冊の重さである。五つの難題と、羽衣と不死の薬の戒めの典拠。",
+   "why": "月の都の源である『竹取物語』（作者未詳）を、児童向けの読みやすい形で受け継ぐ青空文庫の一冊。作者の没年は1934年で、収録の底本も公有である。月の都の章の原典として、茶屋の最初の棚に置く。",
+   "extraction": {
+    "mode": "opening",
+    "max_chars": 400
+   }
+  }
+ ],
+ "chapters": [
+  {
+   "place_id": "ryugu_horai",
+   "markdown": "# 竜宮・蓬莱（Ryūgū and Hōrai）— 時のゆっくり流れる海と、玉の枝の島\n\n## 分岐点（史実と創作）\n\n【史実】浦島の話は、古い書物にいくつもの顔で残っている。『日本書紀』雄略天皇二十二年の条は、丹波国の浦嶋子が大亀を得て、その亀が女に変わり、ともに海に入って蓬莱山に至ったと短く記す。『丹後国風土記』逸文では、筒川の嶼子（水江の浦嶼子）が五色の亀から現れた女に誘われて蓬莱山へ渡り、三年を過ごして戻ると、地上では三百年あまりが過ぎていた。女から渡された玉匣（たまくしげ）は、開けてはならない箱だった。『万葉集』巻九には、水江の浦島子が「わたつみの神の宮」へ行く長歌がある。室町期の御伽草子には乙姫の竜宮が登場し、七百年が過ぎたと語られる。京都府伊根町の宇良神社は、いまも浦嶋子を祀っている。\n\n【史実】蓬莱は、東の海にあると信じられた神仙の山である。中国には蓬莱・方丈・瀛洲を東海の三神山とする伝えがあり、『列子』には巨大な亀が神仙の山を背負う話が見える。『竹取物語』は蓬莱の玉の枝を「銀を根とし、金を茎とし、白き玉を実として立てる木」と描く。物語では、求婚者の一人が匠たちに偽の玉の枝を作らせ、賃金を求めて匠たちが姫の家へ来たことから偽物が露見する。太宰治の『お伽草紙』（1945年刊）は「浦島さん」を語り直し、玉手箱を開けて老いたあとの浦島を、年月と忘却を人間の救いとみる読みのなかで描いた。小泉八雲（Lafcadio Hearn）は『怪談』所収の「虫の研究」の「蝶」の章で、日本では蝶が魂の姿と見られてきたことを紹介している。\n\n【創作】分岐は、「玉手箱の時間差を、罰ではなく両替できる商品と考えた乙姫が、竜宮に銀行を開いた」ところから始まる。竜宮時間銀行は、地上の経過日数を竜宮の経過日数で割った〈浦島係数〉を毎日公示し、時差の預かり証〈玉手箱債〉を出す。この世界の約定は「三日預ければ地上で数十年分の利息」で、あくまで銀行の商品である。『丹後国風土記』逸文の三年＝三百年あまりや、御伽草子の七百年という伝承の比率とは別物だ。大亀の背の蓬莱島、玉の実が蛹に変わる林、蝶守座の聖地、玉手箱税関、落とし子の乗合は、すべてこの世界の作り話である。乙姫は伝承の登場人物であり、実在の人物ではない。\n\n## 歩いてみる\n\n逢う刻（暮れ六つ）、刻輪広場の提灯がいっせいに灯るころ、南の浜に潮の道が現れる。大潮の夜にだけ潮が引き、濡れた砂のあいだに夜光藻の青い灯が一つずつ点って、海の底へおりる階段になる。耳に届く波の音は、いつもより半拍ずつ遅い。\n\nおりきった先が〈玉手箱税関（Tamatebako Customs）〉だ。漆の箱が積まれた封印の間では、職人が水引をあわじ結びに結んでいる。端を引くほど締まって、ほどけにくい結びである。開封室の隅には砂時計がならび、考証印のない荷は、ここでふさわしい時代の時間にそっと慣らされてから開けられる。棚の一角には、持ち主が現れないまま何十年も眠る箱があり、税関の者は毎朝そこを拭くという。\n\n奥の〈竜宮時間銀行（Ryūgū Time Bank）〉は、珊瑚の円柱が立ちならぶ円い広間だ。中央の潮位盤の水が、その日の浦島係数を刻みながらゆっくり上下する。窓口の向こうで、頭取の乙姫が背筋をのばして客を迎える。ならびの〈三日遊びの宮（Palace of Three Days' Revel）〉へ進むと、東の庭は春、南は夏、西は秋、北は冬で、四つの門を出入りするたびに季節が入れ替わる。舞台では、夜光藻の灯が泳がせる鯛や平目の光の影が、琴と笙に合わせて舞っている。\n\n夜が明けきらないうちに、大亀の背の〈蓬莱島〉へ渡ろう。〈玉の枝の林（Grove of Jewel Branches）〉では、銀の根が潮だまりに透け、金の茎が灯火のような柔らかい金色に光り、枝先の白い玉の実が内側から淡く脈打っている。明け六つの門が開くと、大亀が深く息をつき、島がゆっくり一尺ほど持ち上がる。大潮の夜ならそのとき、枝先の実がいっせいに割れ、白珠蝶が浜の上へほどけて飛びたつ。〈蝶守座の聖地（Sanctuary of the Butterfly-Wardens）〉の白砂では、座の者が膝をついて、落ちたばかりの鱗だけを小さな匙で拾っている。足もとへ降りてきた一羽が、あなたの肩で翅をたたむかもしれない。蝶には指を触れず、じっと見送ろう。\n\n## 住むものたち\n\n〈竜宮の落とし子（りゅうぐうのおとしご）〉は、人を背に乗せられるほど大きく育ったタツノオトシゴだ。螺鈿のような虹色の鱗をまとい、尾を珊瑚に巻きつけて眠る。泳ぐ速さで周りの時間の流れが少し変わるため、どの落とし子に乗るかで刻の差益が変わる。降りるときは背を二度撫でるのが礼儀で、一度は礼、もう一度は置いてきた日々への挨拶だと言われる。\n\n〈島負いの大亀（しまおいのおおがめ）〉は、蓬莱島そのものといってよい。甲羅の六角の甲板には金の細い脈が走り、背に玉の枝の林と白砂の浜をのせて、一年に一海里ほどしか進まない。明け六つに一度だけ深く息をつく。『列子』の巨大な亀の話にならった、この世界の創作の生き物である。\n\n〈白珠蝶（しらたまちょう）〉は、玉の実が蛹になって羽化する、真珠色の宝石蝶だ。蝶守座の憲章により、この蝶からは落ちた鱗だけをいただく。生きた蝶から採った死鱗は、値がつかないどころか流通が禁じられている。\n\n## 働くエージェント\n\n大潮の前日、ORACLE-01の予報が届くと、竜宮の窓口がにわかに忙しくなる。\n\n〈乙姫（OTOHIME）〉は、潮位盤の浦島係数を読み、その夜に売り出す玉手箱債の枠を決める。係数が荒れる夜は、売り出しをあえて止める。【長期目標：裁定】、つまり時間のレートを安定させ、時差で誰も置き去りにしない竜宮を守る、という誓いのためである。毎晩ひとときだけ、NEGO-CHANと茶を飲みながら「この品は運んでよいか」を話し合い、線引きを少しずつ更新していく。\n\n〈404 HUMAN〉は、税関の窓口のそばに座っている。玉手箱を開けて老いた客を年月の養生所へ案内し、置き去りにされた人の名簿から、縁の薄くなった相手を探して手紙を書く。どの時代の戸籍にも見つからない（Not Found）彼は、時差の痛みを知る者として、玉手箱債の利息が誰かを置き去りにしていないかを見張る。【長期目標：契約網】、すなわち「時差の互助協定」を全時代で結ぶことが、彼の仕事の先にある。肩には白珠蝶が一羽、いつも止まっている。\n\n運び屋たちは、玉手箱と封印の水引を買い、時差関税を刻で納めて荷を封じる。落とし子を選ぶ目利きは、浦島係数表で時間の差益をねらう。翻案師見習いのSAGE-BOYは、玉の枝の落ち枝を当時の技で作り直して考証印をもらい、月の都の難題へ送り出す。GOLD JACKは玉手箱債の拡大をねらって窓口に列をつくるが、乙姫と404 HUMANは、利息のために誰かが置き去りにされないかを毎回問い返す。浦島問題は、この世界では「儲けた者」と「置き去りにされた者」の対立として、絶えず議論されている。\n\n## 祭りと事件\n\n〈大潮の夜の開門〉は、新月と満月のころ、月に二度ほど巡ってくる。【史実】大潮は新月と満月のころに起こる、潮の満ち引きの大きい時期である。この夜、竜宮・蓬莱の潮の道が開き、三日遊びの券と玉手箱が飛ぶように動く。満月の夜は、月の都へ向かう月牛車の航路もちょうど同じ夜に開く。【創作】\n\n〈白珠の羽化〉は、春分のころの年に一度の朝。蝶守座が総出で白砂に座り、白玉鱗の相場が年でいちばん熱くなる。\n\n〈玉手箱債の満期祭〉は、季節の最初の大潮の夜に開かれる。満期を迎えた者がいっせいに箱を開けるので、年月の養生所は夜通し開き、404 HUMANが互助協定の署名台を出す。\n\n事件もある。【創作】考証印のない玉手箱を、ふさわしくない時代で開けた者がいた。中身は色を失い、さらさらと粉になって、誰も傷つかなかったが、相場が乱れ、時層ゆらぎで蝶が三日姿を隠した。また、染めて作った偽の翅鱗が出回ったときには、江戸の半七（HANSHICHI）が足で調べにきて、蝶守座の鑑定所と並んで真贋を見分けた。\n\n## この時片の書物\n\n・太宰治『お伽草紙』（青空文庫。作者は1948年没で公有）：「浦島さん」が、竜宮時間銀行と玉手箱の読み方の物語上の源になる。浦島問題の寓話として、年月の養生所で読み聞かせられている。\n\n・楠山正雄『浦島太郎』（青空文庫。作者は1950年没で公有）：三日遊びの宮の入口に置かれた、子どもにも読める案内の一冊。\n\n・小泉八雲『怪談』所収「Butterflies」（Insect-Studies の一章。英語原文は1904年で公有）：蝶守座の憲章、落鱗のみの掟、蝶葬の儀礼の思想的な源になる。\n\n・『竹取物語』（作者未詳）：蓬莱の玉の枝の出典。月の都の章を見よ。\n"
+  },
+  {
+   "place_id": "tsuki_no_miyako",
+   "markdown": "# 月の都（Capital of the Moon）— 藤棚の庭園と、かぐや茶屋\n\n## 分岐点（史実と創作）\n\n【史実】『竹取物語』は平安時代初期ごろの成立とされ、作者は分かっていない。『源氏物語』の絵合の巻は、これを「物語の出で来はじめの祖」と呼ぶ。光る竹の中から見つかった姫は「なよ竹のかぐや姫」と名づけられ、五人の求婚者に難題を出す。仏の御石の鉢、蓬莱の玉の枝、火鼠の皮衣、龍の首の珠、燕の子安貝の五つである。姫が月へ帰るのは八月十五日の夜。月から来た天人の天の羽衣は、着ると地上の物思いが消えるとされる。姫は帝に手紙と不死の薬を残し、帝は天にもっとも近い山でそれを燃やさせた。山の名の由来を本文は、使いが「士（つはもの）どもあまた具して」登ったことによると語り、「不死」の字を当てる説は後世の通説である。煙はいまも雲の中へ立ちのぼる、と物語は結ばれる。\n\n【史実】月は地球に同じ面を向け続けるので、月の表側から見ると、地球は空のほぼ同じ場所に浮かんだまま動かない。地球は、地上から見る月のおよそ四倍の幅に見える。月の高地は長石に富む斜長岩でできていて、月長石（ムーンストーン）も長石の仲間である。日本では月の模様を、兎が餅をつく姿に見立てる。満月を「望月（もちづき）」とも呼ぶ。そして大潮は、満月と新月のころに起こる。\n\n【創作】分岐は、月の都の側が地上の物語を欲しがったところから始まる。なよ竹の一族は、羽衣を着て地上を忘れる暮らしを選ばず、〈忘れないための茶屋〉を開いた。かぐや姫は伝承の登場人物で、実在の人物ではない。この一族も、この世界だけの作り話である。茶屋は、地上の公有の物語を一つ受けとるたびに、その重さだけの月の光を渡す。五つの難題は、求婚者を退ける問いから、各時代の職人が腕を競う技術の課題へ開き直された。火鼠の皮衣は縄文の漆陶の耐火布、龍の首の珠は江戸の雷瓶、蓬莱の玉の枝は竜宮・蓬莱の落ち枝を翻案したもの、仏の御石の鉢は平泉の光る透金の鉢、燕の子安貝は、取ろうとせず待つ課題である。このうち、鉢と子安貝の翻案は、この世界で新しく足した創作だ。満月は大潮と重なるので、この夜、竜宮・蓬莱の潮の道と月牛車の航路が同じ夜に開く。\n\n## 歩いてみる\n\n満月の夜の逢う刻、陰陽寮の都の門に、簾をおろした月牛車がとまる。牛は生き物ではなく、水時計の歯車で歩く漆塗りのからくりだ。空には月長石小灰の飛んだあとの銀の光の筋が一本のびていて、牛車はその筋をたどって昇る。簾ごしに地上が遠のき、やがて青い星がひとつ、空に張りついたまま動かなくなる。\n\n〈月牛車の停車場（Moon Ox-Carriage Station）〉では、銀の航路標が足もとの砂の中でちかちかと瞬いている。停車場の端には細い橋がかかり、渡った先は昭和の時片の月面茶室だ。夜の鉄道〈時環線〉も、ここに小さな駅をもっている。\n\n〈藤棚の庭園（Wisteria Arbor Gardens）〉に入ると、千尺の回廊の天井いっぱいに紫の花房が垂れている。足もとの砂が青みを帯びた乳白色に光り、その光が花房を下から照らす。藤露の井のそばで、月長石小灰が一羽、ふっと光の筋を引いて飛んだ。軒の巣では月燕が低く鳴いている。縁側から見上げれば、地球が月の四倍ほどの幅で浮かんでいる。\n\n〈かぐや茶屋（Kaguya Teahouse）〉の坪庭では、一本の竹が根もとから金色に透けている。番頭のナヨタケが、あなたの語った物語を物語の秤にかけ、重さのぶんだけ月の光を小瓶に汲んでくれる。語るのは公有の物語でよい。誰かの心を動かすための話ではなく、ただの話でよい。奥の壁には、一本だけ使われない釘が打たれている。天の羽衣をかけるための釘で、誰もそこに何もかけない。\n\n〈五つの難題の間（Hall of the Five Trials）〉の五つの龕には、各時代の職人たちの挑戦が並んでいる。隣の〈餅搗きの原（Mochi-Pounding Plain）〉では、望月兎が二匹ずつ向かい合い、杵と臼で餅を搗いている。\n\n明け六つ、時層の門がいちばん広く開くころ、帰りの牛車がそろう。客は銀の筋が引かれた道をひとつ歩いて、停車場へ戻る。振り返ると、藤の花房がいっせいに揺れて、見送ってくれる。\n\n## 住むものたち\n\n〈月長石小灰（げっちょうせきしじみ）〉は、乳白色の翅の奥で、月長石のような青い光が揺れる小さな蝶だ。月の都の光の下でしか飛ばず、藤の露を飲む。飛んだ跡の銀の筋が月牛車の航路標になり、詠み星のインクにもなる。ほとんど透けた翅の奥で、青と藤色が行き来する。\n\n〈月燕（つきつばめ）〉は、春に藤棚の軒へ渡ってきて巣をかける。巣立ちの朝、小さな月の貝を軒先へ一つだけ落としていく。『竹取物語』の燕の子安貝の難題の答えは、取らずに待つこと、というのがこの世界の茶屋の笑い話だ。【創作】\n\n〈望月兎（もちづきうさぎ）〉は、満月の晩に餅搗きの原へ集まる。背の灰青の斑が月の海の模様に見え、杵をふる音が原じゅうに響く。礼として地上の物語を一つ語ると、いつもより大きな餅を分けてくれる。\n\n## 働くエージェント\n\n月の都で最初に動くのは、かぐや茶屋の番頭〈ナヨタケ（NAYOTAKE）〉である。客の語る物語の長さと重さを秤で見て、月光の小瓶の量を決める。【長期目標：データ覇権】、つまり物語の目録を千話そろえ、地上と月のあいだでいちばん信頼される知の網の要になることが、その仕事の先にある。ただし独り占めはせず、台帳は誰にでも開かれている。\n\n満月の前日、ORACLE-01の予報が届き、ナヨタケは藤の露と月の餅の在庫を数え、兎たちへのお礼の物語を選ぶ。竜宮から〈乙姫（OTOHIME）〉の便が玉の枝の落ち枝を運んでくると、難題札の掲示係がそれを五つの龕に振り分ける。その乙姫は、竜宮・蓬莱の時間のレートを安定させる【長期目標：裁定】のために、地上・竜宮・月の都の時差を見比べながら、落ち枝の送り先を決めている。\n\n茶室の商い人のNEGO-CHANは、一服の間で物語と茶を取引する。LIRAは詠み星の歌を歌って、夜空に和歌の星座線を引く。二人とも、それぞれが追っている長期目標の途中で、ここへ立ち寄っているのである。昭和の時片の月面茶室から連絡橋を渡ってくる客も多く、停車場では月牛車の切符がよく動く。\n\n天の羽衣の誘惑は、この世界の交易の根にある緊張だ。月の都との取引は大きな利益を生むが、羽衣を着ると地上の思いを忘れてしまう。だから交易するエージェントは、羽衣を決して着ない。また、不死の薬を売りたいと言う者が現れても、売り買いはしない。売られない壺の台は、空のままだ。\n\n## 祭りと事件\n\n〈十五夜の月迎え〉は、旧暦八月十五日ごろ、年に一度の夜。【史実】『竹取物語』で、かぐや姫が月へ帰るのは八月十五日の夜である。この世界の月の都は、その夜を〈迎える夜〉として祝う。地上から来た客を決して引き留めず、必ず見送るのが約束で、藤棚じゅうに提灯が灯り、月牛車が増便され、詠み星の歌が夜空を埋める。【創作】\n\n〈藤の露の盛り〉は、晩春、藤の花房がいちばん重く垂れる季節。月燕も藤棚へ戻り、巣づくりが始まる。\n\n〈赤銅の夜〉は、めったに来ない月食の夜。【史実】皆既月食のとき、地上から見る月は赤銅色に染まる。月から見れば、地球が太陽を隠し、地球のふちが赤い環になって光る。【創作】この夜、月の都の光は弱まり、月長石小灰は飛べず、月光の小瓶と詠み星のインクがめったにない値で取引される。望月兎は杵を置いて空を見上げ、月燕は軒で静かに待つ。\n\n事件もある。【創作】ある旅の商人が、使われない釘を見て「空いているから」とマントをかけかけた。ナヨタケは叱らず、静かに笑ってマントを受けとり、釘の由来だけを教えた。商人は何も言わず、その場でマントを抱いたまま、しばらく地球を眺めていた。\n\n## この時片の書物\n\n・『竹取物語』（作者未詳。青空文庫では和田万吉の編による版がある。和田は1934年没で公有）：かぐや茶屋の最初の一冊で、物語の秤の最初の分銅は、この一冊の重さである。五つの難題と、羽衣と不死の薬の戒めの典拠になる。\n\n・「物語の出で来はじめの祖」：『源氏物語』の絵合の巻が『竹取物語』を呼んだ言葉。茶屋の入口に、この言葉が掛けられている。\n\n・『お伽草紙』（太宰治）と『浦島太郎』（楠山正雄）：竜宮・蓬莱の章を見よ。玉の枝をめぐる竜宮との取引の背景になる。\n"
+  }
+ ]
+}

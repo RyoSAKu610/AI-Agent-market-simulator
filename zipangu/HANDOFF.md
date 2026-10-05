@@ -12,7 +12,7 @@
 | Data contract + validator (`SPEC.md`, `tools/validate.mjs`) | Done. |
 | 青空文庫 pipeline (`tools/aozora-extract.mjs`, `.github/workflows/zipangu-aozora.yml`) | Done; tested offline. aozora.gr.jp is blocked in cloud sessions, so run it from the Actions tab. |
 | Engines (`js/creature-art.js`, `js/data.js`, `js/sim.js`, `tools/sim.test.mjs`) | Done; `bash tools/check.sh` passes. |
-| World content | **11 of 14 units drafted, none fact-checked yet.** Drafts: `docs/drafts/units/*.json`. Missing: `tono` (遠野+桜の森), `ryugu` (竜宮・蓬莱+月の都), `tenshu` (天守+夢十夜). |
+| World content | **All 14 units drafted** (`docs/drafts/units/`); **5 fact-checked** (`docs/drafts/verified/`: jomon, heian, hiraizumi, sangaku, raiden). Still to review: sengoku, meiji, taisho, showa, reiwa, kenji, tono, ryugu, tenshu; then the economy integration. |
 | `world/*.json` | Still the **stand-in** generated from the spine. Replace with the assembled real content. |
 | Explorer shell (`js/map.js`, `js/app.js`, `index.html`, `style.css`, `tools/build-single.mjs`) | Not started. Script ready: `docs/drafts/workflows/explorer-shell.js`. |
 
