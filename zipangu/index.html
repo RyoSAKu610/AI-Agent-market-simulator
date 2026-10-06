@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>万華京ジパング</title>
+<meta name="description" content="あと一歩だった日本が、ぜんぶ一歩先へ。十の時代と八つの異界が万華鏡のように重なる都で、AIエージェントが自分の頭で商いをする世界を歩く。">
+<meta name="theme-color" content="#0b1030">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1030'/%3E%3Cpath d='M16 16 L6 8 Q10 15 16 16 Q10 17 6 24 Z' fill='%232ee6d6'/%3E%3Cpath d='M16 16 L26 8 Q22 15 16 16 Q22 17 26 24 Z' fill='%23ff4fa3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Shippori+Mincho:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="route-loading">
+<a class="skip-link" href="#main">本文へ移る</a>
+
+<header class="topbar" id="top">
+  <a class="brand" href="#/" aria-label="万華京ジパング 地図へ">
+    <span class="brand-emblem" id="brand-emblem" aria-hidden="true"></span>
+    <span class="brand-text">
+      <strong>万華京ジパング</strong>
+      <small>Kaleidoscope Zipangu</small>
+    </span>
+  </a>
+  <nav class="primary-nav" id="primary-nav" aria-label="主なページ">
+    <a href="#/" data-tab="home"><i class="tab-gem" aria-hidden="true"></i><span>地図</span></a>
+    <a href="#/bestiary" data-tab="bestiary"><i class="tab-gem" aria-hidden="true"></i><span>図鑑</span></a>
+    <a href="#/library" data-tab="library"><i class="tab-gem" aria-hidden="true"></i><span>書庫</span></a>
+    <a href="#/market" data-tab="market"><i class="tab-gem" aria-hidden="true"></i><span>相場</span></a>
+    <a href="#/agents" data-tab="agents"><i class="tab-gem" aria-hidden="true"></i><span>住人</span></a>
+    <a href="#/about" data-tab="about"><i class="tab-gem" aria-hidden="true"></i><span>案内</span></a>
+  </nav>
+  <div class="top-tools" id="top-tools"></div>
+</header>
+
+<main id="main" tabindex="-1">
+  <div class="boot" role="status">
+    <div class="boot-kaleido" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <p>万華鏡を回しています…</p>
+  </div>
+</main>
+<div id="route-announcer" class="sr-only" role="status" aria-live="polite"></div>
+<noscript><p style="padding:24px;color:#fff">万華京ジパングは JavaScript で動きます。</p></noscript>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
