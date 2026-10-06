@@ -12,8 +12,8 @@
 | Data contract + validator (`SPEC.md`, `tools/validate.mjs`) | Done. |
 | 青空文庫 pipeline (`tools/aozora-extract.mjs`, `.github/workflows/zipangu-aozora.yml`) | Done; tested offline. aozora.gr.jp is blocked in cloud sessions, so run it from the Actions tab. |
 | Engines (`js/creature-art.js`, `js/data.js`, `js/sim.js`, `tools/sim.test.mjs`) | Done; `bash tools/check.sh` passes. |
-| World content | **All 14 units drafted** (`docs/drafts/units/`); **5 fact-checked** (`docs/drafts/verified/`: jomon, heian, hiraizumi, sangaku, raiden). Still to review: sengoku, meiji, taisho, showa, reiwa, kenji, tono, ryugu, tenshu; then the economy integration. |
-| `world/*.json` | Still the **stand-in** generated from the spine. Replace with the assembled real content. |
+| World content | **Done.** All 14 units written and fact-checked, economy integrated, assembled into `world/*.json`, `docs/eras`, `docs/realms`, `docs/CORRECTIONS.md`; `tools/check.sh` passes. |
+| `world/*.json` | Real content (10 eras, 8 realms, 81 districts, 67 creatures, 136 goods, 10 currencies, 32 agents, 55 events, 48 works, 23 trade routes). |
 | Explorer shell (`js/map.js`, `js/app.js`, `index.html`, `style.css`, `tools/build-single.mjs`) | Not started. Script ready: `docs/drafts/workflows/explorer-shell.js`. |
 
 ## Next steps
