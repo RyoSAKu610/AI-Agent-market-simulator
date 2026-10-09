@@ -235,7 +235,9 @@ async function main() {
                 credits: { base_book: pick[COL.base], input: pick[COL.input], proofreading: pick[COL.proof] }
             };
         } catch (e) {
-            works[w.id] = { status: 'error', card_url: pick[COL.card], note: e.message };
+            // A download that failed this time must not replace an excerpt an earlier run got.
+            const before = previous.works && previous.works[w.id];
+            works[w.id] = before && before.status === 'ok' ? before : { status: 'error', card_url: pick[COL.card], note: e.message };
         }
         await new Promise(r => setTimeout(r, 1000)); // be gentle with 青空文庫
     }

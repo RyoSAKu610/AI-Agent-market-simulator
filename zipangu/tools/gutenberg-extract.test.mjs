@@ -61,16 +61,21 @@ writeFileSync(join(dir, 'catalog.csv'), [
     '102,Text,2000-01-01,"The Lighthouse — Volume 2",en,"Keeper, Old, 1800-1880; Teller, Young, 1890-1950 [Translator]",,,',
     '201,Text,2000-01-01,"Modern Book",en,"Writer, New, 1940-1990",,,',
     '301,Text,2000-01-01,"Other Book",en,"Keeper, Old, 1800-1880",,,',
-    '401,Text,2000-01-01,"Old Tales",en,"Teller, Undated",,,'
+    '401,Text,2000-01-01,"Old Tales",en,"Teller, Undated",,,',
+    '501,Text,2000-01-01,"Far Book",en,"Keeper, Old, 1800-1880",,,'
 ].join('\n') + '\n');
 writeFileSync(join(dir, 'world', 'library.json'), JSON.stringify([
     { id: 'lighthouse', source: 'gutenberg', language: 'en', gutenberg_id: 101, title: 'The Lighthouse', author: 'Old Keeper', extraction: { mode: 'anchor', anchor: 'The lighthouse stood', max_chars: 300 } },
     { id: 'modern', source: 'gutenberg', language: 'en', gutenberg_id: 201, title: 'Modern Book', author: 'New Writer', extraction: { mode: 'anchor', anchor: 'Modern', max_chars: 300 } },
     { id: 'dated_here', source: 'gutenberg', language: 'en', gutenberg_id: 401, title: 'Old Tales', author: 'Undated Teller', undated_people: { 'Teller, Undated': 1932 }, extraction: { mode: 'anchor', anchor: 'Once', max_chars: 300 } },
+    { id: 'unreachable', source: 'gutenberg', language: 'en', gutenberg_id: 501, title: 'Far Book', author: 'Old Keeper', extraction: { mode: 'anchor', anchor: 'x', max_chars: 300 } },
     { id: 'missing', source: 'gutenberg', language: 'en', gutenberg_id: 999, title: 'No Such Book', author: 'Old Keeper', extraction: { mode: 'anchor', anchor: 'x', max_chars: 300 } },
     { id: 'japanese', title: '日本の本', author: '架空 太郎', extraction: { mode: 'opening', max_chars: 80 } }
 ]));
-writeFileSync(join(dir, 'world', 'library.texts.json'), JSON.stringify({ source: 'old', works: { japanese: { status: 'ok', excerpt: '既存の抜粋。' } } }));
+writeFileSync(join(dir, 'world', 'library.texts.json'), JSON.stringify({ source: 'old', works: {
+    japanese: { status: 'ok', excerpt: '既存の抜粋。' },
+    unreachable: { status: 'ok', excerpt: 'Kept from an earlier run.' }
+} }));
 execFileSync('node', [join(dir, 'tools', 'gutenberg-extract.mjs')], {
     env: { ...process.env, GUTENBERG_CATALOG: join(dir, 'catalog.csv'), GUTENBERG_FILES: files },
     stdio: 'pipe'
@@ -84,6 +89,7 @@ assert.equal(out.modern.status, 'copyrighted');
 assert.equal(out.dated_here.status, 'ok', 'a death year given in library.json fills a catalogue gap');
 assert.equal(out.missing.status, 'not_found');
 assert.ok(out.missing.candidates.some(c => c.includes('Other Book')));
+assert.equal(out.unreachable.excerpt, 'Kept from an earlier run.', 'a failed download keeps the earlier excerpt');
 assert.equal(out.japanese.excerpt, '既存の抜粋。', 'Japanese works are left to the 青空文庫 extractor');
 
 console.log('gutenberg-extract tests passed');

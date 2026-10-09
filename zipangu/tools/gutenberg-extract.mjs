@@ -26,6 +26,7 @@ const only = (() => { const i = process.argv.indexOf('--only'); return i > 0 ? p
 async function getText(url, localName, envDir) {
     const local = process.env[envDir] && join(process.env[envDir], localName);
     if (local && existsSync(local)) return readFileSync(local, 'utf8');
+    if (local) throw new Error(`${localName} is not in ${envDir}`);  // offline runs never reach the network
     const res = await fetch(url, { headers: UA });
     if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
     return res.text();
@@ -157,7 +158,9 @@ async function main() {
                 await new Promise(res => setTimeout(res, 1000)); // be gentle with Gutenberg
             }
         }
-        works[w.id] = result;
+        // A download that failed this time must not replace an excerpt an earlier run got.
+        const before = previous.works && previous.works[w.id];
+        works[w.id] = result && result.status === 'error' && before && before.status === 'ok' ? before : result;
     }
 
     const out = { ...previous, generated_at: new Date().toISOString(), works };
