@@ -10,6 +10,13 @@ export const SPEEDS = [1, 4, 16];
 
 const FEED_ICON = { trade: '◆', arrive: '▸', depart: '↗', event: '✦', settle: '⚖', goal: '★' };
 const FEED_KEEP = 60;
+// Words the feed uses without explaining; shown as a tooltip on the line.
+const VIA_GLOSS = {
+    torii: ['時層鳥居', '時層鳥居：時代と時代のあいだをつなぐ朱の鳥居。くぐると別の時片へ出る'],
+    chodo: ['蝶道', '蝶道：宝石蝶が飛ぶ、ゆっくりした光の道'],
+    ginga: ['銀河鉄道', '銀河鉄道：夜だけ走る、星の線路の列車'],
+    cho: ['蝶守座', '蝶守座：宝石蝶と落鱗を見守る組合。聖地は蝶の集まる谷']
+};
 
 export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
     const dialBig = createDial(W);
@@ -45,10 +52,16 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
 
     // ---------------------------------------------------- ticker (base currency)
     const tickerItems = h('div', { class: 'ticker-items' });
-    const ticker = h('div', { class: 'ticker', role: 'status', 'aria-label': `基軸通貨「${cur}」の相場` },
-        h('span', { class: 'ticker-cur' }, cur),
-        tickerItems);
+    const ticker = h('div', {
+        class: 'ticker', role: 'status', 'aria-label': `基軸通貨「${cur}」の相場`,
+        title: `${cur}＝この世界のお金。▲▼は、品ごとの基準の値段に比べた今の値段`
+    },
+    h('span', { class: 'ticker-cur' }, cur),
+    tickerItems,
+    h('span', { class: 'ticker-note' }, `${cur}＝この世のお金 ・ ▲▼は基準の値段との差`));
     let movers = [], page = 0;
+    // On a phone the ticker is a single line that rotates; on a wide screen it lists three.
+    const phone = typeof matchMedia === 'function' ? matchMedia('(max-width: 899px)') : { matches: false };
 
     function computeMovers() {
         const rows = [];
@@ -64,7 +77,7 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
 
     function renderTicker() {
         if (!movers.length) return;
-        const per = 3, pages = Math.ceil(movers.length / per);
+        const per = phone.matches ? 1 : 3, pages = Math.ceil(movers.length / per);
         const slice = movers.slice((page % pages) * per, (page % pages) * per + per);
         clear(tickerItems);
         for (const m of slice) {
@@ -95,11 +108,14 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
         const body = [
             h('span', { class: 'feed-time' }, `${msg.label || ''}`),
             h('span', { class: 'feed-icon', 'aria-hidden': 'true' }, FEED_ICON[msg.type] || '•'),
-            h('span', { class: 'feed-msg' }, msg.message)
+            // the authored text puts a full space around names; a thin space keeps them apart without the wide gaps
+            h('span', { class: 'feed-msg' }, String(msg.message).replace(/ +/g, '\u2009'))
         ];
         const el = msg.agent && W.byId.agent.has(msg.agent)
             ? h('a', { class: 'feed-item type-' + msg.type + ' is-new', href: `#/agent/${msg.agent}` }, ...body)
             : h('div', { class: 'feed-item type-' + msg.type + ' is-new' }, ...body);
+        const gloss = Object.values(VIA_GLOSS).find(g => String(msg.message).includes(g[0]));
+        if (gloss) el.title = gloss[1];
         return h('li', null, el);
     }
 
@@ -131,6 +147,7 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
     }
 
     function slow() { computeMovers(); renderTicker(); }
+    if (phone.addEventListener) phone.addEventListener('change', () => { page = 0; renderTicker(); });
 
     update();
     computeMovers();

@@ -181,11 +181,14 @@ export function marketView(ctx, query) {
     paintBoard(true);
     if (state.open) setTimeout(() => { const ref = rowRefs.get(state.open); if (ref) ref.details.scrollIntoView({ block: 'center' }); }, 60);
 
+    const liveNote = h('p', { class: 'ar-role live-note' });
+    const paintLive = () => { liveNote.textContent = `この取引は動いています。いままでに ${fmt(eco.stats.trades)} 件、出来高 ${fmt(eco.stats.volume)} ${cur}。`; };
+    paintLive();
     const el = h('div', { class: 'page' },
         h('header', { class: 'page-head' },
             h('h1', null, '相場'),
-            h('p', { class: 'lead' }, `価格は基軸通貨「${cur}」で表す。堂島時層会所が明け六つと暮れ六つに全時片の取引を清算し、エージェントたちは相場の開きを見て自分で動く。`)),
-        currencySection(W),
+            h('p', { class: 'lead' }, `価格は基軸通貨「${cur}」で表す。堂島時層会所が明け六つと暮れ六つに全時片の取引を清算し、エージェントたちは相場の開きを見て自分で動く。`),
+            liveNote),
         h('section', { class: 'sec', 'aria-labelledby': 'arb' },
             sectionHead('裁定のヒント', 'いま、安い所で仕入れて高い所で売ると開きが大きい品', 'arb'), hintList),
         h('section', { class: 'sec', 'aria-labelledby': 'board' },
@@ -193,7 +196,8 @@ export function marketView(ctx, query) {
             plaque({ class: 'filters' },
                 h('div', { class: 'filter-row' }, h('span', { class: 'lbl' }, '種類'), h('div', { class: 'chips' }, catBtns)),
                 h('div', { class: 'filter-row filter-inputs' }, placeSel, search)),
-            count, board, h('p', { class: 'more' }, more)));
+            count, board, h('p', { class: 'more' }, more)),
+        currencySection(W));
 
     return {
         el, title: '相場',
@@ -201,6 +205,7 @@ export function marketView(ctx, query) {
             const now = performance.now();
             if (now - hintStamp > 4000) { hintStamp = now; paintHints(); }
             paintBoard(false);
+            paintLive();
         }
     };
 }

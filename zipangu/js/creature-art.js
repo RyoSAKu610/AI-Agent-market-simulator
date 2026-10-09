@@ -2675,10 +2675,22 @@ const RENDER = {
   mineral: byShape(MINERALS),
 };
 
-export function drawCreature(ctx, creature, t, size) {
+// A few long creatures (whales, catfish, the boar) swing wider than their box. In a
+// canvas card that would end in a hard vertical cut, so the card draws them at
+// the factor that keeps the whole silhouette, over several seconds of motion,
+// inside the box. The map has no box and keeps the full size. Measured by
+// drawing every creature at 30 timestamps and taking the farthest pixel with
+// alpha > 30; re-measure when a creature is added.
+const CONTAIN = {
+  jomon_morioi_jika: 0.76, jinari_namazu: 0.79, kumo_kujira: 0.80, ryugu_shimaoi_ogame: 0.80,
+  tenshu_shachi: 0.86, hiraizumi_kinkei: 0.91, ryugu_otoshigo: 0.91, muou_koi: 0.93, ama_tamamushi: 0.96
+};
+
+export function drawCreature(ctx, creature, t, size, opts) {
   if (!ctx || !creature || !(size > 0)) return;
   const P = prep(creature);
-  const k = (size / 2) * P.fit * (P.kind === 'beast' && P.shape === 'whale' ? 1.12 : 1);
+  const k = (size / 2) * P.fit * (P.kind === 'beast' && P.shape === 'whale' ? 1.12 : 1)
+    * (opts && opts.contain ? CONTAIN[creature.id] || 1 : 1);
   const ppu = k * devScale(ctx);
   const F = { t: (t || 0) * P.tempo + P.phase, rt: (t || 0) + P.phase, ppu, lod: lodOf(ppu) };
   LITE = ppu < 48;
@@ -2710,7 +2722,7 @@ function paintLive(e, t) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, px, px);
   ctx.setTransform(e.dpr, 0, 0, e.dpr, px / 2, px / 2);
-  drawCreature(ctx, e.creature, t, e.size);
+  drawCreature(ctx, e.creature, t, e.size, { contain: true });
 }
 
 function tick(now) {

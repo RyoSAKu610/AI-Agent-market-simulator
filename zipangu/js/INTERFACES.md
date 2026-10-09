@@ -59,6 +59,15 @@ export function createMap(canvas, W, economy, { onSelect })
 // → { resize(), destroy(), focus(id) }
 ```
 
+## js/agent-art.js and js/minimap.js — additive overlays
+```js
+// agent-art.js: a neon-chibi face per agent, from home-district palette + sprite_hint words. Overlay only.
+agentSpec(W, agent) → spec;  agentFaceCanvas(W, agent, px) → <canvas>;  agentSprite(W, agent) → cached canvas for the map
+// minimap.js: inline-SVG 見取り図 of an era or realm (uses map.js buildScene geometry)
+placeMiniMap(W, place) → <figure>
+// creature-art.js: drawCreature(ctx, creature, t, size, { contain: true }) keeps long creatures inside the box (canvas cards only)
+```
+
 ## js/app.js — shell, router and views
 Hash routes: `#/` (map + HUD), `#/place/<id>`, `#/district/<id>`, `#/bestiary`, `#/creature/<id>`,
 `#/library`, `#/work/<id>`, `#/market`, `#/agents`, `#/agent/<id>`, `#/about`.

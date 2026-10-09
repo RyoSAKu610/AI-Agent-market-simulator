@@ -5,6 +5,7 @@
 
 import { drawCreature } from './creature-art.js';
 import { VIA } from './sim.js';
+import { agentSprite, SPRITE_PAD } from './agent-art.js';
 import {
     hash01, clamp, lerp, smooth, rgba, mixHex, accentOf, deepOf, lightOf,
     placeShort, placeSub, districtShort, agentShort, RARITY_RANK
@@ -149,7 +150,7 @@ function placeInfo(p, isEra) {
     };
 }
 
-function buildScene(W) {
+export function buildScene(W) {
     const hubD = W.byId.district.get(W.world.hub && W.world.hub.id);
     const hub = hubD && hubD.map ? { x: hubD.map.x, y: hubD.map.y, id: hubD.id, d: hubD } : { x: 50, y: 50, id: null, d: null };
 
@@ -230,6 +231,7 @@ export function createMap(canvas, W, economy, opts = {}) {
     let night = economy.clock.isNight ? 1 : 0;
     let tween = null, fling = { x: 0, y: 0 };
     let hits = [];
+    let reveal = null;       // a selection that should be panned into the free part of the map
     const smoothAgents = new Map();
     const stats = { frameMs: 0, fps: 0, creatures: 0, frames: 0 };
     const pointers = new Map();
@@ -289,6 +291,23 @@ export function createMap(canvas, W, economy, opts = {}) {
 
     function focusOn(x, y, zoom) {
         tween = { from: { cx: V.cx, cy: V.cy, zoom: V.zoom }, to: { cx: x, cy: y, zoom: clamp(zoom, MIN_ZOOM, MAX_ZOOM) }, t0: performance.now(), dur: reduce.matches ? 1 : 750 };
+    }
+
+    // After the info sheet opens, bring the chosen agent or district into the part of the map the sheet leaves free.
+    function revealSelected() {
+        const target = insets();
+        if (Math.abs(insNow.bottom - target.bottom) > 3 || Math.abs(insNow.top - target.top) > 3 || Math.abs(insNow.right - target.right) > 3) return;
+        const sel = reveal; reveal = null;
+        let pos = null;
+        if (sel.type === 'agent') pos = smoothAgents.get(sel.id);
+        else if (sel.type === 'district') pos = scene.districtById.get(sel.id);
+        if (!pos) return;
+        const x = sx(pos.x), y = sy(pos.y), m = 36;
+        const ins = insNow;
+        // slide the map only as far as it takes to put the selection inside the free area
+        const dx = x < ins.left + m ? ins.left + m - x : x > cw - ins.right - m ? cw - ins.right - m - x : 0;
+        const dy = y < ins.top + m ? ins.top + m - y : y > ch - ins.bottom - m ? ch - ins.bottom - m - y : 0;
+        if (dx || dy) focusOn(clamp(V.cx - dx / S, -15, 115), clamp(V.cy - dy / S, -15, 115), V.zoom);
     }
 
     function locate(id) {
@@ -1108,13 +1127,19 @@ export function createMap(canvas, W, economy, opts = {}) {
             }
             if (isSel) ringAround(x, y, 12, '#fff4cf', t);
 
+            // the neon-chibi face stands on the bead; the bead and rings above stay as they were
+            const fh = clamp(18 + Math.sqrt(V.zoom) * 5, 21, 34);
+            if (info.id) ctx.drawImage(agentSprite(W, info), x - fh / 2 - fh * SPRITE_PAD / 100, y - 7 - fh - fh * SPRITE_PAD / 100, fh * (1 + SPRITE_PAD * 0.02), fh * (1 + SPRITE_PAD * 0.02));
+            if (a.carrying && a.carrying.length) drawCargo(a, x + fh * 0.42, y - 8);
+            const lift = info.id ? fh - 3 : 0;
+
             // ！ → 💭 → 🏃 above the head while the agent reacts, thinks, travels
             const glyph = { react: '！', think: '💭', travel: '🏃' }[a.stage];
             if (glyph) {
                 const big = a.stage !== 'travel';      // the momentary reactions speak louder than a long walk
                 const pop = smooth(0, 0.25, s.since);
                 const bw = big ? 22 : 17, bh = big ? 20 : 16;
-                const by = y - (big ? 21 : 16) - (reduce.matches ? 0 : Math.sin(t * 5 + s.x) * 1.2) - (1 - pop) * 6;
+                const by = y - lift - (big ? 21 : 16) - (reduce.matches ? 0 : Math.sin(t * 5 + s.x) * 1.2) - (1 - pop) * 6;
                 ctx.save();
                 ctx.globalAlpha = pop * (big ? 1 : 0.9);
                 ctx.translate(x, by);
@@ -1131,6 +1156,29 @@ export function createMap(canvas, W, economy, opts = {}) {
             const pri = isSel ? 9 : isHover ? 8 : a.stage === 'react' || a.stage === 'think' ? 6 : a.stage === 'travel' ? 4 : a.stage === 'trade' ? 3 : V.zoom >= 2.2 ? 1 : 0;
             if (pri > 0) agentLabels.push({ x, y, acc: col.pill, pri, nm: agentShort(W.byId.agent.get(a.id) || a) });
         }
+    }
+
+    // What the runner carries: a small gem-tag with the good's first character (and the count past one).
+    const CARGO_HUE = { material: '#c9a36b', energy: '#ffd166', food: '#9be37f', craft: '#e8c36a', knowledge: '#9fc3ff', art: '#ff9ad0', transport: '#7fe3d8', luxury: '#e7b3ff', service: '#b9c2ff' };
+    const cargoTag = new Map();
+    function drawCargo(a, x, y) {
+        const lot = a.carrying[0];
+        let tag = cargoTag.get(lot.good);
+        if (!tag) {
+            const g = W.byId.good.get(lot.good);
+            const nm = String((g && (g.name_ja || g.name)) || lot.good).replace(/（[^）]*）|\([^)]*\)/g, '').trim();
+            tag = { ch: Array.from(nm)[0] || '品', hue: CARGO_HUE[g && g.category] || '#e8c36a' };
+            cargoTag.set(lot.good, tag);
+        }
+        const more = a.carrying.length > 1 ? '+' : '';
+        const str = tag.ch + (lot.qty > 1 || more ? String(lot.qty) + more : '');
+        ctx.font = `700 9.5px ${SERIF}`;
+        const w = Math.max(15, ctx.measureText(str).width + 8);
+        roundRect(x - w / 2, y - 7.5, w, 15, 7.5);
+        ctx.fillStyle = 'rgba(12,16,56,.92)'; ctx.fill();
+        ctx.strokeStyle = tag.hue; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.fillStyle = '#fff6dc'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(str, x, y + 0.5);
     }
 
     // Name chips go on last and only where there is room.
@@ -1224,22 +1272,34 @@ export function createMap(canvas, W, economy, opts = {}) {
         const z = V.zoom;
         const hoverPlace = hovered && hovered.type === 'place' ? hovered.id : null;
         const showSub = z >= 1.7;
-        for (const e of scene.eras) {
-            const x = sx(e.centre ? e.x : e.x), y = sy(e.y);
+        // Era and realm names keep out of each other's way: a name that would land on another is
+        // nudged down (then up) by a line, and only dropped if there is still no room. The chosen
+        // or hovered one always stays; the shards remain tappable either way.
+        const stagger = (str, x, ly, size, opts, must) => {
+            const step = size * 1.15;
+            for (const k of [0, 1, -1, 2]) {
+                if (text(str, x, ly + k * step, { ...opts, size, avoid: !must })) return ly + k * step;
+                if (must) return ly;
+            }
+            return null;
+        };
+        const eraOrder = scene.eras.slice().sort((a, b) => ((selected && selected.id === b.id) || hoverPlace === b.id) - ((selected && selected.id === a.id) || hoverPlace === a.id));
+        for (const e of eraOrder) {
+            const x = sx(e.x), y = sy(e.y);
             const size = clamp(10.5 + Math.sqrt(z) * 2.3, 11, 22);
             const isHubEra = Math.hypot(e.x - scene.hub.x, e.y - scene.hub.y) < 5;
             const ly = y + (isHubEra ? Math.max(18, 5.6 * S) : 12 + z);
             const strong = (selected && selected.id === e.id) || hoverPlace === e.id;
-            text(e.name, x, ly, { size, color: strong ? '#ffffff' : '#fbf1d4', a: 0.95 });
-            if (showSub && e.sub) text(e.sub, x, ly + size * 1.15, { size: Math.max(9.5, size * 0.72), color: rgba(e.light, 0.95), weight: 500, a: 0.9 });
+            const at = stagger(e.name, x, ly, size, { color: strong ? '#ffffff' : '#fbf1d4', a: 0.95 }, strong);
+            if (at != null && showSub && e.sub) text(e.sub, x, at + size * 1.15, { size: Math.max(9.5, size * 0.72), color: rgba(e.light, 0.95), weight: 500, a: 0.9 });
         }
         for (const r of scene.realms) {
             const x = sx(r.x), y = sy(r.y);
             const R = Math.max(10, 3 * S);
             const size = clamp(10 + Math.sqrt(z) * 2, 10.5, 20);
             const strong = (selected && selected.id === r.id) || hoverPlace === r.id;
-            text(r.name, x, y + R + size * 0.95, { size, color: strong ? '#ffffff' : '#e9f0ff', a: 0.95 });
-            if (showSub && r.raw.source) text(`『${r.raw.source.work}』`, x, y + R + size * 2.1, { size: Math.max(9, size * 0.7), color: rgba(r.light, 0.9), weight: 500, a: 0.85 });
+            const at = stagger(r.name, x, y + R + size * 0.95, size, { color: strong ? '#ffffff' : '#e9f0ff', a: 0.95 }, strong);
+            if (at != null && showSub && r.raw.source) text(`『${r.raw.source.work}』`, x, at + size * 1.15, { size: Math.max(9, size * 0.7), color: rgba(r.light, 0.9), weight: 500, a: 0.85 });
         }
         // hub name
         if (scene.hub.d && z >= 1.2) {
@@ -1309,6 +1369,7 @@ export function createMap(canvas, W, economy, opts = {}) {
         }
         stepInsets(dt);
         layout();
+        if (reveal && !tween && !gesture) revealSelected();
 
         const ds = dayState();
         night = lerp(night, 1 - ds.day, 1 - Math.exp(-dt * 3));
@@ -1369,7 +1430,10 @@ export function createMap(canvas, W, economy, opts = {}) {
             if (h.poly) ok = pointInPoly(wxp, wyp, h.poly);
             else ok = Math.hypot(px - h.x, py - h.y) <= h.r + (touch ? 4 : 0);
             if (!ok) continue;
-            if (!h.poly) score += 1 - Math.hypot(px - h.x, py - h.y) / (h.r + 8);
+            if (touch) {
+                // a fingertip means the nearest thing, not the highest-priority one nearby
+                score = h.poly ? -1 + h.pri : 100 * (1 - Math.hypot(px - h.x, py - h.y) / (h.r + 4)) + h.pri * 0.5;
+            } else if (!h.poly) score += 1 - Math.hypot(px - h.x, py - h.y) / (h.r + 8);
             if (score > bestScore) { best = h; bestScore = score; }
         }
         return best ? { type: best.type, id: best.id, label: best.label } : null;
@@ -1510,7 +1574,7 @@ export function createMap(canvas, W, economy, opts = {}) {
             const spot = locate(id);
             if (spot) focusOn(spot.x, spot.y, spot.zoom);
         },
-        select(sel) { selected = sel || null; },
+        select(sel) { selected = sel || null; reveal = selected && (selected.type === 'agent' || selected.type === 'district') ? selected : null; },
         getView: () => ({ cx: V.cx, cy: V.cy, zoom: V.zoom }),
         setView(v) { Object.assign(V, v); layout(); },
         getStats: () => ({ ...stats }),

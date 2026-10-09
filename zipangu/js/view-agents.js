@@ -3,7 +3,7 @@
 import { h, clear, href, link, tagged, nameOf, agentShort, clip, fmt, stripParens } from './util.js';
 import {
     plaque, sectionHead, avatar, stageBadge, progressBar, goalLabel, goodLink, placeLink, emptyNote,
-    STAGE_LABEL
+    STAGE_LABEL, liveActivity, goalPct
 } from './components.js';
 import { notFound } from './view-place.js';
 
@@ -44,10 +44,11 @@ export function agentsView(ctx, query) {
         const paint = () => {
             if (!live) return;
             clear(stage); stage.append(stageBadge(live.stage));
-            act.textContent = live.activity;
+            act.textContent = liveActivity(live);
+            act.hidden = !act.textContent;
             wallet.textContent = `${fmt(live.wallet)} ${cur}`;
-            where.textContent = whereIs(W, live);
-            goalLabelEl.textContent = goalLabel(live.goalType);
+            where.textContent = live.stage === 'travel' ? '' : whereIs(W, live);     // a trip already reads "→ where (by what)" below
+            goalLabelEl.textContent = `${goalLabel(live.goalType)} ・ ${goalPct(live)}%`;
             const v = Math.max(0, Math.min(1, live.goalProgress || 0));
             meter.firstChild.style.width = (v * 100).toFixed(1) + '%';
             meter.setAttribute('aria-valuenow', String(Math.round(v * 100)));
@@ -132,13 +133,13 @@ export function agentView(ctx, id) {
 
     function paint() {
         if (!live) { clear(stage); stage.append('この住人は、いまは世界にいません。'); return; }
-        clear(stage); stage.append(stageBadge(live.stage), ' ', live.activity);
+        clear(stage); stage.append(stageBadge(live.stage)); if (liveActivity(live)) stage.append(' ', liveActivity(live));
         where.textContent = `いる場所：${whereIs(W, live)}`;
         carry.textContent = live.carrying && live.carrying.length
             ? '運んでいるもの：' + live.carrying.map(l => `${stripParens((W.byId.good.get(l.good) || {}).name_ja || l.good)}×${l.qty}`).join('、')
             : '荷物：なし';
         wallet.textContent = `${fmt(live.wallet)} ${cur}`;
-        goalText.textContent = `長期目標（${goalLabel(live.goalType)}）`;
+        goalText.textContent = `長期目標：${goalLabel(live.goalType)} ・ ${goalPct(live)}%`;
         const v = Math.max(0, Math.min(1, live.goalProgress || 0));
         meter.firstChild.style.width = (v * 100).toFixed(1) + '%';
         meter.setAttribute('aria-valuenow', String(Math.round(v * 100)));

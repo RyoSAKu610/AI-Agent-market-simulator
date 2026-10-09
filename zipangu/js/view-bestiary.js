@@ -69,8 +69,11 @@ export function bestiaryView(ctx, query) {
     }
 
     function paintGrid() {
+        // the jewel butterflies lead (most iridescent first) unless the visitor has chosen a kind
+        const irid = c => (c.visual && c.visual.iridescence) || 0;
+        const lead = c => (!state.kind && c.kind === 'butterfly' ? 1 : 0);
         const list = W.creatures.filter(matches)
-            .sort((a, b) => (RARITY_RANK[b.rarity] || 0) - (RARITY_RANK[a.rarity] || 0) || a.kana.localeCompare(b.kana, 'ja'));
+            .sort((a, b) => lead(b) - lead(a) || (lead(a) ? irid(b) - irid(a) : 0) || (RARITY_RANK[b.rarity] || 0) - (RARITY_RANK[a.rarity] || 0) || a.kana.localeCompare(b.kana, 'ja'));
         clear(grid);
         for (const c of list) grid.append(h('div', { role: 'listitem' }, creatureCard(W, c)));
         count.textContent = `${list.length} / ${W.creatures.length} の生き物`;
@@ -81,10 +84,13 @@ export function bestiaryView(ctx, query) {
         h('header', { class: 'page-head' },
             h('h1', null, '生き物図鑑'),
             h('p', { class: 'lead' }, '宝石の翅の蝶から雲鯨まで。どの子も、落ちた鱗や贈り物だけを分けてくれる隣人で、生きたまま採ることは全時代で禁じられている。')),
-        plaque({ class: 'filters' },
-            h('div', { class: 'filter-row' }, h('span', { class: 'lbl' }, '種類'), h('div', { class: 'chips' }, kindBtns)),
-            h('div', { class: 'filter-row' }, h('span', { class: 'lbl' }, '希少さ'), h('div', { class: 'chips' }, rarityBtns)),
-            h('div', { class: 'filter-row filter-inputs' }, placeSel, search)),
+        // on a phone the filters fold into one 絞り込み button so the creatures start on the first screen
+        h('details', { class: 'filters-fold', open: window.innerWidth >= 900 || Object.values(state).some(Boolean) },
+            h('summary', null, '絞り込み（種類・希少さ・名前）'),
+            plaque({ class: 'filters' },
+                h('div', { class: 'filter-row' }, h('span', { class: 'lbl' }, '種類'), h('div', { class: 'chips' }, kindBtns)),
+                h('div', { class: 'filter-row' }, h('span', { class: 'lbl' }, '希少さ'), h('div', { class: 'chips' }, rarityBtns)),
+                h('div', { class: 'filter-row filter-inputs' }, placeSel, search))),
         count, grid);
     paintButtons();
     paintGrid();

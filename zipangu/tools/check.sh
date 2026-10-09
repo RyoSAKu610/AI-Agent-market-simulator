@@ -16,7 +16,8 @@ fi
 
 echo "› explorer syntax"
 for f in js/*.js tools/*.mjs; do
-  [ -e "$f" ] && node --check "$f"
+  # js/ is ES modules (import/export), so check it as a module; node --check alone treats .js as CommonJS
+  case "$f" in js/*) [ -e "$f" ] && node --input-type=module --check < "$f" ;; *) [ -e "$f" ] && node --check "$f" ;; esac
 done
 
 echo "All zipangu checks passed."

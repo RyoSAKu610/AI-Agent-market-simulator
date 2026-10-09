@@ -2,18 +2,19 @@
 
 import { creatureCanvas } from './creature-art.js';
 import { renderMarkdown } from './markdown.js';
+import { placeMiniMap } from './minimap.js';
 import {
     h, clear, href, link, tagged, placeShort, placeSub, nameOf, agentShort, clip, fmtPrice, accentOf, deepOf,
     lightOf, mixHex, stripParens
 } from './util.js';
 import {
     plaque, sectionHead, chip, swatches, placeLink, goodLink, creatureCard, stageBadge, avatar, emptyNote,
-    butterflyFor, CADENCE_LABEL, viaLabel
+    butterflyFor, CADENCE_LABEL, viaLabel, liveActivity
 } from './components.js';
 
 
 export function notFound(what) {
-    return { el: h('div', { class: 'page' }, plaque({ class: 'notice' }, h('h1', null, '見つかりません'), h('p', null, `${what}は、この世界のどこにもありませんでした。`), h('p', null, link('#/', '地図へ戻る')))) };
+    return { title: '見つかりません', el: h('div', { class: 'page' }, plaque({ class: 'notice' }, h('h1', null, '見つかりません'), h('p', null, `${what}は、この世界のどこにもありませんでした。`), h('p', null, link('#/', '地図へ戻る')))) };
 }
 
 function section(id, title, sub, ...kids) {
@@ -27,7 +28,7 @@ function hero(W, p, extra) {
     const fly = butterflyFor(W, p);
     const art = fly ? h('div', { class: 'hero-fly', 'aria-hidden': 'true' }, creatureCanvas(fly, 168)) : null;
     return h('header', {
-        class: 'hero',
+        class: 'hero' + (extra.map ? ' has-map' : ''),
         style: { '--g0': deep, '--g1': mixHex(accent, deep, 0.78), '--g2': mixHex(accent, deep, 0.5), '--light': light }
     }, art,
     h('div', { class: 'hero-body' },
@@ -37,11 +38,12 @@ function hero(W, p, extra) {
         extra.en ? h('p', { class: 'hero-en' }, extra.en) : null,
         extra.summary ? h('p', { class: 'hero-summary' }, extra.summary) : null,
         h('div', { class: 'hero-palette' }, swatches(pal), extra.chips || null),
+        extra.map || null,
         extra.nav || null));
 }
 
 function anchorNav(items) {
-    return h('nav', { class: 'anchors', 'aria-label': 'このページの見出し' }, items.map(([id, label]) =>
+    const nav = h('nav', { class: 'anchors', 'aria-label': 'このページの見出し' }, items.map(([id, label]) =>
         h('a', {
             href: '#/', onclick: e => {
                 e.preventDefault();
@@ -49,6 +51,43 @@ function anchorNav(items) {
                 if (t) t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
             }
         }, label)));
+    // On a phone the chip row scrolls sideways: fade the edge that still has chips behind it.
+    const wrap = h('div', { class: 'anchors-wrap' }, nav);
+    const cue = () => {
+        const more = nav.scrollWidth - nav.clientWidth - nav.scrollLeft > 6;
+        const back = nav.scrollLeft > 6;
+        wrap.classList.toggle('more-right', more);
+        wrap.classList.toggle('more-left', back);
+    };
+    nav.addEventListener('scroll', cue, { passive: true });
+    if (typeof ResizeObserver === 'function') new ResizeObserver(cue).observe(nav); else setTimeout(cue, 60);
+    return wrap;
+}
+
+// Long sections show their first part and a 続きを読む button. The whole text stays in the page
+// (find-in-page, screen readers, anchors all still work); only the height is held back.
+function foldable(content, { limit = 380, label = '続きを読む' } = {}) {
+    const box = h('div', { class: 'fold' }, content);
+    const btn = h('button', { type: 'button', class: 'btn fold-btn', hidden: true, 'aria-expanded': 'false' }, label);
+    const wrap = h('div', { class: 'fold-wrap' }, box, btn);
+    const lim = () => (window.innerWidth >= 900 ? limit + 120 : limit);
+    const measure = () => {
+        if (wrap.classList.contains('is-open')) return;
+        const tall = content.scrollHeight > lim() * 1.35;
+        wrap.classList.toggle('is-clamped', tall);
+        box.style.maxHeight = tall ? lim() + 'px' : '';
+        btn.hidden = !tall;
+    };
+    btn.addEventListener('click', () => {
+        const open = wrap.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', String(open));
+        btn.textContent = open ? 'たたむ' : label;
+        btn.hidden = false;
+        if (open) { box.style.maxHeight = ''; wrap.classList.remove('is-clamped'); wrap.classList.add('is-expanded'); }
+        else { wrap.classList.remove('is-expanded'); measure(); wrap.scrollIntoView({ block: 'nearest' }); }
+    });
+    if (typeof ResizeObserver === 'function') new ResizeObserver(measure).observe(content); else setTimeout(measure, 60);
+    return wrap;
 }
 
 function districtCard(W, d, eco) {
@@ -79,7 +118,7 @@ function agentRow(W, eco, a, rows) {
     const paint = () => {
         if (!live) return;
         clear(status); status.append(stageBadge(live.stage));
-        act.textContent = live.activity;
+        act.textContent = liveActivity(live);
     };
     paint();
     rows.push(paint);
@@ -126,7 +165,7 @@ export function placeView(ctx, id) {
     if (isEra && p.divergence) {
         const dv = p.divergence;
         add('divergence', '分岐点', section('divergence', '分岐点', `${dv.year} ・ ここで歴史が一歩だけ別の道へ`,
-            h('div', { class: 'diverge' },
+            foldable(h('div', { class: 'diverge' },
                 h('div', { class: 'dv dv-fact' },
                     h('h3', null, h('span', { class: 'tag tag-fact' }, '史実'), '実際にあったこと'),
                     h('p', null, tagged(String(dv.real_anchor || '').replace(/^【史実】/, ''))),
@@ -135,14 +174,14 @@ export function placeView(ctx, id) {
                 h('div', { class: 'dv dv-fiction' },
                     h('h3', null, h('span', { class: 'tag tag-fiction' }, '創作'), 'もしも、こうだったら'),
                     h('p', null, tagged(String(dv.what_if || '').replace(/^【創作】/, ''))),
-                    dv.fiction_note ? h('p', { class: 'fiction-note' }, tagged(dv.fiction_note)) : null))));
+                    dv.fiction_note ? h('p', { class: 'fiction-note' }, tagged(dv.fiction_note)) : null)), { limit: 560 })));
     }
 
     // ---- cascade timeline
     if (isEra && (p.cascade || []).length) {
         add('cascade', '時のつながり', section('cascade', '時のつながり', 'その分岐が、いまへ届くまで',
-            h('ol', { class: 'timeline' }, p.cascade.map(c =>
-                h('li', null, h('span', { class: 'tl-year' }, String(c.year)), h('p', null, tagged(c.event)))))));
+            foldable(h('ol', { class: 'timeline' }, p.cascade.map(c =>
+                h('li', null, h('span', { class: 'tl-year' }, String(c.year)), h('p', null, tagged(c.event))))), { limit: 420 })));
     }
 
     if (isEra && (p.alt_present || []).length) {
@@ -194,7 +233,7 @@ export function placeView(ctx, id) {
 
     // ---- chapter
     const chapterBox = h('div', { class: 'chapter-body' }, h('p', { class: 'empty' }, '章を読み込んでいます…'));
-    const chapterSec = section('chapter', '歩いてみる', 'この地の案内記', chapterBox);
+    const chapterSec = section('chapter', '歩いてみる', 'この地の案内記', foldable(chapterBox, { limit: 520, label: '案内記を最後まで読む' }));
     chapterSec.hidden = true;
     nav.push(['chapter', '案内記']);
     sections.push(chapterSec);
@@ -212,7 +251,8 @@ export function placeView(ctx, id) {
     const el = h('article', { class: 'page place-page' },
         hero(W, p, {
             kicker, title: placeShort(p), sub: placeSub(p), en: p.name_en, summary: p.summary, chips,
-            nav: anchorNav(nav.filter(([sid]) => sid !== 'chapter' || true))
+            map: placeMiniMap(W, p),
+            nav: anchorNav(nav)
         }),
         h('div', { class: 'page-body' }, sections));
 

@@ -43,7 +43,10 @@ function parseHash() {
     const parts = path.split('/').filter(Boolean);
     const query = {};
     new URLSearchParams(qs).forEach((v, k) => { query[k] = v; });
-    return { name: parts[0] || 'home', id: parts[1] ? decodeURIComponent(parts[1]) : null, query };
+    // A malformed escape such as %E0%A4%A must not throw: keep the raw segment and let the view say 見つかりません.
+    let id = null;
+    if (parts[1]) { try { id = decodeURIComponent(parts[1]); } catch { id = parts[1]; } }
+    return { name: parts[0] || 'home', id, query };
 }
 
 // ------------------------------------------------------------------ chapters

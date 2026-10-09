@@ -5,7 +5,7 @@ import { VIA } from './sim.js';
 import {
     h, clear, href, placeShort, placeSub, nameOf, agentShort, firstSentence, clip, fmt, accentOf, KIND_LABEL, RARITY_LABEL
 } from './util.js';
-import { plaque, chip, swatches, creatureArt, stageBadge, progressBar, goalLabel, goodLink, avatar } from './components.js';
+import { plaque, chip, swatches, creatureArt, stageBadge, progressBar, goalLabel, goalPct, liveActivity, goodLink, avatar } from './components.js';
 
 // How each vehicle looks on the map, for the legend (colours match map.js).
 const VIA_SWATCH = {
@@ -33,8 +33,11 @@ export function homeView(ctx) {
     const insets = () => {
         const w = stage.clientWidth, hgt = stage.clientHeight;
         if (w >= 900) return { top: 0, right: 372, bottom: 0, left: 0 };       // the side column
-        const sheet = info.classList.contains('is-open') ? info.offsetHeight + 16 : Math.min(130, hgt * 0.18);
-        return { top: Math.min(190, hgt * 0.24), right: 0, bottom: sheet, left: 0 };
+        const feedOpen = hud.feed.classList.contains('is-open');
+        const sheet = info.classList.contains('is-open') ? info.offsetHeight + 16
+            : feedOpen ? hud.feed.offsetHeight + 16 : Math.min(130, hgt * 0.18);
+        // the clock and the one-line ticker share a slim bar, so the map gets the height
+        return { top: Math.min(88, hgt * 0.14), right: 0, bottom: sheet, left: 0 };
     };
 
     // zoom buttons: useful on desktop and for keyboard users
@@ -55,11 +58,20 @@ export function homeView(ctx) {
 
     // On wide screens the HUD, the info plaque and the feed share one column beside the map.
     const side = h('div', { class: 'side' }, hud.clockPanel, hud.ticker, info, hud.feed);
-    stage.append(canvas, side, zoomBox, legend, places);
+    // first visit: what this place is, in three lines (dismissed for good with ×)
+    const seen = () => { try { return window.localStorage.getItem('zipangu.welcome') === '1'; } catch { return false; } };
+    const remember = () => { try { window.localStorage.setItem('zipangu.welcome', '1'); } catch { /* private mode: fine */ } };
+    const welcome = seen() ? null : plaque({ class: 'welcome', role: 'note', 'aria-label': 'はじめての方へ' },
+        h('button', { type: 'button', class: 'info-close', 'aria-label': '閉じる', onclick: () => { remember(); welcome.remove(); } }, '×'),
+        h('p', { class: 'welcome-lead' }, String(W.world.tagline || '').split('／')[0].split('。')[0] + '。'),
+        h('p', { class: 'welcome-text' }, 'AIたちが自分の頭で商いをする街。光る点が住人、「世のうごき」が今の取引。点をタップすると追いかけられる。'),
+        h('p', { class: 'welcome-links' }, h('a', { href: '#/about' }, 'くわしくは 案内 →')));
+    stage.append(h('h1', { class: 'sr-only' }, '万華京ジパング ・ 地図'), canvas, side, zoomBox, legend, places, welcome);
 
     // ------------------------------------------------ info plaque
     function select(sel) {
         current = sel;
+        if (sel && welcome) welcome.hidden = true;
         if (map) map.select(sel);
         clear(info);
         if (!sel) { info.classList.remove('is-open'); return; }
@@ -126,8 +138,8 @@ export function homeView(ctx) {
         const goal = h('div', { class: 'info-goal' });
         const wallet = h('span', { class: 'info-wallet' });
         const paint = () => {
-            clear(status); status.append(stageBadge(live.stage), ' ', live.activity);
-            clear(goal); goal.append(h('span', null, goalLabel(live.goalType)), progressBar(live.goalProgress, `${a.name}の長期目標の進み具合`));
+            clear(status); status.append(stageBadge(live.stage)); if (liveActivity(live)) status.append(' ', liveActivity(live));
+            clear(goal); goal.append(h('span', null, `${goalLabel(live.goalType)} ・ ${goalPct(live)}%`), progressBar(live.goalProgress, `${a.name}の長期目標の進み具合`));
             wallet.textContent = `${fmt(live.wallet)} ${W.baseCurrency.name_ja.replace(/（.*）/, '')}`;
         };
         paint();

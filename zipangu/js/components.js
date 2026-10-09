@@ -2,9 +2,10 @@
 // cards, the jewel-butterfly emblem.
 
 import { creatureCanvas } from './creature-art.js';
+import { agentFaceCanvas } from './agent-art.js';
 import { VIA, GOAL_LABELS } from './sim.js';
 import {
-    h, svg, link, href, accentOf, deepOf, lightOf, rgba, placeShort, nameOf, agentShort,
+    h, svg, link, href, accentOf, deepOf, lightOf, rgba, placeShort, nameOf,
     KIND_LABEL, RARITY_LABEL, clamp
 } from './util.js';
 
@@ -151,16 +152,30 @@ export function agentAccent(W, agent) {
     return accentOf(p && p.aesthetic && p.aesthetic.palette);
 }
 
+// The coin keeps its jewel gradient and rim; the neon-chibi face sits in it.
 export function avatar(W, agent) {
     const d = W.byId.district.get(agent.home);
     const p = d && W.placeOf(d.id);
     const pal = (p && p.aesthetic && p.aesthetic.palette) || [];
-    const ch = agentShort(agent).replace(/[^\p{L}\p{N}]/gu, '').slice(0, 1) || '?';
     return h('span', {
         class: 'avatar ' + (agent.origin === 'native' ? 'is-native' : 'is-neon'), 'aria-hidden': 'true',
         style: { '--a1': accentOf(pal), '--a2': lightOf(pal), '--a0': deepOf(pal) }
-    }, ch);
+    }, agentFaceCanvas(W, agent, 96));
 }
+
+// What an agent is doing, without repeating the badge: the idle label says
+// nothing new, and a trip reads as "→ where (by what)".
+export function liveActivity(live) {
+    const text = String((live && live.activity) || '').trim();
+    if (!text) return '';
+    const badge = (STAGE_LABEL[live.stage] || '').replace(/^[^\p{L}]+\s*/u, '');
+    if (text === badge || text === STAGE_LABEL[live.stage]) return '';
+    const trip = text.match(/^(.+?)へ(.+?)で移動中$/);
+    if (trip) return `→ ${trip[1]}（${trip[2]}）`;   // the badge says 移動; this says where to and by what
+    return text;
+}
+
+export const goalPct = live => Math.round(Math.max(0, Math.min(1, (live && live.goalProgress) || 0)) * 100);
 
 export function emptyNote(text) {
     return h('p', { class: 'empty' }, text);

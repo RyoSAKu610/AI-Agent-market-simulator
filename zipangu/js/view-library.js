@@ -36,11 +36,12 @@ function excerptBox(W, w) {
 }
 
 function workCard(W, w, { detail = false } = {}) {
+    const Title = detail ? 'h1' : 'h3';
     const district = w.district && W.byId.district.get(w.district);
     const life = [`${w.author}（${w.author_death_year}没）`];
     if (w.translator) life.push(`訳：${w.translator}（${w.translator_death_year}没）`);
     return plaque({ class: 'work-card' },
-        h('h3', null, detail ? `『${w.title}』` : link(href.work(w.id), `『${w.title}』`)),
+        h(Title, null, detail ? `『${w.title}』` : link(href.work(w.id), `『${w.title}』`)),
         h('p', { class: 'wm-author' }, life.join(' ・ ')),
         h('p', { class: 'wk-role' }, h('span', { class: 'lbl' }, 'この世界での姿'), tagged(detail ? w.in_world_role : clip(w.in_world_role, 150))),
         district ? h('p', { class: 'wk-where' }, h('span', { class: 'lbl' }, 'ある場所'), link(href.district(district.id), nameOf(district))) : null,
