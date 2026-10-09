@@ -20,7 +20,7 @@ export function visualsView(ctx) {
     const gallery = h('section', { class: 'sec' }, sectionHead('いま、会える設定画', '個別にひらくと、大きな絵と固有の動きを鑑賞できる'), h('div', { class: 'visual-catalog visual-gallery' }, ready.map(v => {
         const art = visualArt(W, v, { size: 250, eco: ctx.eco });
         painters.push(art.update);
-        return h('a', { class: 'visual-tile is-ready', href: '#/visual/' + visualKey(v) }, art, h('strong', null, visualTitle(W, v)), h('span', { class: 'visual-status' }, ['era', 'realm'].includes(v.type) ? '時片・異界の景観' : ['trust', 'credential', 'certificate'].includes(v.motion) ? '信頼・資格・証券の概念図' : '動く設定画'));
+        return h('a', { class: 'visual-tile is-ready', href: '#/visual/' + visualKey(v) }, art, h('strong', null, visualTitle(W, v)), h('span', { class: 'visual-status' }, ['era', 'realm'].includes(v.type) ? '時片・異界の景観' : ['trust', 'credential', 'certificate'].includes(v.motion) ? '素材が息づく信頼・資格・証券の概念図' : '動く設定画'));
     })));
     const sections = groups.map(([no, title, entities, type]) => h('section', { class: 'sec visual-batch' },
         sectionHead(no + ' ' + title, '設定画を一つずつ、正本の形・素材・生態に照らして制作'),

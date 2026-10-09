@@ -15,7 +15,7 @@
 - 星海月: 正本 hoshi_kurage。60cm、薄硝子風船のような傘、内側の光粒、何十本もの銀糸触手、光箔の贈り物。
 - チャハコビ: 正本 agent chahakobi。子どもほどの算機人形古老、白木顔・墨眉・朱唇・黒上衣・袴下真鍮車輪・水平な黒漆盆と茶碗・胸歯車。実在人物ではない。
 - 乙姫: 正本 agent otohime。黒長髪・領巾・珊瑚羽織・水引鍵・背玉手箱紋。銀行頭取・玉手箱税関長。衣服の織り文様と補助小物の具体形のみ **意匠提案**。
-- 万世時計: 本文・正本の十面時計と十時片を解釈した広域コンセプト画。令和中心→縄文外縁の正確な地区境界・時計面数の検証は正本地図に委ねる。夜明け版の初稿に列車が映ったため、v2で車両を除去した後、左下の残像をv3で再除去。空レールを目視確認したv3を採用、初稿・v2は制作側で比較保存。
+- 万世時計: 本文・正本の十面時計と十時片を解釈した広域コンセプト画。令和中心→縄文外縁の正確な地区境界・時計面数の検証は正本地図に委ねる。夜明け版の初稿に列車が映ったため、v2では車両だけ除去して夜限定鉄道のルールに整合。v2を採用、初稿は比較用。
 
 ## 用途と動き
 
@@ -173,6 +173,160 @@ Style: exquisite Japanese fantasy portrait painting, mineral pigments and fine i
 Composition: complete full body from hair to sandals, centered with generous transparent edge margins, genuine transparent alpha backdrop. No throne/palace/water scene, no ground shadows, no paper, frame, text or extra characters. Square high detail portrait.
 ```
 
+
+
+## 2026-10-10 追加採用・修正の節目
+
+主題18点（時計1＋生き物5＋先行人物2＋通貨10）を生成済み。採用時計は **v3**、雪華兎は **v2**、先行人物4stateは各 **actions-v2**、算額手形と米切手は **v2**。旧版は比較用でページ採用しない。
+
+4stateの通常ブラウザ暗舞台表示は統括側が確認済み。画像ツールはα0〜1/255の残留RGBを鮮やかに見せる場合があるため、残像の有無を実際のalpha値と通常ブラウザ合成で判断。透明余白のRGBを勝手に閾値加工していない。通貨のα最大254も有効な透過であり、周囲/四隅α0を確認。
+
+次の住人4名dogu/oracle/kamifuda/hoshiitoは原典IDごとに個別生成済み。ただしORACLE足元の客星小灰が猫、HOSHIITO肩の星蚕が哺乳類様、KAMIFUDA箱に二重顔として誤生成されたため、種同定と単一主体を修正中。これらの未採用品は今節目では完成に数えない。
+
+### bansei-clock-concept-v3.png
+
+採用。左下も車両除去、夜明けに空線路。
+
+```text
+Precise localized edit of supplied dawn city painting. IMPORTANT: leftover BLUE TRAIN CARRIAGES are still visible on the diagonal elevated railway in LOWER LEFT (roughly pixel x=0..350, y=580..840 in this 1536x1024 image): dark navy rectangular roofs and repeated golden rectangular windows directly on bridge. REMOVE this entire remaining blue train so this lower-left diagonal railway is absolutely EMPTY. Replace vehicle roofs/windows with two simple parallel exposed empty steel rails and bridge deck in correct perspective. No train at all anywhere.
+Keep ALL architecture, station buildings OFF the tracks, dawn sun and sky, clock tower, bridges, trees and water exactly unchanged. Do not remove adjacent town buildings. This is only the last rolling stock on that left diagonal railway. Preserve exquisite image detail and entire composition. No new text, no lights added, no darkening.
+```
+
+### sekka-usagi-v2.png
+
+採用。両耳・足・尾と余白復元。
+
+```text
+Edit the supplied 雪華兎 portrait ONLY to restore proper full-body safe framing. Keep exact rabbit identity, glacier-blue eyes, wisteria inner ears, translucent glass-fiber white fur, three snow crystals and pose. Scale the entire rabbit DOWN about 20% relative to the square canvas and complete the currently cropped upper tips of BOTH LONG EARS so BOTH complete ear outlines and every whisker/foot/tail fit inside frame with at least 8% genuine transparent margins on all edges. Do not invent new clothing or scenery, no glow aura, no changes to face or fur craftsmanship. Same fine Japanese natural-history painting. Genuine transparent alpha background.
+```
+
+### chahakobi-actions.png
+
+旧版。余白更新前。
+
+```text
+Use case: identity-preserve.
+Create a 2 by 2 GENUINE TRANSPARENT sprite/action sheet from supplied CHAHakobi reference. FOUR complete figures of THE SAME character, same wood face, black kamishimo, dark hakama, chest gear, brass wheels and black-lacquer tea tray with cup. Preserve exact illustration quality, palette, proportions and identity. NO OTHER character and no scenery/text/cell borders.
+Canvas square, four precisely equal cells, horizontal and vertical centers at 50%. Each figure centered in its cell, full-body with at least 12% per-cell safe margins, feet/wheels at the same relative baseline 87% of each cell, consistent head height and sprite scale. Figures must NOT overlap into another cell.
+Reading order:
+TOP LEFT: WAITING, neutral upright respectfully holding the tray level with both hands.
+TOP RIGHT: THINKING, gently tilts wooden head, eyes thoughtful, tray remains supported level by both hands, never touch chin with a hand abandoning tray.
+BOTTOM LEFT: MOVING, body leans very slightly forward with wheels turned and robe shifted to show a deliberate rolling step; BOTH hands keep tray HORIZONTAL.
+BOTTOM RIGHT: COURTEOUS BOW, bends torso and wooden head modestly forward at a stop, arms compensate so the tray and tea bowl stay HORIZONTAL and tea does not spill.
+All four poses visibly distinct. All parts including head/rope/tassels/wheels must stay inside own cell. Clean transparent alpha around every complete silhouette, not checkerboard print. No glow, no UI emoji, no labels. Same highly detailed Japanese mineral-pigment character painting.
+```
+
+### otohime-actions.png
+
+旧版。余白更新前。
+
+```text
+Use case: identity-preserve
+Make a 2x2 transparent ACTION SHEET from supplied OTOHIME reference. FOUR full-body poses of exactly this same fictional Ryugu banker customs director. Preserve face, long black hair, cream flowing hire scarf, coral haori, navy/ivory kimono, CLOSED black lacquer tamatebako wrapped in coral mizuhiki, and clearly visible MIZUHIKI KNOT KEY hanging at waist. Exact same refined ink/mineral-pigment painting, no change of identity or clothing. No other characters.
+Perfectly square canvas, split into four equal cells with centers 50% width/height. Each character centered in own cell with 12% safe margin; feet on same relative baseline 87% within each cell, exact same height/scale. Whole hair ornaments, scarf and hem contained within each cell, no cropping or overlapping cells. No borders, text, background, shadows or checkerboard print; GENUINE transparent alpha.
+Top-left WAITING: standing composed, closed box gently at waist, eyes open.
+Top-right THINKING: looks down attentively at customs ledger slip, a hand counting an entry; closed box supported by other hand. Key remains on waist.
+Bottom-left WALKING: one small clearly visible step in sandals, long robes gathered a little, scarf softly trails, closed box held secure. Bank director elegance, not running.
+Bottom-right TRANSACTION: respectful slight nod, presents CLOSED customs-sealed box forward with both hands. Box stays closed, no smoke or ageing, no floating magical effects.
+Four visually distinct silhouette gestures. Anatomy: each pose exactly two arms/two hands and two legs, hands physically connected to sleeves. Quiet restrained detail, no aura or sparkle.
+```
+
+### chahakobi-actions-v2.png
+
+採用。2x2四状態、水平盆、各セル全身余白。
+
+```text
+Localized framing edit to this 2x2 action sheet: preserve ALL four existing character identities, exact poses, faces, colors, props and fine artwork. In EACH of the four equal quadrants, shrink its entire character by 15% around its own cell center, retaining a complete full-body silhouette with head ornaments/scarf/feet/wheels and at least 7% genuine transparent margins INSIDE EACH CELL. Restore any tiny clipped top hair ornament seamlessly. Four cells are exact equal halves; do not change pose order. No borders, labels, scenery or checkerboard. True alpha transparent background. Keep artwork and four distinct gestures unchanged.
+```
+
+### otohime-actions-v2.png
+
+採用。2x2四状態、閉箱保持、各セル全身余白。
+
+```text
+Localized framing edit to this 2x2 action sheet: preserve ALL four existing character identities, exact poses, faces, colors, props and fine artwork. In EACH of the four equal quadrants, shrink its entire character by 15% around its own cell center, retaining a complete full-body silhouette with head ornaments/scarf/feet/wheels and at least 7% genuine transparent margins INSIDE EACH CELL. Restore any tiny clipped top hair ornament seamlessly. Four cells are exact equal halves; do not change pose order. No borders, labels, scenery or checkerboard. True alpha transparent background. Keep artwork and four distinct gestures unchanged.
+```
+
+### en.png
+
+採用。結縄と八霊玉、譲渡不能信用記録。具体形は意匠提案。
+
+```text
+Use case: stylized-concept. Transparent detailed object concept for 万華京ジパング.
+Subject 縁 EN /縄目, a NONTRANSFERABLE CREDIT RECORD, backed by honest trades counted as knots in a Jomon cord ledger. Cannot be bought, stolen or transferred; not spendable money. Show exactly ONE portable record: rough natural-fiber cord neatly coiled with several distinct honest-trade knots, EIGHT small understated spiritual beads threaded in a circle, each softly tinted differently showing reputation, and a small unpainted wooden keeper tag with label exactly 「縁」. No denomination or price, no money coin look. Actual appearance of eight beads/keeper tag is proposed design; knots and reputation function canonical.
+Museum-grade Japanese natural-history/object illustration, ultrafine ink, mineral pigment texture, individually drawn braided fibers and aged jade/stone/lacquer beads. Earthbrown, mossjade, cream, muted gold; no neon glow/rays/fireworks. Single complete isolated credit-record coil at center, safely within square frame, genuine transparent alpha, no hands/paper/scenery/text outside object, not icon/vector/cartoon.
+```
+
+### sangaku-tegata.png
+
+旧版。算額の能力資格証明、具体形は意匠提案。
+
+```text
+Use case: stylized-concept. Transparent object concept for 万華京ジパング.
+ONE 算額手形 SANGAKU TEGATA, an ability-and-honor CERTIFICATE earned by solving public mathematics and dedicating proof, enables guild membership and bids, not ordinary spendable cash. Tiny 瑠璃算蝶 pattern is anti-tampering assay. Human-only mathematics boundaries are respected by AI, never depict an AI solving a human-restricted task.
+Proposed design: one cream handmade washi certificate secured to a thin pale wooden backing, elegant sangaku geometric proof (three precise nested circles inside a triangle) printed in fine ink and muted vermilion/gold. Clear central small label exactly 「算額手形」. Deep LAPIS-BLUE tiny butterfly-pattern security seal at bottom. Faint calculation marks, do not invent a mathematically false equation or a real historical mathematician signature. Not cash note, no denomination, no rewards number.
+Museum-grade Japanese fine ink/mineral-pigment material illustration, washi fibers, cedar grain and precise compass geometry, cream/inkblack/vermillion/lapis. Entire complete certificate at gentle three-quarter angle centered with 12% safe margins, genuine transparent alpha, no table/hands/background/frame, no icon/vector/cartoon, no excessive glow.
+```
+
+### sangaku-tegata-v2.png
+
+採用。幾何図と瑠璃蝶印、α0の周囲。
+
+```text
+Use case: background-extraction. Remove ONLY the entire brown/black gradient backdrop and ALL cast shadows from this supplied certificate object. Preserve exactly the whole certificate, printed artwork and Japanese text, paper fibers, cord/rice sample if present, and wooden backing. Deliver one clean complete isolated object on GENUINE transparent alpha, with absolutely no brown haze, dark vignette, paper rectangle backdrop, shadow or studio environment outside the object. Keep all object edges and safe margins. No other changes.
+```
+
+### komekitte.png
+
+旧版。米倉先物証券、具体形は意匠提案。
+
+```text
+Use case: stylized-concept. Single transparent object concept 万華京ジパング.
+ONE 米切手 KOME-KITTE, a rice warehouse futures warrant, backed by crop yield and weather forecasts across eras, collateral for larger contracts, settled twice daily at dawn and dusk by Dojima time-layer exchange. Nominal guide ~12刻, but this portrait need not print price.
+Proposed appearance: thick handmade washi warehouse WARRANT with a small detailed rice-sheaf engraving, ledger ruling, harvest quantity fields shown as delicate non-specific ink strokes and clear title exactly 「米切手」. One red warehouse customs seal plus a tiny water-level/weather diagram inset symbolizes forecasts. A short dark-indigo cord ties a small rice-grain sample to the corner, understated realistic craft, not a giant sheaf. No real bank marks, no actual historical merchant identity/signature, no invented guaranteed profit text.
+Refined Japanese mineral-pigment museum object illustration, fine ink detail, textured washi, visible dry rice grains and cord fibers. Whole single warrant complete at slight angle, 12% safe margins, genuine transparent alpha background, no landscape/hands/table/drop shadow. Crisp restrained material finish, no glow or sparkles. Not vector/icon.
+```
+
+### komekitte-v2.png
+
+採用。米穂と天候/収穫/取引欄。α0の周囲。
+
+```text
+Use case: background-extraction. Remove ONLY the entire brown/black gradient backdrop and ALL cast shadows from this supplied certificate object. Preserve exactly the whole certificate, printed artwork and Japanese text, paper fibers, cord/rice sample if present, and wooden backing. Deliver one clean complete isolated object on GENUINE transparent alpha, with absolutely no brown haze, dark vignette, paper rectangle backdrop, shadow or studio environment outside the object. Keep all object edges and safe margins. No other changes.
+```
+
+### tamatebako-sai.png
+
+採用。閉じた封印箱と時差債。具体形は意匠提案。
+
+```text
+Use case: stylized-concept. One transparent monetary instrument concept for 万華京ジパング.
+ONE 玉手箱債 TAMATEBAKO BOND, a TIME-DEPOSIT DEBT CERTIFICATE from Ryugu Time Bank under Otohime; fictional three-day deposit yields decades-of-surface-time interest, distinct from actual legend ratios. Opening at era changes interest and holder ages; NOT an immortality potion. Nominal~300刻. Do not portray guaranteed real profit or open smoke.
+Proposed physical design: one exquisite black-lacquer SMALL CLOSED TAMATEBAKO serving as bond case, bound tightly with coral-red/ivory MIZUHIKI seal cord. Attached cream-and-sea-blue paper bond clearly labelled exactly 「玉手箱債」, with two tiny differently sized clock engravings to signify time difference, and a small tidal gauge circle. Keep box CLOSED, no smoke or body ageing. Fine pearl inlay, tide-wave lacquer engraving, restrained trusted-bank seal; no historical signatures.
+Museum Japanese mineral-pigment object painting, extremely precise lacquer reflections, cord knots, paper fibers, warm black/coral/ivory/deepsea blue. One unified box+bond instrument centrally isolated, all parts complete with 12% safe transparent margins, genuine alpha, no hand/table/palace/scenery, no aura/glitter, not icon/vector.
+```
+
+### mon.png
+
+採用。公有の物語実績、本の意匠の銭。具体形は意匠提案。
+
+```text
+Use case: stylized-concept. One transparent currency object concept for 万華京ジパング.
+ONE 文 MON, story currency backed by records of READING, PERFORMING and DELIVERING PUBLIC-DOMAIN STORIES whose author AND translator have died and protection term has expired in this fictional world's natural law. It pays meeting rights with story residents and transport of design ideas; stories travel all eras duty-free. ~2刻, no living author work or real copyrighted characters.
+Proposed physical design: ONE round modest dark bronze story coin with softly worn edges; center engraving of an OPEN BOOK whose pages have delicate non-specific handwritten strokes (no quoted passage), one graceful small paper bird emerging at edge to suggest story becomes living encounter, and exactly one clear central Japanese character 「文」. Authentic minted physical token, not flat logo. Reverse detail only as slight visible thickness. Avoid real historical coin exact copy, author face/signature, denomination.
+Exquisite Japanese ink/mineral-pigment material illustration, fine bronze patina and tiny engraved page fibers, dark bronze/ivory/vermilion assay seal. Entire coin frontal slight three-quarter, 12% safe margins, genuine transparent alpha background, no landscape/hands/shadow/paper. No magical aura, no sparkle cloud, not icon or vector.
+```
+
+### yen-data.png
+
+採用。¥決済とDATA知識素材のペア。具体形は意匠提案。
+
+```text
+Use case: stylized-concept. Transparent paired concept asset for 万華京ジパング.
+ONE PAIR representing ¥とDATA, NEON OLD TOWN local settlement currency and knowledge resource, inherited from old NEON MYTHOS. ¥ makes local payments (20¥=1刻 guide), DATA exported to other eras as MATERIAL FOR SANGAKU AND ADAPTATION, not both spendable cash.
+Proposed two related objects side by side, clearly separate functions: LEFT a small worn grey-brass local payment token with one exact engraved character 「¥」 and restrained cyan neon-old-town assay stripe; RIGHT a compact dark ink-lacquer rectangular DATA CARTRIDGE with a translucent mint-green small slot exposing micro-engraved geometric calculation plates and exactly 「DATA」 in small clear lettering. Cipher-like tiny etched patterns, not modern real-brand device; a short removable cream blueprint tab emerges from cartridge to hint knowledge material. No price on DATA, no suggestion of guaranteed investments.
+Museum-grade Japanese fantasy object illustration, ultra-fine ink/mineral-pigment rendering, material texture, small restrained mint neon accent only, no radiating glare/cyberpunk glow cloud. PAIR fully contained in square frame, consistent scale, generous 15% safe transparent margins, genuine alpha. No table/hands/scenery/UI/paper backdrop, not icon/vector.
+```
 
 
 ## 時計の採用履歴

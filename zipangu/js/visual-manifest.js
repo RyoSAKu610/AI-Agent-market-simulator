@@ -9,15 +9,15 @@ export const VISUALS = [
     {"id":"shirin","type":"currency","file":"shirin.png","motion":"shirin","note":"自然に落ちた鱗だけを蝶守座が鑑定。手形の形は創作意匠。","status":"ready"},
     {"id":"kohaku","type":"currency","file":"kohaku.png","motion":"kohaku","note":"透金の札の蓄光量が裏付け。一節気ほど動かさないと減光する。","status":"ready"},
     {"id":"hotarusen","type":"currency","file":"hotarusen.png","motion":"hotarusen","note":"雷蛍の光を蓄えた雷瓶のエネルギー通貨。日ごとに暗くなる。","status":"ready"},
-    {"id":"en","type":"currency","file":"en.png","motion":"trust","note":"譲渡不能の信頼通貨。八つの霊玉と結縄の概念図であり、交換できる貨幣ではない。","status":"planned"},
-    {"id":"sangaku_tegata","type":"currency","file":"sangaku-tegata.png","motion":"credential","note":"難問の奉納が裏付けとなる能力・名誉の手形。券面は創作意匠。名目値は入札の目安。","status":"planned"},
-    {"id":"komekitte","type":"currency","file":"komekitte.png","motion":"certificate","note":"作柄と天気予報に連動する倉荷の先物証券。書式・印の形は創作意匠。","status":"planned"},
-    {"id":"tamatebako_sai","type":"currency","file":"tamatebako-sai.png","motion":"bond","note":"竜宮の時差債。開いた者は老いる約定。箱と証書の細部は創作意匠。","status":"planned"},
-    {"id":"mon","type":"currency","file":"mon.png","motion":"story","note":"公有の物語を届けた実績が裏付け。出会い権を表す意匠は創作。","status":"planned"},
-    {"id":"yen_data","type":"currency","file":"yen-data.png","motion":"data","note":"¥はネオン旧市街の決済、DATAは翻案の素材。二者を一つの交換貨幣にしない。","status":"planned"},
+    {"id":"en","type":"currency","file":"en.png","motion":"trust","note":"譲渡不能の信頼通貨。八つの霊玉と結縄の概念図であり、交換できる貨幣ではない。","status":"ready"},
+    {"id":"sangaku_tegata","type":"currency","file":"sangaku-tegata-v2.png","motion":"credential","note":"難問の奉納が裏付けとなる能力・名誉の手形。券面は創作意匠。名目値は入札の目安。","status":"ready"},
+    {"id":"komekitte","type":"currency","file":"komekitte-v2.png","motion":"certificate","note":"作柄と天気予報に連動する倉荷の先物証券。書式・印の形は創作意匠。","status":"ready"},
+    {"id":"tamatebako_sai","type":"currency","file":"tamatebako-sai.png","motion":"bond","note":"竜宮の時差債。開いた者は老いる約定。箱と証書の細部は創作意匠。","status":"ready"},
+    {"id":"mon","type":"currency","file":"mon.png","motion":"story","note":"公有の物語を届けた実績が裏付け。出会い権を表す意匠は創作。","status":"ready"},
+    {"id":"yen_data","type":"currency","file":"yen-data.png","motion":"data","note":"¥はネオン旧市街の決済、DATAは翻案の素材。二者を一つの交換貨幣にしない。","status":"ready"},
     {"id":"sekka_usagi","type":"creature","file":"sekka-usagi-v2.png","motion":"rabbit","status":"ready"},
     {"id":"hoshi_kurage","type":"creature","file":"hoshi-kurage.png","motion":"jellyfish","status":"ready"},
-    {"id":"chahakobi","type":"agent","file":"chahakobi.png","motion":"agent","status":"ready"},
+    {"id":"chahakobi","type":"agent","file":"chahakobi.png","poses":"chahakobi-actions-v2.png","motion":"agent","status":"ready"},
     {"id":"jomon_yuinawa","type":"era","file":"jomon_yuinawa.png","motion":"era","note":"時片ごとの分岐技術と素材に沿った創作コンセプト景観。","status":"ready"},
     {"id":"onmyoryo_rokoku","type":"era","file":"onmyoryo_rokoku.png","motion":"era","note":"時片ごとの分岐技術と素材に沿った創作コンセプト景観。","status":"ready"},
     {"id":"hiraizumi_zipangu","type":"era","file":"hiraizumi_zipangu.png","motion":"era","note":"時片ごとの分岐技術と素材に沿った創作コンセプト景観。","status":"ready"},
@@ -28,7 +28,7 @@ export const VISUALS = [
     {"id":"taisho_tenki","type":"era","file":"taisho_tenki.png","motion":"era","note":"時片ごとの分岐技術と素材に沿った創作コンセプト景観。","status":"ready"},
     {"id":"showa_hojo","type":"era","file":"showa_hojo.png","motion":"era","note":"時片ごとの分岐技術と素材に沿った創作コンセプト景観。","status":"ready"},
     {"id":"reiwa_mangekyo","type":"era","file":"reiwa_mangekyo.png","motion":"era","note":"時片ごとの分岐技術と素材に沿った創作コンセプト景観。","status":"ready"},
-    {"id":"otohime","type":"agent","file":"otohime.png","motion":"agent","status":"ready"},
+    {"id":"otohime","type":"agent","file":"otohime.png","poses":"otohime-actions-v2.png","motion":"agent","status":"ready"},
     {"id":"dogu_mori","type":"creature","file":"dogu_mori.png","motion":"walk","status":"planned"},
     {"id":"jomon_morioi_jika","type":"creature","file":"jomon_morioi_jika.png","motion":"walk","status":"planned"},
     {"id":"raden_ageha","type":"creature","file":"raden_ageha.png","motion":"flutter","status":"ready"},
@@ -53,9 +53,9 @@ export const VISUALS = [
     {"id":"rai_botaru","type":"creature","file":"rai_botaru.png","motion":"hover","status":"planned"},
     {"id":"hari_kingyo","type":"creature","file":"hari_kingyo.png","motion":"swim","status":"planned"},
     {"id":"jinari_namazu","type":"creature","file":"jinari_namazu.png","motion":"swim","status":"planned"},
-    {"id":"raiden_aizuri_ageha","type":"creature","file":"raiden_aizuri_ageha.png","motion":"flutter","status":"planned"},
+    {"id":"raiden_aizuri_ageha","type":"creature","file":"raiden_aizuri_ageha.png","motion":"flutter","status":"ready"},
     {"id":"raiden_nade_raiju","type":"creature","file":"raiden_nade_raiju.png","motion":"walk","status":"planned"},
-    {"id":"tamamushi_ageha","type":"creature","file":"tamamushi_ageha.png","motion":"glide","status":"planned"},
+    {"id":"tamamushi_ageha","type":"creature","file":"tamamushi_ageha.png","motion":"glide","status":"ready"},
     {"id":"ama_tamamushi","type":"creature","file":"ama_tamamushi.png","motion":"drift","status":"planned"},
     {"id":"meiji_kohaku_tomoshiga","type":"creature","file":"meiji_kohaku_tomoshiga.png","motion":"flutter","status":"planned"},
     {"id":"meiji_ehagaki_tsubame","type":"creature","file":"meiji_ehagaki_tsubame.png","motion":"drift","status":"planned"},
@@ -122,14 +122,16 @@ export const VISUALS = [
     {"id":"tenshu_yurimori","type":"agent","file":"tenshu_yurimori.png","motion":"agent","status":"planned"},
     {"id":"ginga_tetsudo","type":"realm","file":"ginga_tetsudo.png","motion":"era","status":"ready"},
     {"id":"ihatov","type":"realm","file":"ihatov.png","motion":"era","status":"ready"},
-    {"id":"tono","type":"realm","file":"tono.png","motion":"era","status":"planned"},
-    {"id":"sakura_mori","type":"realm","file":"sakura_mori.png","motion":"era","status":"planned"},
-    {"id":"ryugu_horai","type":"realm","file":"ryugu_horai.png","motion":"era","status":"planned"},
-    {"id":"tsuki_no_miyako","type":"realm","file":"tsuki_no_miyako.png","motion":"era","status":"planned"},
-    {"id":"tenshu","type":"realm","file":"tenshu.png","motion":"era","status":"planned"},
-    {"id":"yume_juya","type":"realm","file":"yume_juya.png","motion":"era","status":"planned"}
+    {"id":"tono","type":"realm","file":"tono.png","motion":"era","status":"ready"},
+    {"id":"sakura_mori","type":"realm","file":"sakura_mori.png","motion":"era","status":"ready"},
+    {"id":"ryugu_horai","type":"realm","file":"ryugu_horai.png","motion":"era","status":"ready"},
+    {"id":"tsuki_no_miyako","type":"realm","file":"tsuki_no_miyako.png","motion":"era","status":"ready"},
+    {"id":"tenshu","type":"realm","file":"tenshu.png","motion":"era","status":"ready"},
+    {"id":"yume_juya","type":"realm","file":"yume_juya-v3.png","motion":"era","status":"ready"}
 ];
 
 export function visualOf(type, id) { return VISUALS.find(v => v.type === type && v.id === id && v.status === 'ready'); }
 export function visualKey(v) { return v.type + ':' + v.id; }
 export function visualSource(v) { return (window.__ZIPANGU_VISUALS__ || {})[visualKey(v)] || 'assets/visuals/' + v.file; }
+
+export function visualPoseSource(v) { return (window.__ZIPANGU_VISUALS__ || {})[visualKey(v) + ":poses"] || "assets/visuals/" + v.poses; }

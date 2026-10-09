@@ -900,3 +900,19 @@ input::placeholder { color: var(--ink-faint); }
 @keyframes visual-walk { 0%,45%,100% { transform: translateX(-2%); } 55% { transform: translateX(0) translateY(-1%); } 65% { transform: translateX(2%); } 75% { transform: translateX(2%) translateY(-1%); } }
 @keyframes visual-hover { 0%,100% { transform: translateY(1%); } 50% { transform: translateY(-3%); } }
 @keyframes visual-drift { 0%,100% { transform: translate(-2%,2%); } 50% { transform: translate(3%,-3%); } }
+
+.visual-rig > img[hidden], .visual-pose[hidden] { display: none; }
+.visual-pose { position: absolute; inset: 0; overflow: hidden; }
+.visual-pose > img { width: 200%; height: 200%; max-width: none; display: block; }
+.visual-pose[data-frame="1"] > img { transform: translateX(-50%); }
+.visual-pose[data-frame="2"] > img { transform: translateY(-50%); }
+.visual-pose[data-frame="3"] > img { transform: translate(-50%, -50%); }
+[data-motion="trust"] .visual-rig { animation: visual-trust 16s ease-in-out infinite; }
+[data-motion="credential"] .visual-rig, [data-motion="certificate"] .visual-rig { animation: visual-material 14s ease-in-out infinite; }
+@keyframes visual-trust { 0%,100% { transform: rotate(-1deg); filter: brightness(.97); } 50% { transform: rotate(1deg); filter: brightness(1.04); } }
+@keyframes visual-material { 0%,100% { filter: brightness(.98); } 50% { filter: brightness(1.04); } }
+
+/* Its mechanically level tea tray stays horizontal, including while bowing. */
+[data-visual="agent:chahakobi"] [data-stage="think"] .visual-rig,
+[data-visual="agent:chahakobi"] [data-stage="trade"] .visual-rig { animation: visual-level-tray 5s ease-in-out infinite; }
+@keyframes visual-level-tray { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-1%); } }

@@ -1,7 +1,7 @@
 // Additive concept art: the existing map sprites and procedural art remain available.
 import { createDial } from './clock-dial.js';
 import { h, nameOf, placeShort } from './util.js';
-import { visualOf, visualSource, visualKey } from './visual-manifest.js';
+import { visualOf, visualSource, visualPoseSource, visualKey } from './visual-manifest.js';
 
 export function visualEntity(W, v) {
     return v.type === 'creature' ? W.byId.creature.get(v.id) : v.type === 'agent' ? W.byId.agent.get(v.id) : v.type === 'currency' ? W.byId.currency.get(v.id) : v.type === 'era' ? W.byId.era.get(v.id) : v.type === 'realm' ? W.byId.realm.get(v.id) : null;
@@ -18,6 +18,10 @@ export function visualArt(W, v, { size = 300, eco = null, controls = false } = {
         : img());
     if (butterfly) rig.setAttribute('aria-label', title + '・設定画');
     if (butterfly) rig.setAttribute('role', 'img');
+    const pose = v.poses ? h('div', { class: 'visual-pose', role: 'img', 'aria-label': title + '・行動設定画' }, h('img', { src: visualPoseSource(v), alt: '', loading: 'lazy', decoding: 'async' })) : null;
+    const portrait = pose ? rig.querySelector('img') : null;
+    if (pose) { rig.append(pose); portrait.hidden = true; }
+    let showPortrait = false;
     const reaction = h('span', { class: 'visual-reaction', 'aria-live': 'off', hidden: v.type !== 'agent' });
     const surface = h('div', { class: 'visual-surface', style: { '--visual-size': size + 'px' }, dataset: { motion: v.motion, stage: 'idle' } }, rig, reaction);
     const out = h('div', { class: 'visual-art', dataset: { visual: visualKey(v) } }, surface);
@@ -33,7 +37,14 @@ export function visualArt(W, v, { size = 300, eco = null, controls = false } = {
     let days = 0, demoPlaying = false, demoLast = 0, demoElapsed = 0;
     let daySlider = null;
     const ageNote = h('output', { class: 'visual-age-note' });
-    if (controls && !['era', 'trust', 'credential', 'certificate'].includes(v.motion)) out.append(h('div', { class: 'visual-controls' }, stop), h('p', { class: 'visual-stop-note' }, '絵の動きだけを止めます。街の時間と商いは続きます。'));
+    if (controls && !['era', 'still'].includes(v.motion)) out.append(h('div', { class: 'visual-controls' }, stop), h('p', { class: 'visual-stop-note' }, '絵の動きだけを止めます。街の時間と商いは続きます。'));
+    if (controls && pose) {
+        const toggle = h('button', { type: 'button', class: 'btn', 'aria-pressed': 'false', onclick: () => {
+            showPortrait = !showPortrait; pose.hidden = showPortrait; portrait.hidden = !showPortrait;
+            toggle.textContent = showPortrait ? 'いまの行動を見る' : '単体の設定画を見る'; toggle.setAttribute('aria-pressed', String(showPortrait));
+        } }, '単体の設定画を見る');
+        out.append(toggle);
+    }
     if (controls && ['kohaku', 'hotarusen'].includes(v.id)) {
         const slider = h('input', { type: 'range', min: 0, max: 30, value: 0, 'aria-label': '動かさずに置いた日数', oninput: e => { days = Number(e.target.value); demoElapsed = days; demoLast = performance.now(); update(); } });
         daySlider = slider;
@@ -57,6 +68,7 @@ export function visualArt(W, v, { size = 300, eco = null, controls = false } = {
             const live = eco.agents.get(v.id);
             const stage = live && live.stage || 'idle';
             surface.dataset.stage = stage;
+            if (pose) pose.dataset.frame = String({ think: 1, travel: 2, trade: 3 }[stage] || 0);
             reaction.textContent = { react: '！', think: '💭', travel: '🏃', trade: '◆' }[stage] || '';
             reaction.setAttribute('aria-label', live && live.activity || '待機');
         }
@@ -81,7 +93,7 @@ export function visualFeature(ctx, type, id, { size = 440 } = {}) {
     const v = visualOf(type, id);
     if (!v) return null;
     const art = visualArt(ctx.W, v, { size, eco: ctx.eco, controls: true });
-    const el = h('section', { class: 'visual-feature' }, h('p', { class: 'kicker' }, type === 'era' ? '第一制作帖 ・ 時片の景観' : '第一制作帖 ・ 設定画'), art,
+    const el = h('section', { class: 'visual-feature' }, h('p', { class: 'kicker' }, ['era', 'realm'].includes(type) ? '制作帖 ・ 時片と異界の景観' : '第一制作帖 ・ 設定画'), art,
         h('p', { class: 'ar-role' }, v.note || '正本の外見・生態をもとにした追加の創作コンセプト画。'),
         h('a', { class: 'chip', href: '#/visual/' + visualKey(v) }, '大きく鑑賞・設定を見る →'));
     el.update = art.update;

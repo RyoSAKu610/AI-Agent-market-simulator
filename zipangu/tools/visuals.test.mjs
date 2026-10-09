@@ -25,6 +25,13 @@ for (const v of VISUALS) {
     const bytes = readFileSync(file);
     assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', 'PNG expected');
     assert.ok(bytes.readUInt32BE(16) >= 1024 && bytes.readUInt32BE(20) >= 1024, 'original full-resolution artwork expected');
+    if (v.poses) {
+        assert.match(v.poses, /^[a-z0-9_-]+\.png$/);
+        const sheet = readFileSync(join(root, 'assets/visuals', v.poses));
+        assert.equal(sheet.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+        const width = sheet.readUInt32BE(16), height = sheet.readUInt32BE(20);
+        assert.ok(width >= 1024 && height >= 1024 && width % 2 === 0 && height % 2 === 0, 'four equal full-resolution pose cells expected');
+    }
     ready++;
 }
 console.log(`visuals.test: ${ready} reviewed PNGs, ${VISUALS.length} canonical manifest entries — passed`);
