@@ -8,7 +8,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, copyFileSync } fro
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseCsv, cleanAozoraText, excerpt, findStart, norm, skipHeadings } from './aozora-extract.mjs';
+import { parseCsv, cleanAozoraText, excerpt, findStart, norm, skipHeadings, dropNoteNumbers } from './aozora-extract.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -38,6 +38,11 @@ assert.equal(excerpt('前置き。〓の文。', 0, 100), '前置き。'); // si
 assert.equal(findStart('前の段落\n　目印のある段落です。', { mode: 'anchor', anchor: '目印' }), 5);
 assert.equal(findStart('abc', { mode: 'anchor', anchor: 'zzz' }), -1);
 assert.equal(findStart('序\n三代の榮耀一睡の中にして', { mode: 'anchor', anchor: '三代の栄耀' }), 2); // old kanji in the text
+
+// inline note numbers that count up are dropped; ordinary numerals stay
+assert.equal(dropNoteNumbers('一〇三代の榮耀一睡の中にして、一一大門の跡は一里こなたに有。一二秀衡が跡は田野に成て、一三金鷄山のみ形を殘す。'),
+    '三代の榮耀一睡の中にして、大門の跡は一里こなたに有。秀衡が跡は田野に成て、金鷄山のみ形を殘す。');
+assert.equal(dropNoteNumbers('三人と一人が二度来た。'), '三人と一人が二度来た。');
 
 // headings are skipped; a long first sentence is cut at a comma
 assert.equal(skipHeadings('一\n\n本文です。'), '本文です。');

@@ -81,7 +81,8 @@
     "extraction": {
       "mode": "anchor",
       "anchor": "三代の栄耀",
-      "max_chars": 450
+      "max_chars": 450,
+      "note_numbers": true
     }
   },
   {
@@ -650,7 +651,7 @@
   },
   {
     "id": "tenshu_muou_no_koi",
-    "title": "夢応の鯉魚",
+    "title": "雨月物語",
     "author": "上田 秋成",
     "author_death_year": 1809,
     "placed_in": "yume_juya",
@@ -658,7 +659,8 @@
     "in_world_role": "夢の中で鯉になって琵琶湖を泳ぐ僧の話で、夢応の鯉の起源。【史実】『雨月物語』が刊行された1776年は、平賀源内がエレキテルを復元したとされる年でもある。【創作】その縁で、江戸後期の雷電泰平の記念祭でも読まれる。",
     "why": "【史実】『雨月物語』は上田秋成（1734–1809）の怪異小説集で、1776年（安永5年）に刊行された。その一編「夢応の鯉魚」は、三井寺の絵師の僧・興義が夢の中で鯉になって琵琶湖を泳ぐ話。作者は1809年に没しており公有。【創作】この鯉の子孫が回廊の池へ泳ぎ込む設定と、竜宮の大潮との水のつながりは、原作にはないこの世界の作り話。",
     "extraction": {
-      "mode": "opening",
+      "mode": "anchor",
+      "anchor": "三井寺に興義",
       "max_chars": 350
     }
   },
@@ -695,6 +697,9 @@
       "mode": "anchor",
       "anchor": "Chipangu is an Island towards the east",
       "max_chars": 650
+    },
+    "undated_people": {
+      "Rusticiano, da Pisa": 1300
     }
   },
   {
@@ -752,6 +757,9 @@
       "mode": "anchor",
       "anchor": "Long, long ago in the province of Tango",
       "max_chars": 600
+    },
+    "undated_people": {
+      "Ozaki, Yei Theodora": 1932
     }
   },
   {
@@ -771,6 +779,9 @@
       "mode": "anchor",
       "anchor": "there lived an old bamboo wood-cutter",
       "max_chars": 600
+    },
+    "undated_people": {
+      "Ozaki, Yei Theodora": 1932
     }
   },
   {

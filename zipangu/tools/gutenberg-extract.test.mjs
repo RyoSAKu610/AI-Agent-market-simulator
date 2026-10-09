@@ -54,16 +54,19 @@ const book = body => `Header\n*** START OF THE PROJECT GUTENBERG EBOOK T ***\n\n
 writeFileSync(join(files, 'pg101.txt'), book('Chapter one.\n\nNo lighthouse in this volume.'));
 writeFileSync(join(files, 'pg102.txt'), book('The lighthouse stood on the\nrock. It was bright.'));
 writeFileSync(join(files, 'pg201.txt'), book('Modern words.'));
+writeFileSync(join(files, 'pg401.txt'), book('Once there was a tale.'));
 writeFileSync(join(dir, 'catalog.csv'), [
     'Text#,Type,Issued,Title,Language,Authors,Subjects,LoCC,Bookshelves',
     '101,Text,2000-01-01,"The Lighthouse — Volume 1",en,"Keeper, Old, 1800-1880",,,',
     '102,Text,2000-01-01,"The Lighthouse — Volume 2",en,"Keeper, Old, 1800-1880; Teller, Young, 1890-1950 [Translator]",,,',
     '201,Text,2000-01-01,"Modern Book",en,"Writer, New, 1940-1990",,,',
-    '301,Text,2000-01-01,"Other Book",en,"Keeper, Old, 1800-1880",,,'
+    '301,Text,2000-01-01,"Other Book",en,"Keeper, Old, 1800-1880",,,',
+    '401,Text,2000-01-01,"Old Tales",en,"Teller, Undated",,,'
 ].join('\n') + '\n');
 writeFileSync(join(dir, 'world', 'library.json'), JSON.stringify([
     { id: 'lighthouse', source: 'gutenberg', language: 'en', gutenberg_id: 101, title: 'The Lighthouse', author: 'Old Keeper', extraction: { mode: 'anchor', anchor: 'The lighthouse stood', max_chars: 300 } },
     { id: 'modern', source: 'gutenberg', language: 'en', gutenberg_id: 201, title: 'Modern Book', author: 'New Writer', extraction: { mode: 'anchor', anchor: 'Modern', max_chars: 300 } },
+    { id: 'dated_here', source: 'gutenberg', language: 'en', gutenberg_id: 401, title: 'Old Tales', author: 'Undated Teller', undated_people: { 'Teller, Undated': 1932 }, extraction: { mode: 'anchor', anchor: 'Once', max_chars: 300 } },
     { id: 'missing', source: 'gutenberg', language: 'en', gutenberg_id: 999, title: 'No Such Book', author: 'Old Keeper', extraction: { mode: 'anchor', anchor: 'x', max_chars: 300 } },
     { id: 'japanese', title: '日本の本', author: '架空 太郎', extraction: { mode: 'opening', max_chars: 80 } }
 ]));
@@ -78,6 +81,7 @@ assert.equal(out.lighthouse.gutenberg_id, 102, 'falls back to the volume that ha
 assert.equal(out.lighthouse.excerpt, 'The lighthouse stood on the rock. It was bright.');
 assert.equal(out.lighthouse.card_url, 'https://www.gutenberg.org/ebooks/102');
 assert.equal(out.modern.status, 'copyrighted');
+assert.equal(out.dated_here.status, 'ok', 'a death year given in library.json fills a catalogue gap');
 assert.equal(out.missing.status, 'not_found');
 assert.ok(out.missing.candidates.some(c => c.includes('Other Book')));
 assert.equal(out.japanese.excerpt, '既存の抜粋。', 'Japanese works are left to the 青空文庫 extractor');

@@ -128,7 +128,8 @@ async function main() {
         let result = null;
         for (const r of candidates.slice(0, 4)) {
             const id = Number(r['Text#']);
-            const people = parsePeople(r.Authors);
+            // library.json may give a death year the catalogue lacks (undated_people), as a reviewed fact.
+            const people = parsePeople(r.Authors).map(p => p.died === null && w.undated_people && Number.isInteger(w.undated_people[p.name]) ? { ...p, died: w.undated_people[p.name] } : p);
             if (!publicDomainInJapan(people)) { result = result || { status: 'copyrighted', note: `catalogue lists: ${r.Authors}` }; continue; }
             try {
                 const raw = await getText(textUrl(id), `pg${id}.txt`, 'GUTENBERG_FILES');

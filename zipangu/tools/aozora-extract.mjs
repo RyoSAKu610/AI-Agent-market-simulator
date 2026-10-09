@@ -136,6 +136,29 @@ export function excerpt(text, start, maxChars) {
     return out.replace(/\n+$/, '').trim();
 }
 
+// Some annotated editions (おくのほそ道) print note numbers inline as kanji digits:
+// 「一〇三代の榮耀一睡の中にして、一一大門の跡は…」. They count up one by one, so the
+// runs that continue that count are dropped; other numerals (三代, 一里) stay.
+const KDIGIT = { '〇': 0, '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9 };
+const digitsOf = s => Number([...s].map(c => KDIGIT[c]).join(''));
+export function dropNoteNumbers(text) {
+    const runs = [...text.matchAll(/[〇一二三四五六七八九]+/g)].map(m => ({ at: m.index, s: m[0] }));
+    // Pick the starting number that the most following runs continue.
+    let best = { start: null, len: 0 };
+    for (let k = 1; k <= Math.min(3, runs[0] ? runs[0].s.length : 0); k++) {
+        let next = digitsOf(runs[0].s.slice(0, k)) + 1, len = 1;
+        for (const r of runs.slice(1)) if (r.s.startsWith(String(next).replace(/\d/g, d => '〇一二三四五六七八九'[d]))) { next++; len++; }
+        if (len > best.len) best = { start: digitsOf(runs[0].s.slice(0, k)), len };
+    }
+    if (best.len < 3) return text;
+    let expect = best.start, out = '', last = 0;
+    for (const r of runs) {
+        const want = String(expect).replace(/\d/g, d => '〇一二三四五六七八九'[d]);
+        if (r.s.startsWith(want)) { out += text.slice(last, r.at); last = r.at + want.length; expect++; }
+    }
+    return out + text.slice(last);
+}
+
 export function findStart(text, extraction) {
     if (extraction.mode === 'anchor') {
         const i = fold(text).indexOf(fold(extraction.anchor));
@@ -184,7 +207,8 @@ async function main() {
             const text = cleanAozoraText(new TextDecoder('shift_jis').decode(readFileSync(txt)));
             const start = findStart(text, w.extraction);
             if (start < 0) { works[w.id] = { status: 'anchor_not_found', card_url: pick[COL.card], note: `anchor "${w.extraction.anchor}" not in text` }; continue; }
-            const ex = excerpt(text, start, w.extraction.max_chars || 400);
+            const body = w.extraction.note_numbers ? dropNoteNumbers(text.slice(start)) : text.slice(start);
+            const ex = excerpt(body, 0, w.extraction.max_chars || 400);
             works[w.id] = {
                 status: ex ? 'ok' : 'empty',
                 excerpt: ex,

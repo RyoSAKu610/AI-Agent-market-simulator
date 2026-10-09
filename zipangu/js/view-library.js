@@ -8,7 +8,7 @@ import { notFound } from './view-place.js';
 // Why an excerpt is not on the page yet, in the reader's words.
 const WHY_PENDING = {
     none: '抜粋はこれから、青空文庫の公式データから取り寄せます。',
-    not_found: '青空文庫の索引で見つけられなかったため、確認しています。',
+    not_found: '青空文庫にはまだ収録されていないため、本文の抜粋はありません。',
     copyrighted: '索引が保護期間中と示しているため、掲載しません。',
     anchor_not_found: '抜粋の始まりの位置を確かめているところです。',
     empty: '抜粋を取り出せなかったため、もう一度試します。',
@@ -45,7 +45,7 @@ function excerptBox(W, w) {
     const from = isEnglish(w) ? 'Project Gutenberg' : '青空文庫';
     return h('div', { class: 'excerpt pending' },
         h('span', { class: 'tag tag-pending' }, `${from}から抜粋予定`),
-        h('p', null, isEnglish(w) ? WHY_PENDING[key].replace('青空文庫の公式データ', 'Project Gutenberg').replace('青空文庫の索引', 'Gutenberg の目録') : WHY_PENDING[key]),
+        h('p', null, isEnglish(w) ? WHY_PENDING[key].replace('青空文庫の公式データ', 'Project Gutenberg').replace('青空文庫の索引', 'Gutenberg の目録').replace('青空文庫には', 'Project Gutenberg には') : WHY_PENDING[key]),
         t && t.card_url ? h('a', { href: t.card_url, target: '_blank', rel: 'noopener noreferrer' }, '図書カード ↗') : null);
 }
 
