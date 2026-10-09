@@ -1,6 +1,6 @@
 {
   "source": "青空文庫 https://www.aozora.gr.jp/ and Project Gutenberg https://www.gutenberg.org/ — public-domain texts; credits per work",
-  "generated_at": "2026-10-09T15:54:16.006Z",
+  "generated_at": "2026-10-09T15:58:09.611Z",
   "works": {
     "jomon_shokubutsu_chishiki": {
       "status": "ok",
@@ -74,8 +74,8 @@
     },
     "hiraizumi_okunohosomichi": {
       "status": "ok",
-      "excerpt": "〇三代の榮耀一睡の中にして、一一大門の跡は一里こなたに有。一二秀衡が跡は田野に成て、一三金鷄山のみ形を殘す。先一四高舘にのぼれば、北上川南部より流るゝ大河也。一五衣川は一六和泉が城をめぐりて、高舘の下にて大河に落入。一七康衡等が旧跡は、一八衣が關を隔て南部口をさし堅め、夷をふせぐとみえたり。偖も義臣すぐつて此城にこもり、功名一時の叢となる。「一九國破れて山河あり、城春にして草青みたり」と笠打敷て時のうつるまで泪を落し侍りぬ。\n\n夏草や兵どもが夢の跡\n〇卯の花に二一兼房みゆる白毛かな曾良\n\n兼て耳驚したる二二二堂開帳す。經堂は二三三將の像をのこし、光堂は代の棺を納め、二四三尊の佛を安置す。七宝散うせて珠の扉風にやぶれ、金の柱霜雪に朽て、既頽廢空虚の叢と成べきを、二五四面新に圍て、甍を覆て風雨を凌。暫時千歳の記念とはなれり。\n五月雨の降のこしてや光堂\n\n一　松島の北一四里。栗原郡金成町姉齒にある。「栗原のあねはの松の人ならば都のつとにいざと云はましを」（伊勢物語）\n二　松島の西北七里。",
-      "chars": 447,
+      "excerpt": "三代の榮耀一睡の中にして、大門の跡は一里こなたに有。秀衡が跡は田野に成て、金鷄山のみ形を殘す。先高舘にのぼれば、北上川南部より流るゝ大河也。衣川は和泉が城をめぐりて、高舘の下にて大河に落入。康衡等が旧跡は、衣が關を隔て南部口をさし堅め、夷をふせぐとみえたり。偖も義臣すぐつて此城にこもり、功名一時の叢となる。「國破れて山河あり、城春にして草青みたり」と笠打敷て時のうつるまで泪を落し侍りぬ。\n\n夏草や兵どもが夢の跡",
+      "chars": 207,
       "aozora_work_id": "061619",
       "card_url": "https://www.aozora.gr.jp/cards/002240/card61619.html",
       "orthography": "その他",
@@ -661,20 +661,8 @@
       }
     },
     "en_marco_polo_chipangu": {
-      "status": "ok",
-      "source": "gutenberg",
-      "language": "en",
-      "excerpt": "Chipangu is an Island towards the east in the high seas, 1500 miles distant from the Continent; and a very great Island it is.{1}\n\nThe people are white, civilized, and well-favoured. They are Idolaters, and are dependent on nobody. And I can tell you the quantity of gold they have is endless; for they find it in their own Islands, [and the King does not allow it to be exported. Moreover] few merchants visit the country because it is so far from the main land, and thus it comes to pass that their gold is abundant beyond all measure.{2}\n\nI will tell you a wonderful thing about the Palace of the Lord of that Island.",
-      "chars": 620,
-      "gutenberg_id": 12410,
-      "card_url": "https://www.gutenberg.org/ebooks/12410",
-      "catalogue_title": "The Travels of Marco Polo — Volume 2",
-      "people": [
-        "Polo, Marco, d. 1324",
-        "Rusticiano, da Pisa, d. 1300",
-        "Cordier, Henri (Editor), d. 1925",
-        "Yule, Henry, Sir (Translator), d. 1889"
-      ]
+      "status": "error",
+      "note": "fetch failed"
     },
     "en_book_of_tea": {
       "status": "ok",
