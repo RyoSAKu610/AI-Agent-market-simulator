@@ -141,21 +141,35 @@ export function excerpt(text, start, maxChars) {
 // runs that continue that count are dropped; other numerals (三代, 一里) stay.
 const KDIGIT = { '〇': 0, '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9 };
 const digitsOf = s => Number([...s].map(c => KDIGIT[c]).join(''));
+const kanjiNum = n => String(n).replace(/\d/g, d => '〇一二三四五六七八九'[d]);
+
+// Follows the count from `first`: a run continues it when it starts with the next
+// number, close to the previous note; at most two other runs (三代, 一里) may sit between.
+const NOTE_GAP = 80;
+function noteChain(runs, first) {
+    const hits = [];
+    let next = first, misses = 0;
+    for (let i = 0; i < runs.length && misses <= 2; i++) {
+        if (hits.length && runs[i].at - hits[hits.length - 1].at > NOTE_GAP) break;
+        const want = kanjiNum(next);
+        if (runs[i].s.startsWith(want)) { hits.push({ at: runs[i].at, len: want.length }); next++; misses = 0; }
+        else if (hits.length) misses++;
+    }
+    return hits;
+}
+
 export function dropNoteNumbers(text) {
     const runs = [...text.matchAll(/[〇一二三四五六七八九]+/g)].map(m => ({ at: m.index, s: m[0] }));
-    // Pick the starting number that the most following runs continue.
-    let best = { start: null, len: 0 };
-    for (let k = 1; k <= Math.min(3, runs[0] ? runs[0].s.length : 0); k++) {
-        let next = digitsOf(runs[0].s.slice(0, k)) + 1, len = 1;
-        for (const r of runs.slice(1)) if (r.s.startsWith(String(next).replace(/\d/g, d => '〇一二三四五六七八九'[d]))) { next++; len++; }
-        if (len > best.len) best = { start: digitsOf(runs[0].s.slice(0, k)), len };
+    if (!runs.length) return text;
+    // Pick the reading of the first run (一, 一〇 or 一〇三) that the following runs continue furthest.
+    let best = [];
+    for (let k = 1; k <= Math.min(3, runs[0].s.length); k++) {
+        const hits = noteChain(runs, digitsOf(runs[0].s.slice(0, k)));
+        if (hits.length > best.length) best = hits;
     }
-    if (best.len < 3) return text;
-    let expect = best.start, out = '', last = 0;
-    for (const r of runs) {
-        const want = String(expect).replace(/\d/g, d => '〇一二三四五六七八九'[d]);
-        if (r.s.startsWith(want)) { out += text.slice(last, r.at); last = r.at + want.length; expect++; }
-    }
+    if (best.length < 3) return text;
+    let out = '', last = 0;
+    for (const h of best) { out += text.slice(last, h.at); last = h.at + h.len; }
     return out + text.slice(last);
 }
 
@@ -207,7 +221,8 @@ async function main() {
             const text = cleanAozoraText(new TextDecoder('shift_jis').decode(readFileSync(txt)));
             const start = findStart(text, w.extraction);
             if (start < 0) { works[w.id] = { status: 'anchor_not_found', card_url: pick[COL.card], note: `anchor "${w.extraction.anchor}" not in text` }; continue; }
-            const body = w.extraction.note_numbers ? dropNoteNumbers(text.slice(start)) : text.slice(start);
+            const window = text.slice(start, start + (w.extraction.max_chars || 400) * 3);
+            const body = w.extraction.note_numbers ? dropNoteNumbers(window) : window;
             const ex = excerpt(body, 0, w.extraction.max_chars || 400);
             works[w.id] = {
                 status: ex ? 'ok' : 'empty',

@@ -59,7 +59,8 @@ export function cleanGutenbergText(raw) {
     if (start >= 0) t = t.slice(t.indexOf('\n', start) + 1);
     const end = t.search(/^\*{3}\s*END OF (THE|THIS) PROJECT GUTENBERG/mi);
     if (end >= 0) t = t.slice(0, end);
-    t = t.replace(/\[Illustration[^\]]*\]/gi, '').replace(/_([^_\n]+)_/g, '$1');
+    t = t.replace(/\[Illustration[^\]]*\]/gi, '').replace(/_([^_\n]+)_/g, '$1')
+        .replace(/\{\d+\}|\[\d+\]/g, '');   // footnote markers such as {1} or [12]
     return t.split(/\n\s*\n/)
         .map(p => p.split('\n').map(l => l.trim()).join(' ').replace(/\s+/g, ' ').trim())
         .filter(Boolean)

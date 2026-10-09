@@ -81,7 +81,7 @@
     "extraction": {
       "mode": "anchor",
       "anchor": "三代の栄耀",
-      "max_chars": 450,
+      "max_chars": 210,
       "note_numbers": true
     }
   },

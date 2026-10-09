@@ -43,6 +43,9 @@ assert.equal(findStart('序\n三代の榮耀一睡の中にして', { mode: 'anc
 assert.equal(dropNoteNumbers('一〇三代の榮耀一睡の中にして、一一大門の跡は一里こなたに有。一二秀衡が跡は田野に成て、一三金鷄山のみ形を殘す。'),
     '三代の榮耀一睡の中にして、大門の跡は一里こなたに有。秀衡が跡は田野に成て、金鷄山のみ形を殘す。');
 assert.equal(dropNoteNumbers('三人と一人が二度来た。'), '三人と一人が二度来た。');
+// a count that only lines up much later in the book is not a note sequence
+assert.equal(dropNoteNumbers('一〇三代の榮耀、一一大門、一二秀衡' + '。あ'.repeat(40) + '二つ、三つ、四つ、五つ、六つ、七つ。'),
+    '三代の榮耀、大門、秀衡' + '。あ'.repeat(40) + '二つ、三つ、四つ、五つ、六つ、七つ。');
 
 // headings are skipped; a long first sentence is cut at a comma
 assert.equal(skipHeadings('一\n\n本文です。'), '本文です。');

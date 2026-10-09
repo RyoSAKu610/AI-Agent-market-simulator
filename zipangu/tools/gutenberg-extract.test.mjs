@@ -28,7 +28,7 @@ assert.equal(publicDomainInJapan(parsePeople('Anonymous')), true);
 assert.equal(publicDomainInJapan([]), false);
 
 // cleanGutenbergText: header/footer, unwrapping, italics, illustrations
-const raw = 'The Project Gutenberg eBook of A Test\r\n\r\n*** START OF THE PROJECT GUTENBERG EBOOK A TEST ***\r\n\r\nCONTENTS\r\n\r\n[Illustration: a lantern]\r\n\r\nThe lantern _glowed_ over the\r\nharbour. Mr. Kite\r\nwaved.\r\n\r\nSecond paragraph here.\r\n\r\n*** END OF THE PROJECT GUTENBERG EBOOK A TEST ***\r\nlicence text\r\n';
+const raw = 'The Project Gutenberg eBook of A Test\r\n\r\n*** START OF THE PROJECT GUTENBERG EBOOK A TEST ***\r\n\r\nCONTENTS\r\n\r\n[Illustration: a lantern]\r\n\r\nThe lantern _glowed_ over the\r\nharbour.{1} Mr. Kite\r\nwaved.\r\n\r\nSecond paragraph here.\r\n\r\n*** END OF THE PROJECT GUTENBERG EBOOK A TEST ***\r\nlicence text\r\n';
 const clean = cleanGutenbergText(raw);
 assert.equal(clean, 'CONTENTS\n\nThe lantern glowed over the harbour. Mr. Kite waved.\n\nSecond paragraph here.');
 assert.equal(headerSaysCopyrighted(raw), false);
