@@ -50,10 +50,10 @@ python3 -m http.server 8000            # open http://localhost:8000/
 node tools/build-single.mjs            # dist/zipangu-single.html (everything inlined)
 ```
 
-青空文庫 excerpts: run the **Zipangu — 青空文庫 excerpts** workflow from the Actions tab on
-your branch. It downloads the official index, keeps only works whose people are all marked
-copyright-free, extracts the passages listed in `library.json`, and commits
-`world/library.texts.json`.
+青空文庫 excerpts: on a pull request, add the label `aozora`; after merge, run the
+**Zipangu — 青空文庫 excerpts** workflow from the Actions tab. It downloads the official index,
+keeps only works whose people are all marked copyright-free, extracts the passages listed in
+`library.json`, runs `tools/check.sh` and commits `world/library.texts.json` to that branch.
 
 ## Pull requests
 

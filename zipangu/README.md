@@ -45,7 +45,10 @@ node tools/build-single.mjs      # dist/zipangu-single.html（1ファイルで�
 `world/library.texts.json` は手で書かず、`tools/aozora-extract.mjs` が青空文庫から作ります。
 青空文庫の公式目録で、作品と関わる全員（著者・翻訳者）の著作権フラグが「なし」のものだけを使い、
 ルビと注記を取り除いて文の切れ目で抜粋し、底本・入力・校正のクレジットを残します。
-GitHub の **Actions → Zipangu — 青空文庫 excerpts → Run workflow** で実行すると、結果がそのブランチにコミットされます。
+実行方法は二つあり、どちらも結果をそのブランチにコミットします。
+
+- **マージ前（PR上）**: PR に `aozora` ラベルを付ける。
+- **マージ後**: GitHub の **Actions → Zipangu — 青空文庫 excerpts → Run workflow**。（GitHub は既定ブランチにあるワークフローにしか Run workflow ボタンを出さないため、マージ前はラベルを使います。）
 
 ## 約束ごと
 
