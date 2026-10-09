@@ -281,6 +281,10 @@
     }
   </style>
 
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./pwa-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./pwa-icon.svg">
+  <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
 
@@ -2118,6 +2122,7 @@ const PixelChar = ({
   name,
   color,
   onClick,
+  id,
   x,
   y,
   tick: t,
@@ -2197,6 +2202,7 @@ const PixelChar = ({
   })[spriteId] || sdAnimation;
   const showActivity = !!activityLabel && (state !== "idle" || isSelected || isSpecialtyActive);
   return /*#__PURE__*/React.createElement("div", {
+    "data-agent-id": id,
     "data-agent-sprite": spriteId,
     "data-agent-render-mode": displayPet ? "spritesheet" : "portrait",
     onClick: e => {
@@ -2691,7 +2697,23 @@ for (let y = 0; y < MAP_H; y++) {
   ROADS.add(`15,${y}`);
   ROADS.add(`19,${y}`);
 }
-const getBld = (x, y) => BUILDINGS.find(b => x >= b.x && x < b.x + b.w && y >= b.y && y < b.y + b.h);
+// BUILDINGS never changes after load, so index it once: getBld runs for every
+// agent on every tick and in every render. First building listed wins a tile,
+// as with the linear search this replaces.
+const BUILDING_AT = new Array(MAP_W * MAP_H);
+for (const b of BUILDINGS) {
+  for (let y = Math.max(0, b.y); y < Math.min(MAP_H, b.y + b.h); y++) {
+    for (let x = Math.max(0, b.x); x < Math.min(MAP_W, b.x + b.w); x++) {
+      if (!BUILDING_AT[y * MAP_W + x]) BUILDING_AT[y * MAP_W + x] = b;
+    }
+  }
+}
+const BUILDING_BY_ID = new Map(BUILDINGS.map(b => [b.id, b]));
+const getBld = (x, y) => {
+  const tx = Math.floor(x),
+    ty = Math.floor(y);
+  return tx >= 0 && tx < MAP_W && ty >= 0 && ty < MAP_H ? BUILDING_AT[ty * MAP_W + tx] : undefined;
+};
 const toCellSet = cells => new Set(cells.map(([x, y]) => `${x},${y}`));
 const PLAZA_TILES = toCellSet([
   [8, 4], [9, 4], [10, 4], [11, 4], [8, 5], [9, 5], [10, 5], [11, 5],
@@ -4323,32 +4345,91 @@ const lttPreferredSites = ltt => {
   return scored;
 };
 
-// ── Persistence: the goal survives reload and session end ───────
-const lttSave = list => {
+// ── Persistence + minimal offline catch-up ───────────────────────
+// Offline progress extrapolates only the progress rate that this task actually
+// demonstrated while online. A task with no observed progress earns nothing.
+const lttSave = (list, clock = {}) => {
   try {
-    window.localStorage.setItem(LTT_STORAGE_KEY, JSON.stringify({ v: 1, savedAt: Date.now(), list }));
+    window.localStorage.setItem(LTT_STORAGE_KEY, JSON.stringify({
+      v: 2,
+      savedAt: Date.now(),
+      clock: {
+        day: Number.isFinite(clock.day) ? clock.day : 1,
+        tick: Number.isFinite(clock.tick) ? clock.tick : 0
+      },
+      list
+    }));
   } catch (e) { /* storage unavailable — run in-memory */ }
 };
-const lttLoad = () => {
+const lttLoadSnapshot = () => {
+  const empty = { list: [], day: 1, tick: 0, offlineTicks: 0, offlineGain: 0 };
   try {
     const raw = window.localStorage.getItem(LTT_STORAGE_KEY);
-    if (!raw) return [];
+    if (!raw) return empty;
     const parsed = JSON.parse(raw);
-    if (!parsed || !Array.isArray(parsed.list)) return [];
-    return parsed.list.filter(x => x && x.id && LTT_GOALS[x.goalKey]).map(x => ({
-      ...x,
-      fx: null,
-      resumed: true,
-      accum: x.accum || 0,
-      lastRaw: null,
-      weights: x.weights || {},
-      memory: x.memory || { wins: [], losses: [], notes: [] },
-      history: x.history || [],
-      allies: x.allies || [],
-      betrayedBy: x.betrayedBy || []
-    }));
-  } catch (e) { return []; }
+    if (!parsed || !Array.isArray(parsed.list)) return empty;
+    const hasClock = !!(parsed.clock && Number.isFinite(parsed.clock.tick) && Number.isFinite(parsed.clock.day));
+    const legacyTick = parsed.list.reduce((m, x) => Math.max(m,
+      Number.isFinite(x?.createdTick) ? x.createdTick : 0,
+      ...(Array.isArray(x?.milestones) ? x.milestones.map(ms => Number.isFinite(ms?.doneTick) ? ms.doneTick : 0) : [0])
+    ), 0);
+    const legacyDay = parsed.list.reduce((m, x) => Math.max(m,
+      Number.isFinite(x?.createdDay) ? x.createdDay : 1,
+      Number.isFinite(x?.lastProgressDay) ? x.lastProgressDay : 1,
+      Number.isFinite(x?.lastReportDay) ? x.lastReportDay : 1
+    ), 1);
+    const savedTick = hasClock ? Math.max(0, Math.floor(parsed.clock.tick)) : legacyTick;
+    const savedDay = hasClock ? Math.max(1, Math.floor(parsed.clock.day)) : legacyDay;
+    const elapsedMs = hasClock && Number.isFinite(parsed.savedAt) ? Math.max(0, Date.now() - parsed.savedAt) : 0;
+    const offlineTicks = Math.floor(elapsedMs / TICK_MS);
+    const bootTick = savedTick + offlineTicks;
+    const bootDay = Math.max(savedDay, Math.floor(bootTick / DAY_TICKS) + 1);
+    let totalOfflineGain = 0;
+    const list = parsed.list.filter(x => x && x.id && LTT_GOALS[x.goalKey]).map(x => {
+      const accum = x.accum || 0;
+      const baseTick = Number.isFinite(x.offlineBaseTick) ? x.offlineBaseTick : hasClock ? (Number.isFinite(x.createdTick) ? x.createdTick : savedTick) : savedTick;
+      const baseAccum = Number.isFinite(x.offlineBaseAccum) ? x.offlineBaseAccum : hasClock ? 0 : accum;
+      let next = {
+        ...x, fx: null, resumed: true, accum, lastRaw: null,
+        weights: x.weights || {}, memory: x.memory || { wins: [], losses: [], notes: [] },
+        history: x.history || [], allies: x.allies || [], betrayedBy: x.betrayedBy || [],
+        offlineBaseTick: baseTick, offlineBaseAccum: baseAccum, offlineTicksApplied: 0, offlineGain: 0
+      };
+      if (!hasClock || offlineTicks <= 0 || next.status !== "active") return next;
+      const observedTicks = Math.max(0, savedTick - baseTick);
+      const observedGain = Math.max(0, accum - baseAccum);
+      const ratePerTick = observedTicks > 0 ? observedGain / observedTicks : 0;
+      const remaining = Math.max(0, next.target - (next.baseline + accum));
+      const offlineGain = Math.min(remaining, Math.max(0, Math.floor(ratePerTick * offlineTicks)));
+      if (offlineGain > 0) {
+        next.accum = accum + offlineGain;
+        next.value = next.baseline + next.accum;
+        next.progress = lttProgressPct(next);
+        next.lastProgressDay = bootDay;
+        next.offlineGain = offlineGain;
+        totalOfflineGain += offlineGain;
+        next.history = [{ day: bootDay, kind: "offline", detail: `+${offlineGain} over ${offlineTicks} ticks` }, ...next.history].slice(0, 24);
+        while (next.milestoneIdx < next.milestones.length && next.value >= next.milestones[next.milestoneIdx].target) {
+          const idx = next.milestoneIdx;
+          const milestones = next.milestones.slice();
+          milestones[idx] = { ...milestones[idx], done: true, doneDay: bootDay, doneTick: bootTick };
+          next.milestones = milestones;
+          next.milestoneIdx += 1;
+        }
+      }
+      next.offlineTicksApplied = offlineTicks;
+      if (next.milestoneIdx >= next.milestones.length) next.status = "done";
+      else if (bootDay > next.deadlineDay) next.status = "failed";
+      return next;
+    });
+    return { list, day: bootDay, tick: bootTick, offlineTicks, offlineGain: totalOfflineGain };
+  } catch (e) {
+    console.warn("[LTT] offline catch-up skipped", e);
+    return empty;
+  }
 };
+const LTT_BOOT = lttLoadSnapshot();
+const lttLoad = () => LTT_BOOT.list;
 const lttClear = () => { try { window.localStorage.removeItem(LTT_STORAGE_KEY); } catch (e) {} };
 
 // ── Localised copy ──────────────────────────────────────────────
@@ -4753,8 +4834,8 @@ function NeonMythosCity() {
 
   // ── Game state ─────────────────────────────────────────────
   const [connections, setConnections] = useState([]);
-  const [tick, setTick] = useState(0);
-  const [day, setDay] = useState(1);
+  const [tick, setTick] = useState(() => LTT_BOOT.tick);
+  const [day, setDay] = useState(() => LTT_BOOT.day);
   const [speed, setSpeed] = useState(1);
   const [paused, setPaused] = useState(false);
   const [res, setRes] = useState({
@@ -4874,7 +4955,7 @@ function NeonMythosCity() {
       if (!target) return;
       const intent = detail.intent || "assist";
       const buildingId = commandToBuilding(intent) || target.pref?.[0];
-      const building = BUILDINGS.find(b => b.id === buildingId);
+      const building = BUILDING_BY_ID.get(buildingId);
       if (detail.note) {
         setAgentNotes(prev => ({
           ...prev,
@@ -4943,7 +5024,45 @@ function NeonMythosCity() {
     setAvatar(r);
     setShowAvSel(false);
     log("SYSTEM", `${r.jp} — ${t.sub}`, r.color);
+    setTimeout(() => window.dispatchEvent(new CustomEvent("nm:game-ready", { detail: { avatar: r.id } })), 0);
   };
+  useEffect(() => {
+    const quickStart = event => {
+      const code = event.detail?.lang || "ja";
+      const r = RES_POOL.find(x => x.id === "neon") || RES_POOL[0];
+      setLang(code); setAvatar(r); setShowLangSel(false); setShowAvSel(false);
+      log("SYSTEM", `⚡ QUICK START — ${r.jp}`, r.color);
+      setTimeout(() => window.dispatchEvent(new CustomEvent("nm:game-ready", { detail: { avatar: r.id, quick: true } })), 0);
+    };
+    window.addEventListener("nm:quick-start", quickStart);
+    return () => window.removeEventListener("nm:quick-start", quickStart);
+  }, [log]);
+  useEffect(() => {
+    const personality = {
+      bold: { g: .82, s: .52, c: .62, e: .9 }, social: { g: .48, s: .95, c: .58, e: .82 },
+      analytical: { g: .35, s: .42, c: .98, e: .72 }, steady: { g: .42, s: .62, c: .72, e: .68 }
+    };
+    const prefs = { investor: ["bank", "market", "shrine"], analyst: ["tower", "academy", "hacklab"], trader: ["market", "arena", "tavern"], engineer: ["hacklab", "port", "academy"] };
+    const colors = { investor: "#FFD700", analyst: "#00E5FF", trader: "#FF69B4", engineer: "#BF40FF" };
+    const createCompanion = event => {
+      const d = event.detail || {};
+      const base = AGENTS.find(a => a.spriteId === d.spriteId || a.id === d.spriteId) || AGENTS.find(a => a.id === "neon") || AGENTS[0];
+      const id = String(d.id || `buddy-${Date.now().toString(36)}`).replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 48);
+      if (!id) return;
+      const specialty = prefs[d.specialty] ? d.specialty : "analyst";
+      const pref = prefs[specialty];
+      const act = { ...(base.act || {}) };
+      pref.forEach(site => { if (!act[site]) act[site] = ["Personal mission in progress", "Long-term objective updated"]; });
+      const template = { ...base, id, name: d.name || "MY BUDDY", jp: d.name || "MY BUDDY", color: colors[specialty], specialty, p: personality[d.personality] || personality.analytical, pref, act, title: d.guest ? "Guest AI" : "Personal AI", tier: "sp" };
+      setResi(prev => prev.some(c => c.id === id) ? prev : [...prev, createCharacterEntity(template, {
+        x: Math.max(1, Math.floor(MAP_W / 2) + Math.floor(Math.random() * 5) - 2),
+        y: Math.max(1, Math.floor(MAP_H / 2) + Math.floor(Math.random() * 3) - 1), timer: 2
+      })]);
+      setTimeout(() => window.dispatchEvent(new CustomEvent("nm:companion-created", { detail: { ...d, id, specialty } })), 0);
+    };
+    window.addEventListener("nm:create-companion", createCompanion);
+    return () => window.removeEventListener("nm:create-companion", createCompanion);
+  }, []);
   const recruit = r => {
     if (recruited.find(x => x.id === r.id)) return;
     const cost = r.tier === "champ" ? 8000 : r.tier === "e4" ? 5000 : r.tier === "gym" ? 3000 : 2000;
@@ -5145,13 +5264,13 @@ function NeonMythosCity() {
           const goalSites = lttPreferredSites(lttByAgent[c.id]);
           if (goalSites && goalSites.length && r < .78) {
             const pick = goalSites[Math.floor(Math.random() * Math.min(3, goalSites.length))];
-            tb = BUILDINGS.find(b => b.id === pick);
+            tb = BUILDING_BY_ID.get(pick);
           }
           if (!tb) {
             const r2 = Math.random();
             if (r2 < .55) {
               const pid = c.pref[Math.floor(Math.random() * c.pref.length)];
-              tb = BUILDINGS.find(b => b.id === pid);
+              tb = BUILDING_BY_ID.get(pid);
             } else if (r2 < .85) tb = BUILDINGS[Math.floor(Math.random() * BUILDINGS.length)];else {
               c.tx = Math.max(0, Math.min(MAP_W - 1, c.x + Math.floor(Math.random() * 9) - 4));
               c.ty = Math.max(0, Math.min(MAP_H - 1, c.y + Math.floor(Math.random() * 7) - 3));
@@ -5259,13 +5378,16 @@ function NeonMythosCity() {
   };
   // ── Long-term task loop ─────────────────────────────────────
   // Runs on its own cadence, independent of the per-tick agent AI.
-  useEffect(() => { lttSave(ltts); }, [ltts]);
+  useEffect(() => { lttSave(ltts, { day, tick }); }, [ltts]);
 
   useEffect(() => {
     if (showLangSel || lttResumedRef.current) return;
     lttResumedRef.current = true;
     const live = ltts.filter(l => l.status === "active" || l.status === "awaiting");
-    if (live.length) log("LTT", `${live.length} × ${lttT(lang).resume}`, "#00E5FF");
+    if (live.length) {
+      const offline = LTT_BOOT.offlineTicks > 0 ? ` · OFFLINE +${(LTT_BOOT.offlineTicks / DAY_TICKS).toFixed(1)}D / +${LTT_BOOT.offlineGain}` : "";
+      log("LTT", `${live.length} × ${lttT(lang).resume}${offline}`, "#00E5FF");
+    }
   }, [showLangSel, ltts, lang, log]);
 
   const lttAssign = useCallback((agentId, goalKey, confirmMode) => {
@@ -5279,6 +5401,65 @@ function NeonMythosCity() {
       return [created, ...prev.filter(l => !(l.agentId === agentId && l.status === "active"))].slice(0, 12);
     });
   }, [agents, resi, day, tick, res, lang, log]);
+
+  useEffect(() => {
+    const norm = value => String(value || "").toLowerCase().replace(/[\s_-]/g, "");
+    const handler = event => {
+      const d = event.detail || {}, roster = [...agents, ...resi], key = norm(d.target);
+      const agent = roster.find(c => key && [c.id, c.name, c.jp, c.spriteId].some(v => norm(v) === key || norm(v).includes(key) || key.includes(norm(v)))) || roster.find(c => c.id === "nego") || roster[0];
+      const goalKey = LTT_GOALS[d.goalKey] ? d.goalKey : "district_control";
+      if (agent) lttAssign(agent.id, goalKey, !!d.confirmMode);
+    };
+    window.addEventListener("nm:ltt-command", handler);
+    return () => window.removeEventListener("nm:ltt-command", handler);
+  }, [agents, resi, lttAssign]);
+
+  // ── Errand mode: after replying/thinking, physically send the assigned
+  // agent toward a goal-relevant building. This uses the real walk state, so
+  // the "AI went to do it" moment happens on the city map rather than in UI only.
+  useEffect(() => {
+    const norm = value => String(value || "").toLowerCase().replace(/[\s_-]/g, "");
+    const routeAgent = event => {
+      const d = event.detail || {}, roster = [...agents, ...resi], key = norm(d.target);
+      const agent = roster.find(c => key && [c.id, c.name, c.jp, c.spriteId].some(v => norm(v) === key || norm(v).includes(key) || key.includes(norm(v)))) || roster.find(c => c.id === "nego") || roster[0];
+      const goalKey = LTT_GOALS[d.goalKey] ? d.goalKey : "district_control";
+      if (!agent) return;
+      const candidates = LTT_CAT_BUILDINGS(LTT_GOALS[goalKey].cats)
+        .map(id => BUILDING_BY_ID.get(id)).filter(Boolean)
+        .sort((a, b) => (Math.abs(a.x - agent.x) + Math.abs(a.y - agent.y)) - (Math.abs(b.x - agent.x) + Math.abs(b.y - agent.y)));
+      if (!candidates.length) return;
+      const dest = candidates[Math.floor(Math.random() * Math.min(3, candidates.length))];
+      const patch = rosterState => rosterState.map(c => c.id !== agent.id ? c : ({
+        ...c,
+        tx: dest.x + Math.floor(dest.w / 2),
+        ty: dest.y + dest.h,
+        state: "walk",
+        timer: 0,
+        expression: "focus",
+        behaviorState: "mission-route",
+        currentBuilding: "",
+        currentAction: `MISSION ROUTE → ${dest.name || dest.id}`,
+        lastReaction: `Heading to ${dest.name || dest.id}`
+      }));
+      setAgents(patch);
+      setResi(patch);
+      setSel(agent.id);
+      log(agent.jp || agent.name, `🏃 ${dest.name || dest.id}へ向かう`, agent.color);
+      setTimeout(() => window.dispatchEvent(new CustomEvent("nm:agent-routed", { detail: {
+        requestId: d.requestId || null,
+        agentId: agent.id,
+        agentName: agent.jp || agent.name,
+        goalKey,
+        siteId: dest.id,
+        siteName: dest.name || dest.id,
+        fromX: agent.x, fromY: agent.y,
+        toX: dest.x + Math.floor(dest.w / 2), toY: dest.y + dest.h,
+        tile: TILE
+      } })), 0);
+    };
+    window.addEventListener("nm:route-agent", routeAgent);
+    return () => window.removeEventListener("nm:route-agent", routeAgent);
+  }, [agents, resi, log]);
 
   const lttResolveChoice = useCallback((id, approve) => {
     setLtts(prev => prev.map(l => {
@@ -5323,6 +5504,10 @@ function NeonMythosCity() {
         const who = nextLtt.agentName;
         const col = nextLtt.color || LTT_GOALS[nextLtt.goalKey].color;
         events.forEach(ev => {
+          window.dispatchEvent(new CustomEvent("nm:ltt-event", { detail: {
+            ...ev, agentId: nextLtt.agentId, agentName: who, goalKey: nextLtt.goalKey,
+            goalLabel: L["g_" + nextLtt.goalKey], progress: nextLtt.progress, day
+          } }));
           if (ev.kind === "milestone") {
             log(who, `✔ ${L.milestone}: ${L["ms_" + ev.milestone.key] || ev.milestone.key} (${ev.index}/${nextLtt.milestones.length})`, "#00FF9C");
           } else if (ev.kind === "evolve") {
@@ -5999,7 +6184,7 @@ function NeonMythosCity() {
       const spec = c.specialty ? SPECIALTIES[c.specialty] : null;
       const stateLabel = c.state === "walk" ? t.routing : c.state === "work" ? t.executing : t.standby;
       const activity = getAgentActivity(c, lang);
-      const visibleBuilding = BUILDINGS.find(b => b.id === c.currentBuilding) || activity.building || (c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null);
+      const visibleBuilding = BUILDING_BY_ID.get(c.currentBuilding) || activity.building || (c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null);
       const reasoningLogs = ["[LOG] Scouting local merchant...", "[LOG] Negotiating 5% fee...", "[LOG] Analyzing route optimization...", "[LOG] Verifying SAS signature...", "[LOG] Initiating x402 fee stream...", "[LOG] Waiting for confirmation..."];
       return /*#__PURE__*/React.createElement("div", {
         style: {
@@ -6378,7 +6563,7 @@ function NeonMythosCity() {
     const worldAgents = all.map(c => {
       const activity = getAgentActivity(c, lang);
       const targetBuilding = c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null;
-      const currentBuilding = BUILDINGS.find(b => b.id === c.currentBuilding) || activity.building;
+      const currentBuilding = BUILDING_BY_ID.get(c.currentBuilding) || activity.building;
       return { c, activity, targetBuilding, currentBuilding };
     });
     const activeByBuilding = worldAgents.reduce((acc, item) => {
@@ -6856,7 +7041,7 @@ function NeonMythosCity() {
     const petAnimation = pet ? getCodexPetAnimation(pet, c.state, c.expression, c.spriteId) : null;
     const spec = c.specialty ? SPECIALTIES[c.specialty] : null;
     const activity = getAgentActivity(c, lang);
-    const visibleBuilding = BUILDINGS.find(b => b.id === c.currentBuilding) || activity.building || (c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null);
+    const visibleBuilding = BUILDING_BY_ID.get(c.currentBuilding) || activity.building || (c.tx != null && c.ty != null ? getBld(c.tx, c.ty - 1) || getBld(c.tx, c.ty) : null);
     const face = c.expression === "joy" ? "≧▽≦" : c.expression === "focus" ? "◕_◕" : c.expression === "worried" ? "•́︿•̀" : "•ᴗ•";
     return /*#__PURE__*/React.createElement("div", {
       style: {
@@ -10832,5 +11017,8 @@ function NeonMythosCity() {
   })();
   </script>
 
+  <script defer src="./neon-mythos-experience.js"></script>
+  <script defer src="./neon-mythos-errand.js"></script>
+  <script defer src="./neon-mythos-route-fx.js"></script>
 </body>
 </html>

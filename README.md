@@ -151,23 +151,23 @@ Long-term tasks persist locally. The deployed build also includes **minimal offl
 
 ---
 
-## Deployment / 開発メモ
+## Development / 開発メモ
 
-GitHub Pages deployment is automated by [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
+**Contributors and coding agents (Jules, Claude, Codex…) start with [`AGENTS.md`](AGENTS.md)**: it names the one build under development, the role of every other file, and the rules for pull requests.  
+**開発する人・AIエージェント（Jules など）は最初に [`AGENTS.md`](AGENTS.md) を読んでください。** 開発対象は `index.html` の1本です。
 
-- Every push to `main` triggers the Pages workflow.
-- The workflow syntax-checks the Python patchers and JavaScript experience layers before deployment.
-- The repository is staged into `_site/`, then the offline-task, errand-mode and route-FX patches are injected into the generated `index.html`.
-- The staged build is checked for the required event bridges (`nm:ltt-command`, `nm:route-agent`, `nm:agent-routed`, etc.) before upload.
-- `.nojekyll` is used so repository assets are served verbatim.
+- `index.html` is the canonical build and is exactly what ships; nothing is patched at deploy time.
+- `bash scripts/check.sh` runs every check (JS syntax, PWA manifest, `tests/*.test.js`). CI runs it on every pull request.
+- Every push to `main` runs [`.github/workflows/pages.yml`](.github/workflows/pages.yml): `scripts/check.sh`, then the repository is copied to `_site/` and published to GitHub Pages. `.nojekyll` keeps assets served verbatim.
 
-### Relevant experience files
+### Live files
+- `index.html` — the city simulation, long-term-task engine with offline catch-up, errand routing.
 - `neon-mythos-experience.js` — PWA/mobile hub, chat, buddy creation, daily mission, demo wallet, highlights.
 - `neon-mythos-errand.js` — receive/reply/think/depart/return errand interaction.
 - `neon-mythos-route-fx.js` — `! → 💭 → 🏃` head reactions and temporary neon route visualization.
-- `scripts/apply-offline-actions.py` — long-term-task persistence + minimal offline catch-up injection.
-- `scripts/apply-errand-mode.py` — connects chat errands to real Long-term Tasks and agent movement.
-- `scripts/apply-route-fx.py` — injects agent DOM identity and route geometry into the staged build.
+- `sw.js`, `manifest.webmanifest`, `pwa-icon.svg` — PWA shell.
+
+Legacy prototypes, the old demo video and recording script are in [`archive/`](archive/).
 
 ## Assets
 

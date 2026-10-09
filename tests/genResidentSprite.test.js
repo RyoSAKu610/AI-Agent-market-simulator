@@ -1,10 +1,11 @@
 const fs = require('fs');
 const vm = require('vm');
+const path = require('path');
 const assert = require('assert');
 
 // 1. Read index.html and extract the genResidentSprite function
-const html = fs.readFileSync('index.html', 'utf8');
-const spriteFuncMatch = html.match(/const genResidentSprite=\(hairStyle,hc,sc,bc,ac,ec\)=>{[\s\S]*?\n};/);
+const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const spriteFuncMatch = html.match(/const genResidentSprite\s*=\s*\(hairStyle,\s*hc,\s*sc,\s*bc,\s*ac,\s*ec\)\s*=>\s*{[\s\S]*?\n};/);
 
 if (!spriteFuncMatch) {
     console.error('Error: Could not find genResidentSprite function in index.html');
