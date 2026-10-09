@@ -1,3 +1,5 @@
+import { visualFeature, visualArt } from './visual-art.js';
+import { visualOf } from './visual-manifest.js';
 // #/agents and #/agent/<id>
 
 import { h, clear, href, link, tagged, nameOf, agentShort, clip, fmt, stripParens } from './util.js';
@@ -29,6 +31,8 @@ export function agentsView(ctx, query) {
 
     function card(a) {
         const live = eco.agents.get(a.id);
+        const v = visualOf('agent', a.id);
+        const art = v ? visualArt(W, v, { size: 160, eco }) : null;
         const stage = h('span', { class: 'ag-stage' });
         const act = h('p', { class: 'ag-act' });
         const wallet = h('b', { class: 'ag-wallet' });
@@ -40,8 +44,9 @@ export function agentsView(ctx, query) {
         const el = h('a', { class: 'agent-card', href: href.agent(a.id), role: 'listitem' },
             h('div', { class: 'ag-head' }, avatar(W, a),
                 h('div', { class: 'ag-id' }, h('strong', null, agentShort(a)), h('span', null, clip(a.role, 34)))),
-            h('div', { class: 'ag-live' }, stage, where), act, goal, h('p', { class: 'ag-foot' }, h('span', null, '財布'), wallet));
+            art, h('div', { class: 'ag-live' }, stage, where), act, goal, h('p', { class: 'ag-foot' }, h('span', null, '財布'), wallet));
         const paint = () => {
+            if (art) art.update();
             if (!live) return;
             clear(stage); stage.append(stageBadge(live.stage));
             act.textContent = liveActivity(live);
@@ -126,6 +131,7 @@ export function agentView(ctx, id) {
     const a = W.byId.agent.get(id);
     const live = eco.agents.get(id);
     if (!a) return notFound('その住人');
+    const feature = visualFeature(ctx, 'agent', id);
     const cur = stripParens(W.baseCurrency.name_ja);
     const home = W.byId.district.get(a.home);
     const place = home && W.placeOf(home.id);
@@ -177,9 +183,9 @@ export function agentView(ctx, id) {
                 h('h1', null, agentShort(a)),
                 h('p', { class: 'hero-sub' }, stripParens(a.name_ja) !== agentShort(a) ? a.name_ja : ''),
                 h('p', { class: 'hero-summary' }, a.role),
-                h('p', { class: 'chips' }, home ? h('a', { class: 'chip', href: href.district(home.id) }, nameOf(home)) : null, place ? placeLink(place) : null))),
+                h('p', { class: 'chips' }, h('a', { class: 'btn', href: '#/', onclick: () => { ctx.pendingFocus = id; } }, '地図で追う →'), home ? h('a', { class: 'chip', href: href.district(home.id) }, nameOf(home)) : null, place ? placeLink(place) : null))),
         h('div', { class: 'page-body' },
-            panel,
+            feature, panel,
             h('section', { class: 'sec', 'aria-labelledby': 'ag-person' }, sectionHead('人となり', null, 'ag-person'),
                 h('p', { class: 'lead' }, tagged(a.personality)),
                 h('dl', { class: 'facts' }, h('dt', null, '得意'), h('dd', null, tagged(a.specialty)))),
@@ -192,5 +198,5 @@ export function agentView(ctx, id) {
             rels.length ? h('section', { class: 'sec', 'aria-labelledby': 'ag-rel' }, sectionHead('縁のある人', null, 'ag-rel'), h('ul', { class: 'relations' }, rels)) : null,
             h('p', { class: 'pager' }, link('#/agents', '← 住人たちへ'))));
 
-    return { el, title: agentShort(a), update: paint };
+    return { el, title: agentShort(a), update() { paint(); if (feature) feature.update(); } };
 }

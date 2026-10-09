@@ -1,3 +1,5 @@
+import { visualArt } from './visual-art.js';
+import { visualOf, visualKey } from './visual-manifest.js';
 // #/market — currencies, arbitrage hints and the price board.
 
 import { goodQuotes } from './history.js';
@@ -15,14 +17,17 @@ function issuerOf(W, id) {
     return p ? placeLink(p) : id;
 }
 
-function currencySection(W) {
+function currencySection(ctx) {
+    const { W, eco } = ctx;
     const base = W.baseCurrency;
     const cards = W.currencies.map((c, i) => plaque({ class: 'currency-card' + (c.base ? ' is-base' : '') + (i < 4 ? ' is-core' : '') },
         h('p', { class: 'kicker' }, c.base ? '基軸通貨' : i < 4 ? '主要通貨' : '手形・信用'),
+        visualOf('currency', c.id) ? h('a', { href: '#/visual/' + visualKey(visualOf('currency', c.id)), 'aria-label': stripParens(c.name_ja) + 'の設定画を見る' }, visualArt(W, visualOf('currency', c.id), { size: 220, eco })) : null,
         h('h3', null, stripParens(c.name_ja)),
         h('p', { class: 'cur-en' }, c.name_en),
-        h('p', { class: 'cur-rate' }, c.base ? '価格はすべてこの単位' : `1 = ${fmt(c.to_base, c.to_base < 1 ? 2 : 0)} ${stripParens(base.name_ja)}`),
+        h('p', { class: 'cur-rate' }, ['en', 'sangaku_tegata'].includes(c.id) ? `名目評価 ${fmt(c.to_base)} ${stripParens(base.name_ja)}（決済用の換算ではない）` : c.base ? '価格はすべてこの単位' : `1 = ${fmt(c.to_base, c.to_base < 1 ? 2 : 0)} ${stripParens(base.name_ja)}`),
         h('p', { class: 'cur-backing' }, clip(c.backing, 70)),
+        c.id === 'yen_data' ? h('p', { class: 'ar-role' }, '¥20＝1刻。DATAは算額・翻案の素材。') : null,
         h('p', { class: 'cur-issuer' }, '発行：', issuerOf(W, c.issuer))));
     return h('section', { class: 'sec', 'aria-labelledby': 'cur' },
         sectionHead('通貨', '十の時片と八つの異界を結ぶ、いくつもの「お金」', 'cur'),
@@ -210,7 +215,7 @@ export function marketView(ctx, query) {
                 h('div', { class: 'filter-row' }, h('span', { class: 'lbl' }, '種類'), h('div', { class: 'chips' }, catBtns)),
                 h('div', { class: 'filter-row filter-inputs' }, placeSel, search)),
             count, board, h('p', { class: 'more' }, more)),
-        currencySection(W));
+        currencySection(ctx));
 
     return {
         el, title: '相場',

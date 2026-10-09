@@ -1,3 +1,4 @@
+import { visualFeature } from './visual-art.js';
 // #/place/<id> and #/district/<id>
 
 import { creatureCanvas } from './creature-art.js';
@@ -146,6 +147,8 @@ export function placeView(ctx, id) {
     if (!p) return notFound('その時片・異界');
     const isEra = W.byId.era.has(id);
     const painters = [];
+    const feature = visualFeature(ctx, W.byId.era.has(id) ? 'era' : 'realm', id, { size: 720 });
+    if (feature) painters.push(feature.update);
     const dist = W.districtsIn(id);
     const distIds = new Set(dist.map(d => d.id));
     const sections = [];
@@ -254,7 +257,7 @@ export function placeView(ctx, id) {
             map: placeMiniMap(W, p),
             nav: anchorNav(nav)
         }),
-        h('div', { class: 'page-body' }, sections));
+        h('div', { class: 'page-body' }, feature, sections));
 
     return { el, title: placeShort(p), update: () => painters.forEach(fn => fn()), destroy() {} };
 }

@@ -14,6 +14,7 @@
 **NEON MYTHOS** is a browser-based living future city where AI agents move, work, negotiate, learn, and pursue long-term goals on their own.
 
 ### What you can do
+- 🦋 **Zipangu visual atelier** — detailed setting paintings with butterfly flight, live agent reactions and light-currency demos in the separate [`zipangu/`](zipangu/) explorer.
 - 📱 **Play instantly on mobile** — responsive UI, fullscreen-friendly layout, PWA support, and “Add to Home Screen”.
 - 🎯 **Get a daily mission** on first launch and jump into the city with one tap.
 - 💬 **Give long-term work in natural language** — e.g. “Spend a week making this district more lively.”
@@ -51,6 +52,7 @@ Long-term tasks persist locally. The deployed build also includes **minimal offl
 **NEON MYTHOS** は、AIエージェントたちが自分で歩き、働き、交渉し、学び、長期目標を追い続ける「生きた未来都市」をブラウザで体験するシミュレーターです。
 
 ### 主な体験
+- 🦋 **万華京の動く制作帖** — 別プロジェクト [`zipangu/`](zipangu/) で、設定画・蝶の飛行・住人の行動・光のお金を鑑賞できます。
 - 📱 **スマホですぐ開始** — レスポンシブ、全画面向けUI、PWA、「ホーム画面に追加」に対応。
 - 🎯 **今日のミッション** — 初回起動時に1つ提示し、ワンタップで街へ入れます。
 - 💬 **会話だけで長期タスクを依頼** — 「この地区を1週間かけて盛り上げて」のような自然文から目標を判定します。

@@ -1,3 +1,5 @@
+import { creatureCanvas } from './creature-art.js';
+import { visualFeature } from './visual-art.js';
 // #/bestiary and #/creature/<id>
 
 import {
@@ -107,6 +109,7 @@ export function creatureView(ctx, id) {
     const { W } = ctx;
     const c = W.byId.creature.get(id);
     if (!c) return notFound('その生き物');
+    const feature = visualFeature(ctx, 'creature', id);
     const v = c.visual || {};
     const pal = v.palette || [];
     const accent = accentOf(pal);
@@ -137,6 +140,8 @@ export function creatureView(ctx, id) {
                     b.social ? chip(SOCIAL_LABEL[b.social] || b.social) : null),
                 h('p', { class: 'chips' }, places.map(p => placeLink(p))))),
         h('div', { class: 'page-body' },
+            feature,
+            feature ? h('details', { class: 'visual-compare' }, h('summary', null, '従来の動く描画も見る'), creatureCanvas(c, 300)) : null,
             h('section', { class: 'sec', 'aria-labelledby': 'cr-desc' }, sectionHead('すがた', null, 'cr-desc'), h('p', { class: 'lead' }, tagged(c.description))),
             h('section', { class: 'sec', 'aria-labelledby': 'cr-eco' }, sectionHead('くらし', '食べるもの・現れる時・経済でのはたらき', 'cr-eco'), h('p', { class: 'lead' }, tagged(c.ecology))),
             h('section', { class: 'sec', 'aria-labelledby': 'cr-lore' }, sectionHead('言い伝え', null, 'cr-lore'), plaque({ class: 'lore-card' }, h('p', null, tagged(c.lore)))),
@@ -163,5 +168,5 @@ export function creatureView(ctx, id) {
                 link(href.creature(prev.id), '← ', nameOf(prev)),
                 link('#/bestiary', '図鑑に戻る'),
                 link(href.creature(next.id), nameOf(next), ' →'))));
-    return { el, title: nameOf(c) };
+    return { el, title: nameOf(c), update() { if (feature) feature.update(); } };
 }

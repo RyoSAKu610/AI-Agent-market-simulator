@@ -1,3 +1,4 @@
+import { visualFeature } from './visual-art.js';
 // #/about and #/corrections
 
 import { VIA } from './sim.js';
@@ -46,6 +47,7 @@ function charterOf(economy) {
 
 export function aboutView(ctx) {
     const { W } = ctx;
+    const feature = visualFeature(ctx, 'concept', 'bansei_clock', { size: 720 });
     const w = W.world;
     const hub = w.hub && W.byId.district.get(w.hub.id);
     const fly = jewelButterfly(W);
@@ -66,7 +68,7 @@ export function aboutView(ctx) {
                 h('h1', null, stripParens(w.title_ja || '万華京ジパング').replace(/^[A-Za-z][A-Za-z ]*/, '').trim() || '万華京ジパング'),
                 h('p', { class: 'hero-summary' }, (w.tagline || '').split('／')[0]),
                 (w.tagline || '').includes('／') ? h('p', { class: 'hero-en' }, w.tagline.split('／')[1]) : null)),
-        h('div', { class: 'page-body' },
+        h('div', { class: 'page-body' }, feature, h('p', { class: 'chips' }, link('#/visuals', '動く絵の制作帖を見る →')),
             h('section', { class: 'sec', 'aria-labelledby': 'ab-premise' }, sectionHead('はじまり', 'この世界の前提', 'ab-premise'),
                 h('div', { class: 'prose' }, paragraphs(w.premise).map(lead))),
             h('section', { class: 'sec', 'aria-labelledby': 'ab-coexist' }, sectionHead('十の時代の同居のしかた', '時片は鏡片のように重なって回る', 'ab-coexist'),
@@ -89,7 +91,7 @@ export function aboutView(ctx) {
             h('section', { class: 'sec', 'aria-labelledby': 'ab-credit' }, sectionHead('出典とお礼', null, 'ab-credit'),
                 h('p', null, '本の抜粋は、著作権の消えた作品を公開する電子図書館「青空文庫」から取り寄せている。底本・入力・校正のみなさんに感謝する。'),
                 h('p', { class: 'ar-role' }, W.eras.length + ' の時片 ・ ' + W.realms.length + ' の異界 ・ ' + W.districts.length + ' の地区 ・ ' + W.creatures.length + ' の生き物 ・ ' + W.agents.length + ' の住人'))));
-    return { el, title: 'この世界について' };
+    return { el, title: 'この世界について', update() { if (feature) feature.update(); } };
 }
 
 export function correctionsView(ctx) {

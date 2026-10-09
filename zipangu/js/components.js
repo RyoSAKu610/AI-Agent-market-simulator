@@ -3,6 +3,8 @@
 
 import { creatureCanvas } from './creature-art.js';
 import { agentFaceCanvas } from './agent-art.js';
+import { visualOf } from './visual-manifest.js';
+import { visualArt } from './visual-art.js';
 import { VIA, GOAL_LABELS } from './sim.js';
 import {
     h, svg, link, href, accentOf, deepOf, lightOf, rgba, placeShort, nameOf,
@@ -107,7 +109,8 @@ function observeLazy(el, make) {
 
 export function creatureArt(creature, size, { lazy = true, animate = true } = {}) {
     const box = h('div', { class: 'art', style: { width: size + 'px', height: size + 'px' } });
-    const make = () => creatureCanvas(creature, size, { animate });
+    const v = visualOf('creature', creature.id);
+    const make = () => v ? visualArt(null, { ...v, title: nameOf(creature) }, { size }) : creatureCanvas(creature, size, { animate });
     if (lazy) observeLazy(box, make); else box.append(make());
     return box;
 }

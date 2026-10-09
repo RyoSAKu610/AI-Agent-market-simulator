@@ -94,6 +94,17 @@ const bundle = entry => order(entry).map(wrap).join('\n\n');
 
 // ------------------------------------------------------------------ assemble
 
+const { VISUALS, visualKey } = await import('data:text/javascript;base64,' + Buffer.from(read('js/visual-manifest.js')).toString('base64'));
+function collectVisuals() {
+    const out = {};
+    for (const visual of VISUALS.filter(v => v.status === 'ready')) {
+        const path = join(root, 'assets/visuals', visual.file);
+        if (!existsSync(path)) throw new Error('Reviewed visual is missing: ' + visual.file);
+        out[visualKey(visual)] = 'data:image/png;base64,' + readFileSync(path).toString('base64');
+    }
+    return out;
+}
+
 function build() {
     let html = read('index.html');
     const css = read('style.css');
@@ -102,7 +113,7 @@ function build() {
     if (!html.includes(cssTag) || !html.includes(jsTag)) throw new Error('index.html no longer has the stylesheet/script tags the builder replaces');
 
     const code = bundle('app.js');
-    const data = `<script>window.__ZIPANGU_WORLD__ = ${inlineJson(collectWorld())};\nwindow.__ZIPANGU_DOCS__ = ${inlineJson(collectDocs())};</script>`;
+    const data = `<script>window.__ZIPANGU_WORLD__ = ${inlineJson(collectWorld())};\nwindow.__ZIPANGU_DOCS__ = ${inlineJson(collectDocs())};\nwindow.__ZIPANGU_VISUALS__ = ${inlineJson(collectVisuals())};</script>`;
     html = html
         .replace(cssTag, () => `<style>\n${css}\n</style>`)
         .replace(jsTag, () => `${data}\n<script type="module">\n${code.replace(/<\/script/gi, '<\\/script')}\n</script>`);
