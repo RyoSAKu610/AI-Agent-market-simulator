@@ -61,8 +61,15 @@ export function parseCsv(text) {
 }
 
 // 青空文庫 spells some names with the simplified form (芥川 竜之介, 森 鴎外).
-const VARIANTS = { '龍': '竜', '鷗': '鴎', '國': '国', '澤': '沢', '邊': '辺', '邉': '辺', '齋': '斎', '齊': '斉', '髙': '高', '﨑': '崎', '濱': '浜', '櫻': '桜', '會': '会', '與': '与' };
-export const norm = s => String(s || '').replace(/[\s\u3000]+/g, '').replace(/./g, ch => VARIANTS[ch] || ch);
+const VARIANTS = {
+    '龍': '竜', '鷗': '鴎', '國': '国', '澤': '沢', '邊': '辺', '邉': '辺', '齋': '斎', '齊': '斉', '髙': '高', '﨑': '崎',
+    '濱': '浜', '櫻': '桜', '會': '会', '與': '与', '榮': '栄', '藝': '芸', '圓': '円', '舊': '旧', '實': '実', '氣': '気',
+    '歸': '帰', '戀': '恋', '號': '号', '譯': '訳', '聲': '声', '發': '発', '經': '経', '樂': '楽', '傳': '伝', '鐵': '鉄',
+    '驛': '駅', '體': '体', '學': '学', '譽': '誉', '蟲': '虫', '畫': '画', '燈': '灯', '靈': '霊', '萬': '万', '眞': '真'
+};
+// One-for-one character folding, so an index found in the folded text is valid in the original.
+export const fold = s => String(s || '').replace(/./g, ch => VARIANTS[ch] || ch);
+export const norm = s => fold(String(s || '').replace(/[\s\u3000]+/g, ''));
 
 const COL = {
     workId: '作品ID', title: '作品名', kana: '文字遣い種別', workRight: '作品著作権フラグ', card: '図書カードURL',
@@ -92,11 +99,26 @@ export function cleanAozoraText(raw) {
     return t.split('\n').map(l => l.replace(/^[\u3000 ]+/, '').replace(/\s+$/, '')).join('\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
+// A heading is a short line with no sentence punctuation: 一, 六　銀河ステーション, まえがき, 第１図版.
+const HEADING = /^[^。！？「」『』、]{1,12}$/;
+
+// Drops the section headings (and plate lists) an excerpt would otherwise open with.
+export function skipHeadings(body) {
+    let i = 0;
+    for (let n = 0; n < 40; n++) {
+        const m = /^\n*([^\n]*)(\n+)/.exec(body.slice(i));
+        if (!m || !HEADING.test(m[1])) break;
+        i += m[0].length;
+    }
+    return body.slice(i);
+}
+
 // Takes whole sentences from `start` until `maxChars`, never cutting mid-sentence.
 // A paragraph containing a gaiji placeholder is dropped whole, so the excerpt
-// never ends on a fragment that led into it.
+// never ends on a fragment that led into it. If the very first sentence is
+// longer than `maxChars`, it is cut at a comma and marked with ……
 export function excerpt(text, start, maxChars) {
-    const body = text.slice(start);
+    const body = skipHeadings(text.slice(start));
     const sentences = body.match(/[^。！？\n]*(?:[。！？][」』）]*|\n+)/g) || [];
     let out = '', paraStart = 0;
     for (const s of sentences) {
@@ -105,12 +127,18 @@ export function excerpt(text, start, maxChars) {
         out += s;
         if (s.endsWith('\n')) paraStart = out.length;
     }
+    const first = (sentences[0] || '').trim();
+    if (!out.trim() && first && !first.includes('〓')) {
+        const head = first.slice(0, maxChars);
+        const comma = head.lastIndexOf('、');
+        return (comma > maxChars / 2 ? head.slice(0, comma + 1) : head) + '……';
+    }
     return out.replace(/\n+$/, '').trim();
 }
 
 export function findStart(text, extraction) {
     if (extraction.mode === 'anchor') {
-        const i = text.indexOf(extraction.anchor);
+        const i = fold(text).indexOf(fold(extraction.anchor));
         if (i < 0) return -1;
         const para = text.lastIndexOf('\n', i);
         return para < 0 ? 0 : para + 1;
@@ -134,9 +162,16 @@ async function main() {
     const works = { ...previous.works };
     for (const w of library) {
         if (only && w.id !== only) continue;
+        if (w.source === 'gutenberg') continue; // English works: tools/gutenberg-extract.mjs
         const wantAuthor = norm(w.author), wantTitle = norm(w.title);
         const candidates = rows.filter(r => norm(r[COL.title]) === wantTitle && r[COL.role] === '著者' && norm(r[COL.last] + r[COL.first]) === wantAuthor);
-        if (!candidates.length) { works[w.id] = { status: 'not_found', note: `${w.title} / ${w.author} is not in the 青空文庫 index` }; continue; }
+        if (!candidates.length) {
+            // Say what the index does have, so the entry can be corrected from the log alone.
+            const near = rows.filter(r => r[COL.role] === '著者' && (norm(r[COL.last] + r[COL.first]) === wantAuthor || norm(r[COL.title]).includes(wantTitle)));
+            const seen = [...new Set(near.map(r => `${r[COL.title]} / ${r[COL.last]} ${r[COL.first]}`))].slice(0, 12);
+            works[w.id] = { status: 'not_found', note: `${w.title} / ${w.author} is not in the 青空文庫 index`, candidates: seen };
+            continue;
+        }
         // Prefer modern orthography, then any edition whose people are all copyright-free.
         candidates.sort((a, b) => (b[COL.kana] === '新字新仮名') - (a[COL.kana] === '新字新仮名'));
         const pick = candidates.find(r => r[COL.workRight] === 'なし' && byWork.get(r[COL.workId]).every(p => p[COL.personRight] === 'なし'));
@@ -167,7 +202,8 @@ async function main() {
     }
 
     const out = {
-        source: '青空文庫 https://www.aozora.gr.jp/ — public-domain texts; credits per work',
+        ...previous,
+        source: '青空文庫 https://www.aozora.gr.jp/ and Project Gutenberg https://www.gutenberg.org/ — public-domain texts; credits per work',
         generated_at: new Date().toISOString(),
         works
     };

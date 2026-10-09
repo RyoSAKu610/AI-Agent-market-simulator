@@ -7,7 +7,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, copyFileSync } fro
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseCsv, cleanAozoraText, excerpt, findStart, norm } from './aozora-extract.mjs';
+import { parseCsv, cleanAozoraText, excerpt, findStart, norm, skipHeadings } from './aozora-extract.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -36,6 +36,13 @@ assert.equal(excerpt(t, 0, 10), '一つ目の文です。');
 assert.equal(excerpt('前置き。〓の文。', 0, 100), '前置き。'); // single paragraph: keep the whole sentences before it
 assert.equal(findStart('前の段落\n　目印のある段落です。', { mode: 'anchor', anchor: '目印' }), 5);
 assert.equal(findStart('abc', { mode: 'anchor', anchor: 'zzz' }), -1);
+assert.equal(findStart('序\n三代の榮耀一睡の中にして', { mode: 'anchor', anchor: '三代の栄耀' }), 2); // old kanji in the text
+
+// headings are skipped; a long first sentence is cut at a comma
+assert.equal(skipHeadings('一\n\n本文です。'), '本文です。');
+assert.equal(skipHeadings('第１図版\n\n第２図版\n\n雪は天から送られた手紙である。'), '雪は天から送られた手紙である。');
+assert.equal(skipHeadings('この書を外国に在る人々に呈す\n\n本文。'), 'この書を外国に在る人々に呈す\n\n本文。');
+assert.equal(excerpt('其一\n\nあいうえお、かきくけこ、さしすせそ、たちつてと。', 0, 14), 'あいうえお、かきくけこ、……');
 
 // End to end against the fixtures, in a scratch copy of the project layout.
 const dir = mkdtempSync(join(tmpdir(), 'zipangu-aozora-'));
@@ -53,11 +60,12 @@ execFileSync('node', [join(dir, 'tools', 'aozora-extract.mjs')], {
 });
 const out = JSON.parse(readFileSync(join(dir, 'world', 'library.texts.json'), 'utf8')).works;
 assert.equal(out.free_work.status, 'ok');
-assert.equal(out.free_work.excerpt, '一\n\n夜の汽車は青い野原を走りました。窓の外では蝶が光っていました。');
+assert.equal(out.free_work.excerpt, '夜の汽車は青い野原を走りました。窓の外では蝶が光っていました。');
 assert.equal(out.free_work.credits.input, 'テスト');
 assert.equal(out.anchored.status, 'ok');
 assert.ok(out.anchored.excerpt.startsWith('銀の鉄橋を渡るとき'), out.anchored.excerpt);
 assert.equal(out.protected.status, 'copyrighted');
 assert.equal(out.missing.status, 'not_found');
+assert.ok(out.missing.candidates.some(c => c.startsWith('試験の星図')), 'not_found lists what the author does have');
 
 console.log('aozora-extract tests passed');
