@@ -3,7 +3,7 @@ const vm = require('vm');
 const path = require('path');
 
 function runTest() {
-  const htmlPath = path.join(__dirname, '../ai-agent-economy.html');
+  const htmlPath = path.join(__dirname, 'ai-agent-economy.html');
   const htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
   // Extract the escapeHTML function from the script tag
