@@ -1,6 +1,7 @@
 // Offline tests for tools/aozora-extract.mjs. The fixtures in tools/fixtures/ are
-// a synthetic text written in 青空文庫 markup (not a real 青空文庫 file) and a
-// two-row index: one copyright-free work and one marked as under copyright.
+// a synthetic text written in 青空文庫 markup (not a real 青空文庫 file, Shift_JIS
+// like the real ones) and a small index: one copyright-free work and one marked
+// as under copyright. They are zipped here at test time, the way 青空文庫 ships them.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, copyFileSync } from 'node:fs';
@@ -54,8 +55,13 @@ writeFileSync(join(dir, 'world', 'library.json'), JSON.stringify([
     { id: 'protected', title: '保護中の本', author: '現役 次郎', author_death_year: 1900, extraction: { mode: 'opening', max_chars: 80 } },
     { id: 'missing', title: '存在しない本', author: '架空 太郎', author_death_year: 1933, extraction: { mode: 'opening', max_chars: 80 } }
 ]));
+const zips = join(dir, 'zips');
+mkdirSync(zips);
+const zipUp = (name, file) => execFileSync('zip', ['-q', '-j', join(zips, name), join(here, 'fixtures', file)]);
+zipUp('list_person_all_extended_utf8.zip', 'list_person_all_extended_utf8.csv');
+zipUp('99999_ruby_1.zip', 'test_star.txt');
 execFileSync('node', [join(dir, 'tools', 'aozora-extract.mjs')], {
-    env: { ...process.env, AOZORA_INDEX_ZIP: join(here, 'fixtures', 'list_person_all_extended_utf8.zip'), AOZORA_FILES: join(here, 'fixtures') },
+    env: { ...process.env, AOZORA_INDEX_ZIP: join(zips, 'list_person_all_extended_utf8.zip'), AOZORA_FILES: zips },
     stdio: 'pipe'
 });
 const out = JSON.parse(readFileSync(join(dir, 'world', 'library.texts.json'), 'utf8')).works;

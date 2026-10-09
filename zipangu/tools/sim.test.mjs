@@ -4,7 +4,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildWorld } from '../js/data.js';
-import { createEconomy, clockAt, KOKU_LABELS } from '../js/sim.js';
+import { createEconomy, clockAt, KOKU_LABELS, indexRoutes, routeBetween } from '../js/sim.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'world');
 const read = (file, fallback) => (existsSync(join(root, file)) ? JSON.parse(readFileSync(join(root, file), 'utf8')) : fallback);
@@ -136,6 +136,15 @@ for (const [i, r] of runs.entries()) {
         `${r.log.trade.filter(m => m.action === 'buy').length} buys, ${r.log.trade.filter(m => m.action === 'craft').length} crafts, ` +
         `${r.log.event.length} events, ${r.log.goal.length} goal milestones, prices ${r.worstPrice.lo.toFixed(2)}–${r.worstPrice.hi.toFixed(2)}× base`);
 }
+// Routes keep their direction: opposite routes between the same districts keep their own vehicles.
+{
+    const ix = indexRoutes([{ id: 'out', from: 'a', to: 'b', via: 'oshie' }, { id: 'back', from: 'b', to: 'a', via: 'ginga_tetsudo' }, { id: 'one', from: 'c', to: 'd', via: 'torii' }]);
+    assert.equal(routeBetween(ix, 'a', 'b').id, 'out');
+    assert.equal(routeBetween(ix, 'b', 'a').id, 'back');
+    assert.equal(routeBetween(ix, 'd', 'c').id, 'one', 'a one-way route can be ridden back');
+    assert.equal(routeBetween(ix, 'a', 'c'), null);
+}
+
 console.log(`  seed 1 travel: ${Object.entries(vias).map(([v, n]) => `${v} ${n}`).join(', ')}`);
 console.log(`  seed 1 top earners: ${rich.map(a => `${a.name} +${Math.round(a.stats.profit)}`).join(', ')}`);
 console.log(`  feed sample:`);
