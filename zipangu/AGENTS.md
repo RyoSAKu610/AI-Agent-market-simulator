@@ -31,8 +31,10 @@ NEON MYTHOS city at the repository root is a separate build with its own rules.
    real person is stated to be a distinct fictional character. The confirmed corrections in
    `world.json` → `style_guide` §4 stay corrected.
 3. **Public domain only.** A work enters `library.json` only if its author and any translator
-   died in 1967 or earlier, and its title/author match 青空文庫 exactly. Excerpts come only
-   from `tools/aozora-extract.mjs`, which checks the 青空文庫 copyright flags; never paste text.
+   died in 1967 or earlier, and its title/author match 青空文庫 (or, for English works, the
+   Project Gutenberg catalogue) exactly. Excerpts come only from `tools/aozora-extract.mjs`,
+   which checks the 青空文庫 copyright flags, and `tools/gutenberg-extract.mjs`, which checks
+   every listed person's death year; never paste text.
 4. **The charter.** Creature goods come from shed scales and gifts, never from harming or
    capturing. Things the world says have no price (クラムボン, 桜の森) get none.
 5. **No graphics degradation.** Do not simplify the creature renderer, the map, or the palettes

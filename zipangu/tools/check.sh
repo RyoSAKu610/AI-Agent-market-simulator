@@ -6,8 +6,9 @@ cd "$(dirname "$0")/.."
 echo "› world data"
 node tools/validate.mjs
 
-echo "› 青空文庫 extractor"
+echo "› 青空文庫 and Gutenberg extractors"
 node tools/aozora-extract.test.mjs
+node tools/gutenberg-extract.test.mjs
 
 if [ -f tools/sim.test.mjs ]; then
   echo "› economy simulation"

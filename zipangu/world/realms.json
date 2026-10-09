@@ -58,7 +58,8 @@
     ],
     "literature": [
       "kenji_ginga_tetsudo_no_yoru",
-      "kenji_igirisu_kaigan"
+      "kenji_igirisu_kaigan",
+      "en_peter_pan"
     ],
     "agents": [
       "zero",
@@ -353,7 +354,9 @@
     ],
     "literature": [
       "ryugu_otogizoshi_dazai",
-      "ryugu_kusuyama_urashima"
+      "ryugu_kusuyama_urashima",
+      "en_kwaidan_horai",
+      "en_ozaki_urashima"
     ],
     "agents": [
       "human",
@@ -435,7 +438,8 @@
       "ryugu_mochizuki_usagi"
     ],
     "literature": [
-      "ryugu_taketori_monogatari"
+      "ryugu_taketori_monogatari",
+      "en_ozaki_bamboo_cutter"
     ],
     "agents": [
       "ryugu_nayotake"
@@ -602,7 +606,8 @@
     ],
     "literature": [
       "tenshu_yume_juya",
-      "tenshu_muou_no_koi"
+      "tenshu_muou_no_koi",
+      "en_alice_wonderland"
     ],
     "agents": [
       "tenshu_yurimori"

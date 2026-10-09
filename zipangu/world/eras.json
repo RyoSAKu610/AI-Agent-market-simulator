@@ -540,7 +540,8 @@
     "literature": [
       "hiraizumi_okunohosomichi",
       "hiraizumi_koigoromo",
-      "hiraizumi_basho_zakki"
+      "hiraizumi_basho_zakki",
+      "en_marco_polo_chipangu"
     ],
     "agents": [
       "kane",
@@ -745,7 +746,8 @@
     ],
     "literature": [
       "sengoku_hokyonin_no_shi",
-      "sengoku_tabako_to_akuma"
+      "sengoku_tabako_to_akuma",
+      "en_book_of_tea"
     ],
     "agents": [
       "nego",
@@ -1567,7 +1569,8 @@
     "literature": [
       "taisho_gusuko_budori",
       "taisho_chawan_no_yu",
-      "taisho_yuki"
+      "taisho_yuki",
+      "en_wizard_of_oz"
     ],
     "agents": [
       "lira",
@@ -1761,7 +1764,8 @@
     "literature": [
       "showa_kumo_no_ito",
       "showa_hojoki",
-      "showa_nihon_bunka_shikan"
+      "showa_nihon_bunka_shikan",
+      "en_first_men_moon"
     ],
     "agents": [
       "goldjack",
@@ -1952,7 +1956,8 @@
       "reiwa_akai_rosoku_to_ningyo",
       "reiwa_junishi_ko",
       "reiwa_juhachiji_no_ongakuyoku",
-      "reiwa_ginza_alps"
+      "reiwa_ginza_alps",
+      "en_time_machine"
     ],
     "agents": [
       "zero",
