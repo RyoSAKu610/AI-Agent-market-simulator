@@ -222,7 +222,7 @@ export function placeView(ctx, id) {
     const works = W.library.filter(w => w.placed_in === id);
     if (works.length) add('books', '書物', section('books', '書物', 'この地にある、没後の約束を果たした本',
         h('div', { class: 'cards' }, works.map(w => plaque({ class: 'work-mini' },
-            h('h3', null, link(href.work(w.id), `『${w.title}』`)),
+            h('h3', null, link(href.work(w.id), `『${w.title_ja || w.title}』`)),
             h('p', { class: 'wm-author' }, w.author),
             h('p', null, clip(w.in_world_role, 90)))))));
 

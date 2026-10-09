@@ -8,15 +8,28 @@ import { notFound } from './view-place.js';
 // Why an excerpt is not on the page yet, in the reader's words.
 const WHY_PENDING = {
     none: '抜粋はこれから、青空文庫の公式データから取り寄せます。',
-    not_found: '青空文庫の索引で見つけられなかったため、確認しています。',
+    not_found: '青空文庫にはまだ収録されていないため、本文の抜粋はありません。',
     copyrighted: '索引が保護期間中と示しているため、掲載しません。',
     anchor_not_found: '抜粋の始まりの位置を確かめているところです。',
     empty: '抜粋を取り出せなかったため、もう一度試します。',
     error: '取得でつまずいたため、もう一度試します。'
 };
 
+const isEnglish = w => w.source === 'gutenberg';
+
+function englishExcerpt(t) {
+    return h('figure', { class: 'excerpt excerpt-en' },
+        h('blockquote', { lang: 'en' }, t.excerpt),
+        h('figcaption', null,
+            h('span', { class: 'src' }, '出典：Project Gutenberg（英語の原文）'),
+            t.gutenberg_id ? h('span', null, `eBook #${t.gutenberg_id}`) : null,
+            (t.people || []).length ? h('span', { lang: 'en' }, t.people.join(' / ')) : null,
+            t.card_url ? h('a', { href: t.card_url, target: '_blank', rel: 'noopener noreferrer' }, '書誌ページ ↗') : null));
+}
+
 function excerptBox(W, w) {
     const t = W.textOf(w.id);
+    if (t && t.status === 'ok' && t.excerpt && isEnglish(w)) return englishExcerpt(t);
     if (t && t.status === 'ok' && t.excerpt) {
         const cr = t.credits || {};
         return h('figure', { class: 'excerpt' },
@@ -29,9 +42,10 @@ function excerptBox(W, w) {
                 t.card_url ? h('a', { href: t.card_url, target: '_blank', rel: 'noopener noreferrer' }, '図書カード ↗') : null));
     }
     const key = t && WHY_PENDING[t.status] ? t.status : 'none';
+    const from = isEnglish(w) ? 'Project Gutenberg' : '青空文庫';
     return h('div', { class: 'excerpt pending' },
-        h('span', { class: 'tag tag-pending' }, '青空文庫から抜粋予定'),
-        h('p', null, WHY_PENDING[key]),
+        h('span', { class: 'tag tag-pending' }, `${from}から抜粋予定`),
+        h('p', null, isEnglish(w) ? WHY_PENDING[key].replace('青空文庫の公式データ', 'Project Gutenberg').replace('青空文庫の索引', 'Gutenberg の目録').replace('青空文庫には', 'Project Gutenberg には') : WHY_PENDING[key]),
         t && t.card_url ? h('a', { href: t.card_url, target: '_blank', rel: 'noopener noreferrer' }, '図書カード ↗') : null);
 }
 
@@ -40,9 +54,11 @@ function workCard(W, w, { detail = false } = {}) {
     const district = w.district && W.byId.district.get(w.district);
     const life = [`${w.author}（${w.author_death_year}没）`];
     if (w.translator) life.push(`訳：${w.translator}（${w.translator_death_year}没）`);
+    const shown = `『${w.title_ja || w.title}』`;
     return plaque({ class: 'work-card' },
-        h(Title, null, detail ? `『${w.title}』` : link(href.work(w.id), `『${w.title}』`)),
-        h('p', { class: 'wm-author' }, life.join(' ・ ')),
+        h(Title, null, detail ? shown : link(href.work(w.id), shown)),
+        isEnglish(w) ? h('p', { class: 'wk-original', lang: 'en' }, w.title) : null,
+        h('p', { class: 'wm-author' }, life.join(' ・ '), isEnglish(w) ? h('span', { class: 'tag tag-en' }, '英語') : null),
         h('p', { class: 'wk-role' }, h('span', { class: 'lbl' }, 'この世界での姿'), tagged(detail ? w.in_world_role : clip(w.in_world_role, 150))),
         district ? h('p', { class: 'wk-where' }, h('span', { class: 'lbl' }, 'ある場所'), link(href.district(district.id), nameOf(district))) : null,
         detail ? h('p', { class: 'wk-why' }, h('span', { class: 'lbl' }, 'ここにある理由'), tagged(w.why)) : null,
@@ -58,7 +74,7 @@ export function libraryView(ctx) {
         h('header', { class: 'page-head' },
             h('h1', null, '青空書庫'),
             h('p', { class: 'lead' }, '作者（と訳者）が世を去って、みんなのものになった本だけが、この世界の棚に並ぶ。これを世界では「没後の約束」と呼ぶ。保護期間の中にある作品は、影絵として名前さえ出さない。'),
-            h('p', { class: 'ar-role' }, `${W.library.length} 冊のうち、本文の抜粋を載せられたのは ${ok} 冊。本文は青空文庫の公式データから自動で取り寄せる。`)),
+            h('p', { class: 'ar-role' }, `${W.library.length} 冊のうち、本文の抜粋を載せられたのは ${ok} 冊。日本語の本文は青空文庫の公式データから、英語の本文は Project Gutenberg から自動で取り寄せる。`)),
         groups.map(({ p, works }) => h('section', { class: 'sec', 'aria-labelledby': 'lib-' + p.id },
             h('header', { class: 'section-head' },
                 h('h2', { id: 'lib-' + p.id }, h('span', { class: 'gem', 'aria-hidden': 'true' }), placeShort(p)),
@@ -75,6 +91,8 @@ export function workView(ctx, id) {
     const el = h('div', { class: 'page page-narrow' },
         h('p', { class: 'crumb' }, link('#/library', '← 青空書庫'), place ? ' ・ ' : '', place ? placeLink(place) : null),
         workCard(W, w, { detail: true }),
-        h('p', { class: 'ar-role' }, '青空文庫は、著作権の消えた作品を公開している電子図書館。本文・底本・入力者・校正者のことは、図書カードで確かめられる。'));
-    return { el, title: `『${w.title}』` };
+        h('p', { class: 'ar-role' }, isEnglish(w)
+            ? 'Project Gutenberg は、パブリックドメインの本を公開している電子図書館。英語の原文と書誌は、書誌ページで確かめられる。この世界では、作者と訳者がみな1967年までに世を去った本だけを置く。'
+            : '青空文庫は、著作権の消えた作品を公開している電子図書館。本文・底本・入力者・校正者のことは、図書カードで確かめられる。'));
+    return { el, title: `『${w.title_ja || w.title}』` };
 }

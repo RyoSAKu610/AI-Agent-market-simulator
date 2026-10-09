@@ -81,7 +81,8 @@
     "extraction": {
       "mode": "anchor",
       "anchor": "三代の栄耀",
-      "max_chars": 450
+      "max_chars": 210,
+      "note_numbers": true
     }
   },
   {
@@ -588,7 +589,7 @@
     "why": "この世界の乙姫は、竜宮の時間差を罰ではなく両替できるものと考えた。【史実】太宰治『お伽草紙』は1945年刊の連作で、「浦島さん」は玉手箱を開けたあとの浦島を、年月と忘却を人間の救いとみる読みのなかで語り直している。置き去りを出さない銀行の姿勢とよく重なる。作者は1948年に没し、作品は公有である。",
     "extraction": {
       "mode": "anchor",
-      "anchor": "水の江の浦",
+      "anchor": "丹後の水江",
       "max_chars": 400
     }
   },
@@ -650,7 +651,7 @@
   },
   {
     "id": "tenshu_muou_no_koi",
-    "title": "夢応の鯉魚",
+    "title": "雨月物語",
     "author": "上田 秋成",
     "author_death_year": 1809,
     "placed_in": "yume_juya",
@@ -658,7 +659,8 @@
     "in_world_role": "夢の中で鯉になって琵琶湖を泳ぐ僧の話で、夢応の鯉の起源。【史実】『雨月物語』が刊行された1776年は、平賀源内がエレキテルを復元したとされる年でもある。【創作】その縁で、江戸後期の雷電泰平の記念祭でも読まれる。",
     "why": "【史実】『雨月物語』は上田秋成（1734–1809）の怪異小説集で、1776年（安永5年）に刊行された。その一編「夢応の鯉魚」は、三井寺の絵師の僧・興義が夢の中で鯉になって琵琶湖を泳ぐ話。作者は1809年に没しており公有。【創作】この鯉の子孫が回廊の池へ泳ぎ込む設定と、竜宮の大潮との水のつながりは、原作にはないこの世界の作り話。",
     "extraction": {
-      "mode": "opening",
+      "mode": "anchor",
+      "anchor": "三井寺に興義",
       "max_chars": 350
     }
   },
@@ -674,6 +676,206 @@
     "extraction": {
       "mode": "opening",
       "max_chars": 330
+    }
+  },
+  {
+    "source": "gutenberg",
+    "language": "en",
+    "id": "en_marco_polo_chipangu",
+    "title": "The Travels of Marco Polo",
+    "title_ja": "東方見聞録（英訳）",
+    "author": "Marco Polo",
+    "author_death_year": 1324,
+    "translator": "Henry Yule",
+    "translator_death_year": 1889,
+    "gutenberg_id": 12410,
+    "placed_in": "hiraizumi_zipangu",
+    "district": "hiraizumi_hikaridou",
+    "in_world_role": "光堂の大参道、金箔の扉の脇に一章だけ開いて置かれた英訳本。「黄金の国」の噂が海を渡って西で書き留められた、その頁を巡礼者が声に出して読み、光金術の職人は「噂が先に世界を一周した」と笑う。",
+    "why": "マルコ・ポーロの旅行記（13世紀末）は、日本を「ジパング」として黄金の島と伝えた最初期の記録の一つで、平泉の「黄金の国ジパング」の時片の出発点にあたる。英訳者ヘンリー・ユール（1889年没）の訳で読む。",
+    "extraction": {
+      "mode": "anchor",
+      "anchor": "Chipangu is an Island towards the east",
+      "max_chars": 650
+    },
+    "undated_people": {
+      "Rusticiano, da Pisa": 1300
+    }
+  },
+  {
+    "source": "gutenberg",
+    "language": "en",
+    "id": "en_book_of_tea",
+    "title": "The Book of Tea",
+    "title_ja": "茶の本（英語の原文）",
+    "author": "Kakuzo Okakura",
+    "author_death_year": 1913,
+    "gutenberg_id": 769,
+    "placed_in": "sengoku_neji",
+    "district": "sengoku_azuchi_rakuichi",
+    "in_world_role": "楽市の春野の茶屋の棚にある、日本人が英語で書いた茶の書。自鳴鐘が刻を打つ合間に、南蛮の商人と茶人が同じ頁を指さして「一碗のなかの静けさ」を値踏みし合う。",
+    "why": "岡倉覚三（天心、1913年没）が1906年にニューヨークで英語で出版した本で、茶の湯を世界に向けて説いた。南蛮貿易と茶の湯が交わる戦国・桃山の時片に、英語の原文のまま置く。",
+    "extraction": {
+      "mode": "anchor",
+      "anchor": "Tea began as a medicine and grew into a beverage",
+      "max_chars": 600
+    }
+  },
+  {
+    "source": "gutenberg",
+    "language": "en",
+    "id": "en_kwaidan_horai",
+    "title": "Kwaidan",
+    "title_ja": "怪談より「蓬莱」（英語の原文）",
+    "author": "Lafcadio Hearn",
+    "author_death_year": 1904,
+    "gutenberg_id": 1210,
+    "placed_in": "ryugu_horai",
+    "district": "ryugu_tamanoe_no_hayashi",
+    "in_world_role": "蓬莱島・玉の枝の林の入口で、旅人に最初に手渡される英語の小品。霞の青を言葉にした一節を読んでから林に入ると、玉の枝の光が少しやわらいで見えるという。",
+    "why": "小泉八雲（ラフカディオ・ハーン、1904年没）が1904年に英語で出版した『怪談』には、蓬莱を描いた小品「Hōrai」が収められている。竜宮・蓬莱の異界に、その英語の原文を置く。",
+    "extraction": {
+      "mode": "anchor",
+      "anchor": "Blue vision of depth lost in height",
+      "max_chars": 600
+    }
+  },
+  {
+    "source": "gutenberg",
+    "language": "en",
+    "id": "en_ozaki_urashima",
+    "title": "Japanese Fairy Tales",
+    "title_ja": "浦島太郎（英語の再話）",
+    "author": "Yei Theodora Ozaki",
+    "author_death_year": 1932,
+    "gutenberg_id": 4018,
+    "placed_in": "ryugu_horai",
+    "district": "ryugu_mikka_asobi",
+    "in_world_role": "三日遊びの宮の受付に、楠山正雄の『浦島太郎』と並べて置かれた英語の再話。海の向こうから来た客は、こちらで時間差の作法を学ぶ。",
+    "why": "楠山秀子（Yei Theodora Ozaki、1932年没）が1908年に英語で出版した日本の昔話集で、浦島太郎の話を収める。日本の話が英語で世界に渡った例として、日本語の再話と対にする。",
+    "extraction": {
+      "mode": "anchor",
+      "anchor": "Long, long ago in the province of Tango",
+      "max_chars": 600
+    },
+    "undated_people": {
+      "Ozaki, Yei Theodora": 1932
+    }
+  },
+  {
+    "source": "gutenberg",
+    "language": "en",
+    "id": "en_ozaki_bamboo_cutter",
+    "title": "Japanese Fairy Tales",
+    "title_ja": "竹取の翁と月の子（英語の再話）",
+    "author": "Yei Theodora Ozaki",
+    "author_death_year": 1932,
+    "gutenberg_id": 4018,
+    "placed_in": "tsuki_no_miyako",
+    "district": "ryugu_kaguya_chaya",
+    "in_world_role": "かぐや茶屋の床の間に置かれた英語の竹取物語。月の都から来た客は、地上の言葉と海の向こうの言葉の両方で自分たちの物語が語られているのを見て、少し誇らしげにする。",
+    "why": "同じ英語の昔話集（1908年）に収められた竹取物語の再話。月の都の異界に、日本最古の物語の一つが英語で渡った姿を置く。",
+    "extraction": {
+      "mode": "anchor",
+      "anchor": "there lived an old bamboo wood-cutter",
+      "max_chars": 600
+    },
+    "undated_people": {
+      "Ozaki, Yei Theodora": 1932
+    }
+  },
+  {
+    "source": "gutenberg",
+    "language": "en",
+    "id": "en_alice_wonderland",
+    "title": "Alice's Adventures in Wonderland",
+    "title_ja": "不思議の国のアリス",
+    "author": "Lewis Carroll",
+    "author_death_year": 1898,
+    "gutenberg_id": 11,
+    "placed_in": "yume_juya",
+    "district": "tenshu_yume_no_roka",
+    "in_world_role": "夢の回廊の文替所で、夢から夢へ渡る客に貸し出される英語の本。最初の頁の退屈な午後を読み終えたころ、回廊の扉が一枚、兎穴の形に変わるという。",
+    "why": "ルイス・キャロル（1898年没）が1865年に出版した、夢のなかの不思議の国の物語。漱石の『夢十夜』と並ぶ夢の回廊に、英語の夢の古典として置く。",
+    "extraction": {
+      "mode": "anchor",
+      "anchor": "Alice was beginning to get very tired",
+      "max_chars": 600
+    }
+  },
+  {
+    "source": "gutenberg",
+    "language": "en",
+    "id": "en_time_machine",
+    "title": "The Time Machine",
+    "title_ja": "タイム・マシン",
+    "author": "H. G. Wells",
+    "author_death_year": 1946,
+    "gutenberg_id": 35,
+    "placed_in": "reiwa_mangekyo",
+    "district": "kokurin_hiroba",
+    "in_world_role": "刻輪広場の万世時計の台座に埋め込まれた英語の一冊。十の時代が重なる都で、時間を旅する機械を最初に物語にした本として、時計守りが毎朝一節を読み上げる。",
+    "why": "H・G・ウェルズ（1946年没）が1895年に出版した、時間旅行の機械を描いた小説。十の時代が重なる令和の万華京の中心に置くのがふさわしい。",
+    "extraction": {
+      "mode": "anchor",
+      "anchor": "The Time Traveller (for so it will be convenient to speak of him)",
+      "max_chars": 600
+    }
+  },
+  {
+    "source": "gutenberg",
+    "language": "en",
+    "id": "en_first_men_moon",
+    "title": "The First Men in the Moon",
+    "title_ja": "月世界最初の人間",
+    "author": "H. G. Wells",
+    "author_death_year": 1946,
+    "gutenberg_id": 1013,
+    "placed_in": "showa_hojo",
+    "district": "showa_kokubunji_pencil",
+    "in_world_role": "国分寺のペンシル発射場の控室で、打ち上げを待つ技師たちが回し読みする英語の本。重力を遮る物質で月へ行く話を読みながら、自分たちはペンシルで行くのだと笑い合う。",
+    "why": "ウェルズが1901年に出版した、月への旅の小説。ペンシルロケットから軌道の方丈へ進む昭和の時片に、宇宙への夢の先行者として置く。",
+    "extraction": {
+      "mode": "anchor",
+      "anchor": "As I sit down to write here amidst the shadows of vine-leaves",
+      "max_chars": 600
+    }
+  },
+  {
+    "source": "gutenberg",
+    "language": "en",
+    "id": "en_wizard_of_oz",
+    "title": "The Wonderful Wizard of Oz",
+    "title_ja": "オズの魔法使い",
+    "author": "L. Frank Baum",
+    "author_death_year": 1919,
+    "gutenberg_id": 55,
+    "placed_in": "taisho_tenki",
+    "district": "taisho_tenki_kyoku",
+    "in_world_role": "イーハトーヴ天気局の予報室に置かれた英語の本。竜巻に家ごと運ばれる少女の話は、天気細工師の見習いが最初に読む「天気をあなどるな」の教科書になっている。",
+    "why": "L・フランク・ボーム（1919年没）が1900年に出版した物語で、竜巻が少女を不思議の国へ運ぶところから始まる。天気を細工する大正の時片の天気局に置く。",
+    "extraction": {
+      "mode": "anchor",
+      "anchor": "Dorothy lived in the midst of the great Kansas prairies",
+      "max_chars": 600
+    }
+  },
+  {
+    "source": "gutenberg",
+    "language": "en",
+    "id": "en_peter_pan",
+    "title": "Peter Pan",
+    "title_ja": "ピーター・パン",
+    "author": "J. M. Barrie",
+    "author_death_year": 1937,
+    "gutenberg_id": 16,
+    "placed_in": "ginga_tetsudo",
+    "in_world_role": "銀河鉄道・時環線の車内文庫にある英語の本。「二つめの角を右へ、あとは朝までまっすぐ」という星の道順は、銀河鉄道の車掌も気に入っている。",
+    "why": "J・M・バリー（1937年没）が1911年に小説として出版した、子どもが空を飛んで星の向こうの島へ行く物語。夜空を走る銀河鉄道の異界に置く。",
+    "extraction": {
+      "mode": "anchor",
+      "anchor": "All children, except one, grow up",
+      "max_chars": 600
     }
   }
 ]

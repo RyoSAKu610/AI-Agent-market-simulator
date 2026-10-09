@@ -1,0 +1,2 @@
+# Shift_JIS test text: keep bytes exactly as committed
+*.txt -text

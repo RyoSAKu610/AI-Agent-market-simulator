@@ -1,11 +1,11 @@
 {
-  "source": "青空文庫 https://www.aozora.gr.jp/ — public-domain texts; credits per work",
-  "generated_at": "2026-10-09T15:31:44.029Z",
+  "source": "青空文庫 https://www.aozora.gr.jp/ and Project Gutenberg https://www.gutenberg.org/ — public-domain texts; credits per work",
+  "generated_at": "2026-10-09T16:01:04.703Z",
   "works": {
     "jomon_shokubutsu_chishiki": {
       "status": "ok",
-      "excerpt": "まえがき\n\n花は、率直にいえば生殖器である。有名な蘭学者の宇田川榕庵先生は、彼の著『植学啓源』に、「花は動物の陰処の如し、生産蕃息の資て始まる所なり」と書いておられる。すなわち花は誠に美麗で、且つ趣味に富んだ生殖器であって、動物の醜い生殖器とは雲泥の差があり、とても比べものにはならない。そして見たところなんの醜悪なところは一点もこれなく、まったく美点に充ち満ちている。まず花弁の色がわが眼を惹きつける、花香がわが鼻を撲つ。なお子細に注意すると、花の形でも萼でも、注意に値せぬものはほとんどない。\nこの花は、種子を生ずるために存在している器官である。",
-      "chars": 275,
+      "excerpt": "花は、率直にいえば生殖器である。有名な蘭学者の宇田川榕庵先生は、彼の著『植学啓源』に、「花は動物の陰処の如し、生産蕃息の資て始まる所なり」と書いておられる。すなわち花は誠に美麗で、且つ趣味に富んだ生殖器であって、動物の醜い生殖器とは雲泥の差があり、とても比べものにはならない。そして見たところなんの醜悪なところは一点もこれなく、まったく美点に充ち満ちている。まず花弁の色がわが眼を惹きつける、花香がわが鼻を撲つ。なお子細に注意すると、花の形でも萼でも、注意に値せぬものはほとんどない。\nこの花は、種子を生ずるために存在している器官である。もし種子を生ずる必要がなかったならば、花はまったく無用の長物で、植物の上には現れなかったであろう。",
+      "chars": 318,
       "aozora_work_id": "046821",
       "card_url": "https://www.aozora.gr.jp/cards/001266/card46821.html",
       "orthography": "新字新仮名",
@@ -32,8 +32,8 @@
     },
     "jomon_inei_raisan": {
       "status": "ok",
-      "excerpt": "○\n\n今日、普請道楽の人が純日本風の家屋を建てて住まおうとすると、電気や瓦斯や水道等の取附け方に苦心を払い、何とかしてそれらの施設が日本座敷と調和するように工夫を凝らす風があるのは、自分で家を建てた経験のない者でも、待合料理屋旅館等の座敷へ這入ってみれば常に気が付くことであろう。独りよがりの茶人などが科学文明の恩沢を度外視して、辺鄙な田舎にでも草庵を営むなら格別、いやしくも相当の家族を擁して都会に住居する以上、いくら日本風にするからと云って、近代生活に必要な煖房や照明や衛生の設備を斥ける訳には行かない。で、凝り性の人は電話一つ取り附けるにも頭を悩まして、梯子段の裏とか、廊下の隅とか、出来るだけ目障りにならない場所に持って行く。",
-      "chars": 317,
+      "excerpt": "今日、普請道楽の人が純日本風の家屋を建てて住まおうとすると、電気や瓦斯や水道等の取附け方に苦心を払い、何とかしてそれらの施設が日本座敷と調和するように工夫を凝らす風があるのは、自分で家を建てた経験のない者でも、待合料理屋旅館等の座敷へ這入ってみれば常に気が付くことであろう。独りよがりの茶人などが科学文明の恩沢を度外視して、辺鄙な田舎にでも草庵を営むなら格別、いやしくも相当の家族を擁して都会に住居する以上、いくら日本風にするからと云って、近代生活に必要な煖房や照明や衛生の設備を斥ける訳には行かない。で、凝り性の人は電話一つ取り附けるにも頭を悩まして、梯子段の裏とか、廊下の隅とか、出来るだけ目障りにならない場所に持って行く。",
+      "chars": 314,
       "aozora_work_id": "056642",
       "card_url": "https://www.aozora.gr.jp/cards/001383/card56642.html",
       "orthography": "新字新仮名",
@@ -60,8 +60,8 @@
     },
     "heian_ryu": {
       "status": "ok",
-      "excerpt": "一\n\n宇治の大納言隆国「やれ、やれ、昼寝の夢が覚めて見れば、今日はまた一段と暑いようじゃ。あの松ヶ枝の藤の花さえ、ゆさりとさせるほどの風も吹かぬ。いつもは涼しゅう聞える泉の音も、どうやら油蝉の声にまぎれて、反って暑苦しゅうなってしもうた。どれ、また童部たちに煽いででも貰おうか。\n「何、往来のものどもが集った？　ではそちらへ参ると致そう。童部たちもその大団扇を忘れずに後からかついで参れ。\n「やあ、皆のもの、予が隆国じゃ。大肌ぬぎの無礼は赦してくれい。\n「さて今日はその方どもにちと頼みたい事があって、わざと、この宇治の亭へ足を止めて貰うたのじゃ。",
-      "chars": 274,
+      "excerpt": "宇治の大納言隆国「やれ、やれ、昼寝の夢が覚めて見れば、今日はまた一段と暑いようじゃ。あの松ヶ枝の藤の花さえ、ゆさりとさせるほどの風も吹かぬ。いつもは涼しゅう聞える泉の音も、どうやら油蝉の声にまぎれて、反って暑苦しゅうなってしもうた。どれ、また童部たちに煽いででも貰おうか。\n「何、往来のものどもが集った？　ではそちらへ参ると致そう。童部たちもその大団扇を忘れずに後からかついで参れ。\n「やあ、皆のもの、予が隆国じゃ。大肌ぬぎの無礼は赦してくれい。\n「さて今日はその方どもにちと頼みたい事があって、わざと、この宇治の亭へ足を止めて貰うたのじゃ。",
+      "chars": 271,
       "aozora_work_id": "000134",
       "card_url": "https://www.aozora.gr.jp/cards/000879/card134.html",
       "orthography": "新字新仮名",
@@ -73,9 +73,18 @@
       }
     },
     "hiraizumi_okunohosomichi": {
-      "status": "anchor_not_found",
+      "status": "ok",
+      "excerpt": "三代の榮耀一睡の中にして、大門の跡は一里こなたに有。秀衡が跡は田野に成て、金鷄山のみ形を殘す。先高舘にのぼれば、北上川南部より流るゝ大河也。衣川は和泉が城をめぐりて、高舘の下にて大河に落入。康衡等が旧跡は、衣が關を隔て南部口をさし堅め、夷をふせぐとみえたり。偖も義臣すぐつて此城にこもり、功名一時の叢となる。「國破れて山河あり、城春にして草青みたり」と笠打敷て時のうつるまで泪を落し侍りぬ。\n\n夏草や兵どもが夢の跡",
+      "chars": 207,
+      "aozora_work_id": "061619",
       "card_url": "https://www.aozora.gr.jp/cards/002240/card61619.html",
-      "note": "anchor \"三代の栄耀\" not in text"
+      "orthography": "その他",
+      "author_died": "1694-11-28",
+      "credits": {
+        "base_book": "芭蕉　おくのほそ道",
+        "input": "砂場清隆",
+        "proofreading": ""
+      }
     },
     "hiraizumi_koigoromo": {
       "status": "ok",
@@ -93,8 +102,8 @@
     },
     "hiraizumi_basho_zakki": {
       "status": "ok",
-      "excerpt": "一　著書\n\n芭蕉は一巻の書も著はしたことはない。所謂芭蕉の七部集なるものも悉門人の著はしたものである。これは芭蕉自身の言葉によれば、名聞を好まぬ為だつたらしい。\n「曲翠問、発句を取りあつめ、集作ると云へる、此道の執心なるべきや。翁曰、これ卑しき心より我上手なるを知られんと我を忘れたる名聞より出る事也。」\nかう云つたのも一応は尤もである。しかしその次を読んで見れば、おのづから微笑を禁じ得ない。\n「集とは其風体の句々をえらび、我風体と云ふことを知らするまで也。我俳諧撰集の心なし。しかしながら貞徳以来其人々の風体ありて、宗因まで俳諧を唱来れり。",
-      "chars": 272,
+      "excerpt": "芭蕉は一巻の書も著はしたことはない。所謂芭蕉の七部集なるものも悉門人の著はしたものである。これは芭蕉自身の言葉によれば、名聞を好まぬ為だつたらしい。\n「曲翠問、発句を取りあつめ、集作ると云へる、此道の執心なるべきや。翁曰、これ卑しき心より我上手なるを知られんと我を忘れたる名聞より出る事也。」\nかう云つたのも一応は尤もである。しかしその次を読んで見れば、おのづから微笑を禁じ得ない。\n「集とは其風体の句々をえらび、我風体と云ふことを知らするまで也。我俳諧撰集の心なし。しかしながら貞徳以来其人々の風体ありて、宗因まで俳諧を唱来れり。",
+      "chars": 266,
       "aozora_work_id": "000023",
       "card_url": "https://www.aozora.gr.jp/cards/000879/card23.html",
       "orthography": "新字旧仮名",
@@ -149,8 +158,8 @@
     },
     "sangaku_botchan": {
       "status": "ok",
-      "excerpt": "一\n\n親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。別段深い理由でもない。新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。と囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。",
-      "chars": 240,
+      "excerpt": "親譲りの無鉄砲で小供の時から損ばかりしている。小学校に居る時分学校の二階から飛び降りて一週間ほど腰を抜かした事がある。なぜそんな無闇をしたと聞く人があるかも知れぬ。別段深い理由でもない。新築の二階から首を出していたら、同級生の一人が冗談に、いくら威張っても、そこから飛び降りる事は出来まい。弱虫やーい。と囃したからである。小使に負ぶさって帰って来た時、おやじが大きな眼をして二階ぐらいから飛び降りて腰を抜かす奴があるかと云ったから、この次は抜かさずに飛んで見せますと答えた。",
+      "chars": 237,
       "aozora_work_id": "000752",
       "card_url": "https://www.aozora.gr.jp/cards/000148/card752.html",
       "orthography": "新字新仮名",
@@ -163,8 +172,8 @@
     },
     "raiden_hanshichi_torimonocho": {
       "status": "ok",
-      "excerpt": "一\n\nわたしの叔父は江戸の末期に生まれたので、その時代に最も多く行なわれた化け物屋敷の不入の間や、嫉み深い女の生霊や、執念深い男の死霊や、そうしたたぐいの陰惨な幽怪な伝説をたくさんに知っていた。しかも叔父は「武士たるものが妖怪などを信ずべきものでない」という武士的教育の感化から、一切これを否認しようと努めていたらしい。その気風は明治以後になっても失せなかった。わたし達が子供のときに何か取り留めのない化け物話などを始めると、叔父はいつでも苦い顔をして碌々相手にもなってくれなかった。\nその叔父がただ一度こんなことを云った。\n「しかし世の中には解らないことがある。あのおふみの一件なぞは……」\nおふみの一件が何であるかは誰も知らなかった。叔父も自己の主張を裏切るような、この不可解の事実を発表するのが如何にも残念であったらしく、その以上には何も秘密を洩らさなかった。父に訊いても話してくれなかった。",
-      "chars": 399,
+      "excerpt": "わたしの叔父は江戸の末期に生まれたので、その時代に最も多く行なわれた化け物屋敷の不入の間や、嫉み深い女の生霊や、執念深い男の死霊や、そうしたたぐいの陰惨な幽怪な伝説をたくさんに知っていた。しかも叔父は「武士たるものが妖怪などを信ずべきものでない」という武士的教育の感化から、一切これを否認しようと努めていたらしい。その気風は明治以後になっても失せなかった。わたし達が子供のときに何か取り留めのない化け物話などを始めると、叔父はいつでも苦い顔をして碌々相手にもなってくれなかった。\nその叔父がただ一度こんなことを云った。\n「しかし世の中には解らないことがある。あのおふみの一件なぞは……」\nおふみの一件が何であるかは誰も知らなかった。叔父も自己の主張を裏切るような、この不可解の事実を発表するのが如何にも残念であったらしく、その以上には何も秘密を洩らさなかった。父に訊いても話してくれなかった。",
+      "chars": 396,
       "aozora_work_id": "001293",
       "card_url": "https://www.aozora.gr.jp/cards/000082/card1293.html",
       "orthography": "新字新仮名",
@@ -191,16 +200,18 @@
     },
     "raiden_hakkenden": {
       "status": "not_found",
-      "note": "南総里見八犬伝 / 曲亭 馬琴 is not in the 青空文庫 index"
+      "note": "南総里見八犬伝 / 曲亭 馬琴 is not in the 青空文庫 index",
+      "candidates": []
     },
     "raiden_furyu_shidoken": {
       "status": "not_found",
-      "note": "風流志道軒伝 / 平賀 源内 is not in the 青空文庫 index"
+      "note": "風流志道軒伝 / 平賀 源内 is not in the 青空文庫 index",
+      "candidates": []
     },
     "raiden_gesaku_zanmai": {
       "status": "ok",
-      "excerpt": "一\n\n天保二年九月のある午前である。神田同朋町の銭湯松の湯では、朝から相変らず客が多かった。式亭三馬が何年か前に出版した滑稽本の中で、「神祇、釈教、恋、無常、みないりごみの浮世風呂」といった光景は、今もそのころと変りはない。風呂の中で歌祭文を唄っている嚊たばね、上がり場で手拭をしぼっているちょん髷本多、文身の背中を流させている丸額の大銀杏、さっきから顔ばかり洗っている由兵衛奴、水槽の前に腰を据えて、しきりに水をかぶっている坊主頭、竹の手桶と焼き物の金魚とで、余念なく遊んでいる虻蜂蜻蛉、――狭い流しにはそういう種々雑多な人間がいずれも濡れた体を滑らかに光らせながら、濛々と立ち上がる湯煙と窓からさす朝日の光との中に、糢糊として動いている。そのまた騒ぎが、一通りではない。",
-      "chars": 337,
+      "excerpt": "天保二年九月のある午前である。神田同朋町の銭湯松の湯では、朝から相変らず客が多かった。式亭三馬が何年か前に出版した滑稽本の中で、「神祇、釈教、恋、無常、みないりごみの浮世風呂」といった光景は、今もそのころと変りはない。風呂の中で歌祭文を唄っている嚊たばね、上がり場で手拭をしぼっているちょん髷本多、文身の背中を流させている丸額の大銀杏、さっきから顔ばかり洗っている由兵衛奴、水槽の前に腰を据えて、しきりに水をかぶっている坊主頭、竹の手桶と焼き物の金魚とで、余念なく遊んでいる虻蜂蜻蛉、――狭い流しにはそういう種々雑多な人間がいずれも濡れた体を滑らかに光らせながら、濛々と立ち上がる湯煙と窓からさす朝日の光との中に、糢糊として動いている。そのまた騒ぎが、一通りではない。",
+      "chars": 334,
       "aozora_work_id": "000038",
       "card_url": "https://www.aozora.gr.jp/cards/000879/card38.html",
       "orthography": "新字新仮名",
@@ -213,8 +224,8 @@
     },
     "meiji_gojunoto": {
       "status": "ok",
-      "excerpt": "其一",
-      "chars": 2,
+      "excerpt": "木理美しき槻胴、縁にはわざと赤樫を用いたる岩畳作りの長火鉢に対いて話し敵もなくただ一人、少しは淋しそうに坐り居る三十前後の女、男のように立派な眉をいつ掃いしか剃ったる痕の青々と、見る眼も覚むべき雨後の山の色をとどめて翠の匂いひとしお床しく、鼻筋つんと通り眼尻キリリと上り、洗い髪をぐるぐると酷く丸めて引裂紙をあしらいに一本簪でぐいと留めを刺した色気なしの様はつくれど、憎いほど烏黒にて艶ある髪の毛の一綜二綜後れ乱れて、浅黒いながら渋気の抜けたる顔にかかれる趣きは、年増嫌いでも褒めずにはおかれまじき風体、わがものならば着せてやりたい好みのあるにと好色漢が随分頼まれもせぬ詮議を蔭ではすべきに、……",
+      "chars": 298,
       "aozora_work_id": "050351",
       "card_url": "https://www.aozora.gr.jp/cards/000051/card50351.html",
       "orthography": "新字新仮名",
@@ -255,8 +266,8 @@
     },
     "meiji_sanshiro": {
       "status": "ok",
-      "excerpt": "一\n\nうとうととして目がさめると女はいつのまにか、隣のじいさんと話を始めている。このじいさんはたしかに前の前の駅から乗ったいなか者である。発車まぎわに頓狂な声を出して駆け込んで来て、いきなり肌をぬいだと思ったら背中にお灸のあとがいっぱいあったので、三四郎の記憶に残っている。じいさんが汗をふいて、肌を入れて、女の隣に腰をかけたまでよく注意して見ていたくらいである。\n女とは京都からの相乗りである。乗った時から三四郎の目についた。第一色が黒い。三四郎は九州から山陽線に移って、だんだん京大阪へ近づいて来るうちに、女の色が次第に白くなるのでいつのまにか故郷を遠のくような哀れを感じていた。",
-      "chars": 292,
+      "excerpt": "うとうととして目がさめると女はいつのまにか、隣のじいさんと話を始めている。このじいさんはたしかに前の前の駅から乗ったいなか者である。発車まぎわに頓狂な声を出して駆け込んで来て、いきなり肌をぬいだと思ったら背中にお灸のあとがいっぱいあったので、三四郎の記憶に残っている。じいさんが汗をふいて、肌を入れて、女の隣に腰をかけたまでよく注意して見ていたくらいである。\n女とは京都からの相乗りである。乗った時から三四郎の目についた。第一色が黒い。三四郎は九州から山陽線に移って、だんだん京大阪へ近づいて来るうちに、女の色が次第に白くなるのでいつのまにか故郷を遠のくような哀れを感じていた。",
+      "chars": 289,
       "aozora_work_id": "000794",
       "card_url": "https://www.aozora.gr.jp/cards/000148/card794.html",
       "orthography": "新字新仮名",
@@ -269,8 +280,8 @@
     },
     "taisho_gusuko_budori": {
       "status": "ok",
-      "excerpt": "一　森\n\nグスコーブドリは、イーハトーヴの大きな森のなかに生まれました。おとうさんは、グスコーナドリという名高い木こりで、どんな大きな木でも、まるで赤ん坊を寝かしつけるようにわけなく切ってしまう人でした。\nブドリにはネリという妹があって、二人は毎日森で遊びました。ごしっごしっとおとうさんの木を挽く音が、やっと聞こえるくらいな遠くへも行きました。二人はそこで木いちごの実をとってわき水につけたり、空を向いてかわるがわる山鳩の鳴くまねをしたりしました。するとあちらでもこちらでも、ぽう、ぽう、と鳥が眠そうに鳴き出すのでした。\nおかあさんが、家の前の小さな畑に麦を播いているときは、二人はみちにむしろをしいてすわって、ブリキかんで蘭の花を煮たりしました。するとこんどは、もういろいろの鳥が、二人のぱさぱさした頭の上を、まるで挨拶するように鳴きながらざあざあざあざあ通りすぎるのでした。\nブドリが学校へ行くようになりますと、森はひるの間たいへんさびしくなりました。",
-      "chars": 429,
+      "excerpt": "グスコーブドリは、イーハトーヴの大きな森のなかに生まれました。おとうさんは、グスコーナドリという名高い木こりで、どんな大きな木でも、まるで赤ん坊を寝かしつけるようにわけなく切ってしまう人でした。\nブドリにはネリという妹があって、二人は毎日森で遊びました。ごしっごしっとおとうさんの木を挽く音が、やっと聞こえるくらいな遠くへも行きました。二人はそこで木いちごの実をとってわき水につけたり、空を向いてかわるがわる山鳩の鳴くまねをしたりしました。するとあちらでもこちらでも、ぽう、ぽう、と鳥が眠そうに鳴き出すのでした。\nおかあさんが、家の前の小さな畑に麦を播いているときは、二人はみちにむしろをしいてすわって、ブリキかんで蘭の花を煮たりしました。するとこんどは、もういろいろの鳥が、二人のぱさぱさした頭の上を、まるで挨拶するように鳴きながらざあざあざあざあ通りすぎるのでした。\nブドリが学校へ行くようになりますと、森はひるの間たいへんさびしくなりました。",
+      "chars": 424,
       "aozora_work_id": "001924",
       "card_url": "https://www.aozora.gr.jp/cards/000081/card1924.html",
       "orthography": "新字新仮名",
@@ -297,8 +308,8 @@
     },
     "taisho_yuki": {
       "status": "ok",
-      "excerpt": "第１図版\n\n第２図版\n\n第３図版\n\n第４図版\n\n第５図版\n\n第６図版\n\n第７図版\n\n第８図版\n\n第９図版\n\n第10図版\n\n第11図版\n\n第12図版\n\n序\n\nこの本は雪の結晶について私が北海道で行った研究の経過及びその結果をなるべく分りやすく書いたものである。勿論専門の学者の人に読んでもらうつもりは毛頭ないので、ただ自然の色々な現象について正当な理解を持ちたいと思っておられる人々に、少しでも自然現象に対する興味を喚起する機縁になれば有難いと思って書いたものである。雪といっても問題の範囲が広いので、その中で私が主として調べたのは、雪の結晶についてである。随って雪に関する色々な問題、例えば雪崩とか、スキーと雪との関係とかいう風な話はこの本の中には出て来ない。",
-      "chars": 330,
+      "excerpt": "この本は雪の結晶について私が北海道で行った研究の経過及びその結果をなるべく分りやすく書いたものである。勿論専門の学者の人に読んでもらうつもりは毛頭ないので、ただ自然の色々な現象について正当な理解を持ちたいと思っておられる人々に、少しでも自然現象に対する興味を喚起する機縁になれば有難いと思って書いたものである。雪といっても問題の範囲が広いので、その中で私が主として調べたのは、雪の結晶についてである。随って雪に関する色々な問題、例えば雪崩とか、スキーと雪との関係とかいう風な話はこの本の中には出て来ない。主な話はこの本の第三話、「北海道における雪の研究の話」及び第四話、「雪を作る話」の中に収められているのであるが、自然科学に対して別に関係のない読者のために第二話を挿入した。そういう人々のためにこの本を書いたので、雪は水蒸気が凍ったものであるというような分り切ったことまで説明したのである。",
+      "chars": 396,
       "aozora_work_id": "052468",
       "card_url": "https://www.aozora.gr.jp/cards/001569/card52468.html",
       "orthography": "新字新仮名",
@@ -311,8 +322,8 @@
     },
     "showa_kumo_no_ito": {
       "status": "ok",
-      "excerpt": "一\n\nある日の事でございます。御釈迦様は極楽の蓮池のふちを、独りでぶらぶら御歩きになっていらっしゃいました。池の中に咲いている蓮の花は、みんな玉のようにまっ白で、そのまん中にある金色の蕊からは、何とも云えない好い匂が、絶間なくあたりへ溢れて居ります。極楽は丁度朝なのでございましょう。\nやがて御釈迦様はその池のふちに御佇みになって、水の面を蔽っている蓮の葉の間から、ふと下の容子を御覧になりました。この極楽の蓮池の下は、丁度地獄の底に当って居りますから、水晶のような水を透き徹して、三途の河や針の山の景色が、丁度覗き眼鏡を見るように、はっきりと見えるのでございます。",
-      "chars": 283,
+      "excerpt": "ある日の事でございます。御釈迦様は極楽の蓮池のふちを、独りでぶらぶら御歩きになっていらっしゃいました。池の中に咲いている蓮の花は、みんな玉のようにまっ白で、そのまん中にある金色の蕊からは、何とも云えない好い匂が、絶間なくあたりへ溢れて居ります。極楽は丁度朝なのでございましょう。\nやがて御釈迦様はその池のふちに御佇みになって、水の面を蔽っている蓮の葉の間から、ふと下の容子を御覧になりました。この極楽の蓮池の下は、丁度地獄の底に当って居りますから、水晶のような水を透き徹して、三途の河や針の山の景色が、丁度覗き眼鏡を見るように、はっきりと見えるのでございます。",
+      "chars": 280,
       "aozora_work_id": "000092",
       "card_url": "https://www.aozora.gr.jp/cards/000879/card92.html",
       "orthography": "新字新仮名",
@@ -353,8 +364,8 @@
     },
     "reiwa_akai_rosoku_to_ningyo": {
       "status": "ok",
-      "excerpt": "一\n\n人魚は、南の方の海にばかり棲んでいるのではありません。北の海にも棲んでいたのであります。\n北方の海の色は、青うございました。あるとき、岩の上に、女の人魚があがって、あたりの景色をながめながら休んでいました。\n雲間からもれた月の光がさびしく、波の上を照らしていました。どちらを見ても限りない、ものすごい波が、うねうねと動いているのであります。\nなんという、さびしい景色だろうと、人魚は思いました。自分たちは、人間とあまり姿は変わっていない。魚や、また底深い海の中に棲んでいる、気の荒い、いろいろな獣物などとくらべたら、どれほど人間のほうに、心も姿も似ているかしれない。",
-      "chars": 286,
+      "excerpt": "人魚は、南の方の海にばかり棲んでいるのではありません。北の海にも棲んでいたのであります。\n北方の海の色は、青うございました。あるとき、岩の上に、女の人魚があがって、あたりの景色をながめながら休んでいました。\n雲間からもれた月の光がさびしく、波の上を照らしていました。どちらを見ても限りない、ものすごい波が、うねうねと動いているのであります。\nなんという、さびしい景色だろうと、人魚は思いました。自分たちは、人間とあまり姿は変わっていない。魚や、また底深い海の中に棲んでいる、気の荒い、いろいろな獣物などとくらべたら、どれほど人間のほうに、心も姿も似ているかしれない。",
+      "chars": 283,
       "aozora_work_id": "051005",
       "card_url": "https://www.aozora.gr.jp/cards/001475/card51005.html",
       "orthography": "新字新仮名",
@@ -367,8 +378,8 @@
     },
     "reiwa_junishi_ko": {
       "status": "ok",
-      "excerpt": "（一）名義の事\n\n虎梵名ヴィヤグラ、今のインド語でバグ、南インドのタミル語でピリ、ジャワ名マチャム、マレー名リマウ、アラブ名ニムル、英語でタイガー、その他欧州諸国大抵これに似おり、いずれもギリシアやラテンのチグリスに基づく。そのチグリスなる名は古ペルシア語のチグリ（箭）より出で、虎の駛く走るを箭の飛ぶに比べたるに因るならんという。わが国でも古来虎を実際見ずに千里を走ると信じ、戯曲に清正の捷疾を賞して千里一跳虎之助などと洒落て居る。プリニの『博物志』に拠れば生きた虎をローマ人が初めて見たのはアウグスッス帝の代だった。",
-      "chars": 260,
+      "excerpt": "虎梵名ヴィヤグラ、今のインド語でバグ、南インドのタミル語でピリ、ジャワ名マチャム、マレー名リマウ、アラブ名ニムル、英語でタイガー、その他欧州諸国大抵これに似おり、いずれもギリシアやラテンのチグリスに基づく。そのチグリスなる名は古ペルシア語のチグリ（箭）より出で、虎の駛く走るを箭の飛ぶに比べたるに因るならんという。わが国でも古来虎を実際見ずに千里を走ると信じ、戯曲に清正の捷疾を賞して千里一跳虎之助などと洒落て居る。プリニの『博物志』に拠れば生きた虎をローマ人が初めて見たのはアウグスッス帝の代だった。",
+      "chars": 251,
       "aozora_work_id": "000526",
       "card_url": "https://www.aozora.gr.jp/cards/000093/card526.html",
       "orthography": "新字新仮名",
@@ -381,8 +392,8 @@
     },
     "reiwa_juhachiji_no_ongakuyoku": {
       "status": "ok",
-      "excerpt": "１\n\n太陽の下では、地球が黄昏れていた。\nその黄昏れゆく地帯の直下にある彼の国では、ちょうど十八時のタイム・シグナルがおごそかに百万人の住民の心臓をゆすぶりはじめた。\n「ほう、十八時だ」\n「十八時の音楽浴だ」\n「さあ誰も皆、遅れないように早く座席についた！」\nアリシア区では博士コハクと男学員ペンとそして女学員バラの三人がいるきりだった。タイム・シグナルを耳にするより早く、三人は扉を開いて青い廊下にとびだした。\nその青廊下には銀色に光る太い金属パイプを螺旋形に曲げて作ってある座席が遠くまで並んでいた。\n三人は自分たちの名前が書かれてある座席の上に、それぞれ、ピョンピョンと飛びのった。",
-      "chars": 294,
+      "excerpt": "太陽の下では、地球が黄昏れていた。\nその黄昏れゆく地帯の直下にある彼の国では、ちょうど十八時のタイム・シグナルがおごそかに百万人の住民の心臓をゆすぶりはじめた。\n「ほう、十八時だ」\n「十八時の音楽浴だ」\n「さあ誰も皆、遅れないように早く座席についた！」\nアリシア区では博士コハクと男学員ペンとそして女学員バラの三人がいるきりだった。タイム・シグナルを耳にするより早く、三人は扉を開いて青い廊下にとびだした。\nその青廊下には銀色に光る太い金属パイプを螺旋形に曲げて作ってある座席が遠くまで並んでいた。\n三人は自分たちの名前が書かれてある座席の上に、それぞれ、ピョンピョンと飛びのった。",
+      "chars": 291,
       "aozora_work_id": "000865",
       "card_url": "https://www.aozora.gr.jp/cards/000160/card865.html",
       "orthography": "新字新仮名",
@@ -409,8 +420,8 @@
     },
     "kenji_ginga_tetsudo_no_yoru": {
       "status": "ok",
-      "excerpt": "六　銀河ステーション\n\nそしてジョバンニはすぐうしろの天気輪の柱がいつかぼんやりした三角標の形になって、しばらく蛍のように、ぺかぺか消えたりともったりしているのを見ました。それはだんだんはっきりして、とうとうりんとうごかないようになり、濃い鋼青のそらの野原にたちました。いま新しく灼いたばかりの青い鋼の板のような、そらの野原に、まっすぐにすきっと立ったのです。\nするとどこかで、ふしぎな声が、銀河ステーション、銀河ステーションと言う声がしたと思うと、いきなり眼の前が、ぱっと明るくなって、まるで億万の蛍烏賊の火を一ぺんに化石させて、そらじゅうに沈めたというぐあい、またダイアモンド会社で、ねだんがやすくならないために、わざと穫れないふりをして、かくしておいた金剛石を、誰かがいきなりひっくりかえして、ばらまいたというふうに、眼の前がさあっと明るくなって、ジョバンニは、思わず何べんも眼をこすってしまいました。",
-      "chars": 404,
+      "excerpt": "そしてジョバンニはすぐうしろの天気輪の柱がいつかぼんやりした三角標の形になって、しばらく蛍のように、ぺかぺか消えたりともったりしているのを見ました。それはだんだんはっきりして、とうとうりんとうごかないようになり、濃い鋼青のそらの野原にたちました。いま新しく灼いたばかりの青い鋼の板のような、そらの野原に、まっすぐにすきっと立ったのです。\nするとどこかで、ふしぎな声が、銀河ステーション、銀河ステーションと言う声がしたと思うと、いきなり眼の前が、ぱっと明るくなって、まるで億万の蛍烏賊の火を一ぺんに化石させて、そらじゅうに沈めたというぐあい、またダイアモンド会社で、ねだんがやすくならないために、わざと穫れないふりをして、かくしておいた金剛石を、誰かがいきなりひっくりかえして、ばらまいたというふうに、眼の前がさあっと明るくなって、ジョバンニは、思わず何べんも眼をこすってしまいました。\n気がついてみると、さっきから、ごとごとごとごと、ジョバンニの乗っている小さな列車が走りつづけていたのでした。",
+      "chars": 447,
       "aozora_work_id": "043737",
       "card_url": "https://www.aozora.gr.jp/cards/000081/card43737.html",
       "orthography": "新字新仮名",
@@ -521,8 +532,8 @@
     },
     "tono_gon_gitsune": {
       "status": "ok",
-      "excerpt": "一\n\nこれは、私が小さいときに、村の茂平というおじいさんからきいたお話です。\nむかしは、私たちの村のちかくの、中山というところに小さなお城があって、中山さまというおとのさまが、おられたそうです。\nその中山から、少しはなれた山の中に、「ごん狐」という狐がいました。ごんは、一人ぼっちの小狐で、しだの一ぱいしげった森の中に穴をほって住んでいました。そして、夜でも昼でも、あたりの村へ出てきて、いたずらばかりしました。はたけへ入って芋をほりちらしたり、菜種がらの、ほしてあるのへ火をつけたり、百姓家の裏手につるしてあるとんがらしをむしりとって、いったり、いろんなことをしました。\n或秋のことでした。二、三日雨がふりつづいたその間、ごんは、外へも出られなくて穴の中にしゃがんでいました。",
-      "chars": 339,
+      "excerpt": "これは、私が小さいときに、村の茂平というおじいさんからきいたお話です。\nむかしは、私たちの村のちかくの、中山というところに小さなお城があって、中山さまというおとのさまが、おられたそうです。\nその中山から、少しはなれた山の中に、「ごん狐」という狐がいました。ごんは、一人ぼっちの小狐で、しだの一ぱいしげった森の中に穴をほって住んでいました。そして、夜でも昼でも、あたりの村へ出てきて、いたずらばかりしました。はたけへ入って芋をほりちらしたり、菜種がらの、ほしてあるのへ火をつけたり、百姓家の裏手につるしてあるとんがらしをむしりとって、いったり、いろんなことをしました。\n或秋のことでした。二、三日雨がふりつづいたその間、ごんは、外へも出られなくて穴の中にしゃがんでいました。",
+      "chars": 336,
       "aozora_work_id": "000628",
       "card_url": "https://www.aozora.gr.jp/cards/000121/card628.html",
       "orthography": "新字新仮名",
@@ -548,14 +559,23 @@
       }
     },
     "ryugu_otogizoshi_dazai": {
-      "status": "anchor_not_found",
+      "status": "ok",
+      "excerpt": "浦島太郎といふ人は、丹後の水江とかいふところに實在してゐたやうである。丹後といへば、いまの京都府の北部である。あの北海岸の某寒村に、いまもなほ、太郎をまつつた神社があるとかいふ話を聞いた事がある。私はその邊に行つてみた事が無いけれども、人の話に依ると、何だかひどく荒涼たる海濱らしい。そこにわが浦島太郎が住んでゐた。もちろん、ひとり暮しをしてゐたわけではない。父も母もある。弟も妹もある。また、おほぜいの召使ひもゐる。つまり、この海岸で有名な、舊家の長男であつたわけである。舊家の長男といふものには、昔も今も一貫した或る特徴があるやうだ。趣味性、すなはち、之である。善く言へば、風流。惡く言へば、道樂。しかし、道樂とは言つても、女狂ひや酒びたりの所謂、放蕩とは大いに趣きを異にしてゐる。",
+      "chars": 343,
+      "aozora_work_id": "052380",
       "card_url": "https://www.aozora.gr.jp/cards/000035/card52380.html",
-      "note": "anchor \"水の江の浦\" not in text"
+      "orthography": "旧字旧仮名",
+      "author_died": "1948-06-13",
+      "credits": {
+        "base_book": "太宰治全集8",
+        "input": "大沢たかお",
+        "proofreading": "阿部哲也"
+      }
     },
     "ryugu_kusuyama_urashima": {
       "status": "ok",
-      "excerpt": "一\n\nむかし、むかし、丹後の国水の江の浦に、浦島太郎というりょうしがありました。\n浦島太郎は、毎日つりざおをかついでは海へ出かけて、たいや、かつおなどのおさかなをつって、おとうさんおかあさんをやしなっていました。\nある日、浦島はいつものとおり海へ出て、一日おさかなをつって、帰ってきました。途中、子どもが五、六人往来にあつまって、がやがやいっていました。何かとおもって浦島がのぞいてみると、小さいかめの子を一ぴきつかまえて、棒でつついたり、石でたたいたり、さんざんにいじめているのです。浦島は見かねて、\n「まあ、そんなかわいそうなことをするものではない。いい子だから」\nと、とめましたが、子どもたちはきき入れようともしないで、\n「なんだい。なんだい、かまうもんかい」\nといいながら、またかめの子を、あおむけにひっくりかえして、足でけったり、砂のなかにうずめたりしました。",
-      "chars": 385,
+      "excerpt": "むかし、むかし、丹後の国水の江の浦に、浦島太郎というりょうしがありました。\n浦島太郎は、毎日つりざおをかついでは海へ出かけて、たいや、かつおなどのおさかなをつって、おとうさんおかあさんをやしなっていました。\nある日、浦島はいつものとおり海へ出て、一日おさかなをつって、帰ってきました。途中、子どもが五、六人往来にあつまって、がやがやいっていました。何かとおもって浦島がのぞいてみると、小さいかめの子を一ぴきつかまえて、棒でつついたり、石でたたいたり、さんざんにいじめているのです。浦島は見かねて、\n「まあ、そんなかわいそうなことをするものではない。いい子だから」\nと、とめましたが、子どもたちはきき入れようともしないで、\n「なんだい。なんだい、かまうもんかい」\nといいながら、またかめの子を、あおむけにひっくりかえして、足でけったり、砂のなかにうずめたりしました。浦島はますますかわいそうにおもって、",
+      "chars": 400,
       "aozora_work_id": "003390",
       "card_url": "https://www.aozora.gr.jp/cards/000329/card3390.html",
       "orthography": "新字新仮名",
@@ -568,12 +588,26 @@
     },
     "ryugu_taketori_monogatari": {
       "status": "not_found",
-      "note": "竹取物語 / 作者不詳 is not in the 青空文庫 index"
+      "note": "竹取物語 / 作者不詳 is not in the 青空文庫 index",
+      "candidates": [
+        "アイヌ神謡集 / 作者不詳 ",
+        "易経 / 作者不詳 ",
+        "えぞおばけ列伝 / 作者不詳 ",
+        "大岡政談 / 作者不詳 ",
+        "落窪物語 / 作者不詳 ",
+        "現代語訳　平家物語 / 作者不詳 ",
+        "こんちりさんのりやく / 作者不詳 ",
+        "実語教 / 作者不詳 ",
+        "スザナの物語 / 作者不詳 ",
+        "「平家物語」ぬきほ（言文一致訳） / 作者不詳 ",
+        "ベルとドラゴン / 作者不詳 ",
+        "法句経 / 作者不詳 "
+      ]
     },
     "tenshu_yume_juya": {
       "status": "ok",
-      "excerpt": "第一夜\n\nこんな夢を見た。\n腕組をして枕元に坐っていると、仰向に寝た女が、静かな声でもう死にますと云う。女は長い髪を枕に敷いて、輪郭の柔らかな瓜実顔をその中に横たえている。真白な頬の底に温かい血の色がほどよく差して、唇の色は無論赤い。とうてい死にそうには見えない。しかし女は静かな声で、もう死にますと判然云った。自分も確にこれは死ぬなと思った。そこで、そうかね、もう死ぬのかね、と上から覗き込むようにして聞いて見た。死にますとも、と云いながら、女はぱっちりと眼を開けた。大きな潤のある眼で、長い睫に包まれた中は、ただ一面に真黒であった。その真黒な眸の奥に、自分の姿が鮮に浮かんでいる。",
-      "chars": 292,
+      "excerpt": "こんな夢を見た。\n腕組をして枕元に坐っていると、仰向に寝た女が、静かな声でもう死にますと云う。女は長い髪を枕に敷いて、輪郭の柔らかな瓜実顔をその中に横たえている。真白な頬の底に温かい血の色がほどよく差して、唇の色は無論赤い。とうてい死にそうには見えない。しかし女は静かな声で、もう死にますと判然云った。自分も確にこれは死ぬなと思った。そこで、そうかね、もう死ぬのかね、と上から覗き込むようにして聞いて見た。死にますとも、と云いながら、女はぱっちりと眼を開けた。大きな潤のある眼で、長い睫に包まれた中は、ただ一面に真黒であった。その真黒な眸の奥に、自分の姿が鮮に浮かんでいる。",
+      "chars": 287,
       "aozora_work_id": "000799",
       "card_url": "https://www.aozora.gr.jp/cards/000148/card799.html",
       "orthography": "新字新仮名",
@@ -599,13 +633,23 @@
       }
     },
     "tenshu_muou_no_koi": {
-      "status": "not_found",
-      "note": "夢応の鯉魚 / 上田 秋成 is not in the 青空文庫 index"
+      "status": "ok",
+      "excerpt": "六十代醍醐天皇の延長年間、三井寺に興義という僧があった。絵が上手だったので、名人という評判を世間から立てられていた。彼がつねづね画くところは、ふつうの画家のように仏像・山水・花鳥などを主とするのではなく、寺の勤めのひまがある日には琵琶湖に小舟をうかべて、網をひいたり釣をしたりする漁師に金銭をやり、とった魚を買いもとめてもとの湖に放し、その魚の泳ぎまわるのを見ては、その姿態を画いていたので、年とともにその技は精細巧妙の域に達したのである。あるとき、絵のことに思いをこらして心がつかれ、思わずも睡気をもよおしたので、うとうととまどろむと、夢の中で、自分が湖水に入って大小さまざまの魚とともにあそぶのを見た。",
+      "chars": 303,
+      "aozora_work_id": "060609",
+      "card_url": "https://www.aozora.gr.jp/cards/001271/card60609.html",
+      "orthography": "新字新仮名",
+      "author_died": "1809-08-08",
+      "credits": {
+        "base_book": "改訂　雨月物語　現代語訳付き",
+        "input": "砂場清隆",
+        "proofreading": "みきた"
+      }
     },
     "tenshu_kusamakura": {
       "status": "ok",
-      "excerpt": "一\n\n山路を登りながら、こう考えた。\n智に働けば角が立つ。情に棹させば流される。意地を通せば窮屈だ。とかくに人の世は住みにくい。\n住みにくさが高じると、安い所へ引き越したくなる。どこへ越しても住みにくいと悟った時、詩が生れて、画が出来る。\n人の世を作ったものは神でもなければ鬼でもない。やはり向う三軒両隣りにちらちらするただの人である。ただの人が作った人の世が住みにくいからとて、越す国はあるまい。あれば人でなしの国へ行くばかりだ。人でなしの国は人の世よりもなお住みにくかろう。\n越す事のならぬ世が住みにくければ、住みにくい所をどれほどか、寛容て、束の間の命を、束の間でも住みよくせねばならぬ。ここに詩人という天職が出来て、ここに画家という使命が降る。",
-      "chars": 326,
+      "excerpt": "山路を登りながら、こう考えた。\n智に働けば角が立つ。情に棹させば流される。意地を通せば窮屈だ。とかくに人の世は住みにくい。\n住みにくさが高じると、安い所へ引き越したくなる。どこへ越しても住みにくいと悟った時、詩が生れて、画が出来る。\n人の世を作ったものは神でもなければ鬼でもない。やはり向う三軒両隣りにちらちらするただの人である。ただの人が作った人の世が住みにくいからとて、越す国はあるまい。あれば人でなしの国へ行くばかりだ。人でなしの国は人の世よりもなお住みにくかろう。\n越す事のならぬ世が住みにくければ、住みにくい所をどれほどか、寛容て、束の間の命を、束の間でも住みよくせねばならぬ。ここに詩人という天職が出来て、ここに画家という使命が降る。",
+      "chars": 323,
       "aozora_work_id": "000776",
       "card_url": "https://www.aozora.gr.jp/cards/000148/card776.html",
       "orthography": "新字新仮名",
@@ -615,6 +659,139 @@
         "input": "柴田卓治",
         "proofreading": "伊藤時也"
       }
+    },
+    "en_marco_polo_chipangu": {
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "Chipangu is an Island towards the east in the high seas, 1500 miles distant from the Continent; and a very great Island it is.\n\nThe people are white, civilized, and well-favoured. They are Idolaters, and are dependent on nobody. And I can tell you the quantity of gold they have is endless; for they find it in their own Islands, [and the King does not allow it to be exported. Moreover] few merchants visit the country because it is so far from the main land, and thus it comes to pass that their gold is abundant beyond all measure.\n\nI will tell you a wonderful thing about the Palace of the Lord of that Island.",
+      "chars": 614,
+      "gutenberg_id": 12410,
+      "card_url": "https://www.gutenberg.org/ebooks/12410",
+      "catalogue_title": "The Travels of Marco Polo — Volume 2",
+      "people": [
+        "Polo, Marco, d. 1324",
+        "Rusticiano, da Pisa, d. 1300",
+        "Cordier, Henri (Editor), d. 1925",
+        "Yule, Henry, Sir (Translator), d. 1889"
+      ]
+    },
+    "en_book_of_tea": {
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "Tea began as a medicine and grew into a beverage. In China, in the eighth century, it entered the realm of poetry as one of the polite amusements. The fifteenth century saw Japan ennoble it into a religion of aestheticism--Teaism. Teaism is a cult founded on the adoration of the beautiful among the sordid facts of everyday existence. It inculcates purity and harmony, the mystery of mutual charity, the romanticism of the social order. It is essentially a worship of the Imperfect, as it is a tender attempt to accomplish something possible in this impossible thing we know as life.",
+      "chars": 584,
+      "gutenberg_id": 769,
+      "card_url": "https://www.gutenberg.org/ebooks/769",
+      "catalogue_title": "The Book of Tea",
+      "people": [
+        "Okakura, Kakuzo, d. 1913"
+      ]
+    },
+    "en_kwaidan_horai": {
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "Blue vision of depth lost in height,—sea and sky interblending through luminous haze. The day is of spring, and the hour morning.\n\nOnly sky and sea,—one azure enormity... In the fore, ripples are catching a silvery light, and threads of foam are swirling. But a little further off no motion is visible, nor anything save color: dim warm blue of water widening away to melt into blue of air. Horizon there is none: only distance soaring into space,—infinite concavity hollowing before you, and hugely arching above you,—the color deepening with the height.",
+      "chars": 555,
+      "gutenberg_id": 1210,
+      "card_url": "https://www.gutenberg.org/ebooks/1210",
+      "catalogue_title": "Kwaidan: Stories and Studies of Strange Things",
+      "people": [
+        "Hearn, Lafcadio, d. 1904"
+      ]
+    },
+    "en_ozaki_urashima": {
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "Long, long ago in the province of Tango there lived on the shore of Japan in the little fishing village of Mizu-no-ye a young fisherman named Urashima Taro. His father had been a fisherman before him, and his skill had more than doubly descended to his son, for Urashima was the most skillful fisher in all that country side, and could catch more Bonito and Tai in a day than his comrades could in a week.\n\nBut in the little fishing village, more than for being a clever fisher of the sea was he known for his kind heart.",
+      "chars": 521,
+      "gutenberg_id": 4018,
+      "card_url": "https://www.gutenberg.org/ebooks/4018",
+      "catalogue_title": "Japanese Fairy Tales",
+      "people": [
+        "Ozaki, Yei Theodora, d. 1932"
+      ]
+    },
+    "en_ozaki_bamboo_cutter": {
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "Long, long ago, there lived an old bamboo wood-cutter. He was very poor and sad also, for no child had Heaven sent to cheer his old age, and in his heart there was no hope of rest from work till he died and was laid in the quiet grave. Every morning he went forth into the woods and hills wherever the bamboo reared its lithe green plumes against the sky.",
+      "chars": 355,
+      "gutenberg_id": 4018,
+      "card_url": "https://www.gutenberg.org/ebooks/4018",
+      "catalogue_title": "Japanese Fairy Tales",
+      "people": [
+        "Ozaki, Yei Theodora, d. 1932"
+      ]
+    },
+    "en_alice_wonderland": {
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, “and what is the use of a book,” thought Alice “without pictures or conversations?”\n\nSo she was considering in her own mind (as well as she could, for the hot day made her feel very sleepy and stupid), whether the pleasure of making a daisy-chain would be worth the trouble of getting up and picking the daisies, when suddenly a White Rabbit with pink eyes ran close by her.",
+      "chars": 593,
+      "gutenberg_id": 11,
+      "card_url": "https://www.gutenberg.org/ebooks/11",
+      "catalogue_title": "Alice's Adventures in Wonderland",
+      "people": [
+        "Carroll, Lewis, d. 1898"
+      ]
+    },
+    "en_time_machine": {
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "The Time Traveller (for so it will be convenient to speak of him) was expounding a recondite matter to us. His grey eyes shone and twinkled, and his usually pale face was flushed and animated. The fire burnt brightly, and the soft radiance of the incandescent lights in the lilies of silver caught the bubbles that flashed and passed in our glasses. Our chairs, being his patents, embraced and caressed us rather than submitted to be sat upon, and there was that luxurious after-dinner atmosphere, when thought runs gracefully free of the trammels of precision.",
+      "chars": 561,
+      "gutenberg_id": 35,
+      "card_url": "https://www.gutenberg.org/ebooks/35",
+      "catalogue_title": "The Time Machine",
+      "people": [
+        "Wells, H. G. (Herbert George), d. 1946"
+      ]
+    },
+    "en_first_men_moon": {
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "As I sit down to write here amidst the shadows of vine-leaves under the blue sky of southern Italy, it comes to me with a certain quality of astonishment that my participation in these amazing adventures of Mr. Cavor was, after all, the outcome of the purest accident. It might have been any one. I fell into these things at a time when I thought myself removed from the slightest possibility of disturbing experiences. I had gone to Lympne because I had imagined it the most uneventful place in the world. “Here, at any rate,” said I, “I shall find peace and a chance to work!”",
+      "chars": 578,
+      "gutenberg_id": 1013,
+      "card_url": "https://www.gutenberg.org/ebooks/1013",
+      "catalogue_title": "The First Men in the Moon",
+      "people": [
+        "Wells, H. G. (Herbert George), d. 1946"
+      ]
+    },
+    "en_wizard_of_oz": {
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "Dorothy lived in the midst of the great Kansas prairies, with Uncle Henry, who was a farmer, and Aunt Em, who was the farmer’s wife. Their house was small, for the lumber to build it had to be carried by wagon many miles. There were four walls, a floor and a roof, which made one room; and this room contained a rusty looking cookstove, a cupboard for the dishes, a table, three or four chairs, and the beds. Uncle Henry and Aunt Em had a big bed in one corner, and Dorothy a little bed in another corner.",
+      "chars": 505,
+      "gutenberg_id": 55,
+      "card_url": "https://www.gutenberg.org/ebooks/55",
+      "catalogue_title": "The Wonderful Wizard of Oz",
+      "people": [
+        "Baum, L. Frank (Lyman Frank), d. 1919"
+      ]
+    },
+    "en_peter_pan": {
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a garden, and she plucked another flower and ran with it to her mother. I suppose she must have looked rather delightful, for Mrs. Darling put her hand to her heart and cried, “Oh, why can’t you remain like this for ever!” This was all that passed between them on the subject, but henceforth Wendy knew that she must grow up. You always know after you are two. Two is the beginning of the end.",
+      "chars": 554,
+      "gutenberg_id": 16,
+      "card_url": "https://www.gutenberg.org/ebooks/16",
+      "catalogue_title": "Peter Pan",
+      "people": [
+        "Barrie, J. M. (James Matthew), d. 1937"
+      ]
     }
   }
 }

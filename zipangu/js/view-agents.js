@@ -75,8 +75,10 @@ export function agentsView(ctx, query) {
         return rows.sort(by);
     }
 
+    let shown = '';
     function layout() {
         const rows = visible();
+        shown = rows.map(c => c.a.id).join(',');
         clear(grid);
         for (const c of rows) grid.append(c.el);
         if (!rows.length) grid.append(emptyNote('この条件の住人は、いまいません。'));
@@ -104,7 +106,17 @@ export function agentsView(ctx, query) {
             h('div', { class: 'filter-row filter-inputs' }, stageSel, sortSel, search)),
         count, grid);
 
-    return { el, title: '住人たち', update() { for (const c of cells.values()) c.paint(); } };
+    // Stages, wallets and goals change as the economy runs, so the stage filter and
+    // the wallet/goal order are re-applied; the grid is rebuilt only when they move.
+    function update() {
+        for (const c of cells.values()) c.paint();
+        if (visible().map(c => c.a.id).join(',') === shown) return;
+        const focused = document.activeElement;
+        layout();
+        if (focused && grid.contains(focused)) focused.focus({ preventScroll: true });
+    }
+
+    return { el, title: '住人たち', update };
 }
 
 // ---------------------------------------------------------------- one agent

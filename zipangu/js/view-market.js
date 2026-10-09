@@ -164,14 +164,27 @@ export function marketView(ctx, query) {
     }
 
     let ranked = [];
+    let shownIds = '';
     function paintBoard(rebuild) {
         ranked = rankedGoods();
         const slice = ranked.slice(0, state.shown);
+        const ids = slice.map(r => r.g.id).join(',');
         if (rebuild) {
             clear(board); rowRefs.clear();
             for (const r of slice) { const ref = goodRow(r); rowRefs.set(r.g.id, ref); board.append(ref.details); }
             if (!slice.length) board.append(emptyNote('この条件の品は、いまは市に出ていません。'));
+        } else if (ids !== shownIds) {
+            // The ranking moved: keep the rows that stay (and whether they are open),
+            // add the goods that came into the slice, drop the ones that left, in the new order.
+            const focused = document.activeElement;
+            const next = new Map();
+            for (const r of slice) next.set(r.g.id, rowRefs.get(r.g.id) || goodRow(r));
+            clear(board); rowRefs.clear();
+            for (const [id, ref] of next) { rowRefs.set(id, ref); board.append(ref.details); }
+            if (!slice.length) board.append(emptyNote('この条件の品は、いまは市に出ていません。'));
+            if (focused && board.contains(focused)) focused.focus({ preventScroll: true });
         }
+        shownIds = ids;
         for (const r of slice) { const ref = rowRefs.get(r.g.id); if (ref) { paintRowLive(ref, r); if (ref.details.open) ref.paintDetail(); } }
         more.hidden = ranked.length <= state.shown;
         count.textContent = `${ranked.length} 品目（動きの大きい順）`;

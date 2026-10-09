@@ -732,6 +732,9 @@ input::placeholder { color: var(--ink-faint); }
 .excerpt .src { color: var(--gold-soft); font-weight: 700; }
 .excerpt.pending { border: 1px dashed rgba(232, 195, 106, 0.5); border-radius: 12px; padding: 10px 14px; background: rgba(232, 195, 106, 0.04); }
 .excerpt.pending p { margin: 6px 0 4px; font-size: 13.5px; color: var(--ink-dim); }
+.excerpt-en blockquote { font: italic 15px/1.85 Georgia, 'Times New Roman', serif; letter-spacing: 0.01em; }
+.wk-original { margin: -4px 0 4px; font: italic 13px/1.5 Georgia, 'Times New Roman', serif; color: var(--ink-dim); }
+.tag-en { margin-left: 8px; font-size: 11px; vertical-align: 1px; }
 
 /* market */
 .cards-currency { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 14px; }

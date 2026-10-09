@@ -176,14 +176,10 @@ function indexWorld(W) {
         const m = (districts.get(id) || {}).map || {};
         return { x: Number.isFinite(m.x) ? m.x : 50, y: Number.isFinite(m.y) ? m.y : 50 };
     };
-    const routes = new Map();
+    const known = list((W.world || {}).trade_routes).filter(r => districts.has(r.from) && districts.has(r.to));
+    const routes = indexRoutes(known);
     const routeGoods = [];
-    for (const r of list((W.world || {}).trade_routes)) {
-        if (!districts.has(r.from) || !districts.has(r.to)) continue;
-        const key = [r.from, r.to].sort().join('>');
-        if (!routes.has(key)) routes.set(key, r);
-        for (const g of list(r.goods)) if (goods.has(g)) routeGoods.push([r.to, g]);
-    }
+    for (const r of known) for (const g of list(r.goods)) if (goods.has(g)) routeGoods.push([r.to, g]);
     const hub = ((W.world || {}).hub || {}).id;
     const fallbackHome = districts.has(hub) ? hub : [...districts.keys()][0];
     const median = (() => {
@@ -301,6 +297,22 @@ function makeAgent(def, ix, seed) {
 
 // ---------------------------------------------------------------- economy
 
+// Trade routes keyed by direction: a pair of districts can have a different
+// vehicle each way (雪華の型紙 goes by 押絵, the crystals come back by 銀河鉄道).
+export function indexRoutes(tradeRoutes) {
+    const routes = new Map();
+    for (const r of tradeRoutes) {
+        const key = `${r.from}>${r.to}`;
+        if (!routes.has(key)) routes.set(key, r);
+    }
+    return routes;
+}
+
+// The route that runs from a to b; failing that, one from b to a can be ridden back.
+export function routeBetween(routes, a, b) {
+    return routes.get(`${a}>${b}`) || routes.get(`${b}>${a}`) || null;
+}
+
 export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4, state = null } = {}) {
     const ix = indexWorld(W);
     const listeners = new Map();
@@ -391,7 +403,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
 
     // ------------------------------------------------ travel
     function viaBetween(a, b) {
-        const r = ix.routes.get([a, b].sort().join('>'));
+        const r = routeBetween(ix.routes, a, b);
         return r && VIA[r.via] ? r.via : WALK;
     }
     function legDist(a, b, via) {

@@ -1,8 +1,11 @@
 name: Zipangu — 青空文庫 excerpts
 
-# Downloads the 青空文庫 index, keeps only works whose every person is
-# copyright-free, extracts the excerpts listed in zipangu/world/library.json
-# and commits zipangu/world/library.texts.json to the branch it ran on.
+# Fills zipangu/world/library.texts.json for the works in library.json and
+# commits it to the branch it ran on:
+# - Japanese works from 青空文庫, using only works whose every person the
+#   official index marks as copyright-free;
+# - English works ("source": "gutenberg") from Project Gutenberg, using only
+#   books whose every listed person died in 1967 or earlier.
 #
 # Two ways to run it:
 # - On a pull request: add the label "aozora". This works before the PR is
@@ -46,11 +49,12 @@ jobs:
       - name: Extract excerpts
         working-directory: zipangu
         run: |
-          node tools/aozora-extract.test.mjs
           if [ -n "$ONLY" ]; then
             node tools/aozora-extract.mjs --only "$ONLY"
+            node tools/gutenberg-extract.mjs --only "$ONLY"
           else
             node tools/aozora-extract.mjs
+            node tools/gutenberg-extract.mjs
           fi
           bash tools/check.sh
 
@@ -62,6 +66,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes."
           else
-            git commit -m "zipangu: refresh 青空文庫 excerpts"
+            git commit -m "zipangu: refresh library excerpts (青空文庫, Gutenberg)"
             git push origin "HEAD:$BRANCH"
           fi

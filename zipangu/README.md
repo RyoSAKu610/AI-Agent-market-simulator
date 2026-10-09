@@ -18,7 +18,7 @@ AIエージェントたちが自分で仕入れ、運び、作り、交渉して
 - **地図** — 十の時片が万華鏡の鏡片として並び、異界が縁で光ります。AIエージェントが
   ！→💭→🏃 を出しながら交易路を走り、宝石蝶が住処の上を舞い、明け六つ・逢う刻で街の光が変わります。
 - **図鑑** — 67種の生き物（宝石蝶25種）を、手続き的に描いた動く絵で。
-- **書庫** — 48編の名作と、それが世界のなかで果たす役割。
+- **書庫** — 58編の名作（うち英語の原文10編）と、それが世界のなかで果たす役割。
 - **相場** — 地区ごとの値動きと、時代をまたぐ裁定のヒント。
 - **住人** — 32人のエージェントの長期目標、進み具合、いまの行動。
 - **案内** — 世界の掟、憲章、考証記録。
@@ -38,11 +38,14 @@ node tools/build-single.mjs      # dist/zipangu-single.html（1ファイルで�
 | `docs/CORRECTIONS.md` | 各章を史実・文学（著作権）・仕様・文体の四観点で校閲した240件の修正記録。 |
 | `docs/spine.json` | 3案・2審査・1統合で決めた設計の骨格と文体の掟。 |
 | `js/` | エクスプローラー。`creature-art.js`（生き物の描画）、`sim.js`（自律経済）、`map.js`、`app.js` ほか。 |
-| `tools/` | `validate.mjs`（データ検証）、`sim.test.mjs`（経済の検証）、`aozora-extract.mjs`（青空文庫抜粋）、`build-single.mjs`、`check.sh`。 |
+| `tools/` | `validate.mjs`（データ検証）、`sim.test.mjs`（経済の検証）、`aozora-extract.mjs`（青空文庫抜粋）、`gutenberg-extract.mjs`（英語の原文抜粋）、`build-single.mjs`、`check.sh`。 |
 
-## 青空文庫からの抜粋
+## 青空文庫と Project Gutenberg からの抜粋
 
-`world/library.texts.json` は手で書かず、`tools/aozora-extract.mjs` が青空文庫から作ります。
+`world/library.texts.json` は手で書かず、日本語の作品は `tools/aozora-extract.mjs` が青空文庫から、
+英語の作品（『東方見聞録』の英訳、『茶の本』、『怪談』、『不思議の国のアリス』、『タイム・マシン』など）は
+`tools/gutenberg-extract.mjs` が Project Gutenberg から作ります。英語の作品は、目録に載る全員（著者・訳者・編者・挿絵画家）が
+1967年までに亡くなっている本だけを使います。
 青空文庫の公式目録で、作品と関わる全員（著者・翻訳者）の著作権フラグが「なし」のものだけを使い、
 ルビと注記を取り除いて文の切れ目で抜粋し、底本・入力・校正のクレジットを残します。
 実行方法は二つあり、どちらも結果をそのブランチにコミットします。
@@ -57,4 +60,4 @@ node tools/build-single.mjs      # dist/zipangu-single.html（1ファイルで�
 - 生き物から採るのは落鱗や贈り物だけ。値段のないものには値をつけません。
 - グラフィックを劣化させない。開発のルールは [`AGENTS.md`](AGENTS.md)。
 
-`bash tools/check.sh` がすべての検証（データ、青空文庫抽出、自律経済、構文）を実行し、CI でも同じものが走ります。
+`bash tools/check.sh` がすべての検証（データ、青空文庫と Gutenberg の抽出、自律経済、構文）を実行し、CI でも同じものが走ります。

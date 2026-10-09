@@ -205,6 +205,16 @@ library.forEach(w => {
     const x = w.extraction || {};
     if (!['opening', 'anchor'].includes(x.mode)) err('library.json', `${w.id}: extraction.mode must be opening or anchor`);
     if (x.mode === 'anchor' && !x.anchor) err('library.json', `${w.id}: extraction.anchor missing`);
+    if (w.source !== undefined && !['aozora', 'gutenberg'].includes(w.source)) err('library.json', `${w.id}: source must be aozora or gutenberg`);
+    if (w.source === 'gutenberg') {
+        if (!Number.isInteger(w.gutenberg_id) || w.gutenberg_id <= 0) err('library.json', `${w.id}: gutenberg_id must be a positive integer`);
+        if (w.language !== 'en') err('library.json', `${w.id}: Gutenberg works are English (language: "en")`);
+        if (!w.title_ja) err('library.json', `${w.id}: Gutenberg works need title_ja for the Japanese shelf`);
+        for (const [name, died] of Object.entries(w.undated_people || {}))
+            if (!(Number.isInteger(died) && died <= 1967)) err('library.json', `${w.id}: undated_people["${name}"] must be a death year ≤ 1967`);
+        // Gutenberg texts open with a title page and contents, so the excerpt must start at an anchor.
+        if (x.mode !== 'anchor') err('library.json', `${w.id}: Gutenberg works need extraction.mode "anchor"`);
+    }
 });
 
 // orphans
