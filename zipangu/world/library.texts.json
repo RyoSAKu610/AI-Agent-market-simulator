@@ -1,6 +1,6 @@
 {
   "source": "青空文庫 https://www.aozora.gr.jp/ and Project Gutenberg https://www.gutenberg.org/ — public-domain texts; credits per work",
-  "generated_at": "2026-10-09T15:58:09.611Z",
+  "generated_at": "2026-10-09T16:01:04.703Z",
   "works": {
     "jomon_shokubutsu_chishiki": {
       "status": "ok",
@@ -661,8 +661,20 @@
       }
     },
     "en_marco_polo_chipangu": {
-      "status": "error",
-      "note": "fetch failed"
+      "status": "ok",
+      "source": "gutenberg",
+      "language": "en",
+      "excerpt": "Chipangu is an Island towards the east in the high seas, 1500 miles distant from the Continent; and a very great Island it is.\n\nThe people are white, civilized, and well-favoured. They are Idolaters, and are dependent on nobody. And I can tell you the quantity of gold they have is endless; for they find it in their own Islands, [and the King does not allow it to be exported. Moreover] few merchants visit the country because it is so far from the main land, and thus it comes to pass that their gold is abundant beyond all measure.\n\nI will tell you a wonderful thing about the Palace of the Lord of that Island.",
+      "chars": 614,
+      "gutenberg_id": 12410,
+      "card_url": "https://www.gutenberg.org/ebooks/12410",
+      "catalogue_title": "The Travels of Marco Polo — Volume 2",
+      "people": [
+        "Polo, Marco, d. 1324",
+        "Rusticiano, da Pisa, d. 1300",
+        "Cordier, Henri (Editor), d. 1925",
+        "Yule, Henry, Sir (Translator), d. 1889"
+      ]
     },
     "en_book_of_tea": {
       "status": "ok",
