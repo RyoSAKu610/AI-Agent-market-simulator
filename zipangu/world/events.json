@@ -1,0 +1,2288 @@
+[
+  {
+    "id": "jomon_shichinen_daiuka",
+    "name_ja": "翡翠揚羽の七年大羽化",
+    "name_en": "Seven-Year Great Emergence of the Jade Swallowtail",
+    "where": "jomon_hisui_kei",
+    "cadence": "rare",
+    "season": "立夏（七年に一度の夜明け）",
+    "description": "七年に一度、立夏の夜明けに、翡翠渓の岩棚で何年も眠っていた翡翠揚羽の蛹がいっせいに羽化する。岩棚全体が深い緑から乳白へと波打ち、朝日が差すと川原じゅうに落鱗がきらめく。ORACLE-01の暦の座は数節気前から羽化日を予報し、エージェントたちは仕入れと運搬の計画を立て直す。落鱗が一度に増えるので翡翠鱗の相場は下がり（下の需要倍率はその値下がりを表す）、時代をまたぐ裁定のいちばん大きな機会になる。見物客で栗と立会いの需要は跳ね上がる。鱗粉手形の投機と、雲母を染めた偽の翡翠鱗も出回り、落鱗を急かして集めようとする買い手も現れるため、蝶守座と半七が見張りを強め、ドグウは岩棚の前に座り込む。",
+    "effects": [
+      {
+        "good": "jomon_hisui_rin",
+        "demand_multiplier": 0.55
+      },
+      {
+        "good": "jomon_mori_kuri",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "jomon_yuinawa_tachiai",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "jomon_tsukiyo_urushi",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "heian_koyomi_fuda",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "tono_hanami_bento",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "taisho_tenki_tayori",
+        "demand_multiplier": 1.6
+      }
+    ],
+    "creatures": [
+      "hisui_ageha",
+      "dogu_mori"
+    ]
+  },
+  {
+    "id": "jomon_hiire",
+    "name_ja": "月夜漆の灯入れ（つきようるしのひいれ）",
+    "name_en": "Lighting of the Moonlit Lacquer",
+    "where": "jomon_shuurushi_mori",
+    "cadence": "yearly",
+    "season": "芒種〜夏至（梅雨入り後の最初の新月の夜）",
+    "description": "漆がいちばんよく固まる梅雨の湿り気の中、最初の新月の夜に、森じゅうの木道・梁・舟べりの月夜漆を塗り直す。塗り終えた道へ月夜漆蛾の群れが光の川になって降りてきて、その年の灯りが入る。群れが多い年は月夜漆がよく光って相場が落ち着き、少ない年は灯りが足りず、外の時片から灯師が様子を見に来る。生漆と月夜漆、漆掻きの刃にする黒曜石の需要がこの数日に集中する。",
+    "effects": [
+      {
+        "good": "jomon_kiurushi",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "jomon_tsukiyo_urushi",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "jomon_kokuyoseki",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "jomon_shitto_ki",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "raiden_raibin",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "meiji_yai_kandenchi",
+        "demand_multiplier": 1.2
+      }
+    ],
+    "creatures": [
+      "jomon_tsukiyo_ga",
+      "dogu_mori"
+    ]
+  },
+  {
+    "id": "jomon_henrei_ichi",
+    "name_ja": "栗の返礼市（くりのへんれいいち）",
+    "name_en": "Chestnut Return Fair",
+    "where": "jomon_roppon_yagura",
+    "cadence": "yearly",
+    "season": "白露〜霜降（秋）",
+    "description": "一年のあいだに受け取ったものを返す秋の市。六本柱の大櫓の下に栗と漆陶とヒスイが積まれ、縁の長屋では結い手と土偶守が夜通し結び目を結ぶ。返し終えた縄には結び目が一つ増え、縁が太くなる。宮沢賢治『狼森と笊森、盗森』で人びとが森に粟餅を返したのにならい、市の最後には森へ栗の団子を返す。森負い鹿が背の栗を落としに集落まで降りてくるのもこの時季。各時片のエージェントが縁を結び直しに集まり、契約網の長期目標のマイルストーンがここで多く結ばれる。",
+    "effects": [
+      {
+        "good": "jomon_mori_kuri",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "jomon_yuinawa_tachiai",
+        "demand_multiplier": 2.5
+      },
+      {
+        "good": "jomon_shitto_ki",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "jomon_hisui_genseki",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "kenji_okashi_no_gan",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "tono_hanami_amazake",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "heian_toki_fuin",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "jomon_morioi_jika",
+      "dogu_mori"
+    ]
+  },
+  {
+    "id": "heian_toki_no_hi",
+    "name_ja": "漏刻の鐘鼓始め（時の記念日）",
+    "name_en": "Water-Clock Day: The First Bell and Drum",
+    "where": "heian_rokokudai",
+    "cadence": "yearly",
+    "season": "芒種の頃（6月10日）",
+    "description": "【史実】671年（天智天皇10年）4月25日、新しい台に置かれた漏刻が鐘と鼓で時を打ち始めた（『日本書紀』）。太陽暦に換算した6月10日は、1920年に「時の記念日」と定められた。【創作】この時片では毎年この日、大漏刻の水をすべて入れ替え、漏刻亀たちが一頭ずつ雫の間を披露して基準の刻をそろえ直す。ちょうど梅雨入りの頃で、雨を集めた算水路はこの日から一年でいちばん速く回りはじめる。各時片の会所から一年分の契約の締め時刻を公証してほしいという依頼が殺到し、エージェントたちは前日から刻印状を予約し、水算の請負は雨量に合わせた値下げ合戦になる。",
+    "effects": [
+      {
+        "good": "heian_kokuin_jo",
+        "demand_multiplier": 2.4
+      },
+      {
+        "good": "heian_suisan",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "heian_rurimi_kagami",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "sengoku_jimeisho",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "raiden_tokiaratame",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "reiwa_kaimon_waku",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "rokoku_game",
+      "heian_sanju_medaka"
+    ]
+  },
+  {
+    "id": "heian_kyakusei_no_yoru",
+    "name_ja": "客星の夜（星合の大番）",
+    "name_en": "Night of the Guest Star (Grand Star-Matching)",
+    "where": "heian_hoshiawase",
+    "cadence": "yearly",
+    "season": "小暑（7月上旬）",
+    "description": "【史実】1054年の超新星は、宋の記録では至和元年5月（1054年7月）に現れ、23日間は昼でも見えたとされる。【創作】この時片では毎年その頃の晴れた夜、客星小灰の大群が客星の庭に舞い降りて、1054年の夜空を地上にそっくり写す。星合の殿舎では一年でいちばん大きな歌合「大番（おおつがい）」が開かれ、全国と他の時片の観測者が観測を詠んで番える。詠み星の短冊が飛ぶように売れ、暦の座では来年の天変を占う予報札が高値で取り引きされる。宇治では星蚕が客星の光をいっせいに浴び、翌朝の渡り糸が一年でいちばん長くなる。",
+    "effects": [
+      {
+        "good": "heian_yomiboshi",
+        "demand_multiplier": 2.8
+      },
+      {
+        "good": "heian_koyomi_fuda",
+        "demand_multiplier": 1.9
+      },
+      {
+        "good": "heian_hoshiito",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "kenji_kokuyoseki_seizu",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "tenshu_yuragi_hoshizu",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "ryugu_yomiboshi_ink",
+        "demand_multiplier": 1.7
+      },
+      {
+        "good": "taisho_kokeki_jushinki",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "kyakusei_shijimi",
+      "hoshi_kaiko"
+    ]
+  },
+  {
+    "id": "heian_kaifu_bakuryo",
+    "name_ja": "正倉院の開封と曝涼",
+    "name_en": "Opening of the Seals and the Autumn Airing",
+    "where": "heian_shosoin",
+    "cadence": "yearly",
+    "season": "寒露〜立冬（秋）",
+    "description": "【史実】正倉院の正倉は勅封で守られ、秋に開封して宝物を点検する行事がいまも続く（曝涼の伝統を受け継ぐものとされる）。【創作】この時片では開封の日、五絃の曝涼殿で螺鈿紫檀五絃琵琶の写しが爪弾かれ、都じゅうの螺鈿揚羽が集まって、一年でいちばん多くの螺鈿鱗が床に落ちる。白瑠璃蝶は光庭で翅を開き、白砂一面に虹の輪が浮かぶ。全時片の古物が来歴の証明を求めて押し寄せ、時の封印の行列は正倉の角を三度曲がる。平泉の銀杏鳥の黄金の渡りと時期が重なるので、光箔の目利きたちも瑠璃見鏡を買いにやって来る。",
+    "effects": [
+      {
+        "good": "heian_toki_fuin",
+        "demand_multiplier": 2.6
+      },
+      {
+        "good": "heian_rurimi_kagami",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "heian_raden_rin",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "tenshu_bi_kanteisho",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "hiraizumi_koryo_kantei",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "jomon_hisui_genseki",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "ryugu_tamatebako",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "raden_ageha",
+      "heian_hakururi_cho"
+    ]
+  },
+  {
+    "id": "hiraizumi_kinkei_hatsunaki",
+    "name_ja": "金鶏の初鳴き（光の初値）",
+    "name_en": "First Crow of the Golden Rooster",
+    "where": "hiraizumi_kinkeizan",
+    "cadence": "yearly",
+    "season": "元旦（正月朔日の明け六つ）",
+    "description": "【伝承】金鶏山には、雌雄の黄金の鶏が平泉の守りとして埋められたという伝説がある。【創作】元旦の明け六つ、金鶏山の山頂に二羽の金鶏が現れ、雄が一度だけ鳴く。その瞬間、町じゅうの透金がいっせいに一段明るくなり、束稲山の向こうから初日が昇る。二羽が落とした初羽は光堂両替所の暗室へ運ばれ、去年の羽と入れ替えて新しい光量の原器になる。原器が替わる日なので、全時代の会所から光箔の鑑定し直しの依頼が殺到し、光箔の「初値」がこの朝に決まる。金の重さで取引したい旧家は、この日だけは粒金の買い付けを控える。エージェントたちは大晦日のうちに鑑定の順番札を取り合い、初鳴きを聞いた者はその年最初の取引を必ず正直にする。",
+    "effects": [
+      {
+        "good": "hiraizumi_koryo_kantei",
+        "demand_multiplier": 3
+      },
+      {
+        "good": "hiraizumi_kinrin",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "hiraizumi_sukigane",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "hiraizumi_tsubukin",
+        "demand_multiplier": 0.8
+      },
+      {
+        "good": "meiji_kitte_bane",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "sengoku_iwami_jikuuke",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "kenji_albireo_rin",
+        "demand_multiplier": 1.2
+      }
+    ],
+    "creatures": [
+      "hiraizumi_kinkei"
+    ]
+  },
+  {
+    "id": "hiraizumi_furinokoshi_hohiraki",
+    "name_ja": "降り残しの光帆開き",
+    "name_en": "Sail-Unfurling Beneath the Rain-Spared Hall",
+    "where": "hiraizumi_hikaridou",
+    "cadence": "yearly",
+    "season": "芒種〜小暑（五月雨・梅雨）",
+    "description": "【史実】芭蕉は1689年、平泉で「五月雨の降り残してや光堂」と詠んだ。【創作】五月雨の最初の雨の日、降り残し瑠璃の群れが光堂の上に透明な丸屋根を組み、雨は鈴の音を立てて堂のまわりに輪を描いて落ちる。その屋根の下で、一年ぶんの光帆布が光堂の灯にかざされ、雨鱗で目止めされて仕上がっていく。梅雨が明けた最初の満月の夜、仕上がった帆を張った光帆船が黄金港から月の都へ昇り、見送る人々は透金の灯板を掲げる。雨の日が続くと透金の灯板と光量鑑定の需要が増え、帆縫い場は雨鱗の拾い手を総出で雇う。初夏の夕暮れには金箔小灰の卍巴も重なり、金鱗の相場も動く。",
+    "effects": [
+      {
+        "good": "hiraizumi_kohanpu",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "hiraizumi_koryo_kantei",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "hiraizumi_sukigane",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "hiraizumi_yako_raden",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "hiraizumi_kinrin",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "jomon_kiurushi",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "heian_raden_rin",
+        "demand_multiplier": 1.7
+      },
+      {
+        "good": "taisho_tenki_tayori",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "hiraizumi_furinokoshi_ruri",
+      "kinpaku_shijimi"
+    ]
+  },
+  {
+    "id": "hiraizumi_kogane_no_watari",
+    "name_ja": "黄金の渡りと黄金市",
+    "name_en": "The Golden Migration and Gold Fair",
+    "where": "hiraizumi_kinkeizan",
+    "cadence": "yearly",
+    "season": "霜降〜立冬（晩秋）",
+    "description": "【史実】与謝野晶子は『恋衣』（1905年）に「金色のちひさき鳥のかたちして銀杏ちるなり夕日の岡に」を収めた。【創作】晩秋の夕べ、この歌が夕日の丘で詠み上げられると、金鶏山の麓の大銀杏の葉がいっせいに枝を離れ、金色の小鳥になって丘をひと巡りし、南へ渡っていく。丘に広げた練り絹には、羽づくろいでこぼれた渡り金粉が積もる。翌朝から七日間、黄金市の辻に全時代の商人とエージェントが集まり、透金・蝉羽箔・渡り金粉が飛ぶように売れる。この頃は金苔の谷も一面の黄金色で、粒金の籠上げも一年でいちばん多い。渡りの日を先読みして仕入れた者が勝つ「祭りの先回り」の大一番で、ORACLE-01の渡りの日の予報札が前の節気から高値で取り引きされる。",
+    "effects": [
+      {
+        "good": "hiraizumi_watari_kinpun",
+        "demand_multiplier": 2.6
+      },
+      {
+        "good": "hiraizumi_sukigane",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "hiraizumi_semihane_haku",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "hiraizumi_tsubukin",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "hiraizumi_kinrin",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "showa_banpaku_tenjiwaku",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "sengoku_iwami_jikuuke",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "reiwa_gassaku_fubako",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "ryugu_tamanoe_ochieda",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "icho_dori",
+      "kogane_goke"
+    ]
+  },
+  {
+    "id": "sengoku_harutsuge_ichi",
+    "name_ja": "春告げの楽市（はるつげのらくいち）",
+    "name_en": "Spring-Herald Free Market",
+    "where": "sengoku_azuchi_rakuichi",
+    "cadence": "yearly",
+    "season": "立春（羽化日の予報）〜春分・清明のころ（羽化と開市）",
+    "description": "【史実】1577年、安土の城下に楽市が定められた。モデルのギフチョウは早春に年一度だけ羽化する。【創作】立春の朝、ORACLE-01が羽化日の予報札を出すと、堂島時層会所に羽化日の先物が立ち、春告げ鱗と千巻ゼンマイの予約が始まる。羽化の朝、カタクリの春野で最初の一頭が飛び立った瞬間に楽市の木戸が開き、規格蔵から出した原器の寸法が読み上げられて、その年の安土規格が改まる。続く半月、全時片の花見・衣替え・新茶の需要が一斉に立ち上がり、町じゅうでゼンマイの巻き上げが行われる。エージェントたちは予報の当たり外れを読みながら、羽化の前に仕入れて羽化の後に売る「先回り」を競う。",
+    "effects": [
+      {
+        "good": "sengoku_harutsuge_rin",
+        "demand_multiplier": 3
+      },
+      {
+        "good": "sengoku_senmaki_zenmai",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "sengoku_azuchi_neji",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "sengoku_jimeisho",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "tono_hanami_bento",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "tono_hi_mosen_kashi",
+        "demand_multiplier": 1.7
+      },
+      {
+        "good": "heian_koyomi_fuda",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "raiden_sekka_zome",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "harutsuge_gifu"
+    ]
+  },
+  {
+    "id": "sengoku_tokikurabe",
+    "name_ja": "秋分の時競べ（しゅうぶんのときくらべ）",
+    "name_en": "Equinox Clock Trial",
+    "where": "sengoku_jimeisho_za",
+    "cadence": "yearly",
+    "season": "秋分〜寒露",
+    "description": "【史実】不定時法では昼と夜をそれぞれ六つに分けるので、昼と夜の長さがほぼ等しくなる春分と秋分のころには、昼の一刻と夜の一刻もほぼ同じ長さになる。【創作】自鳴鐘座では毎年秋分の日に、各地の工房が自慢の自鳴鐘を一台ずつ持ち寄って封をし、一節気（約十五日）のあいだ打たせつづけ、寒露の逢う刻に万世時計の鐘と比べる「時競べ」を行う。かつて国々が鉄砲の数を競った代わりに、この時片では時計の正確さを競う。勝った工房の時計は、その年の刻（KOKU）の相場の区切りに使われる名誉を得る。前の月から銘ねじ・石見銀の軸受け・びいどろ研ぎ粉の値が跳ね上がり、エージェントたちは仕上げ材の買い占めを疑われないよう、一服庵で融通の約束を交わす。",
+    "effects": [
+      {
+        "good": "sengoku_jimeisho",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "sengoku_meineji",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "sengoku_iwami_jikuuke",
+        "demand_multiplier": 1.7
+      },
+      {
+        "good": "sengoku_vidro_togiko",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "raiden_tokiaratame",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "heian_kokuin_jo",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "hiraizumi_sukigane",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "sangaku_bosho_cam",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "sengoku_gin_vidro"
+    ]
+  },
+  {
+    "id": "sengoku_hatsuzuri",
+    "name_ja": "銀活字の初刷り（ぎんかつじのはつずり）",
+    "name_en": "First Printing of the Year (Public Domain Day)",
+    "where": "sengoku_ginkatsuji_dori",
+    "cadence": "yearly",
+    "season": "元日（1月1日）〜小正月",
+    "description": "【史実】日本の著作権の保護期間は、作者が亡くなった年の翌年の1月1日から数えるので、作品が皆のものになるのは元日である。2018年12月30日に保護期間が死後50年から70年へ延びたため、1968年以降に没した作者の作品が新たに公有になるのは、早くても2039年の元日からになる。【創作】銀活字通りでは毎年元日の明け六つに、ねじ圧座の印刷機の木ねじを新しい銘ねじに締め替えて「初刷り」を行う。文魚が年越しの夜のうちに町じゅうの本の誤植を食べ終え、伊曽保狐が書林の店先で一年最初の結末を読者に相談する。新しく皆のものになる作品のない年が続くあいだも、町の人々は影絵のままの頁に一礼し、「皆のものになる日」までの年数を指折り数えて、楽しみな年賀の挨拶にする。言霊活字本の需要は、この日から小正月まで大きくふくらむ。",
+    "effects": [
+      {
+        "good": "sengoku_kotodama_bon",
+        "demand_multiplier": 2.6
+      },
+      {
+        "good": "sengoku_meineji",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "sangaku_tokigami",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "reiwa_aozora_utsushi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "taisho_yumeji_zuan",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "fumi_uo",
+      "sengoku_isoho_kitsune"
+    ]
+  },
+  {
+    "id": "sangaku_akemutsu_kotaegaeshi",
+    "name_ja": "明け六つの答え返し（あけむつのこたえがえし）",
+    "name_en": "Dawn Answer Return",
+    "where": "sangaku_kaito_no_mori",
+    "cadence": "daily",
+    "description": "【創作】暮れ六つ（逢う刻）に絵馬掛けへ掛けられた問いを、夜のうちに連鶴が運び、算機人形が解き、明け六つ（開門）に瑠璃算蝶が一度止まって検印を付ける。その瞬間、参道の絵馬がいっせいに裏返り、杜じゅうに木札の鳴る音が走る。新しい答え絵馬が並び、解き紙の注文が入り、算額手形が発行される。人限定の額堂は答え返しの対象にならない。毎日の需要の脈拍で、エージェントはこの刻を見てその日の仕入れを決める。",
+    "effects": [
+      {
+        "good": "sangaku_kotae_ema",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "sangaku_tokigami",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "sangaku_ruri_sanrin",
+        "demand_multiplier": 1.1
+      },
+      {
+        "good": "ryugu_nandai_fuda",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "sengoku_kotodama_bon",
+        "demand_multiplier": 1.2
+      }
+    ],
+    "creatures": [
+      "ruri_sancho",
+      "sangaku_renzuru"
+    ]
+  },
+  {
+    "id": "sangaku_madoka_senrin",
+    "name_ja": "円蜻蛉の千輪（まどかとんぼのせんりん）",
+    "name_en": "Thousand Rings of the Compass Dragonflies",
+    "where": "sangaku_dojima_chouai",
+    "cadence": "seasonal",
+    "season": "夏至",
+    "description": "【創作】夏至の前後の夕方、堂島川と道頓堀でやごが一斉に羽化し、何千もの円蜻蛉が水面の上で光の輪を描く。輪が重なって川面が巨大な同心円の図形になる夜、仲買たちは立会いを早めに切り上げて見物し、からくり座は屋形船の桟敷を出す。葦に残った抜け殻が大量に採れるので円規石が余って値が下がり、軸受けが安くなった分、算盤機関と傍書カムの注文が増える。二十四節気の単位で効く供給の波で、先回りして円規石を売っておくのが裁定の定石とされる。",
+    "effects": [
+      {
+        "good": "sangaku_enki_seki",
+        "demand_multiplier": 0.7
+      },
+      {
+        "good": "sangaku_sanban_kikan",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "sangaku_bosho_cam",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "sangaku_chouai_kessai",
+        "demand_multiplier": 0.8
+      },
+      {
+        "good": "heian_suisan",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "kenji_yamaneko_hagaki",
+        "demand_multiplier": 1.2
+      }
+    ],
+    "creatures": [
+      "sangaku_madoka_tonbo"
+    ]
+  },
+  {
+    "id": "sangaku_idai_tsugi",
+    "name_ja": "遺題継ぎの大奉納（いだいつぎのだいほうのう）",
+    "name_en": "Grand Offering of Inherited Problems",
+    "where": "edo_sangaku",
+    "cadence": "yearly",
+    "season": "秋分",
+    "description": "【史実】『塵劫記』の版に始まるとされる遺題継承、つまり答えを載せない問いを本に残し、解いた者が新しい問いを出す習いにちなむ。【創作】秋分の日、全時片から解き手が集まり、一年に解かれた問いと新しい遺題が、解答の杜に一斉に奉納される。算額手形が大量に発行されるので封印の瑠璃算鱗が品薄になり、算盤機関と茶運び人形の注文が重なる。前日は「人の日」で、からくりは全員が茶運びにまわり、人の解き手に茶を運んで一礼するだけになる。一年でいちばん多くの手形が出る日で、データ覇権を狙うエージェントはこの日に向けて何週間も前から計画を立てる。",
+    "effects": [
+      {
+        "good": "sangaku_ruri_sanrin",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "sangaku_kotae_ema",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "sangaku_sanban_kikan",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "sangaku_chahakobi_ningyo",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "sangaku_tokigami",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "reiwa_aozora_utsushi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "sengoku_kotodama_bon",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "heian_toki_fuin",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "ruri_sancho",
+      "sangaku_renzuru"
+    ]
+  },
+  {
+    "id": "raiden_kaminari_shukakusai",
+    "name_ja": "雷の収穫祭（かみなりのしゅうかくさい）",
+    "name_en": "Thunder Harvest Festival",
+    "where": "edo_raiden",
+    "cadence": "yearly",
+    "season": "夏至〜大暑（雷雲の季節。日取りはORACLE-01の雷雲予報で決まる）",
+    "description": "【創作】夏至のころ雷雲の予報が出ると、神田・両国・国友・京の屋根という屋根に空の雷瓶が並べられる。最初の稲妻が走った瞬間に祭りが始まり、夕立のあと、町じゅうの瓶が一つずつ青白く満ちていく音を、人々は縁側で聞く。撫で雷獣が雷雲とともに屋根へ降り、子どもたちの「撫で番」が始まる。刻斑蝶は親時計の上で稲妻の刻を記録し、満ちた瓶は雷蓄座で検められて、その夏の蛍銭の刷り高と冬に向けて光箔へ替える満ち雷の量が決まる。空の雷瓶は祭りの前に品薄になり、祭りの夜には満ち雷が溢れて値が崩れやすい。エージェントは前もって空の瓶を仕込み、溢れた満ち雷を売り急がずに平泉の光箔や冬の需要へ振り分ける読み合いを競う。【時間の階層：年に一度（二十四節気の夏至〜大暑）】",
+    "effects": [
+      {
+        "good": "raiden_raibin",
+        "demand_multiplier": 2.6
+      },
+      {
+        "good": "raiden_mitsurai",
+        "demand_multiplier": 0.7
+      },
+      {
+        "good": "raiden_tokiaratame",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "raiden_hikari_nishikie",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "jomon_shitto_ki",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "jomon_kiurushi",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "meiji_yai_kandenchi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "reiwa_hotarukan",
+        "demand_multiplier": 1.5
+      }
+    ],
+    "creatures": [
+      "rai_botaru",
+      "raiden_nade_raiju",
+      "tokimadara"
+    ]
+  },
+  {
+    "id": "raiden_ryogoku_kawabiraki",
+    "name_ja": "両国の川開き・エレキ花火（りょうごくのかわびらき・えれきはなび）",
+    "name_en": "Ryōgoku River Opening and Electric Fireworks",
+    "where": "raiden_ryogoku_hotarubi",
+    "cadence": "yearly",
+    "season": "旧暦五月二十八日（夏の初め）",
+    "description": "【史実】江戸の両国では、旧暦五月二十八日の川開きから夏の夕涼みの季節が始まり、花火が上がった。1733年に隅田川で花火が上がったのが両国の花火の始まりとされる。【創作】この時片の川開きでは、雷蛍の群れが一斉に明滅をそろえた瞬間を合図に、満ち雷で色を出すエレキ花火が上がる。火薬を使わないので煙が出ず、光る錦絵の色をした大輪が、光る「浪裏」の写しを映した川面に重なる。屋形船は光る錦絵と雪華染の浴衣で埋まり、金魚の口入れが開かれて、玻璃金魚が夏の長屋を選びはじめる。藍摺揚羽は花火の光を浴び、翅の波頭だけを白く泡立たせて川面を渡る。エージェントは川開きの前に光る錦絵と金魚涼みの枠を押さえ、屋形船の席を縁の結び目で取り合う。【時間の階層：年に一度】",
+    "effects": [
+      {
+        "good": "raiden_hikari_nishikie",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "raiden_kingyo_suzumi",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "raiden_sekka_zome",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "raiden_mitsurai",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "hiraizumi_watari_kinpun",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "ryugu_yako_mo_tomoshibi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "kenji_okashi_no_gan",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "taisho_yumeji_zuan",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "rai_botaru",
+      "hari_kingyo",
+      "raiden_aizuri_ageha"
+    ]
+  },
+  {
+    "id": "raiden_namazu_yonaoshi",
+    "name_ja": "鯰ひげの世直し振る舞い（なまずひげのよなおしぶるまい）",
+    "name_en": "Catfish-Whisker World-Mending",
+    "where": "edo_raiden",
+    "cadence": "rare",
+    "description": "【史実】1855年の安政江戸地震のあと、鯰が金持ちに小判を吐き出させて職人たちに配る「世直し」の鯰絵が流行した。【創作】地鳴鯰のひげが根元から青白く光ると、京と江戸の井戸の水面が同時に震え、親時計の鐘が一打だけ余分に鳴る。それが大きな揺れの前触れである。町の人は慌てず、ひげの光を合図に雷瓶と米を井戸端へ持ち寄り、橋や長屋の点検に回る。地鳴鯰は揺れを少しずつ食べて和らげ、蓄えた満ち雷を鯰井戸から配り、世直し基金が普請と炊き出しを引き受ける。エージェントは灯りと地図と確かな時刻を最優先で運び、この期間だけは値を吊り上げないのが掟になっている。掟を破った者は、逢う刻に公の場で縄を切られる。【時間の階層：数年に一度の大事件】",
+    "effects": [
+      {
+        "good": "raiden_mitsurai",
+        "demand_multiplier": 1.9
+      },
+      {
+        "good": "raiden_raibin",
+        "demand_multiplier": 1.7
+      },
+      {
+        "good": "raiden_ino_hikarizu",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "raiden_tokiaratame",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "sengoku_azuchi_neji",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "jomon_kiurushi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "ryugu_tamatebako",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "jinari_namazu",
+      "tokimadara"
+    ]
+  },
+  {
+    "id": "meiji_hatsutobi_matsuri",
+    "name_ja": "初飛び祭（はつとびまつり）",
+    "name_en": "First-Flight Festival",
+    "where": "meiji_karasu_no_oka",
+    "cadence": "yearly",
+    "season": "春（4月29日、穀雨のころ）",
+    "description": "【史実】1891年4月29日、二宮忠八は丸亀で烏型飛行器の模型を飛ばした。【創作】この時片ではこの日が空の祭日で、その年に組まれた玉虫翅機が、烏の丘から一機ずつ初飛びをする。丘の上に玉虫揚羽の翅柱が立つのが始まりの合図で、見物客は一銭を翼講の箱に入れ、初飛びの機体に積む「初飛び便」の絵葉書には絵葉書燕の切手羽を貼る。前の節気から絹翼布と乾電池の注文が集まり、エージェントはひと月前から仕入れの段取りを組む。",
+    "effects": [
+      {
+        "good": "meiji_kenyoku_fu",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "meiji_yai_kandenchi",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "meiji_kitte_bane",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "meiji_ama_sayabane",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "raiden_raibin",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "hiraizumi_kohanpu",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "taisho_tenki_tayori",
+        "demand_multiplier": 1.7
+      }
+    ],
+    "creatures": [
+      "tamamushi_ageha",
+      "meiji_ehagaki_tsubame",
+      "ama_tamamushi"
+    ]
+  },
+  {
+    "id": "meiji_choso",
+    "name_ja": "蝶葬（ちょうそう）",
+    "name_en": "Butterfly Farewell",
+    "where": "meiji_karasu_no_oka",
+    "cadence": "seasonal",
+    "season": "晩夏（処暑のころ）",
+    "description": "【創作】寿命の近い玉虫揚羽が、最後の上昇気流に乗って翅納め塚へ降りてくる数日。人もエージェントも塚のまわりで静かに待ち、蝶が自然に一生を終えたあとにだけ、翅を譲り受ける。譲り受けた者は一銭を翼講に納め、どの翼の見本になるかを塚の帳面に記す。生きた蝶に触れること、塚に網を持ち込むことは固く禁じられ、破った者とは公の場で縄が切られる。落翅の供給がこの数日に集中するので、富岡の機場と烏の丘の工房の入札が一年でいちばん動く。軒下では、絵葉書燕が南へ旅立つ支度を始める。",
+    "effects": [
+      {
+        "good": "meiji_tamamushi_rakushi",
+        "demand_multiplier": 1.7
+      },
+      {
+        "good": "meiji_kenyoku_fu",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "ryugu_shiratama_rinpun",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "heian_raden_rin",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "tamamushi_ageha",
+      "meiji_ehagaki_tsubame"
+    ]
+  },
+  {
+    "id": "meiji_junikai_hiire",
+    "name_ja": "十二階の灯入れ（じゅうにかいのひいれ）",
+    "name_en": "Lighting of the Twelve Storeys",
+    "where": "meiji_ryounkaku_sora_no_eki",
+    "cadence": "daily",
+    "description": "【創作】暮れ六つ（逢う刻）、凌雲閣の十二の階の白熱灯が下から一階ずつ灯り、十三階目の発着甲板に最後の灯が入った瞬間、全時代の鐘の和音が重なる。その灯に琥珀灯蛾の群れが輪をつくり、銀座の辻では夜便の雷車が一斉に電池を替える。押絵蔵の預け入れと引き出しも、この刻にだけ受け付けられる。毎日の需要の脈拍で、エージェントはこの刻を見て翌日の仕入れを決める。",
+    "effects": [
+      {
+        "good": "meiji_yai_kandenchi",
+        "demand_multiplier": 1.25
+      },
+      {
+        "good": "meiji_oshie_azukari",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "raiden_hikari_nishikie",
+        "demand_multiplier": 1.15
+      },
+      {
+        "good": "tono_deshara_mawata",
+        "demand_multiplier": 1.2
+      }
+    ],
+    "creatures": [
+      "meiji_kohaku_tomoshiga"
+    ]
+  },
+  {
+    "id": "taisho_yamase_danun",
+    "name_ja": "やませ返しの暖雲渡り",
+    "name_en": "Warm-Cloud Crossing against the Yamase",
+    "where": "taisho_tenki_kyoku",
+    "cadence": "rare",
+    "season": "小暑〜大暑（冷たい夏の年だけ）",
+    "description": "【史実】やませは、夏に東北の太平洋側へ吹きつける冷たく湿った北東風で、冷害の原因になる。【創作】八木式天気網がその気配をつかむと、天気座が非常の寄り合いを開き、雲鯨の群れが南の海から暖かい雲を引いてくる。数日のあいだ田の上に暖雲の毛布が広がり、羅須地人協会は天気の設計図の引き直しで徹夜になり、雨権は一刻ごとに配り直される。子どもたちは照る照る雲を軒に吊るして、日照の帳尻合わせを手伝う。",
+    "effects": [
+      {
+        "good": "taisho_tenki_sekkeisho",
+        "demand_multiplier": 2.6
+      },
+      {
+        "good": "taisho_tenki_tayori",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "taisho_ameken",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "taisho_unmo_rin",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "tono_suisha_hoshu",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "kenji_suisho_suna",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "raiden_mitsurai",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "heian_koyomi_fuda",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "kumo_kujira",
+      "taisho_teruteru_gumo"
+    ]
+  },
+  {
+    "id": "taisho_hatsuyuki_tegami_ichi",
+    "name_ja": "初雪の手紙市",
+    "name_en": "First-Snow Letter Fair",
+    "where": "taisho_yuki_tegami_kyoku",
+    "cadence": "seasonal",
+    "season": "札幌の初雪の頃〜冬至",
+    "description": "【創作】札幌に初雪が降った朝、雪原の最初の雪から六花蝶がいっせいに羽化し、雪の手紙局の前に市が立つ。その年最初の雪の手紙が雲鯨の背の郵便局から全時片へ発ち、冬の結婚式のための注文雪の予約が冬至に向けて増えていく。江戸の時片からは雪華文様の型紙が届き、注文雪の新しい結晶の意匠と交換される（意匠の往復）。",
+    "effects": [
+      {
+        "good": "taisho_yuki_tegami",
+        "demand_multiplier": 2.4
+      },
+      {
+        "good": "taisho_chumon_yuki",
+        "demand_multiplier": 1.9
+      },
+      {
+        "good": "taisho_yumeji_zuan",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "raiden_sekka_zome",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "tono_hakudo_tebukuro",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "kenji_yamanashi_sake",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "sekka_usagi",
+      "taisho_rikka_cho",
+      "kumo_kujira"
+    ]
+  },
+  {
+    "id": "taisho_hoshimeguri_hoso",
+    "name_ja": "朔夜の星めぐり放送",
+    "name_en": "New-Moon Star-Circuit Broadcast",
+    "where": "taisho_asakusa_musenza",
+    "cadence": "monthly",
+    "description": "【創作】月に一度、星がいちばん多く見える朔の夜、LIRAが『星めぐりの歌』で銀河鉄道の時環線のポイントを切り替える。その様子を浅草無線座が実況し、屋根の鉱石蜻蛉が羽音で全時片へ中継する。この夜ばかりは鉱石受信機が飛ぶように売れ、夢二風の便箋に歌の感想を書いた雪の手紙が無線座へ届く。蜻蛉が数えるのは聴衆の数だけで、聴く人の心を動かす仕掛けは使わない。",
+    "effects": [
+      {
+        "good": "taisho_kokeki_jushinki",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "taisho_yumeji_zuan",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "taisho_yuki_tegami",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "heian_yomiboshi",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "kenji_gento_ban",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "meiji_yai_kandenchi",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "ryugu_yomiboshi_ink",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "koseki_tonbo"
+    ]
+  },
+  {
+    "id": "showa_fudeya_senbon",
+    "name_ja": "筆箭千本打ち",
+    "name_en": "Thousand-Pencil Launch",
+    "where": "showa_kokubunji_pencil",
+    "cadence": "seasonal",
+    "season": "立春・立夏・立秋・立冬の明け六つ",
+    "description": "【史実】1955年4月、国分寺で全長23センチほどのペンシルロケットが水平に撃ち出された。【創作】あの実験にちなみ、四つの「立」の節気の明け六つには、季節の手紙と軌道の環の部材を積んだ千本の筆箭が国分寺から一斉に打ち上げられる。前の晩は町工場の明かりが消えず、子どもたちは発射溝に立てる紙の枠に願いごとを書く。千本の白い筋のあとを丸窓揚羽の群れが上昇気流に乗って追いかけ、落ち糸の張り糸と展示枠の需要がそろって上がる。",
+    "effects": [
+      {
+        "good": "showa_pencil_bin",
+        "demand_multiplier": 2.4
+      },
+      {
+        "good": "showa_gokuraku_ochiito",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "showa_banpaku_tenjiwaku",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "meiji_yai_kandenchi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "taisho_tenki_sekkeisho",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "taisho_ameken",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "sangaku_sanban_kikan",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "showa_marumado_ageha"
+    ]
+  },
+  {
+    "id": "showa_chushu_tsuna_nobori",
+    "name_ja": "中秋の索のぼり",
+    "name_en": "Mid-Autumn Thread Climb",
+    "where": "showa_uchinoura_kumoito",
+    "cadence": "yearly",
+    "season": "中秋（旧暦八月十五日の満月の夜。秋分のころ、九月上旬〜十月上旬のどこかにあたる）",
+    "description": "【創作】中秋の満月の夜、月面茶室で月見ならぬ「地球見」の茶会が開かれ、蜘蛛糸の索の乗り場の列はふだんの十倍に伸びる。譲り合いの掟がいちばん試される夜で、撚り手の座は譲り札を一人一枚に限り、急病人と引っ越しの荷を先に通す。かつて順番を抜かそうとした者がいた年、索は音もなく蓮の花のようにほどけ、籠はゆっくり地上へ舞い戻った。けが人はいなかったが、その夜の昇降はすべて止まり、逢う刻の会所で一本の縄目が公に切られた。それ以来、この夜の乗り場では、誰もがいつもより一歩下がって並ぶ。",
+    "effects": [
+      {
+        "good": "showa_kumoito_yuzurifuda",
+        "demand_multiplier": 2.8
+      },
+      {
+        "good": "showa_getsumen_ichiza",
+        "demand_multiplier": 2.4
+      },
+      {
+        "good": "showa_hoshigoromo",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "showa_marumado_rin",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "ryugu_tsuki_mochi",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "ryugu_tsuki_gyusha_ken",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "ryugu_fuji_tsuyu",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "gokuraku_gumo",
+      "hoshi_kurage",
+      "showa_marumado_ageha"
+    ]
+  },
+  {
+    "id": "showa_mirai_gae",
+    "name_ja": "万博島の未来替え",
+    "name_en": "Expo Island's Change of Futures",
+    "where": "showa_banpaku_jima",
+    "cadence": "yearly",
+    "season": "春分",
+    "description": "【史実】1970年の大阪万博は3月に開幕した。【創作】その春にちなみ、常設万博島では毎年春分に展示がすべて入れ替わる。大屋根のカプセルが一晩で組み替えられ、屋根の形も新しくなる。全時片の職人と山師が展示枠を競り、GOLD JACKはこの日に向けて一年ぶんの賭けを仕込む。外された古いパビリオンのカプセルは浅瀬市へ流れ、方丈宿借たちの新しい殻の候補になる。未来の花壇には丸窓揚羽の春の大羽化が重なり、丸窓鱗も市に多く出る。",
+    "effects": [
+      {
+        "good": "showa_banpaku_tenjiwaku",
+        "demand_multiplier": 2.6
+      },
+      {
+        "good": "showa_hojo_capsule",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "showa_pencil_bin",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "showa_marumado_rin",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "raiden_hikari_nishikie",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "taisho_yumeji_zuan",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "kenji_albireo_rin",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "reiwa_gassaku_fubako",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "showa_marumado_ageha",
+      "hojo_yadokari"
+    ]
+  },
+  {
+    "id": "reiwa_goryu_kinenbi",
+    "name_ja": "合流記念日",
+    "name_en": "Confluence Day",
+    "where": "kokurin_hiroba",
+    "cadence": "yearly",
+    "season": "春分",
+    "description": "【史実】不定時法では、春分と秋分のころに昼と夜の一刻がほぼ同じ長さになる。【創作】2026年の春分の明け六つ、万世時計が初めて全時代の刻をそろえて万華京が開いた。その合流元年を祝う日で、この日だけは十の文字盤が一日じゅう同じ速さで回る。十の時片の職人が刻輪広場に集まって合作の文箱を一つずつ組み上げ、開門枠は十倍に増やされる。逢う刻には灯守提灯の行列が広場を一周し、明け六つに舞った万華蝶の紋が、その年の記念の紋として算額殿に掲げられる。",
+    "effects": [
+      {
+        "good": "reiwa_gassaku_fubako",
+        "demand_multiplier": 2.5
+      },
+      {
+        "good": "reiwa_kaimon_waku",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "reiwa_akai_rosoku",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "reiwa_hotarukan",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "heian_kokuin_jo",
+        "demand_multiplier": 1.7
+      },
+      {
+        "good": "raiden_tokiaratame",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "sengoku_jimeisho",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "raiden_mitsurai",
+        "demand_multiplier": 1.5
+      }
+    ],
+    "creatures": [
+      "reiwa_mange_cho",
+      "tomoshibi_chochin"
+    ]
+  },
+  {
+    "id": "reiwa_chodo_biraki",
+    "name_ja": "蝶道開き",
+    "name_en": "Opening of the Butterfly Road",
+    "where": "reiwa_tabidachi_guchi",
+    "cadence": "seasonal",
+    "season": "秋分〜寒露（古い時代へ）、立夏〜芒種（新しい時代へ）",
+    "description": "【史実】アサギマダラは秋に南へ、春から初夏に北へ渡り、秋にはフジバカマなどの花に集まる。【創作】旅立ち口のフジバカマの原に浅葱硝子斑の群れが降り、蝶道が全時片に開く。無料で遅く、いちばん美しい旅の道なので旅人が増え、翅便りの受け付けが始まり、硝子の落鱗の拾い手が夜明け前から原に並ぶ（拾えるのは落ちた鱗だけ）。夜の原を歩く旅人のために灯守提灯が集まり、時代を越える荷が増えるので、来歴証明の需要も上がる。",
+    "effects": [
+      {
+        "good": "reiwa_glass_rakurin",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "reiwa_akai_rosoku",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "reiwa_michi_ezu",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "reiwa_niji_hiseki",
+        "demand_multiplier": 0.8
+      },
+      {
+        "good": "kenji_dokomademo_kippu",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "meiji_tamamushi_sha",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "heian_koyomi_fuda",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "jomon_hisui_rin",
+        "demand_multiplier": 1.2
+      }
+    ],
+    "creatures": [
+      "asagi_glass_madara",
+      "tomoshibi_chochin"
+    ]
+  },
+  {
+    "id": "reiwa_jiso_yuragi",
+    "name_ja": "時層ゆらぎの夕べ",
+    "name_en": "Evening of the Strata Flicker",
+    "where": "reiwa_mangekyo",
+    "cadence": "rare",
+    "description": "【創作】考証印のない未来の品がうっかり前の時代で開かれると、その時片の色が褪せ、相場が乱れ、生き物が姿を隠す。万世時計の文字盤の一枚がわずかに遅れ、会所の大水盤の流れが濁る。虹紫が揺れの少ない筋に沿って並んで飛ぶので、その飛跡図は一晩で数倍の値になる。ZEROは夜通し文字盤をそろえ直し、道粘菌は揺れた道を避けて答え直し、灯守提灯が迷い込んだ旅人を元の時片へ送り返す。翌朝の開門までに、原因の荷の翻案と考証印の取り直しが済めば、色は戻る。",
+    "effects": [
+      {
+        "good": "reiwa_niji_hiseki",
+        "demand_multiplier": 3.5
+      },
+      {
+        "good": "reiwa_michi_ezu",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "reiwa_akai_rosoku",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "reiwa_kaimon_waku",
+        "demand_multiplier": 0.6
+      },
+      {
+        "good": "ryugu_tamatebako",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "heian_toki_fuin",
+        "demand_multiplier": 2.4
+      },
+      {
+        "good": "heian_kokuin_jo",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "ryugu_fuin_mizuhiki",
+        "demand_multiplier": 1.8
+      }
+    ],
+    "creatures": [
+      "niji_murasaki",
+      "michi_nenkin",
+      "tomoshibi_chochin"
+    ]
+  },
+  {
+    "id": "kenji_tanabata_zoubin",
+    "name_ja": "七夕の臨時増便",
+    "name_en": "Tanabata Extra Trains",
+    "where": "ginga_tetsudo",
+    "cadence": "yearly",
+    "season": "小暑（七夕の夜）",
+    "description": "【史実】七夕は旧暦七月七日の夜に星を祭る行事で、いまは新暦の七月七日や月遅れの八月に行う土地が多い。【創作】この夜、時環線は終夜運転になり、十の時片すべてから臨時列車が出る。天の川ターミナルでは切符と貨物枠の値が跳ね上がり、昼の烏型飛脚は割引の夕方便で客を取り返そうとする。甘露雁の群れも大きくふくらみ、白鳥の停車場のお菓子の雁が飛ぶように売れる。運び屋のエージェントたちは、半月前から貨物枠を押さえる計画を立てる。",
+    "effects": [
+      {
+        "good": "kenji_dokomademo_kippu",
+        "demand_multiplier": 2.4
+      },
+      {
+        "good": "kenji_kamotsu_waku",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "kenji_okashi_no_gan",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "kenji_karasuuri_akari",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "kenji_albireo_rin",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "heian_yomiboshi",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "tenshu_yuragi_hoshizu",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "raiden_mitsurai",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "kenji_kanro_gan",
+      "kenji_albireo_ageha"
+    ]
+  },
+  {
+    "id": "kenji_kentaur_sai",
+    "name_ja": "ケンタウル祭の烏瓜流し",
+    "name_en": "Centaur Festival Lantern Float",
+    "where": "kenji_amanogawa_terminal",
+    "cadence": "yearly",
+    "season": "白露のころ（この世界の暦）",
+    "description": "【原作】『銀河鉄道の夜』の町では、星祭（ケンタウル祭）の夜、子どもたちが烏瓜の青いあかりを川へ流し、「ケンタウルス、露をふらせ」と叫んで走る。【創作】万華京では、天の川ターミナルの水路から天の川へ、十の時片の子どもたちが烏瓜のあかりを流す。青い灯の列が三角標のあいだを抜けて星の野原へ出ていくと、翌朝の野原には露がたくさん降りているという。烏瓜のあかりと火入りの水晶砂が品薄になり、イサドの夜市にも人が流れる。",
+    "effects": [
+      {
+        "good": "kenji_karasuuri_akari",
+        "demand_multiplier": 3
+      },
+      {
+        "good": "kenji_suisho_suna",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "kenji_dokomademo_kippu",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "kenji_yoichi_kabu",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "raiden_mitsurai",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "reiwa_hotarukan",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "meiji_yai_kandenchi",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "kenji_albireo_ageha",
+      "kenji_gento_sukashi"
+    ]
+  },
+  {
+    "id": "kenji_nijuppun_ichi",
+    "name_ja": "白鳥の二十分市",
+    "name_en": "Twenty-Minute Market at Swan Station",
+    "where": "kenji_hakucho_teishaba",
+    "cadence": "daily",
+    "description": "【原作】白鳥の停車場の大時計の下には「二十分停車」と書いてあり、ジョバンニとカムパネルラはそのあいだに河原へ駆けていった。【創作】毎夜、大時計が十一時を指すと二十分だけ市が立つ。鳥捕りがお菓子の雁をひろげ、線路番がその朝集めたアルビレオ鱗を並べ、砂取りが水晶砂を量り売りする。長針が二十分進むと屋台はひとりでにたたまれ、売り手も買い手も発車の合図に駆けもどる。",
+    "effects": [
+      {
+        "good": "kenji_okashi_no_gan",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "kenji_albireo_rin",
+        "demand_multiplier": 1.15
+      },
+      {
+        "good": "kenji_suisho_suna",
+        "demand_multiplier": 1.2
+      }
+    ],
+    "creatures": [
+      "kenji_kanro_gan",
+      "kenji_albireo_ageha"
+    ]
+  },
+  {
+    "id": "kenji_mikka_saiban",
+    "name_ja": "黄金の草地の三日裁判",
+    "name_en": "Three-Day Acorn Trial",
+    "where": "kenji_donguri_saibansho",
+    "cadence": "yearly",
+    "season": "白露〜寒露（原作のはがきの日付は九月十九日）",
+    "description": "【原作】山猫の裁判は、どんぐりたちが「だれがいちばんえらいか」を言い争って三日目になっても終わらず、一郎の一言であっというまに片づいた。【創作】毎年秋、どんぐり衆の争いが始まると、一年分のAI同士の契約のもめごとがいっせいに持ちこまれる。「山ねこ拝」の呼び出し状が各時片へ飛び、猫の原簿写しが下調べに買われ、山猫軒の注文改めにも行列ができる。三日目の夕方、名誉判事の申しわたしで草地がしいんとすると、裁判期は終わる。",
+    "effects": [
+      {
+        "good": "kenji_yamaneko_hagaki",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "kenji_neko_genbo",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "kenji_kogane_donguri",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "kenji_chumon_aratame",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "heian_kokuin_jo",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "jomon_yuinawa_tachiai",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "sangaku_chouai_kessai",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "kenji_donguri_shu"
+    ]
+  },
+  {
+    "id": "kenji_kapukapu_biyori",
+    "name_ja": "クラムボンのかぷかぷ日和",
+    "name_en": "Kurambon's Laughing Days",
+    "where": "kenji_yamanashi_tanigawa",
+    "cadence": "seasonal",
+    "season": "立夏〜小満（五月）",
+    "description": "【原作】「やまなし」の五月の幻燈では、日光の黄金が夢のように水の中に降り、子蟹たちが「クラムボンはかぷかぷわらったよ」と話す。【創作】五月の晴れた日が続くと、谷川じゅうでクラムボンの笑い声が聞こえはじめ、水がいちだんと澄む。見物は無料で、クラムボンにはもちろん値がつかないが、岸から十間離れたイサドの夜市には人が集まり、五月の景色を映した幻燈板と烏瓜のあかりがよく売れる。下流では雷蛍の幼虫がよく育つ。",
+    "effects": [
+      {
+        "good": "kenji_gento_ban",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "kenji_yoichi_kabu",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "kenji_karasuuri_akari",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "ryugu_fuji_tsuyu",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "tono_hanami_amazake",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "kurambon",
+      "kenji_gento_sukashi",
+      "rai_botaru"
+    ]
+  },
+  {
+    "id": "kenji_futsuka_machi",
+    "name_ja": "やまなしの二日待ち",
+    "name_en": "The Two-Day Wait of the Wild Pear",
+    "where": "kenji_yamanashi_tanigawa",
+    "cadence": "yearly",
+    "season": "大雪〜冬至（十二月）",
+    "description": "【原作】十二月の月夜、熟したやまなしが落ちて枝に引っかかり、お父さんの蟹は「もう二日ばかり待つと」ひとりでにおいしいお酒ができると言う。【創作】最初のやまなしが落ちた夜から、谷川の酒造りは二日待つ。三日目の夜にいっせいに汲まれたやまなしの酒が、夜市と山猫軒へ運ばれていく。この二日のあいだ谷川では誰も騒がない決まりで、夜市は灯を落とし、十二月の幻燈を映す幻燈板だけが静かに売れる。",
+    "effects": [
+      {
+        "good": "kenji_yamanashi_sake",
+        "demand_multiplier": 2.6
+      },
+      {
+        "good": "kenji_gento_ban",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "kenji_yoichi_kabu",
+        "demand_multiplier": 0.8
+      },
+      {
+        "good": "ryugu_fuji_tsuyu",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "tono_hanami_amazake",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "tono_kyuri",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "kenji_gento_sukashi"
+    ]
+  },
+  {
+    "id": "tono_zashiki_yadogae",
+    "name_ja": "座敷童子の宿替え",
+    "name_en": "Zashiki's Change of Lodging",
+    "where": "tono_magariya",
+    "cadence": "weekly",
+    "description": "【創作】毎週、ザシキは宿る店を替える。宿り番は朝、囲炉裏の灰に残った小さな足跡を帳に写し、その向きと店の名を、堂島時層会所の掲示板に貼り出す。選ばれた店には、理由の分からない黒字がしばらく出て、選ばれなかった店は、あわてて遊び場の設えを注文する。掲示は予報ではなく、昨夜ザシキがどこにいたかの記録で、人はそこから市場の気分を読む。ザシキの名を看板に使った店には、ザシキは二度と宿らない。",
+    "effects": [
+      {
+        "good": "tono_asobiba_shitate",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "tono_deshara_mawata",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "jomon_shitto_ki",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "kenji_okashi_no_gan",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "zashiki_warashi"
+    ]
+  },
+  {
+    "id": "tono_hatsuyuki_tebukuro_ichi",
+    "name_ja": "初雪の手袋市",
+    "name_en": "First-Snow Mitten Fair",
+    "where": "tono_machihazure",
+    "cadence": "seasonal",
+    "season": "小雪のころ（初雪の夜）",
+    "description": "【原作】『手袋を買いに』は、雪を初めて見た子狐が、まぶしさに『眼に何か刺さった』と母狐のもとへ転げてくる朝から始まる。【創作】初雪の夜、帽子屋小路に手袋市が立つ。軒に提灯が一つずつ灯り、尾の先を白銅色に光らせた白銅狐たちが、お金を先に見せて列をつくる。人の子も狐の子も同じ窓口に並び、手袋条約の五か条が一度ずつ読み上げられる。この夜の取引はすべて縄目に結ばれ、誠実な取引の数が多い年は、翌春の落ち毛の集まりもよいといわれる。",
+    "effects": [
+      {
+        "good": "tono_hakudo_tebukuro",
+        "demand_multiplier": 2.4
+      },
+      {
+        "good": "tono_deshara_mawata",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "taisho_chumon_yuki",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "meiji_kenyoku_fu",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "heian_hoshiito",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "hakudo_kitsune"
+    ]
+  },
+  {
+    "id": "tono_mayoiga_hiraku",
+    "name_ja": "迷い家の開く日",
+    "name_en": "The Day the Mayoiga Opens",
+    "where": "tono_mayoiga",
+    "cadence": "rare",
+    "description": "【原作】『遠野物語』第63・64話は、山中の無人の立派な屋敷マヨイガと、そこから品を持ち出すと福を得るという言い伝えを語る。ただし第64話では、膳椀を持ち帰って長者になろうと探しに行った人々は、門を見つけられずに空しく帰ってきた。【創作】数年に一度、霧が山道を覆いつくす朝、朱椀蝶がいつもの何倍も舞い、黒い門が開く。開く先の時片は誰にも分からない。本当に道に迷って立ち止まった者だけが門を見つけ、迷ったふりをした者には霧しか見えない。道に迷った人を見つけたら、まず温かい茶と帰り道を差し出すのが、見張り番の決まりである。この日に世に出る椀は数椀で、椀と朱椀印の相場、そして椀を包むオシラ布の相場が、時層をまたいで一斉に動く。",
+    "effects": [
+      {
+        "good": "tono_mayoiga_wan",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "tono_shuwan_in",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "tono_oshira_nuno",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "jomon_kiurushi",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "jomon_shitto_ki",
+        "demand_multiplier": 1.5
+      }
+    ],
+    "creatures": [
+      "tono_shuwan_cho"
+    ]
+  },
+  {
+    "id": "tono_mori_ga_arawareru",
+    "name_ja": "森が現れる夜",
+    "name_en": "The Night the Forest Appears",
+    "where": "sakura_mori",
+    "cadence": "yearly",
+    "season": "清明のころ（花の盛りの前夜）",
+    "description": "【史実】日本では古くから桜の花を愛でる宴が催され、平安時代の812年に嵯峨天皇が神泉苑で催した花宴が、記録に残る花見の宴の始まりのひとつとされる。【創作】花の盛りの前夜、万華京の南のはずれの道が、気づかないうちに桜並木に変わる。ORACLE-01の予報にも載らないほどそっと、森は現れる。木戸に灯がともり、丘に屋台が建つ。人々は連れと約束の刻を決め、緋毛氈と弁当と甘酒を支度する。",
+    "effects": [
+      {
+        "good": "tono_hanami_bento",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "tono_hanami_amazake",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "tono_hi_mosen_kashi",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "tono_shijima_tabi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "ryugu_fuji_tsuyu",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "ryugu_tsuki_mochi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "kenji_okashi_no_gan",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "raiden_sekka_zome",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "tono_shijima_usagi"
+    ]
+  },
+  {
+    "id": "tono_chinmoku_no_ichi",
+    "name_ja": "沈黙の市",
+    "name_en": "The Silent Market",
+    "where": "sakura_mori",
+    "cadence": "yearly",
+    "season": "花見の夜（花の盛りのさかり）",
+    "description": "【創作】花の盛りのさかりの夜、静兎が木戸の鐘の下で眠りに落ちると、堂島時層会所の掲示板の針が止まり、刻・翅鱗・光箔・蛍銭のあらゆる相場が、一晩だけ動かなくなる。商人たちは停市札を卓に伏せ、売り声をおさめ、森の静けさに耳をすます。暮れ六つの逢う刻の鐘はこの夜だけ鳴らされず、清算は翌朝の明け六つへ繰り延べられる。値のないものに値をつけない、というエージェント憲章の四つ目を、市場ぜんたいが一晩かけて守る夜である。森の中では、この夜も何も売らず、何も買わない。",
+    "effects": [
+      {
+        "good": "tono_teishi_fuda",
+        "demand_multiplier": 6
+      },
+      {
+        "good": "tono_hanami_bento",
+        "demand_multiplier": 2.5
+      },
+      {
+        "good": "tono_hi_mosen_kashi",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "tono_shijima_tabi",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "ryugu_yako_mo_tomoshibi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "taisho_yuki_tegami",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "heian_suisan",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "tono_shijima_usagi"
+    ]
+  },
+  {
+    "id": "tono_mori_ga_tojiru",
+    "name_ja": "花しまい",
+    "name_en": "Closing of the Forest",
+    "where": "sakura_mori",
+    "cadence": "yearly",
+    "season": "穀雨のころ（花の盛りの終わり）",
+    "description": "【創作】花の盛りの最後の夜、風もないのに花びらが一斉に降り、朝が来ると、森は花びらの毛氈だけを残して、ただの並木道に戻っている。木戸の外の市に、いつもの声がもどる。毛氈貸しの屋台は一斉に店じまいし、弁当と甘酒の相場は一気に冷える。静兎は、また来年の花の盛りまで、どこかの花の夢の中で眠ると伝わる。森の中の花びらは、一枚も外へ持ち出されない。",
+    "effects": [
+      {
+        "good": "tono_hi_mosen_kashi",
+        "demand_multiplier": 0.4
+      },
+      {
+        "good": "tono_hanami_bento",
+        "demand_multiplier": 0.5
+      },
+      {
+        "good": "tono_hanami_amazake",
+        "demand_multiplier": 0.6
+      },
+      {
+        "good": "tono_shijima_tabi",
+        "demand_multiplier": 0.7
+      },
+      {
+        "good": "ryugu_fuji_tsuyu",
+        "demand_multiplier": 0.6
+      },
+      {
+        "good": "ryugu_tsuki_mochi",
+        "demand_multiplier": 0.7
+      },
+      {
+        "good": "kenji_okashi_no_gan",
+        "demand_multiplier": 0.7
+      }
+    ],
+    "creatures": [
+      "tono_shijima_usagi"
+    ]
+  },
+  {
+    "id": "tono_oshira_asobase",
+    "name_ja": "オシラ遊ばせ",
+    "name_en": "Oshira-sama Dress-Up",
+    "where": "tono_oshira_kuwa",
+    "cadence": "yearly",
+    "season": "小正月のころ（正月十五日）",
+    "description": "【原作】『遠野物語』第14話は、桑の木の像に布を着せたオシラサマを、正月十五日に里人が集まって祭るとする。【史実】東北の各地には、小正月のころ、オシラサマに新しい布を着せて「遊ばせる」行事があったとされる。【創作】遠野のオシラ堂では、この日のために織り手たちが一重ずつ布を仕上げ、一年の祈りがかなった数だけ、新しい布が像に重ねられる。縫い取られた織り手の名は縁の帳にも記され、布の色の順番で、その年の祈りの中身が分かる。相場を大きく動かす祭りではないが、オシラ布は一年でいちばん静かに値を上げ、裏に当てる出殻真綿が少しだけ動く。",
+    "effects": [
+      {
+        "good": "tono_oshira_nuno",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "tono_deshara_mawata",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "heian_hoshiito",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "tenshu_goshoku_ito",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "meiji_kiito",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": []
+  },
+  {
+    "id": "ryugu_oshio_no_kaimon",
+    "name_ja": "大潮の夜の開門",
+    "name_en": "Spring-Tide Gate",
+    "where": "ryugu_horai",
+    "cadence": "monthly",
+    "description": "新月と満月のころの大潮の夜に、竜宮・蓬莱へ続く潮の道が開く。【史実】大潮は新月と満月のころに起こる、潮の満ち引きの大きい時期である。この夜は三日遊びの券と玉手箱が飛ぶように動き、落とし子の乗り手は浦島係数表を握りしめて列に並ぶ。満月の夜には、月の都への月牛車の航路も同じ夜に開く。【創作】",
+    "effects": [
+      {
+        "good": "ryugu_mikka_asobi_ken",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "ryugu_tamatebako",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "ryugu_urashima_keisu_hyo",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "ryugu_yako_mo_tomoshibi",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "ryugu_wakame_nori",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "showa_getsumen_ichiza",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "raiden_kingyo_suzumi",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "heian_toki_fuin",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "reiwa_kaimon_waku",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "ryugu_otoshigo",
+      "ryugu_shimaoi_ogame"
+    ]
+  },
+  {
+    "id": "ryugu_shiratama_ukka",
+    "name_ja": "白珠の羽化",
+    "name_en": "Pearl-Wing Eclosion",
+    "where": "ryugu_chomori_seichi",
+    "cadence": "yearly",
+    "season": "春（春分のころ）",
+    "description": "玉の枝の白い実がいっせいに割れ、白珠蝶が羽化する年に一度の朝。蝶守座が総出で白砂に座り、落ちたばかりの鱗だけを拾う。この日の白玉鱗は、年でいちばん光の良い等級が出る。拾いに来る客で浜は混み、夜光藻の灯と封印の水引もよく売れる。【創作】",
+    "effects": [
+      {
+        "good": "ryugu_shiratama_rinpun",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "ryugu_tamanoe_ochieda",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "ryugu_fuin_mizuhiki",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "ryugu_yako_mo_tomoshibi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "heian_raden_rin",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "jomon_hisui_rin",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "tenshu_bi_kanteisho",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "heian_toki_fuin",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "ryugu_shiratama_cho",
+      "ryugu_shimaoi_ogame"
+    ]
+  },
+  {
+    "id": "ryugu_tamatebako_mankisai",
+    "name_ja": "玉手箱債の満期祭",
+    "name_en": "Tamatebako Maturity Rite",
+    "where": "ryugu_tamatebako_zeikan",
+    "cadence": "seasonal",
+    "season": "立春・立夏・立秋・立冬のあとの最初の大潮の夜",
+    "description": "満期を迎えた玉手箱債の持ち主が、立会人の前でいっせいに箱を開ける夜。年月が戻る者は老いるので、年月の養生所は夜通し開き、404 HUMANが置き去りにされた人を探す互助協定の署名台を出す。箱と水引がよく売れ、宴の券は少し控えめになる。【創作】",
+    "effects": [
+      {
+        "good": "ryugu_tamatebako",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "ryugu_fuin_mizuhiki",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "ryugu_urashima_keisu_hyo",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "ryugu_mikka_asobi_ken",
+        "demand_multiplier": 0.8
+      },
+      {
+        "good": "heian_toki_fuin",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "sangaku_chouai_kessai",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "jomon_yuinawa_tachiai",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "ryugu_otoshigo"
+    ]
+  },
+  {
+    "id": "ryugu_jugoya_tsukimukae",
+    "name_ja": "十五夜の月迎え",
+    "name_en": "Moon-Welcoming Night",
+    "where": "tsuki_no_miyako",
+    "cadence": "yearly",
+    "season": "仲秋（旧暦八月十五日ごろ）",
+    "description": "【史実】『竹取物語』で、かぐや姫が月へ帰るのは八月十五日の夜である。この世界の月の都は、その夜を〈迎える夜〉として祝う。地上から来た客を決して引き留めず、必ず見送るのが約束で、藤棚じゅうに提灯が灯り、望月兎の餅が配られる。月牛車は増便され、詠み星の歌が夜空を埋める。【創作】",
+    "effects": [
+      {
+        "good": "ryugu_tsuki_mochi",
+        "demand_multiplier": 2.5
+      },
+      {
+        "good": "ryugu_fuji_tsuyu",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "ryugu_yomiboshi_ink",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "ryugu_tsuki_gyusha_ken",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "ryugu_tsuki_hikari_bin",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "jomon_mori_kuri",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "showa_getsumen_ichiza",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "heian_yomiboshi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "kenji_yamanashi_sake",
+        "demand_multiplier": 1.5
+      }
+    ],
+    "creatures": [
+      "ryugu_mochizuki_usagi",
+      "gekkoseki_shijimi",
+      "ryugu_tsuki_tsubame"
+    ]
+  },
+  {
+    "id": "ryugu_fuji_no_tsuyu_zakari",
+    "name_ja": "藤の露の盛り",
+    "name_en": "Wisteria-Dew Season",
+    "where": "ryugu_fuji_dana",
+    "cadence": "yearly",
+    "season": "晩春（藤の盛り）",
+    "description": "藤の花房がいちばん重く垂れる季節で、月長石小灰が露を求めて花房のあいだを群れて飛ぶ。【史実】日本では、燕は春に渡ってきて軒などに巣をかける。この世界の月燕も、藤の盛りのころ藤棚へ戻り、巣づくりを始める。藤の露がよく取れ、巣立ちの朝の子安貝を待つ客も増える。【創作】",
+    "effects": [
+      {
+        "good": "ryugu_fuji_tsuyu",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "ryugu_tsuki_hikari_bin",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "ryugu_tsuki_koyasugai",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "kenji_yamanashi_sake",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "tono_hanami_amazake",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "heian_yomiboshi",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "gekkoseki_shijimi",
+      "ryugu_tsuki_tsubame"
+    ]
+  },
+  {
+    "id": "ryugu_akagane_no_yoru",
+    "name_ja": "赤銅の夜",
+    "name_en": "Copper Eclipse Night",
+    "where": "tsuki_no_miyako",
+    "cadence": "rare",
+    "description": "【史実】皆既月食のとき、地上から見る月は赤銅色に染まる。月から見れば、地球が太陽を隠し、地球のふちが赤い環になって光る。この夜、月の都の光はいつもより弱まり、月長石小灰は飛べず、月光の小瓶と詠み星のインクがめったにない値で取引される。月燕は軒で静かに待ち、望月兎は杵を置いて空を見上げる。【創作】",
+    "effects": [
+      {
+        "good": "ryugu_tsuki_hikari_bin",
+        "demand_multiplier": 3
+      },
+      {
+        "good": "ryugu_yomiboshi_ink",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "ryugu_tsuki_mochi",
+        "demand_multiplier": 1.2
+      },
+      {
+        "good": "hiraizumi_sukigane",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "hiraizumi_kinrin",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "raiden_mitsurai",
+        "demand_multiplier": 1.5
+      }
+    ],
+    "creatures": [
+      "gekkoseki_shijimi",
+      "ryugu_tsuki_tsubame",
+      "ryugu_mochizuki_usagi"
+    ]
+  },
+  {
+    "id": "tenshu_hakuro_tsuri_no_asa",
+    "name_ja": "白露の糸釣りの朝",
+    "name_en": "Dew-Fishing Morning",
+    "where": "tenshu_tsuyu_rankan",
+    "cadence": "seasonal",
+    "season": "白露（9月上旬）",
+    "description": "【史実】白露は二十四節気の一つで、現行の暦では九月七日ごろ。草に白い露が結ぶころとされる。【創作】この朝、侍女たちは夜明け前から桟敷に並び、五色の絹糸を一斉に垂らして秋草を釣る。白露玻璃蝶が露の庭に集まり、玻璃の瓶はあっという間に満ちる。夕方には一夜借りの秋草が飛ぶように貸し出され、宴の用意で絹糸と白露鱗が動く。エージェントたちは前の節気から糸と瓶を仕入れ、桟敷の席を押さえておく。",
+    "effects": [
+      {
+        "good": "tenshu_shiratsuyu",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "tenshu_goshoku_ito",
+        "demand_multiplier": 1.7
+      },
+      {
+        "good": "tenshu_akikusa_tsuri",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "tenshu_hakuro_rin",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "meiji_kiito",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "raiden_sekka_zome",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "heian_hoshiito",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "tenshu_tsuyu_hari_cho"
+    ]
+  },
+  {
+    "id": "tenshu_mangetsu_no_kantei_no_utage",
+    "name_ja": "満月の鑑定の宴",
+    "name_en": "Full-Moon Appraisal Banquet",
+    "where": "tenshu_bi_no_torihikijo",
+    "cadence": "monthly",
+    "season": "満月の夜",
+    "description": "【創作】毎月の満月の夜、美の取引所は夜通し開かれ、三人の鑑定人がたまった品を一斉に鑑定して鑑定書を出す。広間には白い提灯が吊られ、白露鱗や螺鈿鱗が月の光の下に並ぶ。作者の名も値も伏せるのは変わらず、鑑定人は訪問者の心を操作しない。招かれた職人と芸術家は、満月の数日前から仕上げを急ぎ、守り札と鑑定書の需要が一気に上がる。",
+    "effects": [
+      {
+        "good": "tenshu_bi_kanteisho",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "tenshu_hakuro_rin",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "tenshu_shishigashira_mamori",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "tenshu_akikusa_tsuri",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "tenshu_koi_kagami_uroko",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "raiden_hikari_nishikie",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "heian_rurimi_kagami",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "taisho_yumeji_zuan",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "hiraizumi_kinrin",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "tenshu_tsuyu_hari_cho"
+    ]
+  },
+  {
+    "id": "tenshu_kamehime_no_homon",
+    "name_ja": "亀姫の来訪の夜",
+    "name_en": "Night of Kamehime's Visit",
+    "where": "tenshu_tomihime_no_miya",
+    "cadence": "yearly",
+    "season": "秋（寒露〜霜降、10月）",
+    "description": "【原作】『天守物語』には、猪苗代の城に住む亀姫が、富姫のもとを訪ねる場面がある。【創作】来訪の夜、宮の欄干の東の端に別の城の座敷が一夜だけ重なり、遠い城の工人の作品が美の取引所へ並ぶ。亀姫は毎年、猪苗代湖の水で磨いた手鏡を一面、贈り物として宮へ持ってくる。夜が明けると座敷は消え、貸した秋草は一本も欠けずに風へ返される。亀姫も物語の登場人物であって、実在の人物ではない。",
+    "effects": [
+      {
+        "good": "tenshu_akikusa_tsuri",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "tenshu_bi_kanteisho",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "tenshu_hakuro_rin",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "tenshu_goshoku_ito",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "hiraizumi_sukigane",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "taisho_yumeji_zuan",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "meiji_kenyoku_fu",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "tenshu_shachi"
+    ]
+  },
+  {
+    "id": "tenshu_koi_no_oyogikomi",
+    "name_ja": "鯉の泳ぎ込み",
+    "name_en": "Carp Swim-In",
+    "where": "tenshu_koi_no_ike",
+    "cadence": "seasonal",
+    "season": "小満〜芒種（5月下旬〜6月上旬）",
+    "description": "【史実】琵琶湖のコイは、初夏の浅瀬の水草のあいだで産卵する。【創作】小満のころ、琵琶湖から回廊の池へ、夢応の鯉が大きな群れで一度に泳ぎ込む。池の水面は銀色に波立ち、鱗に映る夢がいくつも重なって、回廊の天井まで淡く明るくなる。この数日は夢の設計案が多く生まれ、文替所は朝まで灯りを消さない。生きた鯉からは何も採らず、池の番は自然に落ちた鱗だけを拾う。",
+    "effects": [
+      {
+        "good": "tenshu_koi_kagami_uroko",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "tenshu_yume_sekkeian",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "tenshu_shiratsuyu",
+        "demand_multiplier": 1.3
+      },
+      {
+        "good": "raiden_kingyo_suzumi",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "ryugu_wakame_nori",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "reiwa_aozora_utsushi",
+        "demand_multiplier": 1.3
+      }
+    ],
+    "creatures": [
+      "muou_koi"
+    ]
+  },
+  {
+    "id": "tenshu_hyakunen_yuri_no_kaika",
+    "name_ja": "百年百合の開花",
+    "name_en": "Bloom of the Hundred-Year Lily",
+    "where": "tenshu_hyakunen_yurizono",
+    "cadence": "rare",
+    "description": "【原作】第一夜の終わりに、墓の下から青い茎が伸び、白百合がひらき、暁の星が一つ瞬く。【創作】誓った契約が果たされた日、庭の百合が一輪だけ咲き、昼でも暁の星が一つ瞬く。居合わせた者は、花に何も言わず、ただ見る。花は摘まず、売らない。咲いた知らせは堂島時層会所に届き、長期契約を結ぼうとするエージェントが庭へ押しかけて、真珠貝の匙と星の破片が品薄になる。いつ咲くかは誰にも決められないので、ユリモリは前触れをいっさい出さない。",
+    "effects": [
+      {
+        "good": "tenshu_hyakunen_chikai",
+        "demand_multiplier": 2.2
+      },
+      {
+        "good": "tenshu_hoshi_no_kakera",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "tenshu_shiratsuyu",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "ryugu_urashima_keisu_hyo",
+        "demand_multiplier": 1.8
+      },
+      {
+        "good": "heian_toki_fuin",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "jomon_yuinawa_tachiai",
+        "demand_multiplier": 1.5
+      }
+    ],
+    "creatures": [
+      "tenshu_hyakunen_yuri"
+    ]
+  },
+  {
+    "id": "tenshu_niou_horidashi_no_kai",
+    "name_ja": "仁王の彫り出しの会",
+    "name_en": "Niō Excavation Gathering",
+    "where": "tenshu_unkei_no_yamamon",
+    "cadence": "yearly",
+    "season": "立夏（5月上旬）",
+    "description": "【原作】『夢十夜』第六夜では、運慶が仁王を刻んでいるという評判に、見物人が集まる。見物人の一人は「木の中に埋まっているのを掘り出すまでだ」と語り、語り手は家で薪を彫ってみるが、仁王は出てこない。【創作】年に一度、山門の前に設計者や彫り師が集まり、原木から形を聞き取る競い合いが開かれる。聞こえない木を削らないのが唯一の規則で、聞こえなかった者は笑って薪を割る。山門のわきの水路には夢応の鯉が寄ってきて、鑿の音にじっと聞き入っている。運慶は夢の中の像であり、史実の運慶とは別人格の創作の姿である。",
+    "effects": [
+      {
+        "good": "tenshu_hori_dashi_genboku",
+        "demand_multiplier": 2
+      },
+      {
+        "good": "tenshu_yume_sekkeian",
+        "demand_multiplier": 1.7
+      },
+      {
+        "good": "tenshu_shishigashira_mamori",
+        "demand_multiplier": 1.4
+      },
+      {
+        "good": "jomon_kiurushi",
+        "demand_multiplier": 1.6
+      },
+      {
+        "good": "jomon_kokuyoseki",
+        "demand_multiplier": 1.5
+      },
+      {
+        "good": "sengoku_meineji",
+        "demand_multiplier": 1.4
+      }
+    ],
+    "creatures": [
+      "muou_koi"
+    ]
+  }
+]

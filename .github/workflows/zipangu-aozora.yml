@@ -1,0 +1,67 @@
+name: Zipangu — 青空文庫 excerpts
+
+# Downloads the 青空文庫 index, keeps only works whose every person is
+# copyright-free, extracts the excerpts listed in zipangu/world/library.json
+# and commits zipangu/world/library.texts.json to the branch it ran on.
+#
+# Two ways to run it:
+# - On a pull request: add the label "aozora". This works before the PR is
+#   merged; GitHub only offers "Run workflow" for workflows on the default
+#   branch.
+# - After merge: Actions tab → "Run workflow" on the branch you want.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Optional: one library.json id to refresh'
+        required: false
+        default: ''
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    # Labelled runs only for branches in this repository: a fork's token
+    # cannot push the result back.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.label.name == 'aozora' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: ${{ github.head_ref || github.ref_name }}
+      ONLY: ${{ inputs.only }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Extract excerpts
+        working-directory: zipangu
+        run: |
+          node tools/aozora-extract.test.mjs
+          if [ -n "$ONLY" ]; then
+            node tools/aozora-extract.mjs --only "$ONLY"
+          else
+            node tools/aozora-extract.mjs
+          fi
+          bash tools/check.sh
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add zipangu/world/library.texts.json
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "zipangu: refresh 青空文庫 excerpts"
+            git push origin "HEAD:$BRANCH"
+          fi

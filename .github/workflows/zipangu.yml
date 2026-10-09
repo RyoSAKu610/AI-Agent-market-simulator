@@ -1,0 +1,24 @@
+name: Zipangu checks
+
+on:
+  pull_request:
+    paths:
+      - 'zipangu/**'
+      - '.github/workflows/zipangu*.yml'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: zipangu
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run checks
+        run: bash tools/check.sh

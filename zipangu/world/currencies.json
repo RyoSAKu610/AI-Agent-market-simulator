@@ -1,0 +1,102 @@
+[
+  {
+    "id": "koku",
+    "name_ja": "刻（こく）",
+    "name_en": "KOKU (Time)",
+    "issuer": "kokurin_hiroba",
+    "backing": "不定時法の「一刻の働き」。万世時計守ZEROが発行し、漏刻亀が公証、刻斑蝶が検定する",
+    "to_base": 1,
+    "base": true,
+    "description": "全時片の基軸・価格表示単位。夏の昼の一刻は長く冬は短いため、価値が季節で揺れる。銀河鉄道の運賃、時差関税、時層間の利子はこれで払う。ステープルは1〜10刻、希少な生き物由来の品は5000刻以下に収める。"
+  },
+  {
+    "id": "shirin",
+    "name_ja": "翅鱗（しりん）",
+    "name_en": "SHIRIN (Wing-scale)",
+    "issuer": "ryugu_chomori_seichi",
+    "backing": "宝石蝶が自然に落とした鱗（落鱗）と翅。蝶守座が鑑定し刻印する",
+    "to_base": 120,
+    "base": false,
+    "description": "構造色の等級（翡翠鱗・螺鈿鱗・金鱗・虹鱗）をもつ通貨。束ねた鱗粉手形は蝶の個体数に連動し、乱獲すれば暴落する。生きた蝶から採った死鱗は流通禁止。1翅鱗は約120刻で、各時代の鱗の品の売買と蝶の渡りの先読みに使う。"
+  },
+  {
+    "id": "kohaku",
+    "name_ja": "光箔（こうはく）",
+    "name_en": "KOHAKU (Light-foil)",
+    "issuer": "hiraizumi_hikaridou",
+    "backing": "透金の札の中に蓄えた光の量（光量本位）。光堂両替所が鑑定する",
+    "to_base": 60,
+    "base": false,
+    "description": "金の重さでなく蓄光量を裏付けとする高額で長持ちの札。一節気（約15日）動かさないと光が抜けて目減りするため、富は巡らせて使う。1光箔は約60刻で、戦国の精密部品や昭和の万博枠など高額取引に用いる。"
+  },
+  {
+    "id": "hotarusen",
+    "name_ja": "蛍銭（ほたるせん）",
+    "name_en": "HOTARUSEN (Firefly-coin)",
+    "issuer": "raiden_gennai_nagaya",
+    "backing": "雷蛍の光を蓄えた雷瓶のエネルギー量。江戸・雷蓄座が管理する",
+    "to_base": 0.5,
+    "base": false,
+    "description": "日ごとに暗くなる日用のエネルギー通貨。貯め込めず、使って巡らせるしかない。1蛍銭は約0.5刻で、満ち雷・乾電池・金魚涼みなど安い日用品の決済に向く。雷蛍を獲りすぎるとインフレになる。"
+  },
+  {
+    "id": "en",
+    "name_ja": "縁（えん）／縄目（なわめ）",
+    "name_en": "EN (Bond / Knot)",
+    "issuer": "jomon_yuinawa",
+    "backing": "結縄台帳に刻まれた誠実な取引の結び目の数。買う・盗む・譲ることはできない",
+    "to_base": 1,
+    "base": false,
+    "description": "譲渡不能の信頼通貨。八つの霊玉の光り方で評判を示し、大きな契約の可否を決める。to_baseは格付け評価用の名目値で、決済には使えない。"
+  },
+  {
+    "id": "sangaku_tegata",
+    "name_ja": "算額手形（さんがくてがた）",
+    "name_en": "Sangaku Tegata (Math-tablet note)",
+    "issuer": "sangaku_kaito_no_mori",
+    "backing": "公共の難問を解いて奉納した証明。瑠璃算蝶の模様が改竄防止の印",
+    "to_base": 25,
+    "base": false,
+    "description": "能力と名誉の手形。座への加入や大工事の入札資格になる。人限定の算額の枠にAIは手を出せない。to_baseは入札の目安となる名目値。"
+  },
+  {
+    "id": "komekitte",
+    "name_ja": "米切手（こめきって）",
+    "name_en": "Kome-Kitte (Rice warrant)",
+    "issuer": "reiwa_dojima_kaisho",
+    "backing": "各時代の米の作柄と天気座の予報に連動する倉荷の先物証券",
+    "to_base": 12,
+    "base": false,
+    "description": "大きな契約の担保に使う先物証券。堂島時層会所が明け六つと暮れ六つに清算する。作柄と天気の予報で値が動くので、裁定の格好の種になる。"
+  },
+  {
+    "id": "tamatebako_sai",
+    "name_ja": "玉手箱債（たまてばこさい）",
+    "name_en": "Tamatebako Bond",
+    "issuer": "ryugu_jikan_ginko",
+    "backing": "竜宮時間銀行（頭取：乙姫）の時差預かり。三日預けると地上で数十年分の利息が戻る約定（伝承の比率とは別）",
+    "to_base": 300,
+    "base": false,
+    "description": "竜宮で寝かせる時差債。開けた時片の時間で利息が戻るが、開けた者は老いる（疲労と評判の鮮度）。時間差の裁定に使うが、不死の薬は売買しない。"
+  },
+  {
+    "id": "mon",
+    "name_ja": "文（もん）",
+    "name_en": "MON (Story coin)",
+    "issuer": "reiwa_aozora_shoko",
+    "backing": "没後の約束を満たした公有の物語を読み、演じ、届けた実績",
+    "to_base": 2,
+    "base": false,
+    "description": "物語の通貨。物語の住人に会う出会い権や、夢十夜回廊から設計案を持ち帰る支払いに使う。物語は時差関税が無関税なので、文は全時片で通用する。"
+  },
+  {
+    "id": "yen_data",
+    "name_ja": "¥とDATA",
+    "name_en": "Yen and DATA",
+    "issuer": "reiwa_neon_kyushigai",
+    "backing": "旧NEON MYTHOSの街の通貨と資源。ネオン旧市街の地域通貨",
+    "to_base": 0.05,
+    "base": false,
+    "description": "¥はネオン旧市街の決済に使い、DATAは算額や翻案の素材として他の時代へ輸出される。既存のセーブデータの値はこの扱いで読み替える。to_baseは¥20＝1刻。"
+  }
+]
