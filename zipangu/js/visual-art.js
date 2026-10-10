@@ -1,4 +1,5 @@
 // Additive concept art: the existing map sprites and procedural art remain available.
+import { LOCAL_EFFECTS, paintCreatureEffect } from './creature-effects.js';
 import { createDial } from './clock-dial.js';
 import { h, nameOf, placeShort } from './util.js';
 import { visualOf, visualSource, visualPoseSource, visualCompanionSource, visualKey } from './visual-manifest.js';
@@ -14,7 +15,7 @@ export function visualArt(W, v, { size = 300, eco = null, controls = false } = {
     const img = cls => h('img', { src: visualSource(v), alt: cls ? '' : title + '・設定画', loading: 'lazy', decoding: 'async', class: cls || '' });
     const butterfly = v.motion === 'flutter' || v.motion === 'glide';
     const rig = h('div', { class: 'visual-rig' }, butterfly
-        ? [img('wing wing-left'), img('wing wing-right'), img('wing-body')]
+        ? [h('div', { class: 'wing wing-left' }, img()), h('div', { class: 'wing wing-right' }, img()), img('wing-body')]
         : img());
     if (butterfly) rig.setAttribute('aria-label', title + '・設定画');
     if (butterfly) rig.setAttribute('role', 'img');
@@ -23,6 +24,13 @@ export function visualArt(W, v, { size = 300, eco = null, controls = false } = {
     const pose = v.poses ? h('div', { class: 'visual-pose', style: { width: poseWidth + '%', height: poseHeight + '%', inset: 'auto', left: (100 - poseWidth) / 2 + '%', top: (100 - poseHeight) / 2 + '%' }, role: 'img', 'aria-label': title + '・行動設定画' }, h('img', { src: visualPoseSource(v), alt: '', loading: 'lazy', decoding: 'async' })) : null;
     const portrait = pose ? rig.querySelector('img') : null;
     if (pose) { rig.append(pose); portrait.hidden = true; }
+    let effectTime = performance.now() / 1000, effectRegion = 'east';
+    const effectLayers = [];
+    if (LOCAL_EFFECTS.has(v.id)) {
+        for (const target of butterfly ? [...rig.querySelectorAll('.wing')] : [rig]) {
+            const layer = h('canvas', { class: 'visual-local-effect', width: 512, height: 512, 'aria-hidden': 'true' }); target.append(layer); effectLayers.push(layer);
+        }
+    }
     let showPortrait = false;
     const reaction = h('span', { class: 'visual-reaction', 'aria-live': 'off', hidden: v.type !== 'agent' });
     const surface = h('div', { class: 'visual-surface', style: { '--visual-size': size + 'px' }, dataset: { motion: v.motion, stage: 'idle' } }, rig, reaction);
@@ -42,10 +50,14 @@ export function visualArt(W, v, { size = 300, eco = null, controls = false } = {
     } }, paused ? '動きを再開' : '動きを止める');
     surface.classList.toggle('is-still', paused);
     out.classList.toggle('is-still', paused);
+    let effectFrame = 0, effectStamp = 0;
     let days = 0, demoPlaying = false, demoLast = 0, demoElapsed = 0;
     let daySlider = null;
     const ageNote = h('output', { class: 'visual-age-note' });
     if (controls && !['era', 'still'].includes(v.motion)) out.append(h('div', { class: 'visual-controls' }, stop), h('p', { class: 'visual-stop-note' }, '絵の動きだけを止めます。街の時間と商いは続きます。'));
+    if (controls && v.id === 'rai_botaru') {
+        out.append(h('label', { class: 'visual-region' }, '群れの拍（同じ地域は共通拍）', h('select', { 'aria-label': '雷蛍の地域', onchange: e => { effectRegion = e.target.value; update(); } }, h('option', { value: 'east' }, '東・両国：4秒'), h('option', { value: 'west' }, '西・国友：2秒'))));
+    }
     if (controls && pose) {
         const toggle = h('button', { type: 'button', class: 'btn', 'aria-pressed': 'false', onclick: () => {
             showPortrait = !showPortrait; pose.hidden = showPortrait; portrait.hidden = !showPortrait;
@@ -67,6 +79,23 @@ export function visualArt(W, v, { size = 300, eco = null, controls = false } = {
         out.append(h('div', { class: 'visual-layers', 'aria-label': '十の時片の入り口' }, W.eras.map((era, i) => h('a', { href: '#/place/' + era.id, style: { '--layer': i, '--layer-color': era.aesthetic.palette[1] } }, placeShort(era)))), timeNote);
     }
     function update() {
+        if (effectLayers.length && !effectFrame) effectFrame = requestAnimationFrame(function tick(now) {
+            effectFrame = 0;
+            if (!out.isConnected) return;
+            const rect = out.getBoundingClientRect();
+            if (now-effectStamp > 100 && rect.bottom > 0 && rect.top < innerHeight) { effectStamp = now; update(); }
+            if (!effectFrame) effectFrame=requestAnimationFrame(tick);
+        });
+        const frozen = paused || !!out.closest('.is-still');
+        if (!frozen) effectTime = performance.now() / 1000;
+        const source = rig.querySelector('img');
+        if (source && source.complete && source.naturalWidth) for (const layer of effectLayers) {
+            const gc = layer.getContext('2d'); gc.clearRect(0, 0, 512, 512);
+            const ratio = source.naturalWidth / source.naturalHeight, w = Math.min(512, 512 * ratio), h = Math.min(512, 512 / ratio);
+            if (!frozen || !layer._effectClock) layer._effectClock = eco && { ...eco.clock };
+            paintCreatureEffect(gc, v.id, source, { x: (512-w)/2, y: (512-h)/2, w, h, clock: layer._effectClock, t: effectTime, region: effectRegion });
+            layer.dataset.seed = String(Math.floor(effectTime/1.9)); layer.dataset.koku = String(layer._effectClock?.koku ?? 9); layer.dataset.region=effectRegion; if (v.id === 'rai_botaru') layer.dataset.period=effectRegion==='west'?'2':'4';
+        }
         if (demoPlaying) {
             const now = performance.now();
             if (!paused) { demoElapsed += Math.min(2, (now - demoLast) / 1000); days = Math.min(30, Math.floor(demoElapsed)); if (daySlider) daySlider.value = days; }

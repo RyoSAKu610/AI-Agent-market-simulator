@@ -1,3 +1,5 @@
+import { visualArt } from './visual-art.js';
+import { visualOf } from './visual-manifest.js';
 import { visualFeature } from './visual-art.js';
 // #/ — the kaleidoscope map with the HUD laid over it.
 
@@ -46,6 +48,12 @@ export function homeView(ctx) {
         h('button', { type: 'button', 'aria-label': '拡大', onclick: () => map && map.zoomBy(1.4) }, '＋'),
         h('button', { type: 'button', 'aria-label': '縮小', onclick: () => map && map.zoomBy(1 / 1.4) }, '－'),
         h('button', { type: 'button', 'aria-label': '中心へ戻る', onclick: () => { if (map) map.reset(); select(null); } }, '◎'));
+    let pausedArt = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const artStop = h('button', { type: 'button', class: 'map-art-stop', 'aria-pressed': String(pausedArt), onclick: () => {
+        pausedArt = !pausedArt; if (map) map.pauseArtwork(pausedArt);
+        artStop.textContent = pausedArt ? '絵を動かす' : '絵を止める'; artStop.setAttribute('aria-pressed', String(pausedArt));
+    } }, pausedArt ? '絵を動かす' : '絵を止める');
+    zoomBox.append(artStop);
 
     const legend = h('details', { class: 'legend' },
         h('summary', null, '凡例'),
@@ -104,6 +112,7 @@ export function homeView(ctx) {
             closeButton(),
             h('div', { class: 'info-kicker' }, isEra ? `時片 ${p.real_period || ''}` : `異界 ${p.source ? '『' + p.source.work + '』' : ''}`, swatches(pal)),
             h('h2', { class: 'info-title' }, placeShort(p)),
+            visualOf(isEra ? 'era' : 'realm', p.id) ? visualArt(W, visualOf(isEra ? 'era' : 'realm', p.id), { size: 300 }) : null,
             placeSub(p) ? h('p', { class: 'info-sub' }, placeSub(p)) : null,
             h('p', { class: 'info-text' }, clip(p.summary || firstSentence(p.lore), 120)),
             h('p', { class: 'info-chips' },
@@ -193,4 +202,3 @@ export function homeView(ctx) {
         hits: () => (map ? map.getHits() : [])
     };
 }
-

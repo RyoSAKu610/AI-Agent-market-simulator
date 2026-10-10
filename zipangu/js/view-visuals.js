@@ -37,7 +37,7 @@ export function visualsView(ctx) {
     return { el: h('div', { class: 'page visual-page' },
         h('header', { class: 'page-head' }, h('p', { class: 'kicker' }, '万華京 ・ VISUAL ATELIER'), h('h1', null, '動く絵の制作帖'), h('p', { class: 'lead' }, '時間の骨格から蝶、幻想生物、お金、住人へ。形も動きも、その子の暮らしから。'),
             h('p', { class: 'visual-progress' }, `${ready.length} / ${total} 主題の設定画を制作済`), h('p', { class: 'visual-pose-progress' }, `住人の行動画：${ready.filter(v => v.type === 'agent' && v.poses).length} / ${W.agents.length} 人 ・ 待機／思案／移動／取引の4姿勢`)),
-        gallery, h('details', { class: 'visual-backlog' }, h('summary', null, 'これからの制作順と全対象を見る'), h('p', { class: 'notice' }, '未制作の生き物と住人は、従来の動く描画で引き続き会えます。設定画は追加作品。正本にない券面・建築の細部は創作意匠です。'), sections)), title: '動く絵の制作帖', update() { painters.forEach(paint => paint()); } };
+        gallery, h('details', { class: 'visual-backlog' }, h('summary', null, '全対象と制作順を見る'), h('p', { class: 'notice' }, '全128主題の設定画を採用済み。従来の描画も比較鑑賞できます。正本にない券面・建築の細部は創作意匠です。'), sections)), title: '動く絵の制作帖', update() { painters.forEach(paint => paint()); } };
 }
 
 export function visualView(ctx, key) {

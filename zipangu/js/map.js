@@ -6,6 +6,9 @@
 import { drawCreature } from './creature-art.js';
 import { VIA } from './sim.js';
 import { agentSprite, SPRITE_PAD } from './agent-art.js';
+import { creaturePresence } from './creature-presence.js';
+import { visualOf } from './visual-manifest.js';
+import { drawVisualCreature, drawVisualAgent } from './visual-canvas.js';
 import {
     hash01, clamp, lerp, smooth, rgba, mixHex, accentOf, deepOf, lightOf,
     placeShort, placeSub, districtShort, agentShort, RARITY_RANK
@@ -207,6 +210,12 @@ export function buildScene(W) {
             scale: clamp((c.visual && c.visual.scale) || 1, 0.5, 3)
         });
     }
+    const firefly = critters.find(k => k.c.id === 'rai_botaru');
+    if (firefly) {
+        const allHomes = firefly.c.home.map(id => districtById.get(id)).filter(Boolean);
+        firefly.homes = [allHomes[0]];
+        for (const home of allHomes.slice(1)) critters.push({ ...firefly, homes: [home], ph: hash01(home.id, 'firefly') * TAU });
+    }
     critters.sort((a, b) => b.prio - a.prio);
 
     // The jewel butterfly that never leaves the hub: the most iridescent one.
@@ -234,6 +243,13 @@ export function createMap(canvas, W, economy, opts = {}) {
     let reveal = null;       // a selection that should be panned into the free part of the map
     const smoothAgents = new Map();
     const stats = { frameMs: 0, fps: 0, creatures: 0, frames: 0 };
+    let artPaused = reduce.matches, pauseTime = 0, frozenAgents = null, frozenClock = null;
+    function pauseArtwork(paused) {
+        frozenClock = paused ? { ...economy.clock } : null;
+        artPaused = paused; pauseTime = performance.now() / 1000;
+        frozenAgents = paused ? new Map([...economy.agents].map(([id, a]) => [id, { ...a, trip: a.trip ? { ...a.trip } : null }])) : null;
+    }
+    if (artPaused) pauseArtwork(true);
     const pointers = new Map();
     let gesture = null, tapStart = null, lastTap = { t: 0, x: 0, y: 0 };
 
@@ -1014,6 +1030,7 @@ export function createMap(canvas, W, economy, opts = {}) {
         const limit = mobile() ? 12 : 26;
         const shown = [];
         for (const k of scene.critters) {
+            if (!creaturePresence(k.c.id, { clock: frozenClock || economy.clock, activeEvents: economy.activeEvents, time: economy.time }).present) continue;
             const alwaysOn = scene.jewel === k;
             const alpha = alwaysOn ? 1 : critterAlpha(k, ds, t);
             if (alpha < 0.12) continue;
@@ -1031,11 +1048,12 @@ export function createMap(canvas, W, economy, opts = {}) {
         shown.sort((a, b) => a.y - b.y);
         const zoomK = 0.75 + 0.25 * Math.sqrt(V.zoom);
         for (const s of shown) {
-            const size = clamp((22 + 9 * s.k.scale) * zoomK * (mobile() ? 0.9 : 1.05), 26, 120);
+            const art = visualOf('creature', s.k.c.id);
+            const size = clamp((22 + 9 * s.k.scale) * zoomK * (mobile() ? 0.9 : 1.05) * (art ? 1.35 : 1), 26, 140);
             ctx.save();
             ctx.translate(s.x, s.y);
             ctx.globalAlpha = s.alpha;
-            drawCreature(ctx, s.k.c, t, size);
+            if (!art || !drawVisualCreature(ctx, art, t, size, !artPaused && !reduce.matches, { clock: frozenClock || economy.clock, region: s.k.homes[0]?.id === 'raiden_kunitomo_nichirin' ? 'west' : 'east' })) drawCreature(ctx, s.k.c, t, size);
             ctx.restore();
             hits.push({ type: 'creature', id: s.k.c.id, x: s.x, y: s.y, r: Math.max(14, size * 0.38), pri: 1 });
             if (selected && selected.type === 'creature' && selected.id === s.k.c.id) ringAround(s.x, s.y, size * 0.45, '#fff4cf', t);
@@ -1082,7 +1100,7 @@ export function createMap(canvas, W, economy, opts = {}) {
 
     function drawAgents(t, dt, ds) {
         const list = [];
-        for (const a of economy.agents.values()) list.push({ a, s: agentState(a, dt) });
+        for (const a of (frozenAgents || economy.agents).values()) list.push({ a, s: agentState(a, artPaused ? 0 : dt) });
         const rank = { idle: 0, trade: 1, travel: 2, think: 3, react: 4 };
         list.sort((p, q) => (rank[p.a.stage] || 0) - (rank[q.a.stage] || 0));
         for (const { a, s } of list) {
@@ -1128,8 +1146,11 @@ export function createMap(canvas, W, economy, opts = {}) {
             if (isSel) ringAround(x, y, 12, '#fff4cf', t);
 
             // the neon-chibi face stands on the bead; the bead and rings above stay as they were
-            const fh = clamp(18 + Math.sqrt(V.zoom) * 5, 21, 34);
-            if (info.id) ctx.drawImage(agentSprite(W, info), x - fh / 2 - fh * SPRITE_PAD / 100, y - 7 - fh - fh * SPRITE_PAD / 100, fh * (1 + SPRITE_PAD * 0.02), fh * (1 + SPRITE_PAD * 0.02));
+            const art = visualOf('agent', a.id);
+            const fh = art ? (isSel || isHover ? clamp(60 + V.zoom * 9, 70, 110) : clamp(34 + V.zoom * 8, 40, 86)) : clamp(18 + Math.sqrt(V.zoom) * 5, 21, 34);
+            const painted = art && drawVisualAgent(ctx, art, a.stage, x, y - 7, fh);
+            if (info.id && !painted) ctx.drawImage(agentSprite(W, info), x - fh / 2 - fh * SPRITE_PAD / 100, y - 7 - fh - fh * SPRITE_PAD / 100, fh * (1 + SPRITE_PAD * 0.02), fh * (1 + SPRITE_PAD * 0.02));
+            if (painted) hits.push({ type: 'agent', id: a.id, x, y: y - fh / 2, r: fh * .42, pri: isSel ? 5 : 4 });
             if (a.carrying && a.carrying.length) drawCargo(a, x + fh * 0.42, y - 8);
             const lift = info.id ? fh - 3 : 0;
 
@@ -1354,7 +1375,7 @@ export function createMap(canvas, W, economy, opts = {}) {
         const t0 = performance.now();
         const dt = Math.min(0.1, last ? (now - last) / 1000 : 0.016);
         last = now;
-        const tt = reduce.matches ? 0 : now / 1000;
+        const tt = artPaused ? pauseTime : reduce.matches ? 0 : now / 1000;
 
         // view: tween and inertia
         if (tween) {
@@ -1580,6 +1601,7 @@ export function createMap(canvas, W, economy, opts = {}) {
         getStats: () => ({ ...stats }),
         getHits: () => hits.filter(h => !h.poly).map(({ type, id, x, y }) => ({ type, id, x, y })),
         zoomBy(f) { setZoomAt(cw / 2, ch / 2, V.zoom * f); },
+        pauseArtwork,
         reset() { focusOn(scene.hub.x, scene.hub.y, 1); }
     };
 }

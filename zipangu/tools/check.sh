@@ -17,6 +17,8 @@ fi
 
 echo "› visual asset contracts"
 node tools/visuals.test.mjs
+node tools/history.test.mjs
+node tools/creature-presence.test.mjs
 
 echo "› explorer syntax"
 for f in js/*.js tools/*.mjs; do

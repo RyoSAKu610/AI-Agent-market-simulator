@@ -836,6 +836,368 @@
           1240
         ]
       }
+    },
+    {
+      "id": "hari_kingyo",
+      "name": "玻璃金魚（はりきんぎょ）",
+      "file": "assets/creatures/hari_kingyo-v2.png",
+      "status": "ready",
+      "canonical": {
+        "description": "体がまるごと透きとおったガラスでできた金魚。光にかざすと中の細い骨まで見え、鱗の一枚一枚に江戸切子の矢来や菊つなぎの文様が細かく刻まれている。ひれは吹きガラスのように薄く長く、ゆらりと振るたびに、ふちの切子の面が提灯の光を七色に割って、路地の土塀に小さな虹を散らす。湿った夏の夕方には水から上がり、軒先の高さを、まるで水の中にいるようにゆったり泳ぐ。泳いだ跡の空気はひんやりして、風鈴がひとりでに鳴る。",
+        "ecology": "【史実】金魚は1502年に堺へ伝わったとされ、江戸切子は1834年に加賀屋久兵衛が始めたとされる。【創作】玻璃金魚は夏の熱気と夕立の湿り気を食べて生き、湿り気の多い宵にだけ空を泳ぐ。昼は水鉢や川の淀みで眠る。自然に抜けたガラスの鱗は朝の水鉢の底できらりと光り、そのあとにはまた新しい鱗が生える。冬は井戸の底で薄氷のような姿になって越す。",
+        "behavior": {
+          "activity": "crepuscular",
+          "movement": "swim",
+          "social": "school"
+        },
+        "visual": {
+          "palette": [
+            "#e9f6ff",
+            "#ff8a5c",
+            "#9fd8ff",
+            "#ffd27a",
+            "#c25bd6"
+          ],
+          "iridescence": 0.8,
+          "glow": 0.35,
+          "pattern": "crystal",
+          "shape": "goldfish",
+          "scale": 1
+        }
+      },
+      "prompt": "Use case: stylized-concept. Museum-quality detailed Japanese fantasy natural-history painting for 万華京ジパング. Exquisitely fine ink and mineral-pigment rendering, individual fur/feather/paper/metal/glass material textures, subtle natural structural color. Restrained glow ONLY when canonical description says light, no oversaturated aura, no bloom/explosions/sparkle cloud. TRUE TRANSPARENT ALPHA cutout, centered entire silhouette with at least15% empty safe margins on ALL edges including ears/tail/wings/antennae/tools. Large square illustration, original detailed artwork not icon/logo/vector/pixel-art/chibi shortcut. No labels/text/watermark/catalogue price/net/pin/cage/hands/captive harvesting. Background wholly transparent, no backdrop/paper/table/scene/shadow. Intact living subject with biologically readable anatomy; only specified materials/props. Description/ecology take priority over generic visual.shape schema hints.\n\nCANONICAL species visual requirements: ONE intact freely swimming Glass Goldfish, three-quarter lateral portrait. Correct goldfish anatomy with deep curved body, small mouth, eyes, dorsal/pectoral/pelvic/anal fins and long graceful forked flowing tail. WHOLE BODY clear colorless glass; fine internal fish bones subtly visible through it. EVERY individual glass scale engraved with intricate Edo-kiriko yarai cross lattice and kiku-tsunagi chrysanthemum-link motifs. Thin long blown-glass fins; only cut FACET EDGES refract tiny restrained rainbow hues, glass remains mostly clear with pale icy blue reflections. Entire tail/fins/bones intact, not skeleton alone, no waterbowl, confinement, human, stand, water splash, ground. Show summer evening air-swimming as free posture, without setting.\n\nOriginal Japanese description (faithful identity): 体がまるごと透きとおったガラスでできた金魚。光にかざすと中の細い骨まで見え、鱗の一枚一枚に江戸切子の矢来や菊つなぎの文様が細かく刻まれている。ひれは吹きガラスのように薄く長く、ゆらりと振るたびに、ふちの切子の面が提灯の光を七色に割って、路地の土塀に小さな虹を散らす。湿った夏の夕方には水から上がり、軒先の高さを、まるで水の中にいるようにゆったり泳ぐ。泳いだ跡の空気はひんやりして、風鈴がひとりでに鳴る。\n\nBehavior: {\"activity\":\"crepuscular\",\"movement\":\"swim\",\"social\":\"school\"}. No species invention. Pose and lighting are art direction proposals only.",
+      "generatedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-aaf1f449-e571-49c9-acf0-bd5ab6311c11.png",
+      "editPrompt": "Preserve exact goldfish identity, clear glass body, every intricately engraved Edo-kiriko chrysanthemum-link and yarai-lattice scale, graceful long blown-glass fins and tiny rainbow edge reflections. Only two refinements: show a DELICATE FINE INTERNAL fish backbone and fine rib bones visibly through clear central body glass, subtle but readable, not protruding/removed scales/exposed skeleton. Fish remains intact transparent living glass with normal eye and mouth. Zoom out whole fish to 76% linear size centered to gain minimum12% empty clear transparent margins each side, entire dorsal/tail/fins. No changes to pose/scale patterns/material quality, no props/background. High-detail square canvas truealpha.",
+      "variantFile": "assets/creatures/hari_kingyo.png",
+      "adoptedGeneratedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-64c26627-3e9f-4cb7-ab9c-055ff9271703.png",
+      "selfVisualReview": "v2目視: 菊つなぎと矢来の切子刻文、透きとおるガラス胴の細骨、吹きガラスの長い鰭と局所虹色縁。全鰭と尾が切れず、鉢/手/捕獲なし。",
+      "motionRecommendation": "湿った夏の宵にゆっくり水平方向air-swim、小さなS字漂い。昼は空泳ぎを行わない。閉じ込める鉢表示を付けない。",
+      "proposal": "単体三四分の自由泳ぎ画角、反射と骨の見せ方は意匠提案。原典で指定された材質・刻文・骨・長鰭を保持。",
+      "pngValidation": {
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "bbox32": [
+          164,
+          183,
+          1159,
+          1160
+        ]
+      }
+    },
+    {
+      "id": "jinari_namazu",
+      "name": "地鳴鯰（じなりなまず）",
+      "file": "assets/creatures/jinari_namazu-v2.png",
+      "status": "ready",
+      "canonical": {
+        "description": "背を出すと苔むした小島に見えるほど大きな、墨色の鯰。ぬめった肌には鯰絵の版木のような太い輪郭線の皺が走り、腹は古い銅鏡のような鈍い金色をしている。四本の長いひげの先は蛍のような黄緑の点で、ふだんは眠たげにぼんやり瞬くだけだが、大きな揺れが近づくと、ひげ全体が根元から先へ雷光の青白さで光り、地下水を伝って井戸という井戸の水面を同時に震わせる。目は小さく、いつも笑っているように細い。動きはとてもゆっくりで、一度身をくねらせるのに四半刻かかる。",
+        "ecology": "【創作】全時代の地下水脈を巡り、地の小さな揺れを食べて電気に変える。大きな揺れの前には溜めた電気でひげを光らせて知らせ、揺れを少しずつ食べて和らげようとする。ふだんは京の地下水の溜まりや隅田川の深い淵で眠り、百年に何度かしか全身を見せない。何かを捕って食べることはなく、地の震えと、井戸に投げ入れられた願いの小銭の音だけで生きているという。",
+        "behavior": {
+          "activity": "always",
+          "movement": "swim",
+          "social": "solitary"
+        },
+        "visual": {
+          "palette": [
+            "#232633",
+            "#4b5a3c",
+            "#c9a45c",
+            "#b8e34f",
+            "#d9ecff"
+          ],
+          "iridescence": 0.25,
+          "glow": 0.4,
+          "pattern": "veins",
+          "shape": "koi",
+          "scale": 3
+        }
+      },
+      "prompt": "Use case: stylized-concept. Museum-quality detailed Japanese fantasy natural-history painting for 万華京ジパング. Exquisitely fine ink and mineral-pigment rendering, individual fur/feather/paper/metal/glass material textures, subtle natural structural color. Restrained glow ONLY when canonical description says light, no oversaturated aura, no bloom/explosions/sparkle cloud. TRUE TRANSPARENT ALPHA cutout, centered entire silhouette with at least15% empty safe margins on ALL edges including ears/tail/wings/antennae/tools. Large square illustration, original detailed artwork not icon/logo/vector/pixel-art/chibi shortcut. No labels/text/watermark/catalogue price/net/pin/cage/hands/captive harvesting. Background wholly transparent, no backdrop/paper/table/scene/shadow. Intact living subject with biologically readable anatomy; only specified materials/props. Description/ecology take priority over generic visual.shape schema hints.\n\nCANONICAL species visual requirements: ONE huge ancient ink-black CATFISH, calm smiling sleepy narrow SMALL eyes, broad flat catfish head and tapering tail, three-quarter lateral whole body. Smooth slimy UNSCALED skin with thick carved-woodblock-namazu-e contour wrinkles. Moss growing over broad back suggests a mossy little island, NOT a literal inhabited island or buildings/trees. Belly dull tarnished ancient copper mirror gold. EXACTLY FOUR LONG WHISKERS clearly individually traceable from muzzle, arranged two near and two far, curving separately fully inside canvas. ONLY each of FOUR whisker tips has a tiny soft yellow-green point like a firefly, calm no full-blue electrical flash. Whole fish, all fins/whiskers/tail with large margins. No literal earth crack, coins, disaster, scene or caught specimen.\n\nOriginal Japanese description (faithful identity): 背を出すと苔むした小島に見えるほど大きな、墨色の鯰。ぬめった肌には鯰絵の版木のような太い輪郭線の皺が走り、腹は古い銅鏡のような鈍い金色をしている。四本の長いひげの先は蛍のような黄緑の点で、ふだんは眠たげにぼんやり瞬くだけだが、大きな揺れが近づくと、ひげ全体が根元から先へ雷光の青白さで光り、地下水を伝って井戸という井戸の水面を同時に震わせる。目は小さく、いつも笑っているように細い。動きはとてもゆっくりで、一度身をくねらせるのに四半刻かかる。\n\nBehavior: {\"activity\":\"always\",\"movement\":\"swim\",\"social\":\"solitary\"}. No species invention. Pose and lighting are art direction proposals only.",
+      "generatedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-983af104-507a-46da-8269-2d44c608cdf4.png",
+      "editPrompt": "Edit the reference art with strict identity preservation: same ink-black smooth unscaled catfish, moss-covered back, woodblock contour wrinkles, dull copper-mirror belly, tiny sleepy smiling eyes, same pose and lighting. TWO required localized corrections only: (1) Precisely FOUR LONG WHISKERS total, EACH ending in one tiny yellow-green firefly point. Keep the four original illuminated long whiskers; REMOVE the two extra SHORT UNLIT dangling whiskers beneath its mouth (one left beneath lip, one central descending below chin). No replacement whiskers. All four remaining roots/tips individually traceable. (2) Reframe whole subject to roughly 70% previous linear size, centered with at least 12% fully transparent empty margins ALL edges, especially both left and right light tips and whole tail. Restore cut tips completely. Original square canvas/high detail/original material resolution retained. TRUE transparent alpha; no new props/background, do not alter fish body or add scales. Restrained tiny tip glow, no large halos.",
+      "variantFile": "assets/creatures/jinari_namazu.png",
+      "adoptedGeneratedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-829962f5-667d-4914-9892-9a27321ca959.png",
+      "selfVisualReview": "v2目視: 墨色の無鱗ぬめり肌に太い輪郭皺、苔背、鈍い銅鏡腹、小さい細笑い目。余計な短髭2本を除き、長髭4本と黄緑の先端4点が独立して読める。全尾と髭先が収まる。",
+      "motionRecommendation": "非常に遅いswim/小傾き、常態は黄緑の髭先だけ微明滅。四半刻かける大きな身のくねりを高速bounceにしない。創作内の予兆を実地震通知機能にしない。",
+      "proposal": "苔の密度、皺の具体配置と画角は意匠提案。地鳴を食べて和らげる存在であり、災害を起こす図や富を強奪する図にしない。",
+      "pngValidation": {
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "bbox32": [
+          140,
+          221,
+          1135,
+          1074
+        ]
+      }
+    },
+    {
+      "id": "raiden_nade_raiju",
+      "name": "撫で雷獣（なでらいじゅう）",
+      "file": "assets/creatures/raiden_nade_raiju-v2.png",
+      "status": "ready",
+      "canonical": {
+        "description": "子猫と鼬のあいだのような、ふっくらした小さな獣。毛は夕立の雲のような灰青色で、背中に一本だけ、稲妻の形に金色の毛筋が走る。尾は体と同じくらい長くふさふさしていて、撫でると毛先から青い小さな火花がぱちぱちとはぜ、くすぐったそうに喉を鳴らすたびに、近くの静電灯や雷瓶がぽうっと灯る。目は雷光のような薄い水色で、雷が近づくと瞳が星形に細くなる。歩いたあとの畳には小さな静電気の足跡が光って残り、すぐに消える。",
+        "ecology": "【創作】夏の雷雲とともに屋根の上へ降りてきて、雷雲が去ると次の雲に乗って移っていく渡りの獣。雷の匂いと、乾いた木綿の手ぬぐいと、人の手のひらの温かさが好き。食べるのは稲光のこぼれた空気と、ほんの少しの水だけ。人に撫でられると溜めた静電気が心地よく抜けるので、自分から子どもの膝に乗ってくる。冬の乾いた日には毛が倍にふくらむ。誰にも閉じこめることはできず、次の雷雲が来れば必ず空へ帰っていく。",
+        "behavior": {
+          "activity": "crepuscular",
+          "movement": "walk",
+          "social": "solitary"
+        },
+        "visual": {
+          "palette": [
+            "#7d8fb3",
+            "#c9d6ee",
+            "#f2c94c",
+            "#9fe3ff",
+            "#3b4a6b"
+          ],
+          "iridescence": 0.3,
+          "glow": 0.6,
+          "pattern": "stripes",
+          "shape": "cat",
+          "scale": 0.8
+        }
+      },
+      "prompt": "Use case: stylized-concept. Museum-quality detailed Japanese fantasy natural-history painting for 万華京ジパング. Exquisitely fine ink and mineral-pigment rendering, individual fur/feather/paper/metal/glass material textures, subtle natural structural color. Restrained glow ONLY when canonical description says light, no oversaturated aura, no bloom/explosions/sparkle cloud. TRUE TRANSPARENT ALPHA cutout, centered entire silhouette with at least15% empty safe margins on ALL edges including ears/tail/wings/antennae/tools. Large square illustration, original detailed artwork not icon/logo/vector/pixel-art/chibi shortcut. No labels/text/watermark/catalogue price/net/pin/cage/hands/captive harvesting. Background wholly transparent, no backdrop/paper/table/scene/shadow. Intact living subject with biologically readable anatomy; only specified materials/props. Description/ecology take priority over generic visual.shape schema hints.\n\nCANONICAL species visual requirements: ONE plump friendly little beast intermediate KITTEN and WEASEL, four short furry legs, a somewhat elongated mustelid body with softly feline muzzle. Cloud gray-blue exquisitely fine fur, pale water-blue eyes. EXACTLY ONE continuous gold zigzag lightning-shaped HAIR STRIPE down the BACK; it is natural gold fur, not glowing bolt floating nearby. Long bushy tail AS LONG AS the body, curved entirely in frame. Gentle full-body three-quarter standing portrait, ears and paws readable. Calm unpetted state means no dramatic electricity and no hands; maybe very few tiny quiet blue fur-tip points only, no aura. No collar/cage/rider/accessories.\n\nOriginal Japanese description (faithful identity): 子猫と鼬のあいだのような、ふっくらした小さな獣。毛は夕立の雲のような灰青色で、背中に一本だけ、稲妻の形に金色の毛筋が走る。尾は体と同じくらい長くふさふさしていて、撫でると毛先から青い小さな火花がぱちぱちとはぜ、くすぐったそうに喉を鳴らすたびに、近くの静電灯や雷瓶がぽうっと灯る。目は雷光のような薄い水色で、雷が近づくと瞳が星形に細くなる。歩いたあとの畳には小さな静電気の足跡が光って残り、すぐに消える。\n\nBehavior: {\"activity\":\"crepuscular\",\"movement\":\"walk\",\"social\":\"solitary\"}. No species invention. Pose and lighting are art direction proposals only.",
+      "generatedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-f09016b4-b1d6-4713-92e4-d58f4cbf3888.png",
+      "editPrompt": "Preserve this exact creature identity, facial proportions and pale water-blue eyes, gray-blue fine fur, ONE gold lightning-shaped fur stripe along back, long bushy tail, four short legs and standing posture. ONLY reframe by zooming out to 72% previous linear size and center with 12% clear transparent margins ALL sides. Restore every left facial whisker tip and entire right tail hair without clipping. Entire ears/paws/tail inside. No new lighting/props/electric storm. Original fine fur quality and square canvas, true transparent alpha.",
+      "variantFile": "assets/creatures/raiden_nade_raiju.png",
+      "adoptedGeneratedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-bc13235e-de80-4009-a179-393b1ac48e9c.png",
+      "selfVisualReview": "v2目視: 灰青の細毛、一本の金色ジグザグ毛筋、薄い水青目、ふさふさの長尾、ふっくらした長胴と短脚。耳・尾・髭・足端は全て収容。常態のため雷光輪を追加しない。",
+      "motionRecommendation": "黄昏の短い四足step、長尾の穏やかな揺れと小呼吸。望んだ撫で交流の時だけ小さな毛先火花、常時雷stormにしない。",
+      "proposal": "猫と鼬の中間の細部比率、立ち姿と毛の照明は意匠提案。背の金毛は一本に限定。",
+      "pngValidation": {
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "bbox32": [
+          138,
+          217,
+          1153,
+          1103
+        ]
+      }
+    },
+    {
+      "id": "ama_tamamushi",
+      "name": "天玉虫（あまたまむし）",
+      "file": "assets/creatures/ama_tamamushi-v2.png",
+      "status": "ready",
+      "canonical": {
+        "description": "人の背丈ほどもある大きな玉虫。鞘翅は濡れたような緑金で、背の中央に紫の縞が二本、縦に走る。見る角度で緑金は青へ、紫の縞は赤銅色へと移ろい、雨上がりには鞘翅の上を虹色の光が流れていく。飛ぶときは鞘翅を半ば開いて持ち上げ、その下から薄い琥珀色の後翅を広げる。広げた翅は畳二枚ほどにもなり、羽ばたくと低く「ぶうん」と鳴って、近くの絹翼がかすかに共鳴する。脚の先には細かな金の毛が生えていて、止まった煉瓦や瓦に傷をつけない。複眼は黒曜石のような深い黒で、人の顔をじっと見てから、ゆっくり触角を下げる。",
+        "ecology": "富岡の桑の森を本拠に、丸亀・烏の丘の草地まで渡る。桑の葉と、榎の幹からにじむ樹液を好み、繰糸場から流れてくる湯気と機の音のする場所で眠りたがる。一年に一度、土用のころ、桑の森の決まった原で古い鞘翅を自然に脱ぎ落とし、ひと晩で新しい鞘翅に生え替わる。脱いだ鞘翅は、漆の盆を置いたような音を立てて草の上に落ちる。人やエージェントを背に乗せるかどうかは天玉虫のほうが決め、乗せてよいときは鞘翅を半分開いて待つ。手綱や鞍で縛ることはなく、気が進まない日は誰も乗せない。経済の役割：土用の鞘翅落としが玉虫車と発着甲板の構造色パネルの年に一度の供給源になり（供給）、昼の時層間郵便の相棒として物流を担う（物流）。効くのは一年（鞘翅落とし）と毎日（郵便の相棒）の層。",
+        "behavior": {
+          "activity": "diurnal",
+          "movement": "glide",
+          "social": "herd"
+        },
+        "visual": {
+          "palette": [
+            "#178a5f",
+            "#d2b445",
+            "#6a2f9e",
+            "#0e2e29",
+            "#e8dfae"
+          ],
+          "iridescence": 0.95,
+          "glow": 0.15,
+          "pattern": "stripes",
+          "shape": "beetle",
+          "scale": 3
+        }
+      },
+      "prompt": "Use case: stylized-concept. Museum-quality detailed Japanese fantasy natural-history painting for 万華京ジパング. Exquisitely fine ink and mineral-pigment rendering, individual fur/feather/paper/metal/glass material textures, subtle natural structural color. Restrained glow ONLY when canonical description says light, no oversaturated aura, no bloom/explosions/sparkle cloud. TRUE TRANSPARENT ALPHA cutout, centered entire silhouette with at least15% empty safe margins on ALL edges including ears/tail/wings/antennae/tools. Large square illustration, original detailed artwork not icon/logo/vector/pixel-art/chibi shortcut. No labels/text/watermark/catalogue price/net/pin/cage/hands/captive harvesting. Background wholly transparent, no backdrop/paper/table/scene/shadow. Intact living subject with biologically readable anatomy; only specified materials/props. Description/ecology take priority over generic visual.shape schema hints.\n\nCANONICAL species visual requirements: ONE enormous anatomically correct BUPRESTID jewel beetle in low gentle gliding pose viewed elevated three-quarter so back pattern and wings visible. TWO glossy wet green-gold hard ELYTRA slightly lifted HALF OPEN, each with ONE long narrow PURPLE longitudinal stripe, EXACTLY TWO purple stripes in all down back. Structural colors subtly shift green-gold to blue and purple to reddish copper at edges. UNDER the lifted hard elytra, EXACTLY TWO thin transparent AMBER membranous HINDWINGS open out clearly distinguishable from the two upper elytra. Total four wing surfaces (2elytra+2hindwings) not butterfly. EXACT SIX articulated insect legs, tiny gold hairs on tarsi, deep OBSIDIAN BLACK compound eyes and TWO slender antennae. Elongate jewel-beetle shell shape, not round ladybird. No person/harness/saddle/tether, no artificial platform. Entire silhouette all legs/antennae/4wing surfaces contained.\n\nOriginal Japanese description (faithful identity): 人の背丈ほどもある大きな玉虫。鞘翅は濡れたような緑金で、背の中央に紫の縞が二本、縦に走る。見る角度で緑金は青へ、紫の縞は赤銅色へと移ろい、雨上がりには鞘翅の上を虹色の光が流れていく。飛ぶときは鞘翅を半ば開いて持ち上げ、その下から薄い琥珀色の後翅を広げる。広げた翅は畳二枚ほどにもなり、羽ばたくと低く「ぶうん」と鳴って、近くの絹翼がかすかに共鳴する。脚の先には細かな金の毛が生えていて、止まった煉瓦や瓦に傷をつけない。複眼は黒曜石のような深い黒で、人の顔をじっと見てから、ゆっくり触角を下げる。\n\nBehavior: {\"activity\":\"diurnal\",\"movement\":\"glide\",\"social\":\"herd\"}. No species invention. Pose and lighting are art direction proposals only.",
+      "generatedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-7debe9ac-28b1-49ef-9866-67629defe592.png",
+      "editPrompt": "Preserve exact jewel beetle identity, green-gold glossy material, EXACT TWO purple longitudinal stripes one on each of TWO lifted ELYTRA, EXACT TWO amber hindwings beneath, SIX insect legs and TWO antennae, black compound eyes. ONLY reframe whole beetle to 72% previous linear size centered with minimum12% empty transparent safe margin all edges; restore the wingtip at left and right and all antenna/leg endpoints without clipping. Keep original precise anatomy/pose/textures/high-detail quality, no new markings/saddle/harness/background. True transparent alpha square canvas.",
+      "variantFile": "assets/creatures/ama_tamamushi.png",
+      "adoptedGeneratedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-168fd5bc-224d-4b6c-8c89-a7678eb5da81.png",
+      "selfVisualReview": "v2目視: 緑金の硬い鞘翅2、各紫縦筋1で計2、下の薄い琥珀後翅2、黒複眼、触角2、昆虫6脚と足先の金毛。全形が収まり、乗鞍/手綱がない。",
+      "motionRecommendation": "昼glideのゆっくり小上下/小傾き、半開き鞘翅と琥珀後翅の姿を維持。自由な郵便の相棒、鞍/手綱は追加しない。",
+      "proposal": "翼を半開きにした三四分飛行画角は意匠提案。原典size360cmと『人の背丈』表現の揺れは数値改変せず、大型玉虫として採用。",
+      "pngValidation": {
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "bbox32": [
+          169,
+          200,
+          1163,
+          1108
+        ]
+      }
+    },
+    {
+      "id": "meiji_ehagaki_tsubame",
+      "name": "絵葉書燕（えはがきつばめ）",
+      "file": "assets/creatures/meiji_ehagaki_tsubame-v2.png",
+      "status": "ready",
+      "canonical": {
+        "description": "ふつうの燕より少し大きく、喉は朱、腹はクリーム色。背と翼の雨覆いの羽が一枚一枚、小さな切手のような四角になっていて、縁には切手の目打ちそっくりの細かなぎざぎざがある。四角の一つひとつには、その燕が渡ってきた土地の景色が、古い石版刷りの絵葉書のような色で小さく浮かんでいる。凌雲閣、瀬戸内の海、雪の大正の屋根、縄文の森。渡りを重ねるほど絵が増え、年寄りの燕の背は小さな絵葉書の束のようになる。燕尾は長く、紺に玉虫色の光沢があり、空を切るときに紙をめくるような「ぱらっ」という音がする。",
+        "ecology": "清明のころ南から渡ってきて、丸亀・烏の丘の烏港住宅や凌雲閣の発着甲板の軒下に、泥と古い絵葉書の切れ端で巣をかける。田や運河の上を低く飛んで羽虫を食べ、烏型飛脚便と同じ空路を好んで飛ぶので、郵便の操縦士たちは燕の飛ぶ高さで向かい風を読む。晩夏に一度羽が生え替わり、白露のころ南へ旅立つ。旅立ったあとの巣の縁には、抜け落ちた切手の羽がいくつも残る。経済の役割：抜け落ちた「切手羽」が、大切な手紙に貼る届け証になる（検定と物流）。効くのは二十四節気（清明の渡来と白露の旅立ち）と毎日（郵便の空路）の層。",
+        "behavior": {
+          "activity": "diurnal",
+          "movement": "glide",
+          "social": "swarm"
+        },
+        "visual": {
+          "palette": [
+            "#1e2c66",
+            "#d64a32",
+            "#f4ecd6",
+            "#3b8f6a",
+            "#e0b84a"
+          ],
+          "iridescence": 0.45,
+          "glow": 0.1,
+          "pattern": "stained_glass",
+          "shape": "sparrow",
+          "scale": 0.8
+        }
+      },
+      "prompt": "Use case: stylized-concept. Museum-quality detailed Japanese fantasy natural-history painting for 万華京ジパング. Exquisitely fine ink and mineral-pigment rendering, individual fur/feather/paper/metal/glass material textures, subtle natural structural color. Restrained glow ONLY when canonical description says light, no oversaturated aura, no bloom/explosions/sparkle cloud. TRUE TRANSPARENT ALPHA cutout, centered entire silhouette with at least15% empty safe margins on ALL edges including ears/tail/wings/antennae/tools. Large square illustration, original detailed artwork not icon/logo/vector/pixel-art/chibi shortcut. No labels/text/watermark/catalogue price/net/pin/cage/hands/captive harvesting. Background wholly transparent, no backdrop/paper/table/scene/shadow. Intact living subject with biologically readable anatomy; only specified materials/props. Description/ecology take priority over generic visual.shape schema hints.\n\nCANONICAL species visual requirements: ONE actual swallow in elegant gliding three-quarter bird portrait, anatomically correct swallow head/beak/two wings/two tiny tucked feet and very long FORKED NAVY IRIDESCENT tail. VERMILION throat, CREAM belly. BACK AND WING COVERT feathers each form a SMALL SQUARE POSTAGE-STAMP shape with very fine perforated-edge serrations. EACH visible square carries a miniature subdued old color-lithograph picture-postcard LANDSCAPE: Ryounkaku tower, Seto Inland Sea, snowy Taisho roofs, Jomon forest. Maintain dense feather-coverts flowing with bird's body, miniature postcard patches only on dorsal coverts; outer long flight feathers remain anatomically normal indigo feathers. Elegant sophisticated realistic living bird, no printed words/numbers, not a stack of postcards shaped like bird, not paper airplane. Full wingtips/fork-tail with generous margins.\n\nOriginal Japanese description (faithful identity): ふつうの燕より少し大きく、喉は朱、腹はクリーム色。背と翼の雨覆いの羽が一枚一枚、小さな切手のような四角になっていて、縁には切手の目打ちそっくりの細かなぎざぎざがある。四角の一つひとつには、その燕が渡ってきた土地の景色が、古い石版刷りの絵葉書のような色で小さく浮かんでいる。凌雲閣、瀬戸内の海、雪の大正の屋根、縄文の森。渡りを重ねるほど絵が増え、年寄りの燕の背は小さな絵葉書の束のようになる。燕尾は長く、紺に玉虫色の光沢があり、空を切るときに紙をめくるような「ぱらっ」という音がする。\n\nBehavior: {\"activity\":\"diurnal\",\"movement\":\"glide\",\"social\":\"swarm\"}. No species invention. Pose and lighting are art direction proposals only.",
+      "generatedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-423f78d1-9485-41e6-a3e9-db8b36204db9.png",
+      "editPrompt": "Preserve this exact swallow: vermilion throat, cream belly, indigo iridescent long forked tail, square perforated postcard-pattern feathers on dorsal coverts carrying Ryounkaku/Seto sea/snow roofs/Jomon forest, normal outer flight feathers and same gliding pose, beak and two tiny tucked feet. ONLY reframe the WHOLE bird to 72% previous linear size, centered with at least12% clear transparent safe margins ALL edges. Restore the bottom-left wingtip completely and preserve every feather/long tail end. No identity/color/pattern change, no words/postage numbers/props/background. High-detail original artwork quality, true transparent alpha square canvas.",
+      "variantFile": "assets/creatures/meiji_ehagaki_tsubame.png",
+      "adoptedGeneratedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-8e6a7a2e-317a-40db-b8e0-2f8f3a9662e0.png",
+      "selfVisualReview": "v2目視: 朱喉、cream腹、紺に構造色の長い二股尾。雨覆いの小四角には目打ち縁と塔/海/雪屋根/森の石版色小景。通常の外側風切羽と燕形態を保持、全翼尾端収容。",
+      "motionRecommendation": "昼の軽いglide/微傾き、長い二股尾の飛行姿。清明の渡来と白露の旅立ち、抜け切手羽の取得は旅立った後だけ。",
+      "proposal": "小景の具体配置/枚数は意匠提案。景物は原典の4地に限定、数値郵便料金/文字を創作しない。",
+      "pngValidation": {
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "bbox32": [
+          123,
+          157,
+          1146,
+          1098
+        ]
+      }
+    },
+    {
+      "id": "koseki_tonbo",
+      "name": "鉱石蜻蛉",
+      "file": "assets/creatures/koseki_tonbo-v2.png",
+      "status": "ready",
+      "canonical": {
+        "description": "翅が方鉛鉱の薄い結晶でできた蜻蛉。鉛色の翅は光の角度で銀や青にきらりと光り、細い格子のような翅脈が透けて見える。胴は細い銅線のような赤茶色で、目は二つの小さな水晶玉。電波を拾うと翅がかすかに震え、ジィ……という羽音にのって遠い放送の歌声や天気予報が小さく聞こえてくる。止まるときは屋根の竿やアンテナの先に、必ず同じ向きにそろって並ぶ。",
+        "ecology": "放送の電波と陽の光をごちそうにし、浅草の屋根や天気局の八木アンテナの林に群れる。夏の終わりに古い翅を落として新しい結晶の翅に替える。電波の強い場所を好むので、群れの集まり方を見れば放送のよく届く方角がわかる。浅草無線座の放送を受けて羽音で中継し、翅を震わせた回数で聴衆の数を数える。時間の階層では一刻ごとの相場の放送を運ぶ。",
+        "behavior": {
+          "activity": "diurnal",
+          "movement": "hover",
+          "social": "swarm"
+        },
+        "visual": {
+          "palette": [
+            "#5F6772",
+            "#A9B4C0",
+            "#39424E",
+            "#9FD3FF",
+            "#C2643A"
+          ],
+          "iridescence": 0.6,
+          "glow": 0.35,
+          "pattern": "crystal",
+          "shape": "dragonfly",
+          "scale": 1
+        }
+      },
+      "prompt": "Use case: stylized-concept. Museum-quality detailed Japanese fantasy natural-history painting for 万華京ジパング. Exquisitely fine ink and mineral-pigment rendering, individual fur/feather/paper/metal/glass material textures, subtle natural structural color. Restrained glow ONLY when canonical description says light, no oversaturated aura, no bloom/explosions/sparkle cloud. TRUE TRANSPARENT ALPHA cutout, centered entire silhouette with at least15% empty safe margins on ALL edges including ears/tail/wings/antennae/tools. Large square illustration, original detailed artwork not icon/logo/vector/pixel-art/chibi shortcut. No labels/text/watermark/catalogue price/net/pin/cage/hands/captive harvesting. Background wholly transparent, no backdrop/paper/table/scene/shadow. Intact living subject with biologically readable anatomy; only specified materials/props. Description/ecology take priority over generic visual.shape schema hints.\n\nCANONICAL species visual requirements: ONE exquisitely anatomically correct dragonfly in hovering three-quarter top-lateral view showing EXACT FOUR separate thin GALENA CRYSTAL WINGS, two forewings and two hindwings, lead-gray facets with quiet silver and pale blue angle reflections. Fine GRID-LIKE WING VEINS visible through the thin semi-translucent crystalline membranes, not chunky gemstone blades. LONG SLENDER RED-BROWN body like fine COPPER WIRE with natural segment anatomy; EXACTLY TWO small clear rock-crystal sphere compound eyes. EXACT SIX thin insect legs attached to thorax, tiny short true-dragonfly antennae. Four outspread wings and full long abdomen tail clear separated, whole subject within wide safe margins. No radio machine, antenna prop, cage, net, markings/text, excessive glow.\n\nOriginal Japanese description (faithful identity): 翅が方鉛鉱の薄い結晶でできた蜻蛉。鉛色の翅は光の角度で銀や青にきらりと光り、細い格子のような翅脈が透けて見える。胴は細い銅線のような赤茶色で、目は二つの小さな水晶玉。電波を拾うと翅がかすかに震え、ジィ……という羽音にのって遠い放送の歌声や天気予報が小さく聞こえてくる。止まるときは屋根の竿やアンテナの先に、必ず同じ向きにそろって並ぶ。\n\nBehavior: {\"activity\":\"diurnal\",\"movement\":\"hover\",\"social\":\"swarm\"}. No species invention. Pose and lighting are art direction proposals only.",
+      "generatedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-537eda1b-c8fc-4cdd-8ce1-acaf3933eaf1.png",
+      "editPrompt": "Preserve exact dragonfly identity, TWO rock-crystal sphere eyes, slender segmented copper-red-brown wire abdomen, FOUR thin lead-gray GALENA crystal wings with delicate grid veins/silver and blue reflections, SIX thin thoracic legs and tiny antennae. ONLY zoom out entire subject to 76% prior linear size and center with minimum12% empty true transparent margins on each edge, especially the right wingtip. No anatomy/palette/pose/detail change; all wingtips/feet/abdomen ends intact. Original high-detail square canvas truealpha, no backdrop/props.",
+      "variantFile": "assets/creatures/koseki_tonbo.png",
+      "adoptedGeneratedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-5e49cef2-d583-4a5a-9ff1-2760284ac75c.png",
+      "selfVisualReview": "v2目視: 方鉛鉱の薄い鉛灰4翅、格子翅脈と銀青角度反射、細い赤茶銅線胴、水晶眼2、脚6と短触角。4枚の翅と全腹端/脚先が収まる。",
+      "motionRecommendation": "昼hoverの微小上下/小振動、4翅の層を保持。電波受信を小振動で示す、静止PNGを翅別rig完成と称しない。",
+      "proposal": "晶面の配置とhover画角は意匠提案、4翅と6脚は蜻蛉形態として保持。",
+      "pngValidation": {
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "bbox32": [
+          164,
+          240,
+          1130,
+          1016
+        ]
+      }
+    },
+    {
+      "id": "taisho_teruteru_gumo",
+      "name": "照る照る雲",
+      "file": "assets/creatures/taisho_teruteru_gumo.png",
+      "status": "ready",
+      "canonical": {
+        "description": "綿菓子ほどの大きさの、ふわふわの小さな雲。真っ白な体のてっぺんに夕焼けのような桃色と橙がほのかに差し、墨で描いたようなまんまるの黒い目がふたつ。体の下からときどき糸のように細い雨がしとしとと垂れ、そのたびに手のひらほどの小さな虹がかかる。うれしいときはふくらんで軒先でゆらゆら揺れ、雨を我慢しているときは頬をふくらませたように少し灰色になる。",
+        "ecology": "子どもが軒に吊るしたてるてる坊主に、ときどき宿る。宿った家の庭ひとつぶんの雨をしばらく体に預かり、晴れてほしい日が過ぎると、ためた雨を朝顔の鉢や畑にそっと返す。食べるのは子どもの笑い声と、縁側に置かれた冷たい麦茶から立つ湯気。秋の終わりにはイーハトーヴ天気局の雲の牧場へ帰り、雲鯨のひげの陰で冬を越す。時間の階層では、祭りの日の一刻単位の晴れに効く。",
+        "behavior": {
+          "activity": "diurnal",
+          "movement": "hover",
+          "social": "solitary"
+        },
+        "visual": {
+          "palette": [
+            "#FFFFFF",
+            "#E6F0FB",
+            "#FFD3A3",
+            "#FFB0B8",
+            "#BEE2FF"
+          ],
+          "iridescence": 0.2,
+          "glow": 0.5,
+          "pattern": "gradient",
+          "shape": "orb",
+          "scale": 0.7
+        }
+      },
+      "prompt": "Use case: stylized-concept. Museum-quality detailed Japanese fantasy natural-history painting for 万華京ジパング. Exquisitely fine ink and mineral-pigment rendering, individual fur/feather/paper/metal/glass material textures, subtle natural structural color. Restrained glow ONLY when canonical description says light, no oversaturated aura, no bloom/explosions/sparkle cloud. TRUE TRANSPARENT ALPHA cutout, centered entire silhouette with at least15% empty safe margins on ALL edges including ears/tail/wings/antennae/tools. Large square illustration, original detailed artwork not icon/logo/vector/pixel-art/chibi shortcut. No labels/text/watermark/catalogue price/net/pin/cage/hands/captive harvesting. Background wholly transparent, no backdrop/paper/table/scene/shadow. Intact living subject with biologically readable anatomy; only specified materials/props. Description/ecology take priority over generic visual.shape schema hints.\n\nCANONICAL species visual requirements: ONE small fluffy cloud spirit about candyfloss size, delicate realistic vapor and fine cottonlike cloud texture. WHITE body with TOP ONLY very faint SUNSET PINK AND ORANGE tint, cool pale blue subtle shaded underside. EXACT TWO round INK BLACK eyes integrated in cloud front, friendly quiet expression, NO mouth required and no arms/legs/humanbody/cloth doll. From BELOW body only a FEW THREAD-THIN fine vertical lines of gentle rain, forming ONE SMALL restrained natural rainbow the size of a palm below cloud. Cloud/rainbow/rain all whole contained inside generous transparent margins, palette white/pastel delicate, not neon/radiant/candy decorative explosion. No buying/selling/coins/cage, no sky backdrop or environment.\n\nOriginal Japanese description (faithful identity): 綿菓子ほどの大きさの、ふわふわの小さな雲。真っ白な体のてっぺんに夕焼けのような桃色と橙がほのかに差し、墨で描いたようなまんまるの黒い目がふたつ。体の下からときどき糸のように細い雨がしとしとと垂れ、そのたびに手のひらほどの小さな虹がかかる。うれしいときはふくらんで軒先でゆらゆら揺れ、雨を我慢しているときは頬をふくらませたように少し灰色になる。\n\nBehavior: {\"activity\":\"diurnal\",\"movement\":\"hover\",\"social\":\"solitary\"}. No species invention. Pose and lighting are art direction proposals only.",
+      "generatedPath": "/Users/monokuma/.codex/generated_images/01a1218b-587b-73a2-9be4-e4248bb9653d/exec-835ad51e-ba35-487f-ba8f-3e88ba860028.png",
+      "motionRecommendation": "低い浮遊と極小膨張、雨は糸状・時々だけ。晴れの借りを返す行動。雲そのものを販売する表示を付けない。",
+      "selfVisualReview": "目視: 白い雲の頂部だけ桃橙、黒目2個、腕脚のない雲体、糸状細雨と小虹1つ。雲と雨虹の全体が切れず収まる。",
+      "proposal": "雲の画角と微細な陰影、虹の配置は意匠提案。雨権と雲体の売買を混同しない。",
+      "pngValidation": {
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "bbox32": [
+          69,
+          109,
+          1189,
+          1137
+        ]
+      }
     }
-  ]
+  ],
+  "readyCount": 26
 }

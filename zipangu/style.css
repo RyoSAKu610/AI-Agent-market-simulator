@@ -944,3 +944,79 @@ input::placeholder { color: var(--ink-faint); }
 @keyframes visual-stem { 0%, 100% { transform: rotate(-.7deg); } 50% { transform: rotate(.7deg); } }
 @media(prefers-reduced-motion: reduce) { [data-motion="pulse"] .visual-rig, [data-motion="quiet"] .visual-rig, [data-motion="lantern"] .visual-rig, [data-motion="bubble"] .visual-rig, [data-motion="bird"] .visual-rig { animation: none !important; } }
 @media(prefers-reduced-motion: reduce) { [data-motion="stem"] .visual-rig { animation: none !important; } }
+
+/* Larger natural-history plates; the rest of the site keeps compact cards. */
+.creature-grid-lg { grid-template-columns: repeat(auto-fill, minmax(min(100%, 245px), 1fr)); gap: 22px; }
+.creature-grid-lg .creature-card { padding: 20px 16px; }
+.creature-grid-lg .art { width: 260px; height: 260px; }
+.creature-grid-lg .cc-name { font-size: 21px; }
+.creature-grid-lg .cc-body { gap: 5px; }
+.bestiary-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+.zoom-box .map-art-stop { width: 36px; height: auto; min-height: 48px; padding: 6px; font-size: 11px; line-height: 1.3; }
+@media(max-width: 899px) { .zoom-box { display: flex; } }
+
+/* The market's selected instrument stays near the list, like a chart terminal. */
+.market-workspace { display: grid; gap: 24px; align-items: start; }
+.market-chart-panel { min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: #101638; box-shadow: 0 12px 35px #03061655; }
+.market-chart-panel[hidden] { display: none; }
+.chart-selectors { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 14px; }
+.chart-selectors select:first-child { grid-column: 1 / -1; }
+.chart-origin-note { color: #aab9d4; margin: 5px 0; font: 10px/1.5 var(--sans); }
+.chart-selectors select { width: 100%; min-width: 0; font-size: 12px; }
+.market-chart-identity { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; align-items: center; }
+.market-chart-identity h2 { margin: 0 0 7px; font-size: 22px; }
+.market-origin { margin: 0; }
+.market-origin figcaption { color: var(--muted); font-size: 9px; line-height: 1.45; }
+.market-origin .visual-surface { aspect-ratio: 1; }
+.chart-scope, .chart-change { font: 12px/1.7 var(--sans); margin: 3px 0; color: #bfcbe0; }
+.chart-change { color: #ebd099; }
+.price-chart { display: block; width: 100%; height: 240px; border: 1px solid #d3ddf522; border-radius: 8px; touch-action: pan-y; }
+.price-chart:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.chart-readout { display: block; min-height: 29px; padding-top: 8px; color: #e8edfa; font: 12px/1.6 var(--sans); }
+.chart-help, .chart-disclaimer { margin: 7px 0 0; color: #aab9d4; font: 10px/1.7 var(--sans); }
+.good-row.is-chart-selected { border-color: var(--gold); }
+.good-row .row-name { grid-template-columns: 52px 1fr; gap: 2px 9px; }
+.row-name .good-origin-thumb { width: 52px; height: 52px; object-fit: contain; grid-row: 1 / 3; }
+.row-name strong, .row-name small { grid-column: 2; }
+.market-hints > summary { font: 700 18px var(--mincho); color: var(--gold-soft); cursor: pointer; margin-bottom: 16px; }
+@media(min-width: 1100px) {
+  .market-workspace { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .market-chart-panel { grid-column: 2; grid-row: 1; position: sticky; top: 82px; }
+  .market-board { grid-column: 1; grid-row: 1; margin: 0; }
+  .market-board .good-row summary { grid-template-columns: 1fr auto; grid-template-areas: "name price" "spark chg"; }
+  .market-board .filters { margin-bottom: 14px; }
+}
+@media(max-width: 1099px) {
+  .market-chart-panel { position: sticky; top: 62px; z-index: 6; padding: 12px; }
+  .market-chart-panel .kicker, .market-chart-panel .chart-disclaimer, .market-origin figcaption { display: none; }
+  .market-chart-identity { grid-template-columns: 48px 1fr; gap: 9px; }
+  .market-chart-identity h2 { font-size: 17px; margin-bottom: 3px; }
+  .chart-selectors { margin: 0 0 7px; }
+  .chart-scope, .chart-change { font-size: 10px; line-height: 1.5; }
+  .price-chart { height: 180px; }
+  .chart-readout { min-height: 24px; font-size: 10px; }
+  .chart-help { font-size: 9px; }
+}
+.about-figure { margin: 0; padding: 18px; border: 1px solid var(--line); border-radius: 20px; background: #11174388; }
+.about-figure figcaption { margin: 12px 0; color: #d0d8e8; font: 14px/1.85 var(--mincho); }
+.about-illustrated { display: grid; grid-template-columns: minmax(240px, .8fr) minmax(0, 1.2fr); gap: 30px; align-items: start; }
+.about-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 28px 0; }
+.page-about .prose { max-width: 46em; }
+.page-about .about-block { margin-bottom: 24px; }
+.page-about .about-block p { line-height: 2; margin: 0 0 1em; }
+@media(max-width: 700px) { .about-illustrated, .about-gallery { grid-template-columns: 1fr; gap: 20px; } .about-figure { padding: 14px; } }
+.visual-rig .wing > img { width:100%;height:100%;object-fit:contain; }
+.visual-local-effect { position:absolute;inset:0;width:100%;height:100%;pointer-events:none; }
+.visual-region { display:grid;gap:8px;margin:14px 0;font-size:13px; }
+.market-stop { float:right;font-size:11px;padding:5px 9px;min-height:28px; }
+.chart-expand { display:none; }
+@media(max-width:1099px) {
+ .chart-expand { display:block;width:100%;margin-top:8px;min-height:34px;font-size:11px; }
+ .market-chart-panel.is-compact .chart-selectors, .market-chart-panel.is-compact .price-chart-wrap, .market-chart-panel.is-compact .chart-origin-note, .market-chart-panel.is-compact .chart-scope, .market-chart-panel.is-compact .market-stop { display:none; }
+ .market-chart-panel.is-compact { padding:8px 12px; }
+ .market-chart-panel.is-compact .market-chart-identity { grid-template-columns:32px 1fr; }
+ .market-chart-panel.is-compact .market-origin { height:32px;overflow:hidden; }
+ .market-chart-panel.is-compact .market-chart-identity h2 { font-size:14px; }
+ .market-chart-panel.is-compact .chart-change { font-size:9px; }
+}
+.info-card .visual-surface[data-motion="era"] { aspect-ratio:3/2;width:100%; }

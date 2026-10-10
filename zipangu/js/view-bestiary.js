@@ -25,6 +25,12 @@ export function bestiaryView(ctx, query) {
     const placesWith = W.places.filter(p => (p.creatures || []).length);
 
     const grid = h('div', { class: 'creature-grid creature-grid-lg', role: 'list' });
+    let stopped = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    grid.classList.toggle('is-still', stopped);
+    const stop = h('button', { type: 'button', class: 'btn bestiary-stop', 'aria-pressed': String(stopped), onclick: () => {
+        stopped = !stopped; grid.classList.toggle('is-still', stopped);
+        stop.textContent = stopped ? '絵を動かす' : '絵を止める'; stop.setAttribute('aria-pressed', String(stopped));
+    } }, stopped ? '絵を動かす' : '絵を止める');
     const count = h('p', { class: 'result-count', 'aria-live': 'polite' });
 
     const toggle = (key, value, label, cls = '') => {
@@ -77,7 +83,7 @@ export function bestiaryView(ctx, query) {
         const list = W.creatures.filter(matches)
             .sort((a, b) => lead(b) - lead(a) || (lead(a) ? irid(b) - irid(a) : 0) || (RARITY_RANK[b.rarity] || 0) - (RARITY_RANK[a.rarity] || 0) || a.kana.localeCompare(b.kana, 'ja'));
         clear(grid);
-        for (const c of list) grid.append(h('div', { role: 'listitem' }, creatureCard(W, c)));
+        for (const c of list) grid.append(h('div', { role: 'listitem' }, creatureCard(W, c, { artSize: 260, eco: ctx.eco })));
         count.textContent = `${list.length} / ${W.creatures.length} の生き物`;
         if (!list.length) grid.append(emptyNote('この条件の生き物は、まだ見つかっていません。'));
     }
@@ -93,10 +99,10 @@ export function bestiaryView(ctx, query) {
                 h('div', { class: 'filter-row' }, h('span', { class: 'lbl' }, '種類'), h('div', { class: 'chips' }, kindBtns)),
                 h('div', { class: 'filter-row' }, h('span', { class: 'lbl' }, '希少さ'), h('div', { class: 'chips' }, rarityBtns)),
                 h('div', { class: 'filter-row filter-inputs' }, placeSel, search))),
-        count, grid);
+        h('div', { class: 'bestiary-toolbar' }, count, stop), grid);
     paintButtons();
     paintGrid();
-    return { el, title: '生き物図鑑' };
+    return { el, title: '生き物図鑑', update() { grid.querySelectorAll('.art').forEach(a => a.update?.()); } };
 }
 
 // ---------------------------------------------------------------- one creature
