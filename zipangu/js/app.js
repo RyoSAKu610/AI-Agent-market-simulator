@@ -3,6 +3,8 @@
 
 import { loadWorld } from './data.js';
 import { createEconomy } from './sim.js';
+import { createStories } from './character-stories.js';
+import { loadJourney, saveJourney, journeyKey } from './journey-save.js';
 import { createHistory } from './history.js';
 import { createHud, SPEEDS } from './hud.js';
 import { creatureCanvas } from './creature-art.js';
@@ -84,21 +86,44 @@ async function boot() {
     }
 
     const seed = Number(new URLSearchParams(location.search).get('seed')) || 1;
-    const eco = createEconomy(W, { seed, secondsPerDay: SECONDS_PER_DAY });
-    const history = createHistory(eco);
-    history.sample();
+    let storage;
+    try { storage = window.localStorage; } catch { storage = { getItem() { throw new Error('unavailable'); }, setItem() { throw new Error('unavailable'); } }; }
+    const loaded = loadJourney(storage, W, seed);
+    const eco = createEconomy(W, { seed, secondsPerDay: SECONDS_PER_DAY, state: loaded.data?.economy || null });
+    const history = createHistory(eco, loaded.data?.history || null);
+    if (!loaded.data?.history) history.sample();
     let nextSample = Math.floor(eco.time / SAMPLE_EVERY) + 1;
     const sampleIfDue = () => {
         const slot = Math.floor(eco.time / SAMPLE_EVERY);
         if (slot >= nextSample) { history.sample(); nextSample = slot + 1; }
     };
-    for (let s = 0; s < WARM_UP_SECONDS; s += 5) { eco.step(5); sampleIfDue(); }
+    if (!loaded.data) for (let s = 0; s < WARM_UP_SECONDS; s += 5) { eco.step(5); sampleIfDue(); }
+    const stories = createStories(W, eco, loaded.data?.stories || null);
 
     let speed = Number(store.get('zipangu.speed')) || 1;
     if (!SPEEDS.includes(speed)) speed = 1;
 
     const hud = createHud(W, eco, { speed, onSpeed: s => { speed = s; store.set('zipangu.speed', String(s)); } });
-    const ctx = { W, eco, history, hud, loadDoc, mapView: null, pendingFocus: null, seed };
+    const ctx = { W, eco, history, hud, stories, loadDoc, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status };
+    let saveBlocked = loaded.blocked;
+    const saveNotice = h('div', { class: 'journey-notice' });
+    const saveText = h('span', { role: 'status' }, loaded.status);
+    saveNotice.append(saveText);
+    ctx.persistJourney = () => {
+        if (saveBlocked) return;
+        const result = saveJourney(storage, seed, eco, stories, history);
+        ctx.journeyStatus = result.status;
+        saveText.textContent = result.status;
+        saveNotice.classList.toggle('save-failed', !result.ok);
+    };
+    if (saveBlocked) saveNotice.append(h('button', { type: 'button', class: 'btn btn-small', onclick: () => {
+        try { storage.removeItem(journeyKey(seed)); saveBlocked = false; ctx.persistJourney(); saveNotice.querySelector('button')?.remove(); }
+        catch { ctx.journeyStatus = saveText.textContent = '保存を使えません。この旅は一時的な記録のままです。'; }
+    } }, '元の記録を消して新しい旅を保存'));
+    main.before(saveNotice);
+    setInterval(ctx.persistJourney, 5000);
+    window.addEventListener('pagehide', ctx.persistJourney);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) ctx.persistJourney(); });
     window.__zipangu = ctx;      // handy in the console
 
     // ---------------------------------------------------- shell
