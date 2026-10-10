@@ -39,6 +39,11 @@ export function validateJourney(data, W, seed) {
     }
     for (const ev of [...e.schedule, ...e.active]) ensure(W.byId.event.has(ev.id));
     for (const ev of e.schedule) ensure(finite(ev.at));
+    if (e.encounters) {
+        ensure(Array.isArray(e.encounters) && e.encounters.length <= 128);
+        for (const meeting of e.encounters) ensure(typeof meeting.pair === 'string' && meeting.pair.split('|').length === 2
+            && meeting.pair.split('|').every(id => W.byId.agent.has(id)) && finite(meeting.T) && meeting.T <= e.tick / 288 + 1e-9);
+    }
     for (const [id, row] of Object.entries(e.markets)) {
         ensure(W.byId.district.has(id));
         for (const [g, quote] of Object.entries(row)) ensure(W.byId.good.has(g) && finite(quote.anchor) && finite(quote.p));
@@ -52,6 +57,26 @@ export function validateJourney(data, W, seed) {
         for (const item of [...p.chat, ...p.chronicle, ...p.memories]) ensure(typeof item.text === 'string' && item.text.length <= 2000 && finite(item.T) && natural(item.day));
         for (const r of p.requests) ensure(/^promise-\d+$/.test(r.id) && Number(r.id.slice(8)) < s.nextId
             && ['queued', 'active', 'done'].includes(r.status) && W.byId.district.has(r.target));
+    }
+    if (s.drama) {
+        ensure(Array.isArray(s.drama.scenes) && s.drama.scenes.length <= 96 && s.drama.readers && typeof s.drama.readers === 'object');
+        function sceneCheck(scene) {
+            ensure(scene && typeof scene.id === 'string' && scene.id.length <= 120 && W.byId.agent.has(scene.agent)
+                && W.byId.district.has(scene.district) && finite(scene.T) && natural(scene.day)
+                && typeof scene.title === 'string' && scene.title.length <= 160 && typeof scene.fact === 'string' && scene.fact.length <= 2000
+                && typeof scene.label === 'string' && Array.isArray(scene.cast) && scene.cast.length >= 1 && scene.cast.length <= 2
+                && scene.cast.every(id => W.byId.agent.has(id)) && scene.cast.includes(scene.agent)
+                && Array.isArray(scene.lines) && scene.lines.length >= 1 && scene.lines.length <= 6);
+            for (const l of scene.lines) ensure((l.speaker === null || scene.cast.includes(l.speaker))
+                && typeof l.text === 'string' && l.text.length <= 1800 && natural(l.pose) && l.pose <= 3
+                && ['speech', 'gesture', 'narration', 'memory', 'letter'].includes(l.mode));
+        }
+        for (const scene of s.drama.scenes) { sceneCheck(scene); ensure(natural(scene.seq) && scene.seq <= s.lastSeq); }
+        ensure(new Set(s.drama.scenes.map(s => s.id)).size === s.drama.scenes.length);
+        for (const [id, reader] of Object.entries(s.drama.readers)) {
+            ensure(W.byId.agent.has(id) && typeof reader.scene === 'string' && natural(reader.beat) && reader.beat < 6 && typeof reader.auto === 'boolean');
+            if (reader.held) { sceneCheck(reader.held); ensure(reader.held.cast.includes(id) && reader.held.id === reader.scene && reader.beat < reader.held.lines.length); }
+        }
     }
     if (data.history) {
         const h = decodeHistory(data.history);
