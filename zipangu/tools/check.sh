@@ -15,6 +15,11 @@ if [ -f tools/sim.test.mjs ]; then
   node tools/sim.test.mjs
 fi
 
+echo "› visual asset contracts"
+node tools/visuals.test.mjs
+node tools/history.test.mjs
+node tools/creature-presence.test.mjs
+
 echo "› explorer syntax"
 for f in js/*.js tools/*.mjs; do
   # js/ is ES modules (import/export), so check it as a module; node --check alone treats .js as CommonJS

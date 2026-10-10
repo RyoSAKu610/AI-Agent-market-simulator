@@ -3,6 +3,8 @@
 
 import { creatureCanvas } from './creature-art.js';
 import { agentFaceCanvas } from './agent-art.js';
+import { visualOf } from './visual-manifest.js';
+import { visualArt } from './visual-art.js';
 import { VIA, GOAL_LABELS } from './sim.js';
 import {
     h, svg, link, href, accentOf, deepOf, lightOf, rgba, placeShort, nameOf,
@@ -105,19 +107,21 @@ function observeLazy(el, make) {
     lazyObserver.observe(el);
 }
 
-export function creatureArt(creature, size, { lazy = true, animate = true } = {}) {
+export function creatureArt(creature, size, { lazy = true, animate = true, eco = null } = {}) {
     const box = h('div', { class: 'art', style: { width: size + 'px', height: size + 'px' } });
-    const make = () => creatureCanvas(creature, size, { animate });
+    const v = visualOf('creature', creature.id);
+    const make = () => v ? visualArt(null, { ...v, title: nameOf(creature) }, { size, eco }) : creatureCanvas(creature, size, { animate });
+    box.update = () => { if (box.firstChild?.update) box.firstChild.update(); };
     if (lazy) observeLazy(box, make); else box.append(make());
     return box;
 }
 
-export function creatureCard(W, c) {
+export function creatureCard(W, c, { artSize = 132, eco = null } = {}) {
     const home = W.byId.district.get((c.home || [])[0]);
     const place = home && W.placeOf(home.id);
     const pal = (c.visual && c.visual.palette) || [];
     return h('a', { class: 'creature-card rarity-' + c.rarity, href: href.creature(c.id), style: { '--c1': pal[0] || '#8b5cf6', '--c2': pal[2] || '#2ee6d6' } },
-        creatureArt(c, 132),
+        creatureArt(c, artSize, { eco }),
         h('div', { class: 'cc-body' },
             h('strong', { class: 'cc-name' }, nameOf(c)),
             h('span', { class: 'cc-en' }, c.name_en),

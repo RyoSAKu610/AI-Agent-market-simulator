@@ -1,3 +1,6 @@
+import { visualArt } from './visual-art.js';
+import { visualOf } from './visual-manifest.js';
+import { visualFeature } from './visual-art.js';
 // #/ — the kaleidoscope map with the HUD laid over it.
 
 import { createMap } from './map.js';
@@ -45,6 +48,12 @@ export function homeView(ctx) {
         h('button', { type: 'button', 'aria-label': '拡大', onclick: () => map && map.zoomBy(1.4) }, '＋'),
         h('button', { type: 'button', 'aria-label': '縮小', onclick: () => map && map.zoomBy(1 / 1.4) }, '－'),
         h('button', { type: 'button', 'aria-label': '中心へ戻る', onclick: () => { if (map) map.reset(); select(null); } }, '◎'));
+    let pausedArt = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const artStop = h('button', { type: 'button', class: 'map-art-stop', 'aria-pressed': String(pausedArt), onclick: () => {
+        pausedArt = !pausedArt; if (map) map.pauseArtwork(pausedArt);
+        artStop.textContent = pausedArt ? '絵を動かす' : '絵を止める'; artStop.setAttribute('aria-pressed', String(pausedArt));
+    } }, pausedArt ? '絵を動かす' : '絵を止める');
+    zoomBox.append(artStop);
 
     const legend = h('details', { class: 'legend' },
         h('summary', null, '凡例'),
@@ -66,6 +75,7 @@ export function homeView(ctx) {
         h('p', { class: 'welcome-lead' }, String(W.world.tagline || '').split('／')[0].split('。')[0] + '。'),
         h('p', { class: 'welcome-text' }, 'AIたちが自分の頭で商いをする街。光る点が住人、「世のうごき」が今の取引。点をタップすると追いかけられる。'),
         h('p', { class: 'welcome-links' }, h('a', { href: '#/about' }, 'くわしくは 案内 →')));
+    stage.append(h('a', { class: 'visual-map-link', href: '#/visuals' }, '✦ 動く絵の制作帖 →'));
     stage.append(h('h1', { class: 'sr-only' }, '万華京ジパング ・ 地図'), canvas, side, zoomBox, legend, places, welcome);
 
     // ------------------------------------------------ info plaque
@@ -102,6 +112,7 @@ export function homeView(ctx) {
             closeButton(),
             h('div', { class: 'info-kicker' }, isEra ? `時片 ${p.real_period || ''}` : `異界 ${p.source ? '『' + p.source.work + '』' : ''}`, swatches(pal)),
             h('h2', { class: 'info-title' }, placeShort(p)),
+            visualOf(isEra ? 'era' : 'realm', p.id) ? visualArt(W, visualOf(isEra ? 'era' : 'realm', p.id), { size: 300 }) : null,
             placeSub(p) ? h('p', { class: 'info-sub' }, placeSub(p)) : null,
             h('p', { class: 'info-text' }, clip(p.summary || firstSentence(p.lore), 120)),
             h('p', { class: 'info-chips' },
@@ -134,10 +145,12 @@ export function homeView(ctx) {
     function agentCard(a) {
         const live = a && eco.agents.get(a.id);
         if (!a || !live) return null;
+        const feature = visualFeature(ctx, 'agent', a.id, { size: 170 });
         const status = h('p', { class: 'info-live' });
         const goal = h('div', { class: 'info-goal' });
         const wallet = h('span', { class: 'info-wallet' });
         const paint = () => {
+            if (feature) feature.update();
             clear(status); status.append(stageBadge(live.stage)); if (liveActivity(live)) status.append(' ', liveActivity(live));
             clear(goal); goal.append(h('span', null, `${goalLabel(live.goalType)} ・ ${goalPct(live)}%`), progressBar(live.goalProgress, `${a.name}の長期目標の進み具合`));
             wallet.textContent = `${fmt(live.wallet)} ${W.baseCurrency.name_ja.replace(/（.*）/, '')}`;
@@ -147,7 +160,7 @@ export function homeView(ctx) {
             closeButton(),
             h('div', { class: 'info-head' }, avatar(W, a),
                 h('div', null, h('h2', { class: 'info-title' }, agentShort(a)), h('p', { class: 'info-sub' }, clip(a.role, 40)))),
-            status, goal, wallet,
+            feature, status, goal, wallet,
             h('div', { class: 'info-actions' },
                 h('a', { class: 'btn btn-primary', href: href.agent(a.id) }, '素性を見る →'),
                 h('button', { type: 'button', class: 'btn', onclick: () => map && map.focus(a.id) }, '追う')));
@@ -175,7 +188,7 @@ export function homeView(ctx) {
         getInsets: insets,
         view: ctx.mapView
     });
-    if (ctx.pendingFocus) { const id = ctx.pendingFocus; ctx.pendingFocus = null; setTimeout(() => map && map.focus(id), 50); }
+    if (ctx.pendingFocus) { const id = ctx.pendingFocus; ctx.pendingFocus = null; setTimeout(() => { if (map) { map.focus(id); if (W.byId.agent.has(id)) select({ type: 'agent', id }); } }, 50); }
 
     return {
         el: stage,
@@ -189,4 +202,3 @@ export function homeView(ctx) {
         hits: () => (map ? map.getHits() : [])
     };
 }
-

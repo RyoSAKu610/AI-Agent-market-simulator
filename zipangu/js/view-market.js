@@ -1,3 +1,6 @@
+import { visualArt } from './visual-art.js';
+import { visualOf, visualKey, visualSource } from './visual-manifest.js';
+import { priceChart } from './price-chart.js';
 // #/market — currencies, arbitrage hints and the price board.
 
 import { goodQuotes } from './history.js';
@@ -8,6 +11,15 @@ import { plaque, sectionHead, chip, spark, placeLink, goodLink, viaLabel, CATEGO
 
 const PAGE = 24;
 
+function goodArtwork(W, good) {
+    const creature = good.source_creature && W.byId.creature.get(good.source_creature);
+    const place = W.placeOf(good.origin);
+    const entity = creature || place;
+    const type = creature ? 'creature' : place && W.byId.era.has(place.id) ? 'era' : 'realm';
+    const visual = entity && visualOf(type, entity.id);
+    return visual ? { visual, label: `${creature ? '由来の生き物' : '産地の景観'}：${nameOf(entity)}（商品そのものの絵ではありません）` } : null;
+}
+
 function issuerOf(W, id) {
     const d = W.byId.district.get(id);
     if (d) return link(href.district(d.id), nameOf(d));
@@ -15,14 +27,17 @@ function issuerOf(W, id) {
     return p ? placeLink(p) : id;
 }
 
-function currencySection(W) {
+function currencySection(ctx) {
+    const { W, eco } = ctx;
     const base = W.baseCurrency;
     const cards = W.currencies.map((c, i) => plaque({ class: 'currency-card' + (c.base ? ' is-base' : '') + (i < 4 ? ' is-core' : '') },
         h('p', { class: 'kicker' }, c.base ? '基軸通貨' : i < 4 ? '主要通貨' : '手形・信用'),
+        visualOf('currency', c.id) ? h('a', { href: '#/visual/' + visualKey(visualOf('currency', c.id)), 'aria-label': stripParens(c.name_ja) + 'の設定画を見る' }, visualArt(W, visualOf('currency', c.id), { size: 220, eco })) : null,
         h('h3', null, stripParens(c.name_ja)),
         h('p', { class: 'cur-en' }, c.name_en),
-        h('p', { class: 'cur-rate' }, c.base ? '価格はすべてこの単位' : `1 = ${fmt(c.to_base, c.to_base < 1 ? 2 : 0)} ${stripParens(base.name_ja)}`),
+        h('p', { class: 'cur-rate' }, ['en', 'sangaku_tegata'].includes(c.id) ? `名目評価 ${fmt(c.to_base)} ${stripParens(base.name_ja)}（決済用の換算ではない）` : c.base ? '価格はすべてこの単位' : `1 = ${fmt(c.to_base, c.to_base < 1 ? 2 : 0)} ${stripParens(base.name_ja)}`),
         h('p', { class: 'cur-backing' }, clip(c.backing, 70)),
+        c.id === 'yen_data' ? h('p', { class: 'ar-role' }, '¥20＝1刻。DATAは算額・翻案の素材。') : null,
         h('p', { class: 'cur-issuer' }, '発行：', issuerOf(W, c.issuer))));
     return h('section', { class: 'sec', 'aria-labelledby': 'cur' },
         sectionHead('通貨', '十の時片と八つの異界を結ぶ、いくつもの「お金」', 'cur'),
@@ -33,6 +48,68 @@ export function marketView(ctx, query) {
     const { W, eco, history } = ctx;
     const cur = stripParens(W.baseCurrency.name_ja);
     const state = { cat: query.cat || '', place: query.place || '', q: query.q || '', shown: PAGE, open: query.good || '' };
+    let chartGood = query.good || '', chartDistrict = '', chartArt = null, chartPeriod = 0;
+    const chart = priceChart({ currency: cur });
+    const chartTitle = h('h2', { id: 'selected-good-title' });
+    const chartScope = h('p', { class: 'chart-scope' });
+    const chartChange = h('p', { class: 'chart-change' });
+    const chartOrigin = h('figure', { class: 'market-origin' });
+    const chartOriginNote = h('p', { class: 'chart-origin-note' });
+    const goodSelect = h('select', { 'aria-label': 'チャートの品目', onchange: e => selectChart(e.target.value) });
+    const districtSelect = h('select', { 'aria-label': 'チャートの地区', onchange: e => { chartDistrict = e.target.value; updateChart(); } });
+    const periodSelect = h('select', { 'aria-label': 'チャートの表示期間', onchange: e => { chartPeriod = Number(e.target.value); updateChart(); } },
+        h('option', { value: 0 }, '全観測（最大72点）'), h('option', { value: 1 }, '直近一日'), h('option', { value: .5 }, '直近半日'));
+    let expansionLocked = false;
+    const compactButton = h('button', { type: 'button', class: 'btn chart-expand', 'aria-expanded': 'true', onclick: () => setCompact(!chartPanel.classList.contains('is-compact')) }, '品目リストを見る ↓');
+    function setCompact(compact) { expansionLocked = !compact; chartPanel.classList.toggle('is-compact', compact); compactButton.textContent=compact?'チャートを開く ↑':'品目リストを見る ↓';compactButton.setAttribute('aria-expanded',String(!compact)); }
+    function onScroll() { if (!expansionLocked && innerWidth<1100 && el.querySelector('.market-board').getBoundingClientRect().top<300) setCompact(true); }
+    function onScrollIntent(event) { if (event.type === 'keydown' && !['PageDown','PageUp','ArrowDown','ArrowUp',' '].includes(event.key)) return; expansionLocked = false; }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('wheel', onScrollIntent, { passive: true });
+    window.addEventListener('touchmove', onScrollIntent, { passive: true });
+    window.addEventListener('keydown', onScrollIntent);
+    const chartPanel = h('aside', { class: 'market-chart-panel', 'aria-labelledby': 'selected-good-title' },
+        h('p', { class: 'kicker' }, '堂島時層会所 ・ 観測相場'),
+        h('div', { class: 'chart-selectors' }, goodSelect, districtSelect, periodSelect),
+        h('div', { class: 'market-chart-identity' }, chartOrigin, h('div', null, chartTitle, chartScope, chartChange)), chartOriginNote, chart.el,
+        compactButton, h('p', { class: 'chart-disclaimer' }, '街のシミュレーションで観測した価格。ローソク足・出来高は生成していません。'));
+    function selectChart(id, reveal = false) {
+        const changed = chartGood !== id; chartGood = id;
+        if (changed) chartDistrict = '';
+        const g = W.byId.good.get(id); if (!g) return;
+        goodSelect.value = id;
+        if (changed || !chartOrigin.childNodes.length) {
+            clear(chartOrigin); const origin = goodArtwork(W, g);
+            chartArt = origin ? visualArt(W, origin.visual, { size: 120, eco }) : null;
+            if (chartArt) chartOrigin.append(chartArt);
+            chartOriginNote.textContent = origin ? origin.label : '関連設定画は制作中';
+        }
+        for (const [key, ref] of rowRefs) ref.details.classList.toggle('is-chart-selected', key === id);
+        updateChart();
+        if (reveal && innerWidth < 1100) setCompact(false);
+    }
+    function updateChart() {
+        const g = W.byId.good.get(chartGood); if (!g) return;
+        const allowed = state.place ? new Set(W.districtsIn(state.place).map(d => d.id)) : null;
+        const quotes = goodQuotes(eco, g.id).filter(q => !allowed || allowed.has(q.district));
+        const ids = quotes.map(q => q.district);
+        if (chartDistrict && !ids.includes(chartDistrict)) chartDistrict = '';
+        const signature = state.place + '|' + ids.join('|');
+        if (districtSelect.dataset.signature !== signature) {
+            districtSelect.replaceChildren(h('option', { value: '' }, state.place ? 'この時片・異界の平均' : '全地区の平均'), ...ids.map(id => h('option', { value: id }, nameOf(W.byId.district.get(id)))));
+            districtSelect.dataset.signature = signature;
+        }
+        districtSelect.value = chartDistrict;
+        const allPoints = chartDistrict ? history.points(chartDistrict, g.id) : history.meanPoints(g.id, allowed ? ids : null);
+        const points = chartPeriod && allPoints.length ? allPoints.filter(p => p.time >= allPoints.at(-1).time - chartPeriod) : allPoints;
+        const price = chartDistrict ? quotes.find(q => q.district === chartDistrict)?.price : quotes.reduce((sum, q) => sum + q.price, 0) / quotes.length;
+        chartTitle.textContent = nameOf(g);
+        const scopeLabel = chartDistrict ? nameOf(W.byId.district.get(chartDistrict)) : `${state.place ? placeShort(W.byId.place.get(state.place)) : '全地区'}の単純平均（${quotes.length}地区）`;
+        chartScope.textContent = `${scopeLabel} ・ ${g.unit || '一単位'} ・ ${points.length}観測${points.length ? `（${points[0].day}日 ${points[0].label}〜${points.at(-1).day}日 ${points.at(-1).label}）` : ''}`;
+        const change = points.length > 1 ? points.at(-1).price / points[0].price - 1 : 0;
+        chartChange.textContent = `現在 ${fmtPrice(price)} ${cur}　基準価格比 ${pct(price / g.base_price - 1)} ／ 観測期間の変化 ${pct(change)}`;
+        chart.update(points, g.base_price);
+    }
 
     // ---------------------------------------------------------- arbitrage hints
     const hintList = h('ol', { class: 'hints' });
@@ -127,10 +204,15 @@ export function marketView(ctx, query) {
         const detail = h('div', { class: 'row-detail' });
         const details = h('details', { class: 'good-row', role: 'listitem', open: state.open === r.g.id },
             h('summary', null,
-                h('span', { class: 'row-name' }, h('strong', null, nameOf(r.g)), h('small', null, `${CATEGORY_LABEL[r.g.category] || r.g.category} ・ ${r.g.unit || ''}`)),
+                h('span', { class: 'row-name' }, goodArtwork(W, r.g) ? h('img', { class: 'good-origin-thumb', src: visualSource(goodArtwork(W, r.g).visual), alt: goodArtwork(W, r.g).label, loading: 'lazy', decoding: 'async' }) : null,
+                    h('strong', null, nameOf(r.g)), h('small', null, `${CATEGORY_LABEL[r.g.category] || r.g.category} ・ ${r.g.unit || ''}`)),
                 sparkBox, priceEl, chgEl),
             h('div', { class: 'row-body' }, h('p', { class: 'row-desc' }, tagged(clip(r.g.description, 150))), spreadEl, detail));
         details.addEventListener('toggle', () => { if (details.open) { state.open = r.g.id; paintDetail(); } });
+        details.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover)').matches) selectChart(r.g.id); });
+        details.addEventListener('focusin', () => selectChart(r.g.id));
+        details.querySelector('summary').addEventListener('click', () => selectChart(r.g.id, true));
+        details.querySelector('summary').setAttribute('aria-controls', 'selected-good-title');
         const ref = { g: r.g, sparkBox, priceEl, chgEl, spreadEl, detail, details, dir };
         function paintDetail() {
             if (!details.open) return;
@@ -188,6 +270,11 @@ export function marketView(ctx, query) {
         for (const r of slice) { const ref = rowRefs.get(r.g.id); if (ref) { paintRowLive(ref, r); if (ref.details.open) ref.paintDetail(); } }
         more.hidden = ranked.length <= state.shown;
         count.textContent = `${ranked.length} 品目（動きの大きい順）`;
+        if (rebuild) {
+            goodSelect.replaceChildren(...ranked.map(r => h('option', { value: r.g.id }, nameOf(r.g))));
+            selectChart(ranked.some(r => r.g.id === chartGood) ? chartGood : ranked[0]?.g.id || '');
+            chartPanel.hidden = !ranked.length;
+        } else updateChart();
     }
 
     paintHints();
@@ -197,20 +284,23 @@ export function marketView(ctx, query) {
     const liveNote = h('p', { class: 'ar-role live-note' });
     const paintLive = () => { liveNote.textContent = `この取引は動いています。いままでに ${fmt(eco.stats.trades)} 件、出来高 ${fmt(eco.stats.volume)} ${cur}。`; };
     paintLive();
-    const el = h('div', { class: 'page' },
+    let artworkStopped = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stopArt = h('button', { class: 'btn market-stop', type: 'button', 'aria-pressed': String(artworkStopped), onclick: () => { artworkStopped = !artworkStopped; el.classList.toggle('is-still', artworkStopped); stopArt.textContent=artworkStopped?'絵を動かす':'絵を止める';stopArt.setAttribute('aria-pressed',String(artworkStopped)); } }, artworkStopped?'絵を動かす':'絵を止める');
+    chartPanel.prepend(stopArt);
+    const el = h('div', { class: 'page' + (artworkStopped ? ' is-still' : '') },
         h('header', { class: 'page-head' },
             h('h1', null, '相場'),
             h('p', { class: 'lead' }, `価格は基軸通貨「${cur}」で表す。堂島時層会所が明け六つと暮れ六つに全時片の取引を清算し、エージェントたちは相場の開きを見て自分で動く。`),
             liveNote),
-        h('section', { class: 'sec', 'aria-labelledby': 'arb' },
-            sectionHead('裁定のヒント', 'いま、安い所で仕入れて高い所で売ると開きが大きい品', 'arb'), hintList),
-        h('section', { class: 'sec', 'aria-labelledby': 'board' },
-            sectionHead('地区ごとの価格', '品名をひらくと、地区ごとの値とその推移が見える', 'board'),
+        h('div', { class: 'market-workspace' }, chartPanel,
+        h('section', { class: 'sec market-board', 'aria-labelledby': 'board' },
+            sectionHead('品目と価格', 'かざす・フォーカス・タップでチャートへ。開くと地区ごとの値も見える。', 'board'),
             plaque({ class: 'filters' },
                 h('div', { class: 'filter-row' }, h('span', { class: 'lbl' }, '種類'), h('div', { class: 'chips' }, catBtns)),
                 h('div', { class: 'filter-row filter-inputs' }, placeSel, search)),
-            count, board, h('p', { class: 'more' }, more)),
-        currencySection(W));
+            count, board, h('p', { class: 'more' }, more))),
+        h('details', { class: 'sec market-hints' }, h('summary', null, '裁定のヒントを読む'), hintList),
+        currencySection(ctx));
 
     return {
         el, title: '相場',
@@ -219,6 +309,8 @@ export function marketView(ctx, query) {
             if (now - hintStamp > 4000) { hintStamp = now; paintHints(); }
             paintBoard(false);
             paintLive();
-        }
+            if (chartArt) chartArt.update();
+        },
+        destroy() { chart.destroy(); window.removeEventListener('scroll', onScroll); window.removeEventListener('wheel', onScrollIntent); window.removeEventListener('touchmove', onScrollIntent); window.removeEventListener('keydown', onScrollIntent); }
     };
 }

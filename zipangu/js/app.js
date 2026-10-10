@@ -15,6 +15,7 @@ import { libraryView, workView } from './view-library.js';
 import { marketView } from './view-market.js';
 import { agentsView, agentView } from './view-agents.js';
 import { aboutView, correctionsView } from './view-about.js';
+import { visualsView, visualView } from './view-visuals.js';
 
 const SECONDS_PER_DAY = 240;          // one in-world day (one 節気) is about four minutes
 const WARM_UP_SECONDS = 150;          // the city is already busy when you arrive
@@ -25,7 +26,7 @@ const SAMPLE_EVERY = 1 / 48;          // history point every half game-hour
 const TAB_OF = {
     home: 'home', place: 'home', district: 'home', bestiary: 'bestiary', creature: 'bestiary',
     library: 'library', work: 'library', market: 'market', agents: 'agents', agent: 'agents',
-    about: 'about', corrections: 'about'
+    about: 'about', corrections: 'about', visuals: 'visuals', visual: 'visuals'
 };
 
 // ------------------------------------------------------------------ storage that may not exist
@@ -121,7 +122,9 @@ async function boot() {
         agents: r => agentsView(ctx, r.query),
         agent: r => agentView(ctx, r.id),
         about: () => aboutView(ctx),
-        corrections: () => correctionsView(ctx)
+        corrections: () => correctionsView(ctx),
+        visuals: () => visualsView(ctx),
+        visual: r => visualView(ctx, r.id)
     };
 
     let current = null, firstRender = true;
