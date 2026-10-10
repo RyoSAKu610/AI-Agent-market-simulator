@@ -109,3 +109,11 @@ bash scripts/check.sh
 詳しい仕様と実装範囲は [CHARACTER_JOURNEYS.md](docs/CHARACTER_JOURNEYS.md)。単独HTMLにも同じ機能を含みます。
 
 English: All 32 residents support local rules-based dialogue, simulation-backed errands, bounded memories and persistent journeys. No external AI or API key is required.
+
+## いまを観る、小さな劇場
+
+住人詳細の「いま、何をしている？」では、旅・商い・細工・お願い・帰宅して読む伝言が、景観と行動画を使った短い劇になります。到着時に本当に同じ地区にいる二人だけが顔を合わせ、設定の縁や望みをもとに掛け合います。【創作演出】の台詞と、実際に起きた日時・結果は区別しています。
+
+台詞は街の速度とは別に5〜13秒ずつ進みます。一時停止・手送り・最近の場面の再観覧ができ、街はその間も動きます。読んでいる場面と台詞の位置も保存。数字の詳細と単体設定画は折りたたみ、話しかける・お願いする・地図で追う入口は舞台のそばにあります。設計と検証は [LIVE_DRAMA.md](docs/LIVE_DRAMA.md)。
+
+English: A live resident theatre stages short fictional dialogue around actual journeys, co-located encounters, work, errands and received letters. Reading uses wall time, with pause, replay and saved scene continuity; it grants no extra goods or rewards.

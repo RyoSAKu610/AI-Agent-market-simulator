@@ -1,4 +1,5 @@
 import { CHARACTER_PROFILES, characterArc } from './character-profiles.js';
+import { createDrama } from './character-drama.js';
 
 const short = a => String(a.name || a.name_ja || a.id).replace(/（[^）]*）/g, '');
 const bounded = (a, n) => a.slice(-n);
@@ -9,6 +10,8 @@ export function createStories(W, eco, saved = null, changed = () => {}) {
         chat: [], chronicle: [], memories: [], requests: [], trust: 0, practice: 0, bonds: {}, earned: []
     };
     const person = id => state.people[id];
+    const drama = createDrama(W, eco, state.drama || null, person,
+        id => characterArc(CHARACTER_PROFILES[id], id, person(id), eco.agents.get(id)));
     const districtName = id => W.byId.district.get(id)?.name_ja || id || '道中';
     const moment = () => ({ T: eco.time, day: eco.clock.day, label: eco.clock.label });
     function chat(id, who, text) {
@@ -49,11 +52,16 @@ export function createStories(W, eco, saved = null, changed = () => {}) {
             record(e.agent, e, `${short(sender)}からの封じた伝言を、帰宅して受け取った。`, true);
             chat(e.agent, 'system', `帰宅後に受け取った伝言：「${e.body}」`);
             if (person(e.from)) record(e.from, e, `${short(a)}が帰宅し、伝言を受け取った。`, true);
+        } else if (e.type === 'encounter') {
+            // Meeting is not a trade or a promise: no trust, goods or goal reward.
+            record(e.agent, e, e.message);
+            if (person(e.other)) record(e.other, e, e.message);
         } else if (['depart', 'arrive', 'trade', 'goal'].includes(e.type)) {
             record(e.agent, e, e.message, e.type === 'goal' || (e.type === 'arrive' && e.first));
             // Practise derives from actual crafting, not from talking or a made-up inventory.
             if (e.type === 'trade' && e.action === 'craft') p.practice++;
         }
+        drama.record(e);
         changed();
     }
     eco.on('*', handleEvent);
@@ -98,5 +106,5 @@ export function createStories(W, eco, saved = null, changed = () => {}) {
         reply = `${profile.gesture}\n${reply}`;
         chat(id, 'agent', reply); changed(); return reply;
     }
-    return { person, talk, request, profile: id => CHARACTER_PROFILES[id], snapshot: () => JSON.parse(JSON.stringify(state)), arc: id => characterArc(CHARACTER_PROFILES[id], id, person(id), eco.agents.get(id)), handleEvent };
+    return { person, talk, request, drama, profile: id => CHARACTER_PROFILES[id], snapshot: () => JSON.parse(JSON.stringify({ ...state, drama: drama.snapshot() })), arc: id => characterArc(CHARACTER_PROFILES[id], id, person(id), eco.agents.get(id)), handleEvent };
 }

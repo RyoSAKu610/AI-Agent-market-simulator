@@ -745,7 +745,26 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
             agent: a.id, district: tr.to, via: tr.via, first,
             message: `${a.name} が ${placeName(tr.to)} に着いた${first ? '（初訪問）' : ''}`
         });
+        encounter(a);
         nextStep(a);
+    }
+
+    // A brief exchange at an actual arrival. It does not trade goods, change plans,
+    // earn trust or use the economic RNG. Persisted pair cooldown survives reloads.
+    function encounter(a) {
+        const recent = S.encounters || (S.encounters = []);
+        const relations = list(W.agents).find(c => c.id === a.id)?.relationships || [];
+        const candidates = [...agents.values()].filter(b => b.id !== a.id && b.at === a.at && !b.trip)
+            .sort((b, c) => Number(relations.some(r => r.agent === c.id)) - Number(relations.some(r => r.agent === b.id)) || b.id.localeCompare(c.id));
+        const other = candidates.find(b => {
+            const pair = [a.id, b.id].sort().join('|');
+            return !recent.some(r => r.pair === pair && now() - r.T < 0.5);
+        });
+        if (!other) return;
+        const pair = [a.id, other.id].sort().join('|');
+        S.encounters = [...recent.filter(r => r.pair !== pair), { pair, T: now() }].slice(-128);
+        emit('encounter', { agent: a.id, other: other.id, district: a.at,
+            message: `${a.name} と ${other.name} が ${placeName(a.at)} で顔を合わせた` });
     }
 
     function doBuy(a, step) {

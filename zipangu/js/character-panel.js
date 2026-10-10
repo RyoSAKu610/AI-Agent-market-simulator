@@ -62,7 +62,7 @@ export function characterPanel(ctx, a, feature) {
             h('details', null, h('summary', null, '旅の記録を見る — 実際の移動・仕事・約束'), h('p', { class: 'muted' }, '直近40件の旅、8件の思い出、24件の会話を残します。古い記録は順に整理します。'), chronicle)));
     function update() {
         const p = stories.person(a.id), live = eco.agents.get(a.id);
-        if (feature) feature.update();
+        if (feature?.update) feature.update();
         const arc = stories.arc(a.id);
         chapter.textContent = arc.chapter;
         narrative.textContent = arc.narrative;

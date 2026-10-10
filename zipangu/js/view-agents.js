@@ -1,4 +1,5 @@
 import { characterPanel } from './character-panel.js';
+import { dramaPanel } from './drama-panel.js';
 import { visualFeature, visualArt } from './visual-art.js';
 import { visualOf } from './visual-manifest.js';
 // #/agents and #/agent/<id>
@@ -133,7 +134,9 @@ export function agentView(ctx, id) {
     const live = eco.agents.get(id);
     if (!a) return notFound('その住人');
     const feature = visualFeature(ctx, 'agent', id, { size: 320 });
-    const conversation = characterPanel(ctx, a, feature);
+    const conversation = characterPanel(ctx, a, feature ? h('details', { class: 'character-art-details' }, h('summary', null, '人物の設定画を鑑賞する'), feature) : null);
+    const talk = () => { conversation.el.querySelector('.character-dialogue').scrollIntoView({ block: 'start' }); conversation.el.querySelector('textarea').focus({ preventScroll: true }); };
+    const theatre = dramaPanel(ctx, a, talk);
     const cur = stripParens(W.baseCurrency.name_ja);
     const home = W.byId.district.get(a.home);
     const place = home && W.placeOf(home.id);
@@ -145,8 +148,8 @@ export function agentView(ctx, id) {
     const meter = progressBar(0, '長期目標の進み具合');
     const goalText = h('span', { class: 'live-goal' });
     const stats = h('dl', { class: 'facts facts-compact' });
-    const panel = plaque({ class: 'live-panel' },
-        h('h2', null, h('span', { class: 'live-dot', 'aria-hidden': 'true' }), 'いま、何をしている？'),
+    const panel = h('details', { class: 'live-facts plaque' },
+        h('summary', null, 'いまの荷物・財布・仕事の数字を見る'),
         stage, where, carry,
         h('div', { class: 'live-row' }, h('span', null, '財布'), wallet),
         h('div', { class: 'live-row live-row-goal' }, goalText, meter), stats);
@@ -185,9 +188,9 @@ export function agentView(ctx, id) {
                 h('h1', null, agentShort(a)),
                 h('p', { class: 'hero-sub' }, stripParens(a.name_ja) !== agentShort(a) ? a.name_ja : ''),
                 h('p', { class: 'hero-summary' }, a.role),
-                h('p', { class: 'chips' }, h('button', { type: 'button', class: 'btn btn-primary', onclick: () => { conversation.el.querySelector('.character-dialogue').scrollIntoView({ block: 'start' }); conversation.el.querySelector('textarea').focus({ preventScroll: true }); } }, '話しかける・お願いする'), h('a', { class: 'btn', href: '#/', onclick: () => { ctx.pendingFocus = id; } }, '地図で追う →'), home ? h('a', { class: 'chip', href: href.district(home.id) }, nameOf(home)) : null, place ? placeLink(place) : null))),
+                h('p', { class: 'chips' }, h('button', { type: 'button', class: 'btn btn-primary', onclick: () => theatre.el.scrollIntoView({ block: 'start' }) }, 'いまの劇を観る'), h('button', { type: 'button', class: 'btn', onclick: talk }, '話しかける・お願いする'), h('a', { class: 'btn', href: '#/', onclick: () => { ctx.pendingFocus = id; } }, '地図で追う →'), home ? h('a', { class: 'chip', href: href.district(home.id) }, nameOf(home)) : null, place ? placeLink(place) : null))),
         h('div', { class: 'page-body' },
-            conversation.el, panel,
+            theatre.el, panel, conversation.el,
             h('section', { class: 'sec', 'aria-labelledby': 'ag-person' }, sectionHead('人となり', null, 'ag-person'),
                 h('p', { class: 'lead' }, tagged(a.personality)),
                 h('dl', { class: 'facts' }, h('dt', null, '得意'), h('dd', null, tagged(a.specialty)))),
@@ -200,5 +203,5 @@ export function agentView(ctx, id) {
             rels.length ? h('section', { class: 'sec', 'aria-labelledby': 'ag-rel' }, sectionHead('縁のある人', null, 'ag-rel'), h('ul', { class: 'relations' }, rels)) : null,
             h('p', { class: 'pager' }, link('#/agents', '← 住人たちへ'))));
 
-    return { el, title: agentShort(a), update() { paint(); conversation.update(); } };
+    return { el, title: agentShort(a), update() { paint(); theatre.update(); conversation.update(); if (feature) feature.update(); } };
 }
