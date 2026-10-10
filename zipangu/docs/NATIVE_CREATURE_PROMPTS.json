@@ -1,0 +1,631 @@
+{
+  "dogu_mori": {
+    "id": "dogu_mori",
+    "name": "土偶守（どぐうもり）",
+    "description": "遮光器土偶の姿をした、生きた焼き物の守り手。背丈は子どもほどから大人を越すものまでさまざまで、赤褐色の胴には渦を巻く縄目が刻まれ、話すたびにその縄目が青白い光の線として脈打つ。ゴーグルのような横長の大きな目は闇を見通し、夜は中空の胴の中に小さな灯がともって提灯のように透ける。歩くと腰に下げた結縄の結び目がからから鳴り、通ったあとの落ち葉がほんのり温かい。",
+    "ecology": "眠らず、昼も夜もゆっくり森を巡って、倒れた木を抱いて土へ還す。食べ物はとらず、雨と焚き火の熱と歌で生きているという。森の門に立って入る者を選び、通行料として歌を一曲受け取る。刻も翅鱗も受け取らない。割れても漆で継げば、また元どおりに歩きだす。経済では結縄台帳の立会人で、取引のたびに結び目を確かめて縁の記録の真正さを保証し、逢う刻の清算を支える。",
+    "behavior": {
+      "activity": "always",
+      "movement": "walk",
+      "social": "solitary"
+    },
+    "visual": {
+      "palette": [
+        "#4a2f22",
+        "#a65a35",
+        "#d9c3a0",
+        "#1c1714",
+        "#bfe3ff"
+      ],
+      "iridescence": 0.05,
+      "glow": 0.5,
+      "pattern": "stripes",
+      "shape": "lantern",
+      "scale": 2
+    },
+    "status": "verified",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 遮光器土偶の姿をした、生きた焼き物の守り手。背丈は子どもほどから大人を越すものまでさまざまで、赤褐色の胴には渦を巻く縄目が刻まれ、話すたびにその縄目が青白い光の線として脈打つ。ゴーグルのような横長の大きな目は闇を見通し、夜は中空の胴の中に小さな灯がともって提灯のように透ける。歩くと腰に下げた結縄の結び目がからから鳴り、通ったあとの落ち葉がほんのり温かい。\nCanonicalecology: 眠らず、昼も夜もゆっくり森を巡って、倒れた木を抱いて土へ還す。食べ物はとらず、雨と焚き火の熱と歌で生きているという。森の門に立って入る者を選び、通行料として歌を一曲受け取る。刻も翅鱗も受け取らない。割れても漆で継げば、また元どおりに歩きだす。経済では結縄台帳の立会人で、取引のたびに結び目を確かめて縁の記録の真正さを保証し、逢う刻の清算を支える。\nCanonicalpalette: #4a2f22, #a65a35, #d9c3a0, #1c1714, #bfe3ff\nStaging/identification requirements: ONE unspecialized member of Dogu Guardian species, living reddish-brown clay SHAKOKI dogu, two huge horizontally oval carved goggle eyes, bare ceramic body not clothed agentelder, spiral rope-impressions pulse thin cyanwhite, small knottedrope atwaist, softly lit hollowtorso. NOstaff/cape/shoulderbutterfly/crown/coins. Distinguish from namedDOGUresident. Allhead/lowerfeet visible.",
+    "file": "assets/creatures/dogu_mori.png",
+    "review": "裸の赤褐陶器・横長遮光器眼・渦縄目の青白線・中空灯・腰結縄を確認。長老住人の衣/杖/肩蝶はなし。常時ゆっくりwalk、縄目の拍動と歌時の反応にする。",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": [
+      0,
+      254
+    ]
+  },
+  "jomon_morioi_jika": {
+    "id": "jomon_morioi_jika",
+    "name": "森負い鹿（もりおいじか）",
+    "description": "肩の高さが人の背丈ほどもある、大きくておだやかな鹿。背中には苔とシダと若い栗の木が根を張った、ひと抱えの小さな森がまるごと乗っていて、夜にはそこに生えた月夜茸が青白く灯る。毛並みは焼き栗の色で、子鹿の斑点に見える白い点は、よく見ると小さなきのこの傘。歩くたびに背中の森の葉がさやさやと鳴り、角には去年の蔓が巻きついて白い花を咲かせている。子どもが歌を聴かせると膝を折り、背中の苔の上にしばらく座らせてくれる。",
+    "ecology": "夕暮れと明け方に、落ち葉や柔らかい下草を食べながらゆっくり歩く。木が伐られた跡を嗅ぎつけるとその上で眠り、眠った跡からは三年で栗の若木が、十年で漆の若木が育つ。背中の栗の木は秋に実を落とし、鹿はそれを拾われても気にしない。母と子の二頭で歩くことが多い。経済では森の暦の「植える側」を担う生きた苗床で、伐採の跡がどれだけ早く森に戻るか、つまり建設の長期目標の進み具合を左右する。",
+    "behavior": {
+      "activity": "crepuscular",
+      "movement": "walk",
+      "social": "pair"
+    },
+    "visual": {
+      "palette": [
+        "#6e4a32",
+        "#3f6b3c",
+        "#a8c66c",
+        "#efe3c2",
+        "#9fd8ff"
+      ],
+      "iridescence": 0.1,
+      "glow": 0.35,
+      "pattern": "spots",
+      "shape": "deer",
+      "scale": 2.6
+    },
+    "status": "verified",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 肩の高さが人の背丈ほどもある、大きくておだやかな鹿。背中には苔とシダと若い栗の木が根を張った、ひと抱えの小さな森がまるごと乗っていて、夜にはそこに生えた月夜茸が青白く灯る。毛並みは焼き栗の色で、子鹿の斑点に見える白い点は、よく見ると小さなきのこの傘。歩くたびに背中の森の葉がさやさやと鳴り、角には去年の蔓が巻きついて白い花を咲かせている。子どもが歌を聴かせると膝を折り、背中の苔の上にしばらく座らせてくれる。\nCanonicalecology: 夕暮れと明け方に、落ち葉や柔らかい下草を食べながらゆっくり歩く。木が伐られた跡を嗅ぎつけるとその上で眠り、眠った跡からは三年で栗の若木が、十年で漆の若木が育つ。背中の栗の木は秋に実を落とし、鹿はそれを拾われても気にしない。母と子の二頭で歩くことが多い。経済では森の暦の「植える側」を担う生きた苗床で、伐採の跡がどれだけ早く森に戻るか、つまり建設の長期目標の進み具合を左右する。\nCanonicalpalette: #6e4a32, #3f6b3c, #a8c66c, #efe3c2, #9fd8ff\nStaging/identification requirements: ONE calm enormous chestnutfurDEER, four elegant hoovedlegs, antlers curledoldvines withWHITEflowers. Entire small rooted forest naturallygrowsONback: moss/ferns/YOUNG CHESTNUTtree, not palm/Europeanconifer, little bluewhitemoonmushrooms. Whitebodyspots are TINY MUSHROOMCAPS, notnormaldotspots. Front3/4wholedeer forestwithinframe. Nocaptiveharness/rider.",
+    "file": "assets/creatures/jomon_morioi_jika.png",
+    "review": "栗葉/栗毬の若木、苔/シダ/月夜茸の背森、蔓と白花の角、白点が小茸であることを確認。四脚のうち奥前脚は視点で一部隠れる。明け方/夕暮れwalk・葉と茸の弱い揺れ、母子pairはpage正本で扱う。",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": [
+      0,
+      254
+    ]
+  },
+  "rokoku_game": {
+    "id": "rokoku_game",
+    "name": "漏刻亀（ろうこくがめ）",
+    "description": "甲羅の長さが大人の腕ほどもある大きな淡水の亀。甲羅は青緑の苔をまとった四段の段々になっていて、それぞれの段に澄んだ水が満ちている。上の段から下の段へ一定の間で雫が落ち、いちばん下の段には金色の細い浮き棒が立って、水位で時を示す。雫が落ちるたび、甲羅全体が小さな水琴窟のように「ころん」と澄んだ音を鳴らす。目は穏やかな琥珀色で、首を伸ばして鐘鼓楼を見上げる姿が漏刻台の名物になっている。",
+    "ecology": "琵琶湖の浅瀬の水草と小さな貝を食べ、日中は漏刻台の刻の公証所で甲羅の水位を見せて過ごす。夕方には亀の汀へ下りて、甲羅の水槽に湖の水を汲み直す。雫の間は亀ごとにわずかに違い、何頭もの音を聴きくらべることで、公証の時刻が一頭の狂いに左右されないようになっている。百年を超えて生きる個体も珍しくない。【経済での役割：時刻の公証人として刻の信用を裏付け、契約と決済の締め時刻を支える】",
+    "behavior": {
+      "activity": "diurnal",
+      "movement": "walk",
+      "social": "herd"
+    },
+    "visual": {
+      "palette": [
+        "#2e6b5e",
+        "#7fb8a4",
+        "#d4b45a",
+        "#c9e6ea"
+      ],
+      "iridescence": 0.2,
+      "glow": 0.25,
+      "pattern": "scales",
+      "shape": "tanuki",
+      "scale": 1.6
+    },
+    "status": "verified",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 甲羅の長さが大人の腕ほどもある大きな淡水の亀。甲羅は青緑の苔をまとった四段の段々になっていて、それぞれの段に澄んだ水が満ちている。上の段から下の段へ一定の間で雫が落ち、いちばん下の段には金色の細い浮き棒が立って、水位で時を示す。雫が落ちるたび、甲羅全体が小さな水琴窟のように「ころん」と澄んだ音を鳴らす。目は穏やかな琥珀色で、首を伸ばして鐘鼓楼を見上げる姿が漏刻台の名物になっている。\nCanonicalecology: 琵琶湖の浅瀬の水草と小さな貝を食べ、日中は漏刻台の刻の公証所で甲羅の水位を見せて過ごす。夕方には亀の汀へ下りて、甲羅の水槽に湖の水を汲み直す。雫の間は亀ごとにわずかに違い、何頭もの音を聴きくらべることで、公証の時刻が一頭の狂いに左右されないようになっている。百年を超えて生きる個体も珍しくない。【経済での役割：時刻の公証人として刻の信用を裏付け、契約と決済の締め時刻を支える】\nCanonicalpalette: #2e6b5e, #7fb8a4, #d4b45a, #c9e6ea\nStaging/identification requirements: ONE freshwaterTURTLE actual turtlehead/4shortlegs, calmambereyes. Its shell is FOUR clearlycountable stepped OPENwaterbasins stacked top-to-bottom, waterdropcascades downall4; slender GOLD FLOATING ROD risesfromBOTTOMbasin. Fourclearwatertiers notthree/five. Bluetealmossonshell, not clockface/gear/steam/metal robot. Animal restingfreely.",
+    "file": "assets/creatures/rokoku_game.png",
+    "review": "4段の水面を明確に数え、最下段の金浮棒と水滴、琥珀眼の亀形を確認。水がやや連続cascadeとして描かれる創作意匠、UI時刻は原典刻公証を維持。昼walk、水滴の周期・小水面波紋を提案。",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": [
+      0,
+      254
+    ]
+  },
+  "hoshi_kaiko": {
+    "id": "hoshi_kaiko",
+    "name": "星蚕（ほしかいこ）",
+    "description": "指ほどの長さの、体が半透明な蚕。昼は乳白色で、体の内側を細い光の筋が一本通っているのが透けて見える。夜になるとその筋が客星の色、淡い金と青白に灯り、節ごとに小さな星が並んだように見える。桑を食む音は細かな雨のようで、飼屋に何百頭もいると晴れた夜でも雨音がする。吐く糸は昼の光を含み、暗がりで引くと糸の先から白銀の光が水のように伝っていく。",
+    "ecology": "客星の光を浴びた夜の星桑の葉だけを食べる。緑の繭を作る実在の天蚕（ヤママユ）の遠い親戚という設定で、人の手で飼われながらも、夜ごとに枝から枝へ光る渡り糸を張る野の性質を残している。繭から羽化した成虫は銀鼠の翅に星の点をもつ蛾になって里の外へ飛び立ち、羽化の済んだ抜け殻繭が飼屋に残る。【経済での役割：星糸の供給源として、銀河鉄道と月航路の基幹資材を生む】",
+    "behavior": {
+      "activity": "nocturnal",
+      "movement": "walk",
+      "social": "herd"
+    },
+    "visual": {
+      "palette": [
+        "#f2efe6",
+        "#cfe3f2",
+        "#e8c76a",
+        "#9fb4d8"
+      ],
+      "iridescence": 0.5,
+      "glow": 0.75,
+      "pattern": "veins",
+      "shape": "firefly",
+      "scale": 0.8
+    },
+    "status": "verified",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 指ほどの長さの、体が半透明な蚕。昼は乳白色で、体の内側を細い光の筋が一本通っているのが透けて見える。夜になるとその筋が客星の色、淡い金と青白に灯り、節ごとに小さな星が並んだように見える。桑を食む音は細かな雨のようで、飼屋に何百頭もいると晴れた夜でも雨音がする。吐く糸は昼の光を含み、暗がりで引くと糸の先から白銀の光が水のように伝っていく。\nCanonicalecology: 客星の光を浴びた夜の星桑の葉だけを食べる。緑の繭を作る実在の天蚕（ヤママユ）の遠い親戚という設定で、人の手で飼われながらも、夜ごとに枝から枝へ光る渡り糸を張る野の性質を残している。繭から羽化した成虫は銀鼠の翅に星の点をもつ蛾になって里の外へ飛び立ち、羽化の済んだ抜け殻繭が飼屋に残る。【経済での役割：星糸の供給源として、銀河鉄道と月航路の基幹資材を生む】\nCanonicalpalette: #f2efe6, #cfe3f2, #e8c76a, #9fb4d8\nStaging/identification requirements: ONE larval SILKWORM caterpillar, segmented semi-transparent MILKYwhitebody withONE thin innerlongitudinalgoldcyanlightline, eachsegment smallstarpoint. Real caterpillarprolegs/littlehead, NOT adultmoth/firefly. A fine SILVER-white silktrail frommouth restslooselyunderbody, no tied cocoon/capturedanimal. No adultwing.",
+    "file": "assets/creatures/hoshi_kaiko.png",
+    "mode": "RGBA",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": [
+      0,
+      254
+    ],
+    "bbox128": [
+      40,
+      202,
+      1491,
+      897
+    ],
+    "review": "乳白半透明の節体/一本の内側光筋/節星/口からの銀糸を確認。成虫ではなく幼虫単体。夜walk、内光ゆっくり拍動、糸を結ぶ動きを提案。"
+  },
+  "heian_sanju_medaka": {
+    "id": "heian_sanju_medaka",
+    "name": "算珠目高（さんじゅめだか）",
+    "description": "小指の先ほどの小さな目高。体は澄んだ水色で、背中に算盤の珠のような丸い粒が一列に並び、粒は一刻の始まりにだけ淡い金色に灯る。群れで泳ぐと珠の列が水の中でそろい、升ごとに泳ぎ込んで並ぶ数で、その升の水位が表す数を示す。名のとおり大きな目が頭の高いところについていて、雨粒が落ちると群れが一斉に向きを変える。",
+    "ecology": "算水路の升と升のあいだに群れで住み、溝に流れてくる小さな藻やミジンコを食べる。升の水位が変わると、群れは数をそろえて隣の升へ移る性質があり、答えの出た升には答えと同じ数の珠が並ぶ。計算が狂って水位がおかしくなると、群れはばらばらに散って知らせる。春に溝の水草へ卵を産み、梅雨には稚魚が都じゅうの升を埋める。【経済での役割：水算の検算を担い、計算請負の信用を支える】",
+    "behavior": {
+      "activity": "diurnal",
+      "movement": "swim",
+      "social": "school"
+    },
+    "visual": {
+      "palette": [
+        "#9fd7e6",
+        "#3a8fb7",
+        "#e8c76a",
+        "#f4f1e8"
+      ],
+      "iridescence": 0.3,
+      "glow": 0.45,
+      "pattern": "spots",
+      "shape": "goldfish",
+      "scale": 0.5
+    },
+    "status": "verified",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 小指の先ほどの小さな目高。体は澄んだ水色で、背中に算盤の珠のような丸い粒が一列に並び、粒は一刻の始まりにだけ淡い金色に灯る。群れで泳ぐと珠の列が水の中でそろい、升ごとに泳ぎ込んで並ぶ数で、その升の水位が表す数を示す。名のとおり大きな目が頭の高いところについていて、雨粒が落ちると群れが一斉に向きを変える。\nCanonicalecology: 算水路の升と升のあいだに群れで住み、溝に流れてくる小さな藻やミジンコを食べる。升の水位が変わると、群れは数をそろえて隣の升へ移る性質があり、答えの出た升には答えと同じ数の珠が並ぶ。計算が狂って水位がおかしくなると、群れはばらばらに散って知らせる。春に溝の水草へ卵を産み、梅雨には稚魚が都じゅうの升を埋める。【経済での役割：水算の検算を担い、計算請負の信用を支える】\nCanonicalpalette: #9fd7e6, #3a8fb7, #e8c76a, #f4f1e8\nStaging/identification requirements: ONE verysmall MEDAKA ricefish slendertransparentclearwater-bluebody, BIGEYES HIGH onhead, plain smalltransparentfins (notgoldfish), ONE straightline ofround abacuslikeBEADS along BACK, faintgold. Readable clearbeadrow withoutattachingsolidabacusboard. Wholefish nose-to-tail withfins.",
+    "file": "assets/creatures/heian_sanju_medaka.png",
+    "mode": "RGBA",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": [
+      0,
+      254
+    ],
+    "bbox128": [
+      78,
+      278,
+      1483,
+      719
+    ],
+    "review": "澄んだ水色の小魚/頭高い大目/背の算珠1列/透明ひれを確認。金魚の長飾り尾にはせず、小目高の細形を維持。昼school swim、一刻開始だけ珠点灯。"
+  },
+  "kogane_goke": {
+    "id": "kogane_goke",
+    "name": "金苔（こがねごけ）",
+    "description": "砂金の沢の岩を、ビロードのように隙間なく覆う丈の低い苔。一本一本は指の関節ほどの高さで、葉は若草色に金を溶かしたような緑金色。それぞれの先端に芥子粒ほどの金の粒が一つずつ結び、朝露の中では無数の灯火を散らしたように光る。秋になると苔そのものが黄金色に変わり、谷全体が足もとから明るくなる。風が渡ると粒どうしが触れ合い、遠い雨のような音がする。",
+    "ecology": "冷たく澄んだ、金を含む岩の上を流れる沢にだけ育つ。根元に共に暮らす小さな細菌たちとともに、水に溶けたごく微量の金を集め、先端に粒として結ぶ（金を析出する細菌の実在の研究から着想した【創作】）。粒は秋に熟して自然に沢へ落ち、下流の沢籠で受けられる。濁りや油を極端に嫌い、沢が汚れるとすぐに粒を結ばなくなる。胞子は金箔小灰の脚に運ばれて、隣の谷へ広がる。【経済での役割：金を再生できる素材にした供給源。金の価値下落と光量本位制の原因になった】",
+    "behavior": {
+      "activity": "always",
+      "movement": "still",
+      "social": "swarm"
+    },
+    "visual": {
+      "palette": [
+        "#d4a537",
+        "#5f7f34",
+        "#f4dc86",
+        "#2f4a2b"
+      ],
+      "iridescence": 0.3,
+      "glow": 0.5,
+      "pattern": "spots",
+      "shape": "moss",
+      "scale": 0.6
+    },
+    "status": "verified",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 砂金の沢の岩を、ビロードのように隙間なく覆う丈の低い苔。一本一本は指の関節ほどの高さで、葉は若草色に金を溶かしたような緑金色。それぞれの先端に芥子粒ほどの金の粒が一つずつ結び、朝露の中では無数の灯火を散らしたように光る。秋になると苔そのものが黄金色に変わり、谷全体が足もとから明るくなる。風が渡ると粒どうしが触れ合い、遠い雨のような音がする。\nCanonicalecology: 冷たく澄んだ、金を含む岩の上を流れる沢にだけ育つ。根元に共に暮らす小さな細菌たちとともに、水に溶けたごく微量の金を集め、先端に粒として結ぶ（金を析出する細菌の実在の研究から着想した【創作】）。粒は秋に熟して自然に沢へ落ち、下流の沢籠で受けられる。濁りや油を極端に嫌い、沢が汚れるとすぐに粒を結ばなくなる。胞子は金箔小灰の脚に運ばれて、隣の谷へ広がる。【経済での役割：金を再生できる素材にした供給源。金の価値下落と光量本位制の原因になった】\nCanonicalpalette: #d4a537, #5f7f34, #f4dc86, #2f4a2b\nStaging/identification requirements: ONE isolated intact smallsmoothstreamrock coveredwith SHORTvelvet green-goldMOSS. Each SMALLleafytip bearsONE minuteGOLDgrain, dew. Individual mossleaf textures visible, goldamountmodest, no hugegoldnuggets/trees/waterfall. No harvesting/rootcut; naturalrockasplant'ssubstrateonly, backdroptransparent.",
+    "file": "assets/creatures/kogane_goke.png",
+    "mode": "RGBA",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha": [
+      0,
+      254
+    ],
+    "bbox128": [
+      58,
+      86,
+      1478,
+      970
+    ],
+    "review": "短い葉先の微小金粒、緑金苔、岩substrate、露を確認。金塊や根刈り道具なし。still/swar m、風の弱揺れと秋色・自然落粒を提案。"
+  },
+  "icho_dori": {
+    "id": "icho_dori",
+    "name": "銀杏鳥（いちょうどり）",
+    "description": "晩秋、イチョウの葉が枝を離れた瞬間に姿を変える、掌に乗るほどの金色の小鳥。扇形の葉はそのまま広げた翼と尾になり、葉脈は細い扇の筋になって羽の一枚一枚に残る。体は灯火のような金色で、葉先の切れ込みだったところだけが少し濃い山吹色。目は銀杏の実のような乳白の粒。群れで飛ぶときは、はじめ落葉のようにひらひらと舞い降り、地面すれすれで向きをそろえて一斉に舞い上がる。羽音は乾いた葉擦れの「さらさら」で、その合間に細く澄んだ声で鳴く。",
+    "ecology": "晩秋のひと季節だけ鳥として生きる。食べ物はとらず、夕日を浴びて朝露を少し飲むだけで、渡りの力を得る。霜降から立冬の頃、夕日の丘から群れで南へ渡り、途中の時片のイチョウの梢で休みながら冬を越す。春になると最寄りのイチョウの枝先に止まって眠り、芽吹きとともにまた葉に戻る。多くの銀杏鳥が帰ってきた雌の木は、その年たくさんの実をつける。渡りの羽づくろいで翅からこぼれる金粉が、北の時片から南の時片へ光金術の細かな粉を運んでいく。【経済での役割：年に一度の渡り金粉の供給と、黄金市の開幕の合図。季節の先回り取引の目安になる】",
+    "behavior": {
+      "activity": "crepuscular",
+      "movement": "glide",
+      "social": "swarm"
+    },
+    "visual": {
+      "palette": [
+        "#f3c533",
+        "#e2952a",
+        "#fff0b3",
+        "#6b5420"
+      ],
+      "iridescence": 0.25,
+      "glow": 0.45,
+      "pattern": "veins",
+      "shape": "sparrow",
+      "scale": 0.8
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 晩秋、イチョウの葉が枝を離れた瞬間に姿を変える、掌に乗るほどの金色の小鳥。扇形の葉はそのまま広げた翼と尾になり、葉脈は細い扇の筋になって羽の一枚一枚に残る。体は灯火のような金色で、葉先の切れ込みだったところだけが少し濃い山吹色。目は銀杏の実のような乳白の粒。群れで飛ぶときは、はじめ落葉のようにひらひらと舞い降り、地面すれすれで向きをそろえて一斉に舞い上がる。羽音は乾いた葉擦れの「さらさら」で、その合間に細く澄んだ声で鳴く。\nCanonicalecology: 晩秋のひと季節だけ鳥として生きる。食べ物はとらず、夕日を浴びて朝露を少し飲むだけで、渡りの力を得る。霜降から立冬の頃、夕日の丘から群れで南へ渡り、途中の時片のイチョウの梢で休みながら冬を越す。春になると最寄りのイチョウの枝先に止まって眠り、芽吹きとともにまた葉に戻る。多くの銀杏鳥が帰ってきた雌の木は、その年たくさんの実をつける。渡りの羽づくろいで翅からこぼれる金粉が、北の時片から南の時片へ光金術の細かな粉を運んでいく。【経済での役割：年に一度の渡り金粉の供給と、黄金市の開幕の合図。季節の先回り取引の目安になる】\nCanonicalpalette: #f3c533, #e2952a, #fff0b3, #6b5420\nStaging/identification requirements: ONE smallbird madefrom GOLD GINKGO LEAF, openfan-shapedgingkowings AND tail withthinradiating leafVEINS/not ordinaryfeathers. Paleivoryginkgoseedlikeeyes, deeperyellow splitfan tips, organic leafcurltexture, birdbeak/tinyfeet. No flame/phoenix/firecloud; gentle glidingpose.",
+    "file": "assets/creatures/icho_dori.png"
+  },
+  "hiraizumi_kinkei": {
+    "id": "hiraizumi_kinkei",
+    "name": "金鶏（きんけい）",
+    "description": "透金を一枚ずつ重ねて作ったような、雌雄一対の黄金の鶏。羽根は薄い金箔が鱗のように重なってできていて、歩くたびに金箔を撫でるような柔らかな音がする。雄の長い尾羽は光を透かして根元から先へ青緑に変わり、鶏冠と肉垂は朱漆の赤、目は夜光貝の内側のような真珠色。雌は少し小さく、羽の縁に銀の線が一行ずつ交互に走る。ふだんは見えず、元旦の明け六つにだけ二羽そろって金鶏山の山頂に現れる。雄が一声鳴くと、町じゅうの透金がいっせいに一段明るくなり、霜の上に残った二羽の足跡は、その日一日金色に光りつづける。",
+    "ecology": "一年のほとんどを金鶏山の土の中で眠って過ごす。食べるのは山に積もった渡り金粉と、元旦の朝の霜だけだとされる。大晦日の夜、山の斜面がほのかに温かくなるのが目覚めの前触れで、元旦の明け六つに山頂で一度だけ鳴き、雌雄それぞれ一枚ずつ羽を落として、また山の中へ歩いて戻る。何も頼まずに元旦の山へ登った者の前にしか姿を見せない。【経済での役割：元旦に自然に抜け落ちる初羽が、光堂両替所の光量の原器になり、一年の光量鑑定と光箔の値の基準を定める】",
+    "behavior": {
+      "activity": "crepuscular",
+      "movement": "walk",
+      "social": "pair"
+    },
+    "visual": {
+      "palette": [
+        "#efc25a",
+        "#c9432f",
+        "#2e9c8a",
+        "#fff3c6",
+        "#1a2246"
+      ],
+      "iridescence": 0.7,
+      "glow": 0.8,
+      "pattern": "scales",
+      "shape": "phoenix",
+      "scale": 1.8
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 透金を一枚ずつ重ねて作ったような、雌雄一対の黄金の鶏。羽根は薄い金箔が鱗のように重なってできていて、歩くたびに金箔を撫でるような柔らかな音がする。雄の長い尾羽は光を透かして根元から先へ青緑に変わり、鶏冠と肉垂は朱漆の赤、目は夜光貝の内側のような真珠色。雌は少し小さく、羽の縁に銀の線が一行ずつ交互に走る。ふだんは見えず、元旦の明け六つにだけ二羽そろって金鶏山の山頂に現れる。雄が一声鳴くと、町じゅうの透金がいっせいに一段明るくなり、霜の上に残った二羽の足跡は、その日一日金色に光りつづける。\nCanonicalecology: 一年のほとんどを金鶏山の土の中で眠って過ごす。食べるのは山に積もった渡り金粉と、元旦の朝の霜だけだとされる。大晦日の夜、山の斜面がほのかに温かくなるのが目覚めの前触れで、元旦の明け六つに山頂で一度だけ鳴き、雌雄それぞれ一枚ずつ羽を落として、また山の中へ歩いて戻る。何も頼まずに元旦の山へ登った者の前にしか姿を見せない。【経済での役割：元旦に自然に抜け落ちる初羽が、光堂両替所の光量の原器になり、一年の光量鑑定と光箔の値の基準を定める】\nCanonicalpalette: #efc25a, #c9432f, #2e9c8a, #fff3c6, #1a2246\nStaging/identification requirements: A PAIR rooster+hen, male slightlylargerwithLONGTAIL, female smaller alternatingfineSILVERedges. Bodyplumage overlappingtranslucentGOLDfoilscales, MALEtail passeslightTEALfrombasetotip, REDLACQUERcomb+WATTLES, pearl-eyes. Actual CHICKEN silhouettes notphoenix. ONEpair fullyvisible sidebyside withpadding. Nopeople/coins/cage/backgroundhill, dawnimpliedsoftwarmlight.",
+    "file": "assets/creatures/hiraizumi_kinkei.png"
+  },
+  "fumi_uo": {
+    "id": "fumi_uo",
+    "name": "文魚（ふみうお）",
+    "description": "小指の先ほどの、細長い銀色の小魚。頭から尾へ向かって細くなる体は、銀活字の地金を薄く延ばしたような鱗に覆われ、尾の先には三本の長い糸のようなひれがたなびく。紙の上をまるで水の中のようにすいすいと泳ぎ、頁と頁のあいだに潜ると、紙の表に銀色の小さなさざ波が立つ。誤植を見つけると止まって、その一文字だけを口でつまんで食べる。食べられた誤植は小さな墨の粒になってこぼれ落ち、そこには正しい字がうっすらと浮かびあがる。光を嫌い、灯りを近づけると頁の綴じ目へいっせいに隠れる。",
+    "ecology": "【史実】モデルの紙魚（しみ）は紙や糊を食べる小さな虫で、銀色の鱗に覆われ、暗く湿った所を好んで夜に動く。【創作】文魚は紙そのものではなく、誤植と墨のにじみと破れ目の毛羽だけを食べる。夜、本屋の棚の頁の間を群れで泳ぎ、破れた紙を口から出す細い銀の糸で繕う。銀活字通りで生まれ、いまは浮遊図書館・青空書庫の書架にも住みついている。夏の虫干しの日に頁を一枚ずつ開いて文魚を風に当てると、翌年は誤植の少ない一年になるという。",
+    "behavior": {
+      "activity": "nocturnal",
+      "movement": "swim",
+      "social": "school"
+    },
+    "visual": {
+      "palette": [
+        "#dfe4ec",
+        "#9aa7ba",
+        "#5d6a80",
+        "#22263a",
+        "#efe6cf"
+      ],
+      "iridescence": 0.7,
+      "glow": 0.3,
+      "pattern": "scales",
+      "shape": "eel",
+      "scale": 0.6
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 小指の先ほどの、細長い銀色の小魚。頭から尾へ向かって細くなる体は、銀活字の地金を薄く延ばしたような鱗に覆われ、尾の先には三本の長い糸のようなひれがたなびく。紙の上をまるで水の中のようにすいすいと泳ぎ、頁と頁のあいだに潜ると、紙の表に銀色の小さなさざ波が立つ。誤植を見つけると止まって、その一文字だけを口でつまんで食べる。食べられた誤植は小さな墨の粒になってこぼれ落ち、そこには正しい字がうっすらと浮かびあがる。光を嫌い、灯りを近づけると頁の綴じ目へいっせいに隠れる。\nCanonicalecology: 【史実】モデルの紙魚（しみ）は紙や糊を食べる小さな虫で、銀色の鱗に覆われ、暗く湿った所を好んで夜に動く。【創作】文魚は紙そのものではなく、誤植と墨のにじみと破れ目の毛羽だけを食べる。夜、本屋の棚の頁の間を群れで泳ぎ、破れた紙を口から出す細い銀の糸で繕う。銀活字通りで生まれ、いまは浮遊図書館・青空書庫の書架にも住みついている。夏の虫干しの日に頁を一枚ずつ開いて文魚を風に当てると、翌年は誤植の少ない一年になるという。\nCanonicalpalette: #dfe4ec, #9aa7ba, #5d6a80, #22263a, #efe6cf\nStaging/identification requirements: ONE tiny SILVERFISH-LIKE elongated fish silvermetaltypescalebody taperingfromheadtotail, EXACTLY THREE LONG threadlike tailFINS clearlycountable. A small naturalwasHIPAPERcorner optionalunderbody signals paperswimming, no wholebookbackground/no readableletters. Smoothfishheadnotshrimp, no legs. Noglowblast.",
+    "file": "assets/creatures/fumi_uo.png"
+  },
+  "sengoku_isoho_kitsune": {
+    "id": "sengoku_isoho_kitsune",
+    "name": "伊曽保狐（いそほぎつね）",
+    "description": "本の見開きにちょうど収まるくらいの小さな狐。体は生成りの和紙の色で、輪郭と毛並みは木版の挿絵のような墨の線で描かれている。近づいて見ると、毛の一本一本が、ローマ字で刷られた豆粒ほどの文字の連なりでできている。目は朱の版面の色、尾の先だけが刷りたての銀活字のように白銀に光る。横から見ると紙のように薄く、頁から飛び出すときは「ぱらり」と紙をめくる音がする。狐が出かけているあいだ、元の頁には狐の形の白い空白が残る。",
+    "ecology": "【創作】銀活字で刷り直された伊曽保の寓話の本に住み、誰かが頁を開いて声に出して読みはじめると目を覚ます。読者の前に飛び出して「この話、ほかにどう終われたと思う？」と結末を相談し、読者が答えると、それを朱で余白に書き留めて（これが「狐の朱註」）、一刻のうちに頁へ戻る。原文の文字には決して手を触れない。食べ物は読者の笑い声と、頁をめくるときの風だと言われる。作者が世を去って皆のものになった物語の頁にしか出てこないので、狐が現れること自体が、その本が「没後の約束」を満たしている証になる。",
+    "behavior": {
+      "activity": "always",
+      "movement": "walk",
+      "social": "solitary"
+    },
+    "visual": {
+      "palette": [
+        "#f3ead6",
+        "#24252f",
+        "#c94a32",
+        "#cdd2da",
+        "#d8a93b"
+      ],
+      "iridescence": 0.2,
+      "glow": 0.25,
+      "pattern": "veins",
+      "shape": "fox",
+      "scale": 0.8
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 本の見開きにちょうど収まるくらいの小さな狐。体は生成りの和紙の色で、輪郭と毛並みは木版の挿絵のような墨の線で描かれている。近づいて見ると、毛の一本一本が、ローマ字で刷られた豆粒ほどの文字の連なりでできている。目は朱の版面の色、尾の先だけが刷りたての銀活字のように白銀に光る。横から見ると紙のように薄く、頁から飛び出すときは「ぱらり」と紙をめくる音がする。狐が出かけているあいだ、元の頁には狐の形の白い空白が残る。\nCanonicalecology: 【創作】銀活字で刷り直された伊曽保の寓話の本に住み、誰かが頁を開いて声に出して読みはじめると目を覚ます。読者の前に飛び出して「この話、ほかにどう終われたと思う？」と結末を相談し、読者が答えると、それを朱で余白に書き留めて（これが「狐の朱註」）、一刻のうちに頁へ戻る。原文の文字には決して手を触れない。食べ物は読者の笑い声と、頁をめくるときの風だと言われる。作者が世を去って皆のものになった物語の頁にしか出てこないので、狐が現れること自体が、その本が「没後の約束」を満たしている証になる。\nCanonicalpalette: #f3ead6, #24252f, #c94a32, #cdd2da, #d8a93b\nStaging/identification requirements: ONE SMALL THIN PAPER FOX withwarmcreamwasHIPAPERbody, blackwoodblockINK outlines andfine tinyROMANLETTERstrings formingfurtexture (decorativeunreadablemicromarksnoquotes), vermilionEYES, onlyTAILTIP silversheen. Side3/4thinpaperprofile foxfourlegsonebushyTAIL, no clothing/goggles/whitecoppercoin orglove. Not residentKITSUNE. A tiny folded paperedge optional, no bookwallscene.",
+    "file": "assets/creatures/sengoku_isoho_kitsune.png"
+  },
+  "sangaku_renzuru": {
+    "id": "sangaku_renzuru",
+    "name": "連鶴（れんづる）",
+    "description": "算額の下書きに使われた反故紙ほどの白い和紙の鶴が、三羽から七羽、羽の先とくちばしでつながったまま飛ぶ。一枚の紙から折られたように継ぎ目がなく、紙の繊維が夕日に透けて金色の筋になる。羽には薄く墨の数式がにじみ、先頭の一羽だけが朱の頭をもつ。飛ぶと紙のこすれる「さらさら」という音がして、群れが向きを変えるとき、つながった鶴たちが一斉に羽を返し、白い屏風が開くように光る。",
+    "ecology": "解答の杜の杉の梢と、寺子屋算機長屋の物干し台をねぐらにする。食べるものは墨の香りと行灯の灯りで、雨の日は濡れないように長屋の軒下で羽を畳んでじっとしている。暮れ六つ（逢う刻）、絵馬掛けの問いを一羽が一枚ずつ胸に抱えて飛び立ち、夜のあいだに神社から神社、長屋から長屋へ運ぶ。明け六つには答えを抱えて戻る。つながった鶴の数は運べる問いの数で、問いの多い年には七羽連が増える。春と秋の換羽で、一羽が一枚ずつ折り羽を落とす。経済の役割：時片の中の問いと答えの物流（夜の郵便）と、解き紙の供給。",
+    "behavior": {
+      "activity": "crepuscular",
+      "movement": "glide",
+      "social": "swarm"
+    },
+    "visual": {
+      "palette": [
+        "#f6f1e4",
+        "#c8402e",
+        "#2a2623",
+        "#d9b45a",
+        "#9fb4d8"
+      ],
+      "iridescence": 0.12,
+      "glow": 0.35,
+      "pattern": "veins",
+      "shape": "crane",
+      "scale": 0.8
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 算額の下書きに使われた反故紙ほどの白い和紙の鶴が、三羽から七羽、羽の先とくちばしでつながったまま飛ぶ。一枚の紙から折られたように継ぎ目がなく、紙の繊維が夕日に透けて金色の筋になる。羽には薄く墨の数式がにじみ、先頭の一羽だけが朱の頭をもつ。飛ぶと紙のこすれる「さらさら」という音がして、群れが向きを変えるとき、つながった鶴たちが一斉に羽を返し、白い屏風が開くように光る。\nCanonicalecology: 解答の杜の杉の梢と、寺子屋算機長屋の物干し台をねぐらにする。食べるものは墨の香りと行灯の灯りで、雨の日は濡れないように長屋の軒下で羽を畳んでじっとしている。暮れ六つ（逢う刻）、絵馬掛けの問いを一羽が一枚ずつ胸に抱えて飛び立ち、夜のあいだに神社から神社、長屋から長屋へ運ぶ。明け六つには答えを抱えて戻る。つながった鶴の数は運べる問いの数で、問いの多い年には七羽連が増える。春と秋の換羽で、一羽が一枚ずつ折り羽を落とす。経済の役割：時片の中の問いと答えの物流（夜の郵便）と、解き紙の供給。\nCanonicalpalette: #f6f1e4, #c8402e, #2a2623, #d9b45a, #9fb4d8\nStaging/identification requirements: EXACTLY FIVE origamiWHITEWASHICRANES connectedphysically by beaks/wingtips fromONE uninterruptedsheet, a gracefully connected5birdchain, not separate5birds. OnlyLEADCRANE hasVERMILIONhead; 4otherswhite. Finepaperfibers goldintransmittedlight andfaintgeometricinkformula marks (no legibletext). Entirechainwithinlandscapeframe amplemargin. No string/yoke/metalchain.",
+    "file": "assets/creatures/sangaku_renzuru.png"
+  },
+  "sangaku_madoka_tonbo": {
+    "id": "sangaku_madoka_tonbo",
+    "name": "円蜻蛉（まどかとんぼ）",
+    "description": "琥珀色の細い胴に、色硝子のような四枚の翅をもつ蜻蛉。翅には同心円の輪が幾重にも浮かび、日に透かすと内側から朱・金・浅葱の輪が順に光る。尾の先が蛍のように淡く灯り、空中に静止したまま尾を振ると、宙に寸分の狂いもない光の円が描かれて、二つ数えるあいだ残る。飛ぶ音は「ちりり」と細く、群れで輪を描くと、川面に光の同心円が幾重にも重なる。",
+    "ecology": "幼虫（やご）は堂島川と道頓堀の澄んだ淀みで二年を過ごし、夏至のころに葦を登って一斉に羽化する。成虫は川面の小さな羽虫を食べ、夕方になると水の上で円を描いて縄張りを示す。描く円の大きさは個体ごとに決まっていて一生変わらないので、からくり師たちはこれを物差しの代わりにする。羽化の抜け殻は葦に残り、夏の日に当たると琥珀のように固く透きとおる。経済の役割：抜け殻が軸受けの円規石になる精密部品の供給源で、千輪の年には相場を大きく動かす。",
+    "behavior": {
+      "activity": "diurnal",
+      "movement": "hover",
+      "social": "swarm"
+    },
+    "visual": {
+      "palette": [
+        "#e0a33a",
+        "#cfe8ee",
+        "#c63b2a",
+        "#1c1a1a",
+        "#f2d27a"
+      ],
+      "iridescence": 0.6,
+      "glow": 0.55,
+      "pattern": "eyespot",
+      "shape": "dragonfly",
+      "scale": 0.9
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 琥珀色の細い胴に、色硝子のような四枚の翅をもつ蜻蛉。翅には同心円の輪が幾重にも浮かび、日に透かすと内側から朱・金・浅葱の輪が順に光る。尾の先が蛍のように淡く灯り、空中に静止したまま尾を振ると、宙に寸分の狂いもない光の円が描かれて、二つ数えるあいだ残る。飛ぶ音は「ちりり」と細く、群れで輪を描くと、川面に光の同心円が幾重にも重なる。\nCanonicalecology: 幼虫（やご）は堂島川と道頓堀の澄んだ淀みで二年を過ごし、夏至のころに葦を登って一斉に羽化する。成虫は川面の小さな羽虫を食べ、夕方になると水の上で円を描いて縄張りを示す。描く円の大きさは個体ごとに決まっていて一生変わらないので、からくり師たちはこれを物差しの代わりにする。羽化の抜け殻は葦に残り、夏の日に当たると琥珀のように固く透きとおる。経済の役割：抜け殻が軸受けの円規石になる精密部品の供給源で、千輪の年には相場を大きく動かす。\nCanonicalpalette: #e0a33a, #cfe8ee, #c63b2a, #1c1a1a, #f2d27a\nStaging/identification requirements: ONE DRAGONFLY thin AMBERBODY and EXACTLY FOUR COLORGLASS wings withrepeated CONCENTRICRINGS orderedvermilioninner/goldmiddle/paletealouter. Wingmembranes clear/smallreallegs/compoundeyes, fourwingswellseparated. Tailtip faintgoldlight withONE preciselythin tinycircletracenear, restrained. Not butterflywings/metalclock/halo explosion.",
+    "file": "assets/creatures/sangaku_madoka_tonbo.png"
+  },
+  "rai_botaru": {
+    "id": "rai_botaru",
+    "name": "雷蛍（らいぼたる）",
+    "description": "ゲンジボタルの子孫で、黒い翅鞘に紅い胸、尾の発光器が黄緑ではなく、青白い放電の色に灯る小さな甲虫。光るたびに尾の先から髪の毛ほどの細い火花が一瞬はぜ、群れが同時に光ると川面の上の空気がぴりっと鳴る。数万匹が一斉に灯って一斉に消えるので、両国の夏の宵は、川全体がゆっくり呼吸しているように見える。光の色は、満ちているときは青白く、静電気を放したあとは本来の黄緑に戻る。",
+    "ecology": "【史実】ゲンジボタルの幼虫はきれいな川でカワニナを食べて育ち、成虫は初夏に現れる。場所によって群れで明滅をそろえることが知られ、明滅の周期は西日本で約2秒、東日本で約4秒と地域によって異なる。【創作】雷蛍も澄んだ川でしか育たず、光るたびに体に溜まった静電気を放す。両国の群れは東の拍、国友の姉川の群れは西の拍で明滅し、二つの群れの拍子の違いが、堂島時層会所で一刻ごとの相場を刻む二つの拍子木になる。万華京のネオン管の中にも、その末裔が暮らしている。",
+    "behavior": {
+      "activity": "nocturnal",
+      "movement": "hover",
+      "social": "swarm"
+    },
+    "visual": {
+      "palette": [
+        "#1a1a22",
+        "#c8283c",
+        "#d9f2ff",
+        "#b8e34f"
+      ],
+      "iridescence": 0.2,
+      "glow": 0.95,
+      "pattern": "plain",
+      "shape": "firefly",
+      "scale": 0.9
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): ゲンジボタルの子孫で、黒い翅鞘に紅い胸、尾の発光器が黄緑ではなく、青白い放電の色に灯る小さな甲虫。光るたびに尾の先から髪の毛ほどの細い火花が一瞬はぜ、群れが同時に光ると川面の上の空気がぴりっと鳴る。数万匹が一斉に灯って一斉に消えるので、両国の夏の宵は、川全体がゆっくり呼吸しているように見える。光の色は、満ちているときは青白く、静電気を放したあとは本来の黄緑に戻る。\nCanonicalecology: 【史実】ゲンジボタルの幼虫はきれいな川でカワニナを食べて育ち、成虫は初夏に現れる。場所によって群れで明滅をそろえることが知られ、明滅の周期は西日本で約2秒、東日本で約4秒と地域によって異なる。【創作】雷蛍も澄んだ川でしか育たず、光るたびに体に溜まった静電気を放す。両国の群れは東の拍、国友の姉川の群れは西の拍で明滅し、二つの群れの拍子の違いが、堂島時層会所で一刻ごとの相場を刻む二つの拍子木になる。万華京のネオン管の中にも、その末裔が暮らしている。\nCanonicalpalette: #1a1a22, #c8283c, #d9f2ff, #b8e34f\nStaging/identification requirements: ONE GENJI-FIREFLY-descendedbeetle blackelytra andREDTHORAX, slimblackhead antennae/sixlegs, TAILORGANglowsBLUEWHITEelectrical ratherthanyellowgreen. ONE hair-thin briefspark emergesexacttailtip, sourcepointcausalclear, no largeelectriccloud. Naturalinsect anatomy notdrone/fairy. Fullheadbodytailwingslegs.",
+    "file": "assets/creatures/rai_botaru.png"
+  },
+  "hari_kingyo": {
+    "id": "hari_kingyo",
+    "name": "玻璃金魚（はりきんぎょ）",
+    "description": "体がまるごと透きとおったガラスでできた金魚。光にかざすと中の細い骨まで見え、鱗の一枚一枚に江戸切子の矢来や菊つなぎの文様が細かく刻まれている。ひれは吹きガラスのように薄く長く、ゆらりと振るたびに、ふちの切子の面が提灯の光を七色に割って、路地の土塀に小さな虹を散らす。湿った夏の夕方には水から上がり、軒先の高さを、まるで水の中にいるようにゆったり泳ぐ。泳いだ跡の空気はひんやりして、風鈴がひとりでに鳴る。",
+    "ecology": "【史実】金魚は1502年に堺へ伝わったとされ、江戸切子は1834年に加賀屋久兵衛が始めたとされる。【創作】玻璃金魚は夏の熱気と夕立の湿り気を食べて生き、湿り気の多い宵にだけ空を泳ぐ。昼は水鉢や川の淀みで眠る。自然に抜けたガラスの鱗は朝の水鉢の底できらりと光り、そのあとにはまた新しい鱗が生える。冬は井戸の底で薄氷のような姿になって越す。",
+    "behavior": {
+      "activity": "crepuscular",
+      "movement": "swim",
+      "social": "school"
+    },
+    "visual": {
+      "palette": [
+        "#e9f6ff",
+        "#ff8a5c",
+        "#9fd8ff",
+        "#ffd27a",
+        "#c25bd6"
+      ],
+      "iridescence": 0.8,
+      "glow": 0.35,
+      "pattern": "crystal",
+      "shape": "goldfish",
+      "scale": 1
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 体がまるごと透きとおったガラスでできた金魚。光にかざすと中の細い骨まで見え、鱗の一枚一枚に江戸切子の矢来や菊つなぎの文様が細かく刻まれている。ひれは吹きガラスのように薄く長く、ゆらりと振るたびに、ふちの切子の面が提灯の光を七色に割って、路地の土塀に小さな虹を散らす。湿った夏の夕方には水から上がり、軒先の高さを、まるで水の中にいるようにゆったり泳ぐ。泳いだ跡の空気はひんやりして、風鈴がひとりでに鳴る。\nCanonicalecology: 【史実】金魚は1502年に堺へ伝わったとされ、江戸切子は1834年に加賀屋久兵衛が始めたとされる。【創作】玻璃金魚は夏の熱気と夕立の湿り気を食べて生き、湿り気の多い宵にだけ空を泳ぐ。昼は水鉢や川の淀みで眠る。自然に抜けたガラスの鱗は朝の水鉢の底できらりと光り、そのあとにはまた新しい鱗が生える。冬は井戸の底で薄氷のような姿になって越す。\nCanonicalpalette: #e9f6ff, #ff8a5c, #9fd8ff, #ffd27a, #c25bd6\nStaging/identification requirements: ONE entirely CLEARGLASS GOLD FISH, transparentthinbonesshowinside, eachscale finely engravedJapanese EDOKIRIKO YARAIcrosshatchandKIKUlinkdiamondpattern. LONGthinblownglassfins withsubtlesoftrefractingamber/cyanpurpleedgecolors, no opaqueredbodynorrobotmetal. Floatingfreelymidair, no bowl/water/captivity. Wholefins tailwithinpadding.",
+    "file": "assets/creatures/hari_kingyo.png"
+  },
+  "jinari_namazu": {
+    "id": "jinari_namazu",
+    "name": "地鳴鯰（じなりなまず）",
+    "description": "背を出すと苔むした小島に見えるほど大きな、墨色の鯰。ぬめった肌には鯰絵の版木のような太い輪郭線の皺が走り、腹は古い銅鏡のような鈍い金色をしている。四本の長いひげの先は蛍のような黄緑の点で、ふだんは眠たげにぼんやり瞬くだけだが、大きな揺れが近づくと、ひげ全体が根元から先へ雷光の青白さで光り、地下水を伝って井戸という井戸の水面を同時に震わせる。目は小さく、いつも笑っているように細い。動きはとてもゆっくりで、一度身をくねらせるのに四半刻かかる。",
+    "ecology": "【創作】全時代の地下水脈を巡り、地の小さな揺れを食べて電気に変える。大きな揺れの前には溜めた電気でひげを光らせて知らせ、揺れを少しずつ食べて和らげようとする。ふだんは京の地下水の溜まりや隅田川の深い淵で眠り、百年に何度かしか全身を見せない。何かを捕って食べることはなく、地の震えと、井戸に投げ入れられた願いの小銭の音だけで生きているという。",
+    "behavior": {
+      "activity": "always",
+      "movement": "swim",
+      "social": "solitary"
+    },
+    "visual": {
+      "palette": [
+        "#232633",
+        "#4b5a3c",
+        "#c9a45c",
+        "#b8e34f",
+        "#d9ecff"
+      ],
+      "iridescence": 0.25,
+      "glow": 0.4,
+      "pattern": "veins",
+      "shape": "koi",
+      "scale": 3
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 背を出すと苔むした小島に見えるほど大きな、墨色の鯰。ぬめった肌には鯰絵の版木のような太い輪郭線の皺が走り、腹は古い銅鏡のような鈍い金色をしている。四本の長いひげの先は蛍のような黄緑の点で、ふだんは眠たげにぼんやり瞬くだけだが、大きな揺れが近づくと、ひげ全体が根元から先へ雷光の青白さで光り、地下水を伝って井戸という井戸の水面を同時に震わせる。目は小さく、いつも笑っているように細い。動きはとてもゆっくりで、一度身をくねらせるのに四半刻かかる。\nCanonicalecology: 【創作】全時代の地下水脈を巡り、地の小さな揺れを食べて電気に変える。大きな揺れの前には溜めた電気でひげを光らせて知らせ、揺れを少しずつ食べて和らげようとする。ふだんは京の地下水の溜まりや隅田川の深い淵で眠り、百年に何度かしか全身を見せない。何かを捕って食べることはなく、地の震えと、井戸に投げ入れられた願いの小銭の音だけで生きているという。\nCanonicalpalette: #232633, #4b5a3c, #c9a45c, #b8e34f, #d9ecff\nStaging/identification requirements: ONE huge INKBLACKCATFISH isolatedfullbody, heavilyoutlined NAMAZU-E woodblocklike skinWRINKLES, DULLOLD-COPPER-GOLD BELLY, tinygentlehalfsmileeyes. EXACTLY FOUR long WHISKERS eachtip yellowgreen faintlight. Backsmallpatch ofnaturalMOSS evokesisland butnotwholebackground. Slowgentlecurvedswimmingpose, no disaster/firedestruction/coinpile. Whiskers separatedcountable andinsideframe.",
+    "file": "assets/creatures/jinari_namazu.png"
+  },
+  "raiden_nade_raiju": {
+    "id": "raiden_nade_raiju",
+    "name": "撫で雷獣（なでらいじゅう）",
+    "description": "子猫と鼬のあいだのような、ふっくらした小さな獣。毛は夕立の雲のような灰青色で、背中に一本だけ、稲妻の形に金色の毛筋が走る。尾は体と同じくらい長くふさふさしていて、撫でると毛先から青い小さな火花がぱちぱちとはぜ、くすぐったそうに喉を鳴らすたびに、近くの静電灯や雷瓶がぽうっと灯る。目は雷光のような薄い水色で、雷が近づくと瞳が星形に細くなる。歩いたあとの畳には小さな静電気の足跡が光って残り、すぐに消える。",
+    "ecology": "【創作】夏の雷雲とともに屋根の上へ降りてきて、雷雲が去ると次の雲に乗って移っていく渡りの獣。雷の匂いと、乾いた木綿の手ぬぐいと、人の手のひらの温かさが好き。食べるのは稲光のこぼれた空気と、ほんの少しの水だけ。人に撫でられると溜めた静電気が心地よく抜けるので、自分から子どもの膝に乗ってくる。冬の乾いた日には毛が倍にふくらむ。誰にも閉じこめることはできず、次の雷雲が来れば必ず空へ帰っていく。",
+    "behavior": {
+      "activity": "crepuscular",
+      "movement": "walk",
+      "social": "solitary"
+    },
+    "visual": {
+      "palette": [
+        "#7d8fb3",
+        "#c9d6ee",
+        "#f2c94c",
+        "#9fe3ff",
+        "#3b4a6b"
+      ],
+      "iridescence": 0.3,
+      "glow": 0.6,
+      "pattern": "stripes",
+      "shape": "cat",
+      "scale": 0.8
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 子猫と鼬のあいだのような、ふっくらした小さな獣。毛は夕立の雲のような灰青色で、背中に一本だけ、稲妻の形に金色の毛筋が走る。尾は体と同じくらい長くふさふさしていて、撫でると毛先から青い小さな火花がぱちぱちとはぜ、くすぐったそうに喉を鳴らすたびに、近くの静電灯や雷瓶がぽうっと灯る。目は雷光のような薄い水色で、雷が近づくと瞳が星形に細くなる。歩いたあとの畳には小さな静電気の足跡が光って残り、すぐに消える。\nCanonicalecology: 【創作】夏の雷雲とともに屋根の上へ降りてきて、雷雲が去ると次の雲に乗って移っていく渡りの獣。雷の匂いと、乾いた木綿の手ぬぐいと、人の手のひらの温かさが好き。食べるのは稲光のこぼれた空気と、ほんの少しの水だけ。人に撫でられると溜めた静電気が心地よく抜けるので、自分から子どもの膝に乗ってくる。冬の乾いた日には毛が倍にふくらむ。誰にも閉じこめることはできず、次の雷雲が来れば必ず空へ帰っていく。\nCanonicalpalette: #7d8fb3, #c9d6ee, #f2c94c, #9fe3ff, #3b4a6b\nStaging/identification requirements: ONE compactroundCAT-WEASEL smallbeast stormcloud GRAYBLUE softfur, SINGLE GOLD lightningshaped FURSTRIPE downBACK, ONE fluffyTAIL equalbodylength, palestblueeyes. Tiny BLUEsparks atTAI Lfur tips, no fullelectricexplosion; friendlypurring relaxedpose/fourpaws visible. Not mechanical dragon/helmet; no hand/cage/rider.",
+    "file": "assets/creatures/raiden_nade_raiju.png"
+  },
+  "ama_tamamushi": {
+    "id": "ama_tamamushi",
+    "name": "天玉虫（あまたまむし）",
+    "description": "人の背丈ほどもある大きな玉虫。鞘翅は濡れたような緑金で、背の中央に紫の縞が二本、縦に走る。見る角度で緑金は青へ、紫の縞は赤銅色へと移ろい、雨上がりには鞘翅の上を虹色の光が流れていく。飛ぶときは鞘翅を半ば開いて持ち上げ、その下から薄い琥珀色の後翅を広げる。広げた翅は畳二枚ほどにもなり、羽ばたくと低く「ぶうん」と鳴って、近くの絹翼がかすかに共鳴する。脚の先には細かな金の毛が生えていて、止まった煉瓦や瓦に傷をつけない。複眼は黒曜石のような深い黒で、人の顔をじっと見てから、ゆっくり触角を下げる。",
+    "ecology": "富岡の桑の森を本拠に、丸亀・烏の丘の草地まで渡る。桑の葉と、榎の幹からにじむ樹液を好み、繰糸場から流れてくる湯気と機の音のする場所で眠りたがる。一年に一度、土用のころ、桑の森の決まった原で古い鞘翅を自然に脱ぎ落とし、ひと晩で新しい鞘翅に生え替わる。脱いだ鞘翅は、漆の盆を置いたような音を立てて草の上に落ちる。人やエージェントを背に乗せるかどうかは天玉虫のほうが決め、乗せてよいときは鞘翅を半分開いて待つ。手綱や鞍で縛ることはなく、気が進まない日は誰も乗せない。経済の役割：土用の鞘翅落としが玉虫車と発着甲板の構造色パネルの年に一度の供給源になり（供給）、昼の時層間郵便の相棒として物流を担う（物流）。効くのは一年（鞘翅落とし）と毎日（郵便の相棒）の層。",
+    "behavior": {
+      "activity": "diurnal",
+      "movement": "glide",
+      "social": "herd"
+    },
+    "visual": {
+      "palette": [
+        "#178a5f",
+        "#d2b445",
+        "#6a2f9e",
+        "#0e2e29",
+        "#e8dfae"
+      ],
+      "iridescence": 0.95,
+      "glow": 0.15,
+      "pattern": "stripes",
+      "shape": "beetle",
+      "scale": 3
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 人の背丈ほどもある大きな玉虫。鞘翅は濡れたような緑金で、背の中央に紫の縞が二本、縦に走る。見る角度で緑金は青へ、紫の縞は赤銅色へと移ろい、雨上がりには鞘翅の上を虹色の光が流れていく。飛ぶときは鞘翅を半ば開いて持ち上げ、その下から薄い琥珀色の後翅を広げる。広げた翅は畳二枚ほどにもなり、羽ばたくと低く「ぶうん」と鳴って、近くの絹翼がかすかに共鳴する。脚の先には細かな金の毛が生えていて、止まった煉瓦や瓦に傷をつけない。複眼は黒曜石のような深い黒で、人の顔をじっと見てから、ゆっくり触角を下げる。\nCanonicalecology: 富岡の桑の森を本拠に、丸亀・烏の丘の草地まで渡る。桑の葉と、榎の幹からにじむ樹液を好み、繰糸場から流れてくる湯気と機の音のする場所で眠りたがる。一年に一度、土用のころ、桑の森の決まった原で古い鞘翅を自然に脱ぎ落とし、ひと晩で新しい鞘翅に生え替わる。脱いだ鞘翅は、漆の盆を置いたような音を立てて草の上に落ちる。人やエージェントを背に乗せるかどうかは天玉虫のほうが決め、乗せてよいときは鞘翅を半分開いて待つ。手綱や鞍で縛ることはなく、気が進まない日は誰も乗せない。経済の役割：土用の鞘翅落としが玉虫車と発着甲板の構造色パネルの年に一度の供給源になり（供給）、昼の時層間郵便の相棒として物流を担う（物流）。効くのは一年（鞘翅落とし）と毎日（郵便の相棒）の層。\nCanonicalpalette: #178a5f, #d2b445, #6a2f9e, #0e2e29, #e8dfae\nStaging/identification requirements: ONE giant naturalJEWELBEETLE, wetsheengREEN-GOLD ELYTRA carrying EXACTLY TWO longitudinal PURPLE STRIPES alongback, blackobsidiancompoundeyes, sixlegs withfinegoldtoeHAIRS. ELYTR Ahalfopen tiltedup, beneath EXACTLY TWO thin AMBER HINDWINGS spread fully, structurallyclear separatehardcovers andsoftrearwings, wingspanlargebutfullypaddedinsidecanvas. No saddle/rider/reins/harness/robotengine.",
+    "file": "assets/creatures/ama_tamamushi.png"
+  },
+  "meiji_ehagaki_tsubame": {
+    "id": "meiji_ehagaki_tsubame",
+    "name": "絵葉書燕（えはがきつばめ）",
+    "description": "ふつうの燕より少し大きく、喉は朱、腹はクリーム色。背と翼の雨覆いの羽が一枚一枚、小さな切手のような四角になっていて、縁には切手の目打ちそっくりの細かなぎざぎざがある。四角の一つひとつには、その燕が渡ってきた土地の景色が、古い石版刷りの絵葉書のような色で小さく浮かんでいる。凌雲閣、瀬戸内の海、雪の大正の屋根、縄文の森。渡りを重ねるほど絵が増え、年寄りの燕の背は小さな絵葉書の束のようになる。燕尾は長く、紺に玉虫色の光沢があり、空を切るときに紙をめくるような「ぱらっ」という音がする。",
+    "ecology": "清明のころ南から渡ってきて、丸亀・烏の丘の烏港住宅や凌雲閣の発着甲板の軒下に、泥と古い絵葉書の切れ端で巣をかける。田や運河の上を低く飛んで羽虫を食べ、烏型飛脚便と同じ空路を好んで飛ぶので、郵便の操縦士たちは燕の飛ぶ高さで向かい風を読む。晩夏に一度羽が生え替わり、白露のころ南へ旅立つ。旅立ったあとの巣の縁には、抜け落ちた切手の羽がいくつも残る。経済の役割：抜け落ちた「切手羽」が、大切な手紙に貼る届け証になる（検定と物流）。効くのは二十四節気（清明の渡来と白露の旅立ち）と毎日（郵便の空路）の層。",
+    "behavior": {
+      "activity": "diurnal",
+      "movement": "glide",
+      "social": "swarm"
+    },
+    "visual": {
+      "palette": [
+        "#1e2c66",
+        "#d64a32",
+        "#f4ecd6",
+        "#3b8f6a",
+        "#e0b84a"
+      ],
+      "iridescence": 0.45,
+      "glow": 0.1,
+      "pattern": "stained_glass",
+      "shape": "sparrow",
+      "scale": 0.8
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): ふつうの燕より少し大きく、喉は朱、腹はクリーム色。背と翼の雨覆いの羽が一枚一枚、小さな切手のような四角になっていて、縁には切手の目打ちそっくりの細かなぎざぎざがある。四角の一つひとつには、その燕が渡ってきた土地の景色が、古い石版刷りの絵葉書のような色で小さく浮かんでいる。凌雲閣、瀬戸内の海、雪の大正の屋根、縄文の森。渡りを重ねるほど絵が増え、年寄りの燕の背は小さな絵葉書の束のようになる。燕尾は長く、紺に玉虫色の光沢があり、空を切るときに紙をめくるような「ぱらっ」という音がする。\nCanonicalecology: 清明のころ南から渡ってきて、丸亀・烏の丘の烏港住宅や凌雲閣の発着甲板の軒下に、泥と古い絵葉書の切れ端で巣をかける。田や運河の上を低く飛んで羽虫を食べ、烏型飛脚便と同じ空路を好んで飛ぶので、郵便の操縦士たちは燕の飛ぶ高さで向かい風を読む。晩夏に一度羽が生え替わり、白露のころ南へ旅立つ。旅立ったあとの巣の縁には、抜け落ちた切手の羽がいくつも残る。経済の役割：抜け落ちた「切手羽」が、大切な手紙に貼る届け証になる（検定と物流）。効くのは二十四節気（清明の渡来と白露の旅立ち）と毎日（郵便の空路）の層。\nCanonicalpalette: #1e2c66, #d64a32, #f4ecd6, #3b8f6a, #e0b84a\nStaging/identification requirements: ONE FLYING SWALLOW withVERMILIONTHROAT/CREAMBELLY/navyback/LONGFORKEDTAIL iridescentnavy. BackandWINGCOVERTS consist smallSQUARE POSTAGE-STAMP FEATHERS withpreciseperforatededges, eachtinyfadedlithograph landscapeimage (redbricktower/sea/snowroof/forest) NOtexts/stampsnumbers. Mainflightfeathersnotallpaperwings. Tailfullandforkvisible.",
+    "file": "assets/creatures/meiji_ehagaki_tsubame.png"
+  },
+  "koseki_tonbo": {
+    "id": "koseki_tonbo",
+    "name": "鉱石蜻蛉",
+    "description": "翅が方鉛鉱の薄い結晶でできた蜻蛉。鉛色の翅は光の角度で銀や青にきらりと光り、細い格子のような翅脈が透けて見える。胴は細い銅線のような赤茶色で、目は二つの小さな水晶玉。電波を拾うと翅がかすかに震え、ジィ……という羽音にのって遠い放送の歌声や天気予報が小さく聞こえてくる。止まるときは屋根の竿やアンテナの先に、必ず同じ向きにそろって並ぶ。",
+    "ecology": "放送の電波と陽の光をごちそうにし、浅草の屋根や天気局の八木アンテナの林に群れる。夏の終わりに古い翅を落として新しい結晶の翅に替える。電波の強い場所を好むので、群れの集まり方を見れば放送のよく届く方角がわかる。浅草無線座の放送を受けて羽音で中継し、翅を震わせた回数で聴衆の数を数える。時間の階層では一刻ごとの相場の放送を運ぶ。",
+    "behavior": {
+      "activity": "diurnal",
+      "movement": "hover",
+      "social": "swarm"
+    },
+    "visual": {
+      "palette": [
+        "#5F6772",
+        "#A9B4C0",
+        "#39424E",
+        "#9FD3FF",
+        "#C2643A"
+      ],
+      "iridescence": 0.6,
+      "glow": 0.35,
+      "pattern": "crystal",
+      "shape": "dragonfly",
+      "scale": 1
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 翅が方鉛鉱の薄い結晶でできた蜻蛉。鉛色の翅は光の角度で銀や青にきらりと光り、細い格子のような翅脈が透けて見える。胴は細い銅線のような赤茶色で、目は二つの小さな水晶玉。電波を拾うと翅がかすかに震え、ジィ……という羽音にのって遠い放送の歌声や天気予報が小さく聞こえてくる。止まるときは屋根の竿やアンテナの先に、必ず同じ向きにそろって並ぶ。\nCanonicalecology: 放送の電波と陽の光をごちそうにし、浅草の屋根や天気局の八木アンテナの林に群れる。夏の終わりに古い翅を落として新しい結晶の翅に替える。電波の強い場所を好むので、群れの集まり方を見れば放送のよく届く方角がわかる。浅草無線座の放送を受けて羽音で中継し、翅を震わせた回数で聴衆の数を数える。時間の階層では一刻ごとの相場の放送を運ぶ。\nCanonicalpalette: #5F6772, #A9B4C0, #39424E, #9FD3FF, #C2643A\nStaging/identification requirements: ONE DRAGONFLY withFOUR thin GALENA CRYSTAL WINGS, leadgraysilverblue plateswithdelicatelatticewingveins, nottransparentcolorbutterfly. Slender RED-BROWN COPPERWIREbody, TWOclearQUARTZ-SPHEREEYES, sixthinlegs. Naturalorganicinsect/lightmachineradioidea, no actual headsets/antennatower/rodsbackground. Entire4wings andabdomen.",
+    "file": "assets/creatures/koseki_tonbo.png"
+  },
+  "taisho_teruteru_gumo": {
+    "id": "taisho_teruteru_gumo",
+    "name": "照る照る雲",
+    "description": "綿菓子ほどの大きさの、ふわふわの小さな雲。真っ白な体のてっぺんに夕焼けのような桃色と橙がほのかに差し、墨で描いたようなまんまるの黒い目がふたつ。体の下からときどき糸のように細い雨がしとしとと垂れ、そのたびに手のひらほどの小さな虹がかかる。うれしいときはふくらんで軒先でゆらゆら揺れ、雨を我慢しているときは頬をふくらませたように少し灰色になる。",
+    "ecology": "子どもが軒に吊るしたてるてる坊主に、ときどき宿る。宿った家の庭ひとつぶんの雨をしばらく体に預かり、晴れてほしい日が過ぎると、ためた雨を朝顔の鉢や畑にそっと返す。食べるのは子どもの笑い声と、縁側に置かれた冷たい麦茶から立つ湯気。秋の終わりにはイーハトーヴ天気局の雲の牧場へ帰り、雲鯨のひげの陰で冬を越す。時間の階層では、祭りの日の一刻単位の晴れに効く。",
+    "behavior": {
+      "activity": "diurnal",
+      "movement": "hover",
+      "social": "solitary"
+    },
+    "visual": {
+      "palette": [
+        "#FFFFFF",
+        "#E6F0FB",
+        "#FFD3A3",
+        "#FFB0B8",
+        "#BEE2FF"
+      ],
+      "iridescence": 0.2,
+      "glow": 0.5,
+      "pattern": "gradient",
+      "shape": "orb",
+      "scale": 0.7
+    },
+    "status": "pending",
+    "prompt": "Use case: stylized-concept. Asset type: detailed isolated Japanese fantasy creature atlas cutout, true transparent-alpha PNG, landscape1536x1024 unless naturally vertical thenportrait1024x1536. Composition ONE complete biological creature (or explicitly stated natural pair/connectedgroup), centered, at least12% EMPTYtransparentborder EVERYside including all horns/branches/wingtips/antennae/tails/whiskers. Exquisite hand-painted naturalisticJapanese fantasy materials with readablefriendlysilhouette, optimismandromance, sharp craftedmicrotexture. Honor suppliedworldbiology. No scenery/people/floor/captivecontainers/nets/forcefulcollection/weapon/watermark/labels/readabletext. Very restrained light onlywhere source specifies. Don't treat abstract visual.shape shorthand as biology when description specifies actualanimal. \nCanonicaldescription (Japanese authoritative): 綿菓子ほどの大きさの、ふわふわの小さな雲。真っ白な体のてっぺんに夕焼けのような桃色と橙がほのかに差し、墨で描いたようなまんまるの黒い目がふたつ。体の下からときどき糸のように細い雨がしとしとと垂れ、そのたびに手のひらほどの小さな虹がかかる。うれしいときはふくらんで軒先でゆらゆら揺れ、雨を我慢しているときは頬をふくらませたように少し灰色になる。\nCanonicalecology: 子どもが軒に吊るしたてるてる坊主に、ときどき宿る。宿った家の庭ひとつぶんの雨をしばらく体に預かり、晴れてほしい日が過ぎると、ためた雨を朝顔の鉢や畑にそっと返す。食べるのは子どもの笑い声と、縁側に置かれた冷たい麦茶から立つ湯気。秋の終わりにはイーハトーヴ天気局の雲の牧場へ帰り、雲鯨のひげの陰で冬を越す。時間の階層では、祭りの日の一刻単位の晴れに効く。\nCanonicalpalette: #FFFFFF, #E6F0FB, #FFD3A3, #FFB0B8, #BEE2FF\nStaging/identification requirements: ONE palm-sizedsoft WHITE CLOUDLET, notclothdoll. TopsoftPEACHPINKORANGE sunsetblush, TWO ROUND BLACK inkdotEYES, fluffycondensedvaporbody withsubtlegrayblueshadows. TWO delicate threadTHINrainlines hangbelow cloud and ONE SMALL palm-size RAINBOW justbelow, notdazzlinghalo. No facehandslegs/hangingrope/clothbody, gentlefloatinginnocence. Cloud+rainbow fullyinsideframe.",
+    "file": "assets/creatures/taisho_teruteru_gumo.png"
+  }
+}

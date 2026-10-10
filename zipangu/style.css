@@ -919,3 +919,28 @@ input::placeholder { color: var(--ink-faint); }
 
 /* The cell itself stays untouched; this stage margin protects moving silhouettes. */
 .visual-pose { inset: 4%; }
+
+/* Albireo flies as a lifelong gold/blue pair, each body keeps its own wings. */
+.visual-pair .visual-rig { position: absolute; width: 44%; height: 80%; top: 10%; }
+.visual-pair .visual-pair-gold { left: 5%; animation: visual-orbit-gold 22s ease-in-out infinite; }
+.visual-pair .visual-pair-blue { left: 51%; animation: visual-orbit-blue 22s ease-in-out infinite; }
+.visual-pair .wing { animation-duration: 3.4s; }
+.visual-pair .visual-pair-blue .wing { animation-delay: -.8s; }
+@keyframes visual-orbit-gold { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(52%, -18%); } 50% { transform: translate(100%, 0); } 75% { transform: translate(52%, 18%); } }
+@keyframes visual-orbit-blue { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(-52%, 18%); } 50% { transform: translate(-100%, 0); } 75% { transform: translate(-52%, -18%); } }
+@media(prefers-reduced-motion: reduce) { .visual-pair .visual-rig { animation: none !important; } }
+
+[data-motion="pulse"] .visual-rig { animation: visual-network-pulse 12s ease-in-out infinite; }
+[data-motion="quiet"] .visual-rig { animation: visual-quiet 16s ease-in-out infinite; }
+[data-motion="lantern"] .visual-rig { animation: visual-lantern 9s ease-in-out infinite; }
+[data-motion="bubble"] .visual-rig { animation: visual-bubble 14s ease-in-out infinite; }
+[data-motion="bird"] .visual-rig { animation: visual-bird 13s ease-in-out infinite; }
+@keyframes visual-network-pulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.08); } }
+@keyframes visual-quiet { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.008); } }
+@keyframes visual-lantern { 0%, 100% { transform: translateY(2%) scale(.99); filter: brightness(1); } 50% { transform: translateY(-3%) scale(1.01); filter: brightness(1.07); } }
+@keyframes visual-bubble { 0%, 100% { transform: translate(-3%, 3%); } 60% { transform: translate(3%, -3%); } }
+@keyframes visual-bird { 0%, 100% { transform: translate(-3%, 1%) rotate(-1deg); } 50% { transform: translate(3%, -2%) rotate(1deg); } }
+[data-motion="stem"] .visual-rig { transform-origin: 50% 90%; animation: visual-stem 18s ease-in-out infinite; }
+@keyframes visual-stem { 0%, 100% { transform: rotate(-.7deg); } 50% { transform: rotate(.7deg); } }
+@media(prefers-reduced-motion: reduce) { [data-motion="pulse"] .visual-rig, [data-motion="quiet"] .visual-rig, [data-motion="lantern"] .visual-rig, [data-motion="bubble"] .visual-rig, [data-motion="bird"] .visual-rig { animation: none !important; } }
+@media(prefers-reduced-motion: reduce) { [data-motion="stem"] .visual-rig { animation: none !important; } }

@@ -1,7 +1,7 @@
 // Additive concept art: the existing map sprites and procedural art remain available.
 import { createDial } from './clock-dial.js';
 import { h, nameOf, placeShort } from './util.js';
-import { visualOf, visualSource, visualPoseSource, visualKey } from './visual-manifest.js';
+import { visualOf, visualSource, visualPoseSource, visualCompanionSource, visualKey } from './visual-manifest.js';
 
 export function visualEntity(W, v) {
     return v.type === 'creature' ? W.byId.creature.get(v.id) : v.type === 'agent' ? W.byId.agent.get(v.id) : v.type === 'currency' ? W.byId.currency.get(v.id) : v.type === 'era' ? W.byId.era.get(v.id) : v.type === 'realm' ? W.byId.realm.get(v.id) : null;
@@ -26,6 +26,12 @@ export function visualArt(W, v, { size = 300, eco = null, controls = false } = {
     let showPortrait = false;
     const reaction = h('span', { class: 'visual-reaction', 'aria-live': 'off', hidden: v.type !== 'agent' });
     const surface = h('div', { class: 'visual-surface', style: { '--visual-size': size + 'px' }, dataset: { motion: v.motion, stage: 'idle' } }, rig, reaction);
+    if (v.companion && butterfly) {
+        surface.classList.add('visual-pair'); rig.classList.add('visual-pair-gold');
+        const blueImg = cls => h('img', { src: visualCompanionSource(v), alt: '', loading: 'lazy', decoding: 'async', class: cls });
+        surface.append(h('div', { class: 'visual-rig visual-pair-blue', role: 'img', 'aria-label': title + '・青眼の個体' }, blueImg('wing wing-left'), blueImg('wing wing-right'), blueImg('wing-body')));
+        rig.setAttribute('aria-label', title + '・金眼の個体');
+    }
     const out = h('div', { class: 'visual-art', dataset: { visual: visualKey(v) } }, surface);
     const dial = v.motion === 'clock' && W ? createDial(W) : null;
     if (dial) surface.append(h('div', { class: 'visual-clock-dial' }, dial.el));
@@ -87,7 +93,7 @@ export function visualArt(W, v, { size = 300, eco = null, controls = false } = {
     out.update = update;
     update();
     // A failed file stays visibly unmade, instead of masquerading as a completed picture.
-    rig.querySelectorAll('img').forEach(image => image.addEventListener('error', () => { out.classList.add('visual-unavailable'); reaction.hidden = true; rig.replaceChildren(h('p', { class: 'empty' }, '設定画を読み込めませんでした')); }, { once: true }));
+    surface.querySelectorAll('img').forEach(image => image.addEventListener('error', () => { out.classList.add('visual-unavailable'); reaction.hidden = true; surface.replaceChildren(h('p', { class: 'empty' }, '設定画を読み込めませんでした')); }, { once: true }));
     return out;
 }
 

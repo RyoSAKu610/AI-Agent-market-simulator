@@ -101,6 +101,11 @@ function collectVisuals() {
         const path = join(root, 'assets/visuals', visual.file);
         if (!existsSync(path)) throw new Error('Reviewed visual is missing: ' + visual.file);
         out[visualKey(visual)] = 'data:image/png;base64,' + readFileSync(path).toString('base64');
+        if (visual.companion) {
+            const companion = join(root, 'assets/visuals', visual.companion);
+            if (!existsSync(companion)) throw new Error('Reviewed companion is missing: ' + visual.companion);
+            out[visualKey(visual) + ':companion'] = 'data:image/png;base64,' + readFileSync(companion).toString('base64');
+        }
         if (visual.poses) {
             const poses = join(root, 'assets/visuals', visual.poses);
             if (!existsSync(poses)) throw new Error('Reviewed pose sheet is missing: ' + visual.poses);

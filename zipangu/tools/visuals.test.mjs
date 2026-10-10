@@ -25,6 +25,13 @@ for (const v of VISUALS) {
     const bytes = readFileSync(file);
     assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', 'PNG expected');
     assert.ok(bytes.readUInt32BE(16) >= 1024 && bytes.readUInt32BE(20) >= 1024, 'original full-resolution artwork expected');
+    if (v.id === 'kenji_albireo_ageha') assert.ok(v.companion, 'Albireo must retain both gold-eyed and blue-eyed individuals');
+    if (v.companion) {
+        assert.match(v.companion, /^[a-z0-9_-]+\.png$/);
+        const companion = readFileSync(join(root, 'assets/visuals', v.companion));
+        assert.equal(companion.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+        assert.ok(companion.readUInt32BE(16) >= 1024 && companion.readUInt32BE(20) >= 1024, 'full-resolution companion expected');
+    }
     if (v.poses) {
         assert.match(v.poses, /^[a-z0-9_-]+\.png$/);
         const sheet = readFileSync(join(root, 'assets/visuals', v.poses));

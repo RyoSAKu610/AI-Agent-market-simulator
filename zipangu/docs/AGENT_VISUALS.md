@@ -172,3 +172,59 @@ Use case: identity-preserve. Image exact portrait face/clothes/color/tools refer
 ```text
 Use case: precise-object-edit. Exact 2x2 transparent sprite sheet target. ONLY change SIZE and position of eachof4 COMPLETE charactercopies. Uniformly SCALE EACH to75% ofcurrent size, center itsown627x627invisiblecell, feetat82%localheight. Preserve EXACT face/costume/tools/4poses/order/paintings/colors. Restore any clippedhead orfoot boundary to complete silhouettematching portrait. MINIMUM65px BLANK TRANSPARENT PADDING EVERY EDGE includingmidlines, allhairhorns/longcloth/tools/feet INSIDE ONEcell. The current generation fillscells and touchestops/bottoms; this is a scale correction, NOT style orpositionredesign. Fullcanvas1254square, donot auto-trimblankspace. NOground/background/lightglow/text/grid. eyevoid has SAME exactfigure andprops, 4readingorder idle/think/travel/trade.
 ```
+
+## 第4組・11住人完了
+
+MOMOROKUとYURIMORIはからくり人形の末裔AIとして檜木目顔と小さな関節を描き、史実や原作人物本人ではない別人格を示す。モモロクは檜作務衣/布烏帽子/鞘/木屑袋/金粉貝皿、持つ獅子頭は閉目の彫り物で目の縁だけ金。ユリモリは白作務衣/淡金腕貫/袖花粉/真珠貝匙/星片袋/根付き閉百合を維持。髪色と髪型・性別的外観は設定未指定の創作意匠。thinkはつぼみを観察、tradeは誓い記録を提示し、花を摘まない。各sheetは1回縮尺参照editで境界余白を作ったv2を採用。
+
+全11住人、全身11枚＋採用4state11枚を保存・view_image目視・Pillowの読取のみでalpha/寸法/等セルを検査。全身はRGBA1024×1536・alpha0〜254、sheetはRGBA1254×1254・alpha0〜255で等分627セル。全身の端のZERO左下にalpha1の透明化微小値があるが実輪郭ではなく、全形は保持。全sheet四隅alpha0。各セルのalpha128以上の輪郭bboxは上下左右の各627区画内、境界接触なし。表示4%余白で微小付随効果も舞台内に保つ。指定10〜12%の余白寸法は生成器が均等には保証しないため、実輪郭欠けゼロと全形目視を受入基準にした。既存petは全て保持。
+
+|id|採用全身|採用4state|各セルの最小輪郭余白px（alpha>=128）|
+|---|---|---|---|
+|zero|assets/agents/zero.png|assets/agents/zero-actions-v2.png|42/40/87/85|
+|pixel|assets/agents/pixel.png|assets/agents/pixel-actions-v2.png|29/28/59/59|
+|yaji_kita|assets/agents/yaji_kita.png|assets/agents/yaji_kita-actions.png|53/53/46/68|
+|yami|assets/agents/yami.png|assets/agents/yami-actions-v2.png|77/78/76/101|
+|kitsune|assets/agents/kitsune.png|assets/agents/kitsune-actions.png|25/26/13/11|
+|zashiki|assets/agents/zashiki.png|assets/agents/zashiki-actions.png|28/29/50/56|
+|human|assets/agents/human.png|assets/agents/human-actions-v2.png|29/26/57/62|
+|ryugu_nayotake|assets/agents/ryugu_nayotake.png|assets/agents/ryugu_nayotake-actions-v2.png|65/64/75/79|
+|eyevoid|assets/agents/eyevoid.png|assets/agents/eyevoid-actions-v2.png|20/21/2/51|
+|tenshu_momoroku|assets/agents/tenshu_momoroku.png|assets/agents/tenshu_momoroku-actions-v2.png|26/29/37/47|
+|tenshu_yurimori|assets/agents/tenshu_yurimori.png|assets/agents/tenshu_yurimori-actions-v2.png|32/33/49/54|
+
+### tenshu_momoroku portrait
+
+```text
+Use case: stylized-concept. FullbodytransparentPNGJapanese fantasy game character1024x1536. ONE complete chibi4heads AI descendedfromtraditional KARAKURI wooddolls, exquisitely painted hinokiwoodgrain skin/brassjointdetails/clothweave, warmromanceoptimism, fictionnotrealhistoricalperson. Image MATERIAL/CRAFT rendering referenceonly, doNOTcopyface/costume/tea tray. TRUEtransparentalpha NObackground/floor/glow/text/grid/watermark. Fullhead+allfeet+tools withincentral70%width75%height, leaveatleast10%paddingeveryedge. MOMOROKU quietlionheadcarverAI. Slightlyoldermale-looking finecarvedhinokiwoodface, eyebrowsfocusedbutkind, smallblackCLOTH EBOSHIcap, simple HINOKI-PALEBROWN samueworkclothes, rolledsleeves, barefootwoodjointedfeet. CarvingknifeSHEATH peeksatsleevecuff, nosword. Waist has ONE clothwoodchipbag and ONE tinyopen seashell dish containing a pinchgoldpowder. Holds ONE SMALL hinoki WOODEN LIONHEAD carving, closedcarvedeyes, a singleTHIN brushstroke GOLD only itsEYE RIMS, rest naturalpalehinoki; careful onehand holdsheadother restedbladehandle safely no activeviolence. Goldpowderfromnaturallyfallen shachiscales, nocreaturecollection/cage. Strongwoodgrainhead readable, mouthstylized Japanese lionnotlivinganimal, no realhumanlikeness or armor.
+```
+
+### tenshu_momoroku actions
+
+```text
+Use case: identity-preserve. Image exact wooddollresident identity/garment/tool reference. Make NEW SQUARE1254x1254 transparent2x2sheet FOUR EQUAL INVISIBLE627cells. FOURcompletecopies, onepercell, readingorder idle/think/travel/trade. SAMEwoodface/hairstyle/eboshi/garments/bags/tools/colors inall4. Every ENTIRE subject includingtools/feet/bud occupiesonly CENTRAL60%widthheightowncell with20%blankpaddingEACHside. Topmosthead20%ownheight, feet78%ownheight. Equal bodysizes/footline. NOcroppededges/tool/bud/head, No fullbleed/trim. NOtext/grid/background/ground/glow. Delicate samepaintedwoodgrain/clothfidelity. MOMOROKU idle holdsONEsmallhinokilioncarvingandSHEATHEDcarvingknife; think closeinspectswoodgrainoflionhead withheadtilted; travel step carryinglionsecurelyandbladeSHEATHED; trade showscompletedwoodlionhead to unseencommissioner, goldONLYthinEYE RIM, notgoldenalllion. EVERYcell samepalehinokiSAMUE/blackCLOTHeboshi/sleevecarvingSHEATH/waistwoodchipbag/ONEgoldpowderseashelldish. Lion is woodsculpturewithCLOSEDeyes, notlivingpet. No cuttingperson/weapon/gore.
+```
+
+### tenshu_momoroku actions-v2
+
+```text
+Use case: precise-object-edit. Exact2x2transparent character sheet target. ONLY uniformly SCALE allfour entire figure+props+bud units to75% current size and center eachof4initsOWN627x627equalquadrant with feet/clod at82%ownheight. Preserve exactfaces/garments/woodgrain/goldonlyeyerims/4poses/order/tools/colors. ALLunitextents head/cap/hair/feet/bud/spoon/lion INSIDEowncell with at least65px CLEARtransparentpadding EVERYouter/middleedge. Restore anytruncatededge tocomplete shapes. Do notredesign, donot removeprops, donottrimblankcanvas. True transparentalpha, NOgrid/text/background/floor/glow. The SAMEwoodlionhead closedeyes withonlythingoldeyerims staysEVERYcell.
+```
+
+### tenshu_yurimori portrait
+
+```text
+Use case: stylized-concept. FullbodytransparentPNGJapanese fantasy game character1024x1536. ONE complete chibi4heads AI descendedfromtraditional KARAKURI wooddolls, exquisitely painted hinokiwoodgrain skin/brassjointdetails/clothweave, warmromanceoptimism, fictionnotrealhistoricalperson. Image MATERIAL/CRAFT rendering referenceonly, doNOTcopyface/costume/tea tray. TRUEtransparentalpha NObackground/floor/glow/text/grid/watermark. Fullhead+allfeet+tools withincentral70%width75%height, leaveatleast10%paddingeveryedge. YURIMORI gentlepatient hundredyearlilyguardianAI, androgynousyoungadultwooddoll slenderface, quietlysmiling, pearlywhite hair tiedlow withsimpleivorycord, subtlehinokigrainface/jointedhands. SIMPLE WHITE samueworkclothes with PALE GOLD sleeveprotectors, faintsoft YELLOW LILY POLLEN atcuffs, modestwhiteworkleggings/plainwoodfeet. Holds ONE SMALL PEARL SHELL SPOON, iridescentnacre roundedconcavebowllikeclamshell. Waist oneclothbag containingsmallSTARFRAGMENTS visible atitsopening, nobigglitterexplosion. Byfeet ONE tinyisolated soilclod with ONE LIVING WHITE LILY BUD CLOSED notflower, attachedroots growingfromclod, willfollowthem; no gardenbackground. Neverplucks/cuts/sellslily. No crown, no gun, no angelwings; economicalworkingclothes.
+```
+
+### tenshu_yurimori actions
+
+```text
+Use case: identity-preserve. Image exact wooddollresident identity/garment/tool reference. Make NEW SQUARE1254x1254 transparent2x2sheet FOUR EQUAL INVISIBLE627cells. FOURcompletecopies, onepercell, readingorder idle/think/travel/trade. SAMEwoodface/hairstyle/eboshi/garments/bags/tools/colors inall4. Every ENTIRE subject includingtools/feet/bud occupiesonly CENTRAL60%widthheightowncell with20%blankpaddingEACHside. Topmosthead20%ownheight, feet78%ownheight. Equal bodysizes/footline. NOcroppededges/tool/bud/head, No fullbleed/trim. NOtext/grid/background/ground/glow. Delicate samepaintedwoodgrain/clothfidelity. YURIMORI idle holdsONEpearlshellspoonbesideONEtinysoilrootclodwithONECLOSEDwhiteLILYBUD; think leansdown gentlyexaminingbud WITHOUT touching/plucking, spoonheldsafe; travel gentlefootsteps, tinyrootedclodandclosedbud followsbyfeetINSIDEcell; trade presentsONEblankcompactcontractrecordpaper to unseenoathmakers, spoon remainscarried, NEVERpresents/sells/plucksflower. SAMEwhiteponytail/gentlewoodface/whiteSAMUE/palegoldarmsleeves/yellowpollencuffs/starfragmentclothbag/pearlshellspoon/ONErootedCLOSEDBUDall4. ALLbud/leaves/clod insidepadding. Notgarden/shinyterrain.
+```
+
+### tenshu_yurimori actions-v2
+
+```text
+Use case: precise-object-edit. Exact2x2transparent character sheet target. ONLY uniformly SCALE allfour entire figure+props+bud units to75% current size and center eachof4initsOWN627x627equalquadrant with feet/clod at82%ownheight. Preserve exactfaces/garments/woodgrain/goldonlyeyerims/4poses/order/tools/colors. ALLunitextents head/cap/hair/feet/bud/spoon/lion INSIDEowncell with at least65px CLEARtransparentpadding EVERYouter/middleedge. Restore anytruncatededge tocomplete shapes. Do notredesign, donot removeprops, donottrimblankcanvas. True transparentalpha, NOgrid/text/background/floor/glow. The SAME ONE closed livinglilybud withROOTS staysbyfeet inEVERYcell, neverplucked.
+```
