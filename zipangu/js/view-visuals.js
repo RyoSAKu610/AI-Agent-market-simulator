@@ -20,7 +20,7 @@ export function visualsView(ctx) {
     const gallery = h('section', { class: 'sec' }, sectionHead('いま、会える設定画', '個別にひらくと、大きな絵と固有の動きを鑑賞できる'), h('div', { class: 'visual-catalog visual-gallery' }, ready.map(v => {
         const art = visualArt(W, v, { size: 250, eco: ctx.eco });
         painters.push(art.update);
-        return h('a', { class: 'visual-tile is-ready', href: '#/visual/' + visualKey(v) }, art, h('strong', null, visualTitle(W, v)), h('span', { class: 'visual-status' }, ['era', 'realm'].includes(v.type) ? '時片・異界の景観' : ['trust', 'credential', 'certificate'].includes(v.motion) ? '素材が息づく信頼・資格・証券の概念図' : '動く設定画'));
+        return h('a', { class: 'visual-tile is-ready', href: '#/visual/' + visualKey(v) }, art, h('strong', null, visualTitle(W, v)), h('span', { class: 'visual-status' }, ['era', 'realm'].includes(v.type) ? '時片・異界の景観' : v.type === 'agent' ? (v.poses ? '行動連動の設定画' : '全身設定画・行動ポーズ制作中') : ['trust', 'credential', 'certificate'].includes(v.motion) ? '素材が息づく信頼・資格・証券の概念図' : '動く設定画'));
     })));
     const sections = groups.map(([no, title, entities, type]) => h('section', { class: 'sec visual-batch' },
         sectionHead(no + ' ' + title, '設定画を一つずつ、正本の形・素材・生態に照らして制作'),
@@ -36,7 +36,7 @@ export function visualsView(ctx) {
         }))));
     return { el: h('div', { class: 'page visual-page' },
         h('header', { class: 'page-head' }, h('p', { class: 'kicker' }, '万華京 ・ VISUAL ATELIER'), h('h1', null, '動く絵の制作帖'), h('p', { class: 'lead' }, '時間の骨格から蝶、幻想生物、お金、住人へ。形も動きも、その子の暮らしから。'),
-            h('p', { class: 'visual-progress' }, `${ready.length} / ${total} 主題の設定画を制作済`)),
+            h('p', { class: 'visual-progress' }, `${ready.length} / ${total} 主題の設定画を制作済`), h('p', { class: 'visual-pose-progress' }, `住人の行動画：${ready.filter(v => v.type === 'agent' && v.poses).length} / ${W.agents.length} 人 ・ 待機／思案／移動／取引の4姿勢`)),
         gallery, h('details', { class: 'visual-backlog' }, h('summary', null, 'これからの制作順と全対象を見る'), h('p', { class: 'notice' }, '未制作の生き物と住人は、従来の動く描画で引き続き会えます。設定画は追加作品。正本にない券面・建築の細部は創作意匠です。'), sections)), title: '動く絵の制作帖', update() { painters.forEach(paint => paint()); } };
 }
 

@@ -916,3 +916,6 @@ input::placeholder { color: var(--ink-faint); }
 [data-visual="agent:chahakobi"] [data-stage="think"] .visual-rig,
 [data-visual="agent:chahakobi"] [data-stage="trade"] .visual-rig { animation: visual-level-tray 5s ease-in-out infinite; }
 @keyframes visual-level-tray { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-1%); } }
+
+/* The cell itself stays untouched; this stage margin protects moving silhouettes. */
+.visual-pose { inset: 4%; }

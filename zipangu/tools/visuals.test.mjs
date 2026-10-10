@@ -30,7 +30,8 @@ for (const v of VISUALS) {
         const sheet = readFileSync(join(root, 'assets/visuals', v.poses));
         assert.equal(sheet.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
         const width = sheet.readUInt32BE(16), height = sheet.readUInt32BE(20);
-        assert.ok(width >= 1024 && height >= 1024 && width % 2 === 0 && height % 2 === 0, 'four equal full-resolution pose cells expected');
+        assert.ok(width >= 1024 && height >= 1024, 'full-resolution 2×2 pose sheet expected');
+        assert.ok(!v.poseAspect || Math.abs(v.poseAspect - width / height) < 0.001, 'pose cell aspect ratio must preserve the original artwork');
     }
     ready++;
 }

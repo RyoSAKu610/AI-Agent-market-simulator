@@ -18,7 +18,9 @@ export function visualArt(W, v, { size = 300, eco = null, controls = false } = {
         : img());
     if (butterfly) rig.setAttribute('aria-label', title + '・設定画');
     if (butterfly) rig.setAttribute('role', 'img');
-    const pose = v.poses ? h('div', { class: 'visual-pose', role: 'img', 'aria-label': title + '・行動設定画' }, h('img', { src: visualPoseSource(v), alt: '', loading: 'lazy', decoding: 'async' })) : null;
+    const poseRatio = v.poseAspect || 1;
+    const poseWidth = Math.min(92, 92 * poseRatio), poseHeight = Math.min(92, 92 / poseRatio);
+    const pose = v.poses ? h('div', { class: 'visual-pose', style: { width: poseWidth + '%', height: poseHeight + '%', inset: 'auto', left: (100 - poseWidth) / 2 + '%', top: (100 - poseHeight) / 2 + '%' }, role: 'img', 'aria-label': title + '・行動設定画' }, h('img', { src: visualPoseSource(v), alt: '', loading: 'lazy', decoding: 'async' })) : null;
     const portrait = pose ? rig.querySelector('img') : null;
     if (pose) { rig.append(pose); portrait.hidden = true; }
     let showPortrait = false;
