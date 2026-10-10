@@ -7,7 +7,7 @@
 // The modules use a small, regular import/export style, so the bundler is a
 // few regular expressions rather than a dependency.
 
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, appendFileSync, statSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -95,43 +95,55 @@ const bundle = entry => order(entry).map(wrap).join('\n\n');
 // ------------------------------------------------------------------ assemble
 
 const { VISUALS, visualKey } = await import('data:text/javascript;base64,' + Buffer.from(read('js/visual-manifest.js')).toString('base64'));
-function collectVisuals() {
-    const out = {};
+function* visualFiles() {
     for (const visual of VISUALS.filter(v => v.status === 'ready')) {
-        const path = join(root, 'assets/visuals', visual.file);
-        if (!existsSync(path)) throw new Error('Reviewed visual is missing: ' + visual.file);
-        out[visualKey(visual)] = 'data:image/png;base64,' + readFileSync(path).toString('base64');
-        if (visual.companion) {
-            const companion = join(root, 'assets/visuals', visual.companion);
-            if (!existsSync(companion)) throw new Error('Reviewed companion is missing: ' + visual.companion);
-            out[visualKey(visual) + ':companion'] = 'data:image/png;base64,' + readFileSync(companion).toString('base64');
-        }
-        if (visual.poses) {
-            const poses = join(root, 'assets/visuals', visual.poses);
-            if (!existsSync(poses)) throw new Error('Reviewed pose sheet is missing: ' + visual.poses);
-            out[visualKey(visual) + ':poses'] = 'data:image/png;base64,' + readFileSync(poses).toString('base64');
+        for (const [suffix, file] of [['', visual.file], [':companion', visual.companion], [':poses', visual.poses]]) {
+            if (!file) continue;
+            const path = join(root, 'assets/visuals', file);
+            if (!existsSync(path)) throw new Error('Reviewed visual is missing: ' + file);
+            yield [visualKey(visual) + suffix, path];
         }
     }
-    return out;
 }
 
+// Keep original PNGs in separate non-executable blocks. Blob URLs avoid making
+// several copies of hundreds of megabytes of base64 in image attributes.
+const visualLoader = `window.__ZIPANGU_VISUALS__ = {};
+for (const node of document.querySelectorAll('script[data-visual-key]')) {
+    const key = node.dataset.visualKey;
+    Object.defineProperty(window.__ZIPANGU_VISUALS__, key, { configurable: true, get() {
+        const raw = atob(node.textContent.trim());
+        const bytes = new Uint8Array(raw.length);
+        for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+        const url = URL.createObjectURL(new Blob([bytes], { type: 'image/png' }));
+        Object.defineProperty(window.__ZIPANGU_VISUALS__, key, { value: url });
+        node.remove();
+        return url;
+    } });
+}`;
+
 function build() {
-    let html = read('index.html');
+    // The single-file artifact uses installed serif/monospace fallbacks offline.
+    let html = read('index.html').replace(/^<link[^\n]+https:\/\/fonts\.(?:googleapis|gstatic)\.com[^\n]*>\n/gm, '');
     const css = read('style.css');
     const cssTag = '<link rel="stylesheet" href="style.css">';
     const jsTag = '<script type="module" src="js/app.js"></script>';
     if (!html.includes(cssTag) || !html.includes(jsTag)) throw new Error('index.html no longer has the stylesheet/script tags the builder replaces');
 
     const code = bundle('app.js');
-    const data = `<script>window.__ZIPANGU_WORLD__ = ${inlineJson(collectWorld())};\nwindow.__ZIPANGU_DOCS__ = ${inlineJson(collectDocs())};\nwindow.__ZIPANGU_VISUALS__ = ${inlineJson(collectVisuals())};</script>`;
+    const data = `<script>window.__ZIPANGU_WORLD__ = ${inlineJson(collectWorld())};\nwindow.__ZIPANGU_DOCS__ = ${inlineJson(collectDocs())};\n${visualLoader}</script>`;
     html = html
         .replace(cssTag, () => `<style>\n${css}\n</style>`)
-        .replace(jsTag, () => `${data}\n<script type="module">\n${code.replace(/<\/script/gi, '<\\/script')}\n</script>`);
+        .replace(jsTag, () => `__ZIPANGU_PNG_BLOCKS__${data}\n<script type="module">\n${code.replace(/<\/script/gi, '<\\/script')}\n</script>`);
 
     mkdirSync(join(root, 'dist'), { recursive: true });
     const out = join(root, 'dist', 'zipangu-single.html');
-    writeFileSync(out, html);
-    console.log(`wrote ${out} (${(html.length / 1024).toFixed(0)} KB)`);
+    const files = [...visualFiles()]; // Validate before replacing the artifact.
+    const [before, after] = html.split('__ZIPANGU_PNG_BLOCKS__');
+    writeFileSync(out, before);
+    for (const [key, path] of files) appendFileSync(out, `<script type="application/octet-stream" data-visual-key="${key}">${readFileSync(path).toString('base64')}</script>\n`);
+    appendFileSync(out, after);
+    console.log(`wrote ${out} (${(statSync(out).size / 1024).toFixed(0)} KB, ${files.length} original PNG blocks)`);
 }
 
 build();

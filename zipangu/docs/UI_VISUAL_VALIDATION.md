@@ -21,8 +21,12 @@ Chromiumで1280×800と390×844の地図・図鑑・相場・案内を確認し�
 
 bash scripts/check.shを通過。Macの上位CommonJS package.jsonとtmp実パスの影響を避けるため、README記載の/private/tmpコピー＋TMPDIR=/private/tmpでbash zipangu/tools/check.shを実行し、world、抽出器、経済シミュレーション、128PNGと32pose、観測履歴、presence、構文をすべて通過。
 
-node zipangu/tools/build-single.mjsは全原寸PNG・32行動画・アルビレオの対の両素材を埋め込んだ単一HTMLを生成。418MB程度となるため通常は遅延読込する静的配信を利用し、原画を劣化させません。
+node zipangu/tools/build-single.mjsは全原寸PNG・32行動画・アルビレオの対の両素材を埋め込んだ単一HTMLを生成。約409MiBとなるため通常は遅延読込する静的配信を利用し、原画を劣化させません。
 
 ## 表現範囲
 
 景観18点は静止コンセプト画、万世時計と地図が時間連動を担います。漏刻亀の水流、まどか蜻蛉の円、望月兎の上げ杵、誓いを果たした百年百合は特定瞬間・状態の設定画で、追加画にない動作や未達契約状態を再現したとは称しません。価格はこの街のシミュレーション内の観測で、架空OHLC・出来高や現実の金融データを加えていません。
+
+単独版は非実行PNGブロック161本（128主題・32pose・対の追加1）と、必要時のBlob URLキャッシュへ変更。HTTPで全HTMLを読み込んでからcontext.setOffline(true)にし、128/128・32/32の制作帖、1254pxの金眼／青眼、チャハコビ1254²のシート、clock文字盤、万華蝶seed38→39と停止39保持、相場Home0を確認し、JavaScriptエラー0。金眼・青眼・行動シートのBlob SHA-256は原PNGと完全一致。file:直接ロードは検証ツールが禁止しているため未検証です。単独版の外部フォントリンクは除き、端末の書体へフォールバックします。
+
+外部フォント除去後のfresh ChromiumではローカルHTTP全読込から地図の起動まで3487ms。続けてネットワーク切断し、制作帖128/32・時計・相場Home0を再確認。JavaScriptエラー0、requestfailed0、外部fontリンク0でした。時間はこの検証機の観測で、端末ごとの性能保証ではありません。
