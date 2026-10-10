@@ -162,7 +162,7 @@ export function homeView(ctx) {
                 h('div', null, h('h2', { class: 'info-title' }, agentShort(a)), h('p', { class: 'info-sub' }, clip(a.role, 40)))),
             feature, status, goal, wallet,
             h('div', { class: 'info-actions' },
-                h('a', { class: 'btn btn-primary', href: href.agent(a.id) }, '素性を見る →'),
+                h('a', { class: 'btn btn-primary', href: href.agent(a.id) }, '話しかける・お願い →'),
                 h('button', { type: 'button', class: 'btn', onclick: () => map && map.focus(a.id) }, '追う')));
         return { el, update: paint };
     }

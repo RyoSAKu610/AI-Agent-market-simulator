@@ -348,7 +348,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
     // ------------------------------------------------ events bus
     function emit(type, payload) {
         const c = clockAt(now(), S.startSekki);
-        const msg = { type, T: now(), day: c.day, label: c.label, ...payload };
+        const msg = { type, seq: S.eventSeq = (S.eventSeq || 0) + 1, T: now(), day: c.day, label: c.label, ...payload };
         for (const key of [type, '*']) for (const fn of listeners.get(key) || []) fn(msg);
     }
     function on(type, fn) {
@@ -613,8 +613,57 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         a.timer = wait;
         setStage(a, 'idle', a.small ? '押絵の大きさで休む' : '待機');
     }
+    function queueRequest(agentId, request) {
+        const a = agents.get(agentId);
+        if (!a || !request || !['observe', 'guide', 'message'].includes(request.type)
+            || !ix.districts.has(request.target) || typeof request.id !== 'string') return { ok: false, reason: '依頼先を確かめてください。' };
+        if (request.type === 'message' && (!agents.has(request.recipient) || request.target !== agents.get(request.recipient).home
+            || typeof request.body !== 'string' || !request.body.trim() || request.body.length > 120)) return { ok: false, reason: '宛先と伝言を確かめてください。' };
+        if (request.type === 'message') {
+            const reserved = [...agents.values()].flatMap(other => [...(other.requestQueue || []), ...(other.plan?.request ? [other.plan.request] : [])])
+                .filter(r => r.type === 'message' && r.recipient === request.recipient).length;
+            if ((agents.get(request.recipient).inbox?.length || 0) + reserved >= 64) return { ok: false, reason: '相手の伝言箱がいっぱいです。受け取るまで待ちましょう。' };
+        }
+        const queue = a.requestQueue || (a.requestQueue = []);
+        if (a.plan?.request?.id === request.id || queue.some(r => r.id === request.id)
+            || (S.finishedRequests || []).includes(request.id)) return { ok: false, reason: '同じ依頼はすでに受け取っています。' };
+        if (queue.length) return { ok: false, reason: '先に受け取ったお願いがあります。待ち合わせの枠は一つです。' };
+        queue.push(JSON.parse(JSON.stringify(request)));
+        emit('request', { agent: a.id, request: request.id, status: 'queued', message: `${a.name} がお願いを受け取り、今の仕事のあとに取りかかる` });
+        return { ok: true };
+    }
+    function finishRequest(a, step) {
+        const r = a.plan.request;
+        S.finishedRequests = [...(S.finishedRequests || []), r.id].slice(-128);
+        let observation;
+        if (r.type === 'message') {
+            const recipient = agents.get(r.recipient);
+            (recipient.inbox || (recipient.inbox = [])).push({ id: r.id, from: a.id, body: r.body, deposited: now() });
+            recipient.inbox = recipient.inbox.slice(-64);
+            observation = `${placeName(a.at)}の伝言箱へ投函。本人への到着は帰宅後です。`;
+        } else if (r.type === 'guide') {
+            observation = `${placeName(a.at)}へ到着。${(ix.districts.get(a.at)?.description || '').split('。')[0]}。`;
+        } else {
+            const quotes = [...(prices.get(a.at) || [])].filter(([id]) => list(r.goods).includes(id)).map(([id]) => [id, priceOf(a.at, id)]);
+            observation = `${placeName(a.at)}・${clock.label}／${clock.sekki}。`;
+            if (r.mode === 'market' || r.mode === 'workshop') observation += quotes.length
+                ? quotes.slice(0, 3).map(([id, p]) => `${goodName(id)} ${fmt(p)}${cur}`).join('、') + '（観測時の値）。'
+                : 'この地区に対象品の価格掲示はありません。未確認として記録。';
+            else if (r.mode === 'clock') observation += `時計の現在の刻を記録。明け六つ ${Math.round(clock.dawn * 24 * 60)}分、暮れ六つ ${Math.round(clock.dusk * 24 * 60)}分（圧縮暦・一日内）。`;
+            else observation += `${(ix.districts.get(a.at)?.description || '').split('。')[0]}。`;
+        }
+        emit('request', { agent: a.id, request: r.id, status: 'done', kind: r.type, mode: r.mode,
+            district: a.at, recipient: r.recipient || null, observation,
+            message: `${a.name} のお願いが完了：${observation}` });
+        a.needs.curiosity = clamp(a.needs.curiosity - 0.1, 0, 1);
+        updateGoal(a); // actual visits count for knowledge goals; no invented economic reward
+        nextStep(a);
+    }
     function beginDecision(a) {
-        const plan = decide(a);
+        const request = a.requestQueue?.shift();
+        const plan = request ? { request, steps: [{ type: 'go', to: request.target }, { type: 'request' }] }
+            : a.inbox?.length && a.at !== a.home ? { steps: [{ type: 'go', to: a.home }, { type: 'look' }] } : decide(a);
+        if (request) emit('request', { agent: a.id, request: request.id, status: 'active', message: `${a.name} がお願いの段取りを考えはじめた` });
         plan.i = 0;
         a.plan = plan;
         if (plan.reserve) S.pending[plan.reserve.key] = (S.pending[plan.reserve.key] || 0) + plan.reserve.q;
@@ -628,6 +677,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         if (!step) return goIdle(a);
         switch (step.type) {
             case 'go': return depart(a, step.to);
+            case 'request': a.timer = STAGE.look; return setStage(a, 'trade', a.plan.request.type === 'message' ? '伝言を封じて投函中' : 'お願いの現地記録中');
             case 'buy': case 'sell': a.timer = STAGE.trade; return setStage(a, 'trade', step.type === 'buy' ? '仕入れ中' : '売り込み中');
             case 'craft': a.timer = STAGE.craft; return setStage(a, 'trade', `${goodName(step.good)}を細工中`);
             case 'work': a.timer = STAGE.work; return setStage(a, 'trade', '手伝い仕事中');
@@ -789,6 +839,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
     function finishStep(a) {
         const step = a.plan.steps[a.plan.i];
         switch (step.type) {
+            case 'request': return finishRequest(a, step);
             case 'buy': return doBuy(a, step);
             case 'sell': return doSell(a, step);
             case 'craft': return doCraft(a, step);
@@ -805,6 +856,10 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
 
     function updateAgent(a, dt) {
         const T = now();
+        if (a.at === a.home && a.inbox?.length) {
+            for (const letter of a.inbox.splice(0)) emit('message-received', { agent: a.id, from: letter.from,
+                request: letter.id, body: letter.body, message: `${a.name} が帰宅し、預けられた伝言を受け取った` });
+        }
         if (a.small && T >= a.smallUntil) a.small = false;
         a.needs.curiosity = clamp(a.needs.curiosity + dt * 0.35 * a.traits.wander, 0, 1);
         if (a.stage === 'idle' && a.plan && a.plan.steps[a.plan.i] && a.plan.steps[a.plan.i].type === 'rest') {
@@ -1020,6 +1075,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         step,
         on,
         snapshot,
-        priceOf
+        priceOf,
+        queueRequest
     };
 }

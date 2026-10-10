@@ -1020,3 +1020,66 @@ input::placeholder { color: var(--ink-faint); }
  .market-chart-panel.is-compact .chart-change { font-size:9px; }
 }
 .info-card .visual-surface[data-motion="era"] { aspect-ratio:3/2;width:100%; }
+
+/* A stable conversation desk: forms are never replaced by the live tick. */
+.journey-notice {max-width:1240px;margin:10px auto 0;padding:8px 24px;color:var(--ink-faint);font-size:.78rem;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.journey-notice.save-failed {color:#f6ba8c}
+.ag-talk-entry {display:block;padding:10px 0 2px;color:var(--gold);font-size:.85rem}
+.character-panel {margin:24px 0 42px;border:1px solid var(--line);background:linear-gradient(135deg,rgba(39,70,76,.2),rgba(14,24,40,.5));border-radius:16px;overflow:hidden}
+.character-scene {padding:24px;display:grid;grid-template-columns:minmax(180px,320px) 1fr;gap:28px;align-items:center;border-bottom:1px solid var(--line)}
+.character-scene .visual-feature {margin:0;min-width:0}
+.character-portrait-caption p {line-height:1.85}
+.character-mood {color:var(--gold)}
+.character-growth {font-family:var(--dot);font-size:.85rem}
+.character-wish {font-size:1.14rem}
+.character-change {font-size:.85rem;color:var(--ink-faint);overflow-wrap:anywhere}
+.character-dialogue {padding:24px;min-width:0}
+.character-method {font-size:.78rem;color:var(--ink-faint);line-height:1.7}
+.character-chat {height:300px;overflow-y:auto;overscroll-behavior:contain;background:rgba(3,12,20,.55);border:1px solid var(--line);border-radius:12px;padding:16px;scrollbar-gutter:stable}
+.character-message {max-width:92%;margin:0 0 14px;border-left:2px solid #76978e;padding:8px 12px;background:rgba(57,95,85,.1)}
+.character-message p,.character-chat-empty {white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.85;margin:6px 0}
+.character-message-label {font-size:.72rem;color:var(--ink-faint)}
+.message-visitor {margin-left:auto;border-left-color:var(--gold);background:rgba(171,141,69,.08)}
+.message-system {font-size:.85rem;opacity:.85;border-left-style:dashed}
+.character-topics,.character-ask-buttons {display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.character-talk-form,.character-letter form {display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+.character-talk-form label,.character-letter label {grid-column:1/-1;font-size:.85rem;color:var(--gold)}
+.character-panel textarea,.character-panel select {width:100%;min-width:0;padding:12px;border:1px solid var(--line);border-radius:8px;background:#101b2b;color:var(--ink);font:inherit;line-height:1.6}
+.character-panel textarea {resize:vertical;min-height:80px}
+.character-letter form {grid-template-columns:1fr;padding:14px 0}
+.character-dialogue h3 {margin-top:24px}
+.character-letter summary {cursor:pointer;padding:12px 0;color:var(--gold)}
+.character-feedback {min-height:1.6em;color:var(--gold);font-size:.85rem}
+.promise {border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:10px 0;font-size:.86rem;overflow-wrap:anywhere}
+.promise-done {border-color:#526d60;background:rgba(64,107,78,.12)}
+.promise p {margin:6px 0;line-height:1.75}
+.journey-save-status {font-size:.76rem;color:var(--ink-faint)}
+.character-records {padding:24px;background:rgba(0,0,0,.15);display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.character-records summary {cursor:pointer;color:var(--gold)}
+.character-memories,.character-chronicle {padding-left:22px;font-size:.88rem;line-height:1.85}
+.character-chronicle {max-height:480px;overflow:auto}
+.character-chronicle small {color:var(--ink-faint)}
+.character-chronicle p {margin-top:0}
+@media (max-width:600px) {
+ .journey-notice {padding:8px 14px;font-size:.72rem}
+ .character-scene {grid-template-columns:1fr;padding:16px;gap:8px}
+ .character-scene .visual-feature {max-width:100%;margin:auto}
+ .character-dialogue,.character-records {padding:16px}
+ .character-records {grid-template-columns:1fr;gap:16px}
+ .character-chat {height:290px;padding:10px}
+ .character-message {max-width:100%;padding:8px}
+ .character-panel textarea {font-size:16px}
+ .character-talk-form {grid-template-columns:1fr}
+ .character-talk-form .btn {justify-self:end}
+}
+@media (min-width:901px) {
+ .character-panel {display:grid;grid-template-columns:minmax(260px,.85fr) minmax(0,1.4fr)}
+ .character-scene {grid-template-columns:1fr;border-bottom:0;border-right:1px solid var(--line);align-content:start;padding:22px;gap:18px}
+ .character-records {grid-column:1/-1}
+ .character-chat {height:270px}
+}
+.character-dialogue {scroll-margin-top:calc(var(--topbar-h) + 12px)}
+.character-arc {font-size:.9rem;color:var(--ink-dim)}
+.route-home .journey-notice {position:absolute;z-index:21;top:calc(var(--topbar-h) + 5px);left:14px;max-width:min(520px,calc(100vw - 28px));padding:4px 8px;background:rgba(11,16,48,.85);border-radius:6px;font-size:.68rem;pointer-events:none}
+.route-home .journey-notice button {pointer-events:auto}
+@media (min-width:901px) {.route-home .journey-notice {max-width:calc(100vw - 420px)}}
