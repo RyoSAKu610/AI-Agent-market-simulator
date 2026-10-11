@@ -116,7 +116,9 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
             : h('div', { class: 'feed-item type-' + msg.type + ' is-new' }, ...body);
         const gloss = Object.values(VIA_GLOSS).find(g => String(msg.message).includes(g[0]));
         if (gloss) el.title = gloss[1];
-        return h('li', null, el);
+        const li = h('li', null, el);
+        if (msg.type === 'trade' && chain && chain.state === 'live') { linkable.push({ li, msg }); if (linkable.length > FEED_KEEP * 2) linkable.shift(); }
+        return li;
     }
 
     // At 16× the economy talks faster than anyone can read: events and
@@ -129,6 +131,71 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
         const take = [...important.slice(-3), ...common.slice(-2)].sort((a, b) => a.T - b.T);
         for (const m of take) list.prepend(renderFeedItem(m));
         while (list.children.length > FEED_KEEP) list.lastChild.remove();
+        linkLines();
+    }
+
+    // ---------------------------------------------------- ⛓ chain chip and feed links (docs/ONCHAIN.md)
+    // The chip says SIM until js/chain.js is live; it never shows a chain number it was not given.
+    const chipText = h('span', { class: 'chain-chip-text' }, 'SIM');
+    const chainChip = h('a', { class: 'chain-chip', href: '#/chain', title: 'オンチェーン：住人の取引を Solana devnet に刻む（いまはシミュレーションのみ）' },
+        h('span', { class: 'chain-chip-gem', 'aria-hidden': 'true' }, '⛓'), chipText);
+    let chain = null, chainMod = null, unsubChain = null;
+    const linkable = [];                 // feed lines still waiting for a confirmed tx
+    const claimed = new Set();           // "<tx id>:<op index>" already shown on a line
+
+    function paintChip() {
+        const live = chain && chain.state === 'live';
+        const st = chain ? chain.state : 'off';
+        let text = 'SIM', full = '';
+        if (live) {
+            const s = chain.stats || {};
+            text = '';
+            chipText.replaceChildren(h('span', { class: 'chain-chip-more' }, 'DEVNET '), h('span', { class: 'chain-chip-mid' }, 'LIVE · '), `${fmt(s.confirmed || 0)} tx`);
+            full = ` · ${fmt(s.volume || 0)} KOGANE`;
+        } else if (st === 'loading' || st === 'setting-up') text = st === 'loading' ? '読込中…' : '開設中…';
+        else if (st === 'needs-funds') text = '資金待ち';
+        else if (st === 'error') text = 'ERROR';
+        if (!live) chipText.textContent = text;
+        else chipText.append(h('span', { class: 'chain-chip-more' }, full));
+        chainChip.classList.toggle('is-live', !!live);
+        chainChip.title = live ? 'Solana devnet に実際に刻まれた取引（確定分）。クリックで台帳へ' : 'オンチェーン：住人の取引を Solana devnet に刻む（いまは SIM = シミュレーションのみ）';
+    }
+
+    function linkLines() {
+        if (!chain || !linkable.length) return;
+        const ex = chainMod && chainMod.explorerTx;
+        for (let i = linkable.length - 1; i >= 0; i--) {
+            const L = linkable[i];
+            if (!L.li.isConnected) { linkable.splice(i, 1); continue; }
+            for (const tx of chain.txs || []) {
+                if (tx.kind !== 'trade' || tx.status !== 'confirmed' || !tx.sig) continue;
+                const k = (tx.ops || []).findIndex((op, j) => !claimed.has(tx.id + ':' + j)
+                    && op.agent === L.msg.agent && op.good === L.msg.good && op.district === L.msg.district
+                    && op.action === L.msg.action && (op.qty == null || L.msg.qty == null || op.qty === L.msg.qty));
+                if (k < 0) continue;
+                claimed.add(tx.id + ':' + k);
+                L.li.classList.add('has-chain');
+                L.li.append(h('a', {
+                    class: 'feed-chain', target: '_blank', rel: 'noopener noreferrer',
+                    href: ex ? ex(tx.sig) : `https://explorer.solana.com/tx/${tx.sig}?cluster=devnet`,
+                    title: 'Solana devnet で確定：' + tx.sig.slice(0, 12) + '…', 'aria-label': 'この取引を Explorer で見る（devnet）'
+                }, '⛓'));
+                linkable.splice(i, 1);
+                break;
+            }
+        }
+        if (claimed.size > 600) claimed.clear();
+    }
+
+    function setChain(c, mod) {
+        if (unsubChain) { try { unsubChain(); } catch { /* fine */ } unsubChain = null; }
+        chain = c || null; chainMod = mod || null;
+        if (chain && typeof chain.on === 'function') {
+            const a = chain.on('tx', () => { paintChip(); linkLines(); });
+            const b = chain.on('state', paintChip);
+            unsubChain = () => { for (const u of [a, b]) if (typeof u === 'function') u(); };
+        }
+        paintChip();
     }
 
     // ---------------------------------------------------- update
@@ -144,6 +211,7 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
         const st = eco.stats;
         stats.textContent = `取引 ${fmt(st.trades)} ・ 出来高 ${fmt(st.volume)}${cur}`;
         lastDay = c.day;
+        paintChip();
     }
 
     function slow() { computeMovers(); renderTicker(); }
@@ -153,5 +221,5 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
     computeMovers();
     renderTicker();
 
-    return { clockPanel, mini, speedEl, ticker, feed, update, setSpeed, flushFeed, slow, renderTicker, get day() { return lastDay; } };
+    return { clockPanel, mini, speedEl, chainChip, setChain, ticker, feed, update, setSpeed, flushFeed, slow, renderTicker, get day() { return lastDay; } };
 }

@@ -1,4 +1,5 @@
 import { characterPanel } from './character-panel.js';
+import { agentChainPanel } from './view-chain.js';
 import { dramaPanel } from './drama-panel.js';
 import { visualFeature, visualArt } from './visual-art.js';
 import { visualOf } from './visual-manifest.js';
@@ -137,6 +138,7 @@ export function agentView(ctx, id) {
     const conversation = characterPanel(ctx, a, feature ? h('details', { class: 'character-art-details' }, h('summary', null, '人物の設定画を鑑賞する'), feature) : null);
     const talk = () => { conversation.el.querySelector('.character-dialogue').scrollIntoView({ block: 'start' }); conversation.el.querySelector('textarea').focus({ preventScroll: true }); };
     const theatre = dramaPanel(ctx, a, talk);
+    const onchain = agentChainPanel(ctx, a);
     const cur = stripParens(W.baseCurrency.name_ja);
     const home = W.byId.district.get(a.home);
     const place = home && W.placeOf(home.id);
@@ -190,7 +192,7 @@ export function agentView(ctx, id) {
                 h('p', { class: 'hero-summary' }, a.role),
                 h('p', { class: 'chips' }, h('button', { type: 'button', class: 'btn btn-primary', onclick: () => theatre.el.scrollIntoView({ block: 'start' }) }, 'いまの劇を観る'), h('button', { type: 'button', class: 'btn', onclick: talk }, '話しかける・お願いする'), h('a', { class: 'btn', href: '#/', onclick: () => { ctx.pendingFocus = id; } }, '地図で追う →'), home ? h('a', { class: 'chip', href: href.district(home.id) }, nameOf(home)) : null, place ? placeLink(place) : null))),
         h('div', { class: 'page-body' },
-            theatre.el, panel, conversation.el,
+            theatre.el, panel, onchain.el, conversation.el,
             h('section', { class: 'sec', 'aria-labelledby': 'ag-person' }, sectionHead('人となり', null, 'ag-person'),
                 h('p', { class: 'lead' }, tagged(a.personality)),
                 h('dl', { class: 'facts' }, h('dt', null, '得意'), h('dd', null, tagged(a.specialty)))),
@@ -203,5 +205,5 @@ export function agentView(ctx, id) {
             rels.length ? h('section', { class: 'sec', 'aria-labelledby': 'ag-rel' }, sectionHead('縁のある人', null, 'ag-rel'), h('ul', { class: 'relations' }, rels)) : null,
             h('p', { class: 'pager' }, link('#/agents', '← 住人たちへ'))));
 
-    return { el, title: agentShort(a), update() { paint(); theatre.update(); conversation.update(); if (feature) feature.update(); } };
+    return { el, title: agentShort(a), update() { paint(); theatre.update(); conversation.update(); onchain.update(); if (feature) feature.update(); }, destroy() { onchain.destroy(); } };
 }

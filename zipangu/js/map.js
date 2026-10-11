@@ -9,6 +9,7 @@ import { agentSprite, SPRITE_PAD } from './agent-art.js';
 import { creaturePresence } from './creature-presence.js';
 import { visualOf } from './visual-manifest.js';
 import { drawVisualCreature, drawVisualAgent } from './visual-canvas.js';
+import { drawChainFx } from './chain-fx.js';
 import {
     hash01, clamp, lerp, smooth, rgba, mixHex, accentOf, deepOf, lightOf,
     placeShort, placeSub, districtShort, agentShort, RARITY_RANK
@@ -1425,6 +1426,7 @@ export function createMap(canvas, W, economy, opts = {}) {
         drawScales(tt, ds);
         drawCreatures(tt, ds);
         drawAgents(tt, dt, ds);
+        drawChain(tt);
         drawHourEffects(tt, ds);
         drawVignette();
         drawLabels(tt, ds);
@@ -1435,6 +1437,17 @@ export function createMap(canvas, W, economy, opts = {}) {
         stats.frameMs = lerp(stats.frameMs || ms, ms, 0.1);
         stats.frames++;
         raf = requestAnimationFrame(frame);
+    }
+
+    // ⛓ on-chain receipts (js/chain-fx.js): draws nothing unless chain mode is live
+    const chainApi = {
+        sx, sy, S: 1, night: 0,
+        agentPos: id => smoothAgents.get(id) || null,
+        placePos: id => (id === 'hub' ? scene.hub : scene.placeById.get(id) || null)
+    };
+    function drawChain(t) {
+        chainApi.S = S; chainApi.night = night;
+        try { drawChainFx(ctx, chainApi, t); } catch (err) { console.error('chain-fx', err); }
     }
 
     function start() {
