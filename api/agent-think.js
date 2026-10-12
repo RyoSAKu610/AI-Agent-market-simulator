@@ -42,7 +42,7 @@ function fallback(goal, task) {
 }
 
 async function openRouterThink(task, goal, state) {
-  const key = process.env.OPENROUTER_API_KEY;
+  const key = process.env.GROQ_API_KEY;
   if (!key) return null;
 
   const prompt = [
@@ -55,16 +55,15 @@ async function openRouterThink(task, goal, state) {
     "Current state: " + JSON.stringify(state).slice(0, 1600)
   ].join("\n");
 
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
       "Authorization": "Bearer " + key,
       "Content-Type": "application/json",
-      "HTTP-Referer": "https://ryosaku610.github.io/AI-Agent-market-simulator/",
-      "X-Title": "NEON MYTHOS Agent Thinking"
+      "User-Agent": "NEON-MYTHOS-Agent-Thinking"
     },
     body: JSON.stringify({
-      model: process.env.OPENROUTER_MODEL || "openrouter/free",
+      model: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
       messages: [
         { role: "system", content: "Respond with valid JSON only. Keep output concise and simulator-safe." },
         { role: "user", content: prompt }
@@ -76,7 +75,7 @@ async function openRouterThink(task, goal, state) {
   });
 
   if (!response.ok) {
-    const error = new Error("OpenRouter HTTP " + response.status);
+    const error = new Error("Groq HTTP " + response.status);
     error.status = response.status;
     throw error;
   }
@@ -103,8 +102,8 @@ async function openRouterThink(task, goal, state) {
 
   const action = String(parsed.action || plan[0]).slice(0, 160);
   return {
-    source: "openrouter",
-    model: String(payload.model || process.env.OPENROUTER_MODEL || "openrouter/free"),
+    source: "groq",
+    model: String(payload.model || process.env.OPENROUTER_MODEL || "openai/gpt-oss-120b"),
     thought: String(parsed.thought).slice(0, 500),
     plan,
     action: plan.includes(action) ? action : plan[0],
