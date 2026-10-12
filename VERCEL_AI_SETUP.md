@@ -4,7 +4,7 @@ The public game remains on GitHub Pages. The optional thought panel calls a sepa
 
 ## Provider setup
 
-1. Deploy the repository to a Vercel project (the repo's canonical GitHub Pages deployment remains unchanged).
+1. Deploy this repository to the existing Vercel project only if its Git connection points at this repository. Otherwise create a separate Vercel project linked to this repo, with project root set to the repository root. Keep GitHub Pages as the canonical public game deployment.
 2. In the Vercel project settings, add `GROQ_API_KEY` as a server-side environment variable for Production and Preview. Never put the key in a `NEXT_PUBLIC_*` variable or in browser JavaScript.
 3. Optionally set `GROQ_MODEL`. The default is `openai/gpt-oss-120b`. Confirm that model remains available on the current Groq plan.
 4. Redeploy after setting variables. The browser app does not require each player to supply an API key; the single secret stays on the Vercel server. Groq is still called via API behind the server, so this removes user-side API setup, not the underlying API requirement.
