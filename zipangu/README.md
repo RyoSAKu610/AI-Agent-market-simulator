@@ -164,7 +164,7 @@ The LLM decides where residents go next. The economy still works out each reside
 ### LLM の頭脳のしくみ（`js/mind.js`）
 
 - `js/sim.js` は住人が行き先を決めるとき、`mind.wants(id)` なら候補（上位5つ、重複なし）を `mind.ask()` に渡し、住人は「💭 じっくり考えている」で待ちます。返事の番号の候補をそのまま採り、来なければ `patience`（25秒）後にルールで選びます。待っている問いは保存しません。
-- 端末の中のAIは `js/mind-local.js` と `js/mind-worker.js`。WebLLM（`@mlc-ai/web-llm` 0.2.85、jsDelivr から読み込み）で Qwen2.5（PC 1.5B・スマホ 0.5B、`shader-f16` があれば q4f16）を Web Worker の中で動かし、答えを `{"choice", "thought"}` の JSON に制約します。重みは Hugging Face の mlc-ai から一度だけ取得され、ブラウザのキャッシュに残ります。
+- 端末の中のAIは `js/mind-local.js`（Worker のコードも同じファイルにあり、Blob URL で起動するので1ファイル版でも動きます）。WebLLM（`@mlc-ai/web-llm` 0.2.85、jsDelivr から読み込み）で Qwen2.5（PC 1.5B・スマホ 0.5B、`shader-f16` があれば q4f16）を Web Worker の中で動かし、答えを `{"choice", "thought"}` の JSON に制約します。重みは Hugging Face の mlc-ai から一度だけ取得され、ブラウザのキャッシュに残ります。
 - お試し枠は `netlify/functions/zipangu-mind.mjs`。Netlify のサイト設定で `OPENROUTER_API_KEY` を入れると動きます（`ZIPANGU_MIND_MODEL` で既定モデルを変更可）。モデルは許可リストのものだけ、`max_tokens` は400まで、同じサイトからの呼び出しだけを受け、訪問者ごとに1分20回まで。
 - Claude の Opus／Sonnet 5.5 を選ぶと、Anthropic のサーバー側フォールバック（`fallbacks: "default"`）を有効にして呼びます。混雑時は別のモデルが答えることがあり、答えたモデル名は状態欄に出ます。
 - `tools/mind.test.mjs` が、偽のモデルでの選択・心の声・時間切れ・失敗時のルール回帰、各プロバイダの呼び方、上限、お試し枠の検査を確かめます。

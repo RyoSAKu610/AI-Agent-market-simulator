@@ -13,7 +13,7 @@ import {
     PROVIDERS, DEFAULTS, loadSettings, saveSettings, resolve, complete, listModels, buildPrompt, parseAnswer, createMind, testConnection
 } from '../js/mind.js';
 import trial, { ALLOWED_MODELS } from '../../netlify/functions/zipangu-mind.mjs';
-import { createLocalEngine, localSupport, pickModel, isPhone, WEBLLM_URL } from '../js/mind-local.js';
+import { createLocalEngine, localSupport, pickModel, isPhone, WEBLLM_URL, WORKER_SOURCE } from '../js/mind-local.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const load = () => {
@@ -215,6 +215,21 @@ function trace(eco, seconds) {
     assert.equal(pickModel({ phone: false, f16: true }), 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC');
     assert.equal(pickModel({ phone: true, f16: false }), 'Qwen2.5-0.5B-Instruct-q4f32_1-MLC');
     assert.ok(/@mlc-ai\/web-llm@\d+\.\d+\.\d+\//.test(WEBLLM_URL), 'the library version is pinned');
+    // the worker's source stands on its own (it becomes a Blob URL) and runs: load, then chat in JSON mode
+    {
+        const sent = [];
+        const self = { postMessage: m => sent.push(m) };
+        const fakeLib = 'data:text/javascript,' + encodeURIComponent(`export async function CreateMLCEngine(model, o) {
+            o.initProgressCallback({ progress: 1, text: 'done' });
+            return { chat: { completions: { create: async r => { globalThis.__req = r; return { choices: [{ message: { content: '{"choice":1,"thought":"ok"}' } }] }; } } } };
+        }`);
+        new Function('self', WORKER_SOURCE)(self);
+        await self.onmessage({ data: { id: 1, type: 'load', model: 'm', lib: fakeLib } });
+        await self.onmessage({ data: { id: 2, type: 'chat', messages: [], maxTokens: 9, schema: '{}' } });
+        await self.onmessage({ data: { id: 3, type: 'nonsense' } });
+        assert.deepEqual(sent.slice(0, 3), [{ type: 'progress', progress: 1, text: 'done' }, { id: 1, ok: true }, { id: 2, ok: true, text: '{"choice":1,"thought":"ok"}' }]);
+        assert.equal(globalThis.__req.response_format.type, 'json_object');
+    }
     assert.equal(isPhone({ userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0)' }), true);
     assert.equal(isPhone({ userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', maxTouchPoints: 5 }), true, 'iPad');
     assert.equal(isPhone({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', maxTouchPoints: 0 }), false);
@@ -225,7 +240,7 @@ function trace(eco, seconds) {
     assert.deepEqual(await localSupport({ gpu: { requestAdapter: async () => null } }), { ok: false, reason: 'webgpu' });
     assert.deepEqual(await localSupport(gpu(['shader-f16'])), { ok: true, f16: true });
 
-    // a stand-in for js/mind-worker.js: reports progress, then answers
+    // a stand-in for the worker: reports progress, then answers
     const made = [];
     class FakeWorker {
         constructor(url, opts) { this.url = String(url); this.opts = opts; this.got = []; made.push(this); }

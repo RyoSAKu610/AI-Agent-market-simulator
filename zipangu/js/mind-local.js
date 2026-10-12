@@ -2,8 +2,9 @@
 //
 // No key, no server, no fee: the weights are downloaded once from the model's
 // public repository, kept in the browser's cache, and every thought is worked
-// out on this device. The model runs in a Web Worker (js/mind-worker.js) so
-// the map keeps its frame rate while a resident thinks.
+// out on this device. The model runs in a Web Worker (built from workerMain
+// below, so the single-file build needs no extra file) and the map keeps its
+// frame rate while a resident thinks.
 //
 // Phases: idle (waiting to be started) → checking → loading (progress 0..1)
 // → ready; or unsupported (no WebGPU) / error. Nothing is fetched before start().
@@ -43,9 +44,43 @@ const ANSWER_SCHEMA = JSON.stringify({
     required: ['choice', 'thought']
 });
 
+// The worker's code. It is turned into a Blob URL, so it must not use anything from this module.
+// Messages in:  { id, type: 'load', model, lib }  |  { id, type: 'chat', messages, maxTokens, schema }
+// Messages out: { type: 'progress', progress, text }  |  { id, ok, text?, error? }
+function workerMain() {
+    let engine = null;
+    self.onmessage = async ({ data: m }) => {
+        try {
+            if (m.type === 'load') {
+                const webllm = await import(m.lib);
+                engine = await webllm.CreateMLCEngine(m.model, {
+                    initProgressCallback: p => self.postMessage({ type: 'progress', progress: p.progress, text: p.text })
+                });
+                self.postMessage({ id: m.id, ok: true });
+            } else if (m.type === 'chat') {
+                if (!engine) throw new Error('not loaded');
+                const req = { messages: m.messages, max_tokens: m.maxTokens, temperature: 0.7 };
+                let r;
+                try {
+                    // Constrain the answer to {"choice": n, "thought": "..."}; small models then never break the format.
+                    r = await engine.chat.completions.create({ ...req, response_format: { type: 'json_object', schema: m.schema } });
+                } catch {
+                    r = await engine.chat.completions.create(req);
+                }
+                const msg = r && r.choices && r.choices[0] && r.choices[0].message;
+                self.postMessage({ id: m.id, ok: true, text: (msg && msg.content) || '' });
+            }
+        } catch (e) {
+            self.postMessage({ id: m.id, ok: false, error: String((e && e.message) || e) });
+        }
+    };
+}
+export const WORKER_SOURCE = `(${workerMain})();`;
+const workerBlobUrl = () => URL.createObjectURL(new Blob([WORKER_SOURCE], { type: 'text/javascript' }));
+
 export function createLocalEngine({
     phone = isPhone(), nav = globalThis.navigator, WorkerImpl = globalThis.Worker,
-    workerUrl = new URL('./mind-worker.js', import.meta.url), lib = WEBLLM_URL
+    workerUrl = null, lib = WEBLLM_URL
 } = {}) {
     const state = { phase: 'idle', progress: 0, text: '', error: '', model: pickModel({ phone, f16: false }), phone, sizeMB: phone ? DOWNLOAD_MB.small : DOWNLOAD_MB.large };
     const listeners = new Set();
@@ -79,7 +114,7 @@ export function createLocalEngine({
             state.model = pickModel({ phone, f16: support.f16 });
             state.phase = 'loading'; state.progress = 0; changed();
             try {
-                worker = new WorkerImpl(workerUrl, { type: 'module' });
+                worker = new WorkerImpl(workerUrl || workerBlobUrl(), { type: 'module' });
             } catch (e) { fail(String(e && e.message || e)); return false; }
             worker.onmessage = ({ data: m }) => {
                 if (!m) return;
