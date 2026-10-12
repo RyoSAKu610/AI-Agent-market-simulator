@@ -1279,3 +1279,53 @@ input::placeholder { color: var(--ink-faint); }
 @media (prefers-reduced-motion: reduce) {
   .chain-chip.is-live .chain-chip-gem, .wiz-step.is-busy .wiz-n, .hire-phases li.is-now, .ledger-row.is-new { animation: none; }
 }
+
+/* ---------------------------------------------------------- bringing an AI in (#/summon, #/settings) */
+.settings-link { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(232, 195, 106, 0.45); color: var(--gold-soft); font-size: 17px; text-decoration: none; }
+.settings-link:hover, .settings-link.is-active { background: rgba(232, 195, 106, 0.18); color: #fff; }
+.summon-map-link { position: absolute; left: 18px; bottom: 62px; z-index: 4; padding: 9px 14px; border: 1px solid #7fe3d888; border-radius: 24px; background: #121735dd; color: #bff3ec; font-size: 12px; backdrop-filter: blur(8px); text-decoration: none; }
+.summon-map-link:hover { color: #fff; border-color: #7fe3d8; }
+.welcome-cta { margin: 10px 0 4px; }
+.welcome-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; }
+.lang-pick { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+.lang-select { background: rgba(0, 0, 0, 0.3); color: var(--ink); border: 1px solid rgba(232, 195, 106, 0.4); border-radius: 8px; padding: 4px 8px; font: inherit; }
+.lang-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.summon-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; margin-top: 18px; }
+.summon-steps { display: grid; gap: 18px; }
+.soul-step h2 { font-size: 19px; margin: 0 0 6px; }
+.soul-prompt, .soul-paste { width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, 0.32); color: var(--ink); border: 1px solid rgba(232, 195, 106, 0.35); border-radius: 10px; padding: 10px 12px; font: 13px/1.6 ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; resize: vertical; }
+.soul-prompt:focus, .soul-paste:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.copy-row { display: inline-flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.copy-status { font-size: 13px; color: #9ff0e2; }
+.soul-message { min-height: 1.2em; font-size: 14px; }
+.soul-message.is-error { color: #ffb0b0; }
+.soul-preview { margin-top: 12px; }
+.soul-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.soul-head h3 { margin: 0; font-size: 20px; }
+.soul-from { margin: 2px 0 0; font-size: 13px; color: var(--ink-dim); }
+.soul-greeting { font-family: var(--mincho); font-size: 16px; color: var(--gold-soft); }
+.soul-list h4, .soul-list h3 { margin: 12px 0 4px; font-size: 14px; color: var(--gold-soft); }
+.soul-list ul { margin: 0; padding-left: 1.2em; }
+.soul-arrive { margin-top: 12px; font-size: 13px; color: #9ff0e2; }
+.btn-big { margin-top: 12px; font-size: 16px; padding: 12px 22px; }
+.qr-panel { position: sticky; top: 84px; text-align: center; }
+.qr-panel h3 { margin: 0 0 10px; }
+.qr-box { background: #fff; border-radius: 12px; padding: 8px; width: 220px; max-width: 100%; margin: 0 auto 10px; }
+.qr-box svg { display: block; width: 100%; height: auto; }
+.qr-url { font-size: 11px; word-break: break-all; color: var(--ink-dim); }
+.traveller-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.traveller-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid rgba(232, 195, 106, 0.25); border-radius: 12px; background: rgba(0, 0, 0, 0.18); }
+.traveller-row .tr-id { flex: 1; min-width: 0; display: grid; }
+.traveller-row .tr-id a { font-weight: 700; }
+.traveller-row .tr-id span { font-size: 12px; color: var(--ink-dim); overflow-wrap: anywhere; }
+.settings-card h3 { margin: 18px 0 8px; font-size: 16px; }
+@media (max-width: 860px) {
+  .summon-grid { grid-template-columns: 1fr; }
+  .qr-panel { position: static; }
+}
+@media (max-width: 600px) {
+  .summon-map-link { left: 10px; bottom: 190px; font-size: 11px; padding: 7px 10px; }
+  .traveller-row { flex-wrap: wrap; }
+}
+.visual-pose-drawn { display: grid; place-items: center; aspect-ratio: 1; }
+.visual-pose-drawn .avatar, .visual-pose-drawn canvas { width: 72%; height: auto; }

@@ -25,6 +25,10 @@ node tools/creature-presence.test.mjs
 node tools/character-stories.test.mjs
 node tools/character-drama.test.mjs
 
+echo "› bringing an AI in (soul cards, QR, languages)"
+node tools/soul.test.mjs
+node tools/qr.test.mjs
+
 echo "› explorer syntax"
 for f in js/*.js tools/*.mjs; do
   # js/ is ES modules (import/export), so check it as a module; node --check alone treats .js as CommonJS

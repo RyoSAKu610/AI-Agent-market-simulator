@@ -323,6 +323,19 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
     const S = state ? JSON.parse(JSON.stringify(state)) : freshState();
     const rng = makeRng(S.rng);
     const agents = new Map(S.agents.map(a => [a.id, a]));
+    // A saved journey may predate a resident who joined later (an AI brought in on
+    // #/summon) or name one who has since left: newcomers start fresh, leavers go.
+    const joined = [];
+    if (state) {
+        const known = new Set(list(W.agents).filter(d => d && d.id).map(d => d.id));
+        for (const id of [...agents.keys()]) if (!known.has(id)) agents.delete(id);
+        for (const def of list(W.agents)) {
+            if (!def || !def.id || agents.has(def.id)) continue;
+            const a = makeAgent(def, ix, seed);
+            agents.set(a.id, a);
+            joined.push(a);
+        }
+    }
     const prices = new Map();
     const activeEvents = [];
     const clock = {};
@@ -1080,6 +1093,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         scheduleDay(Math.floor(now()));
         for (const a of agents.values()) { a.stageSince = now(); updateGoal(a); }
     }
+    for (const a of joined) { a.stageSince = now(); updateGoal(a); }
     recomputeEventMult();
     refreshPrices();
 

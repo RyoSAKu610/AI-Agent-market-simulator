@@ -20,6 +20,9 @@ import { aboutView, correctionsView } from './view-about.js';
 import { visualsView, visualView } from './view-visuals.js';
 import { chainView } from './view-chain.js';
 import { attachChainFx } from './chain-fx.js';
+import { summonView, settingsView } from './view-summon.js';
+import { loadCards, addTravellers } from './soul.js';
+import { t, getLang } from './i18n.js';
 
 const SECONDS_PER_DAY = 240;          // one in-world day (one 節気) is about four minutes
 const WARM_UP_SECONDS = 150;          // the city is already busy when you arrive
@@ -30,7 +33,8 @@ const SAMPLE_EVERY = 1 / 48;          // history point every half game-hour
 const TAB_OF = {
     home: 'home', place: 'home', district: 'home', bestiary: 'bestiary', creature: 'bestiary',
     library: 'library', work: 'library', market: 'market', agents: 'agents', agent: 'agents',
-    about: 'about', corrections: 'about', visuals: 'visuals', visual: 'visuals', chain: 'chain'
+    about: 'about', corrections: 'about', visuals: 'visuals', visual: 'visuals', chain: 'chain',
+    summon: 'settings', settings: 'settings'
 };
 
 // ------------------------------------------------------------------ storage that may not exist
@@ -72,6 +76,19 @@ async function loadDoc(kind, id) {
     return text;
 }
 
+// ------------------------------------------------------------------ interface language
+
+// The static frame in index.html (navigation, skip link) follows the chosen language.
+function applyChrome() {
+    document.documentElement.lang = getLang();
+    const skip = document.querySelector('.skip-link');
+    if (skip) skip.textContent = t('skip');
+    document.querySelectorAll('#primary-nav a[data-tab]').forEach(a => {
+        const span = a.querySelector('span');
+        if (span) span.textContent = t('nav.' + (a.dataset.tab === 'home' ? 'map' : a.dataset.tab));
+    });
+}
+
 // ------------------------------------------------------------------ boot
 
 async function boot() {
@@ -90,6 +107,8 @@ async function boot() {
     const seed = Number(new URLSearchParams(location.search).get('seed')) || 1;
     let storage;
     try { storage = window.localStorage; } catch { storage = { getItem() { throw new Error('unavailable'); }, setItem() { throw new Error('unavailable'); } }; }
+    // AIs the visitor brought in (#/summon) join the world before the journey is restored.
+    addTravellers(W, loadCards(storage, W));
     const loaded = loadJourney(storage, W, seed);
     const eco = createEconomy(W, { seed, secondsPerDay: SECONDS_PER_DAY, state: loaded.data?.economy || null });
     const history = createHistory(eco, loaded.data?.history || null);
@@ -106,7 +125,7 @@ async function boot() {
     if (!SPEEDS.includes(speed)) speed = 1;
 
     const hud = createHud(W, eco, { speed, onSpeed: s => { speed = s; store.set('zipangu.speed', String(s)); } });
-    const ctx = { W, eco, history, hud, stories, loadDoc, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
+    const ctx = { W, eco, history, hud, stories, loadDoc, storage, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
     let saveBlocked = loaded.blocked;
     const saveNotice = h('div', { class: 'journey-notice' });
     const saveText = h('span', { role: 'status' }, loaded.status);
@@ -159,7 +178,9 @@ async function boot() {
     const fly = jewelButterfly(W);
     if (emblem && fly) emblem.append(creatureCanvas(fly, 44));
     const tools = document.getElementById('top-tools');
-    tools.append(hud.chainChip, hud.mini, hud.speedEl);
+    const settingsLink = h('a', { class: 'settings-link', href: '#/settings', title: t('nav.settings'), 'aria-label': t('nav.settings') }, '⚙');
+    tools.append(hud.chainChip, hud.mini, hud.speedEl, settingsLink);
+    applyChrome();
     hud.setSpeed(speed);
     const announcer = document.getElementById('route-announcer');
 
@@ -178,7 +199,9 @@ async function boot() {
         corrections: () => correctionsView(ctx),
         visuals: () => visualsView(ctx),
         visual: r => visualView(ctx, r.id),
-        chain: () => chainView(ctx)
+        chain: () => chainView(ctx),
+        summon: () => summonView(ctx),
+        settings: () => settingsView(ctx)
     };
 
     let current = null, firstRender = true;
@@ -202,6 +225,7 @@ async function boot() {
         const head = view.el.querySelector && view.el.querySelector('.page-head');
         if (head && fly) head.append(h('div', { class: 'head-fly', 'aria-hidden': 'true' }, creatureCanvas(fly, 84)));
         document.title = (view.title ? view.title + ' ・ ' : '') + '万華京ジパング';
+        settingsLink.classList.toggle('is-active', TAB_OF[name] === 'settings');
         document.querySelectorAll('#primary-nav a').forEach(a => {
             const on = a.dataset.tab === TAB_OF[name];
             a.classList.toggle('is-active', on);

@@ -1,6 +1,8 @@
 // Small shared helpers: DOM building, Japanese name trimming, colour maths.
 // Pure and DOM-light so every other module can import it.
 
+import { prefersEnglishNames } from './i18n.js';
+
 // ------------------------------------------------------------------ DOM
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -65,8 +67,12 @@ export function tagged(text) {
 export const stripParens = s => String(s == null ? '' : s).replace(/（[^）]*）|\([^)]*\)/g, '').trim();
 
 // 縄文「結縄と漆の森」 → 縄文 ; plain names stay whole.
+// With an English interface, names come from name_en ("Jōmon — The Knotted-Cord …").
+const en = o => (prefersEnglishNames() && o && o.name_en ? String(o.name_en) : '');
+
 export function placeShort(p) {
     if (!p) return '';
+    if (en(p)) return en(p).split(/ — |: /)[0].trim();
     const full = stripParens(p.name_ja);
     const cut = full.split('「')[0].trim();
     return cut || full;
@@ -74,14 +80,15 @@ export function placeShort(p) {
 
 export function placeSub(p) {
     if (!p) return '';
+    if (en(p)) return (en(p).split(/ — /)[1] || '').trim();
     const m = stripParens(p.name_ja).match(/「([^」]*)」?/);
     return m ? m[1].trim() : '';
 }
 
-export const nameOf = o => stripParens(o && (o.name_ja || o.name || o.title || o.id)) || String((o && o.id) || '');
+export const nameOf = o => en(o) || stripParens(o && (o.name_ja || o.name || o.title || o.id)) || String((o && o.id) || '');
 
 // 刻輪広場・万世時計 → 刻輪広場 (for tight map labels)
-export const districtShort = d => stripParens(d && d.name_ja).split('・')[0] || stripParens(d && d.name_ja);
+export const districtShort = d => en(d) || stripParens(d && d.name_ja).split('・')[0] || stripParens(d && d.name_ja);
 
 export const agentShort = a => stripParens(a && (a.name || a.name_ja || a.id)) || String((a && a.id) || '');
 

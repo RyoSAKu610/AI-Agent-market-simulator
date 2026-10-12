@@ -1,4 +1,5 @@
 import { h, clear, agentShort, nameOf } from './util.js';
+import { avatar } from './components.js';
 import { visualOf, visualSource, visualPoseSource } from './visual-manifest.js';
 import { dramaAdvance, dramaChoose, dramaReadSeconds, dramaPose } from './character-drama.js';
 
@@ -70,10 +71,13 @@ export function dramaPanel(ctx, a, onTalk) {
             bond.textContent = scene.relationship ? `正本の縁：${scene.relationship}` : scene.sender ? `便りの送り主：${agentShort(W.byId.agent.get(scene.sender))}（この場には同席していません）` : '';
             bond.hidden = !bond.textContent;
             for (const id of scene.cast) {
-                const v = visualOf('agent', id), char = W.byId.agent.get(id), ratio = v.poseAspect || 1;
-                cast.append(h('div', { class: 'drama-actor', dataset: { actor: id } },
-                    h('div', { class: 'visual-pose', role: 'img', 'aria-label': `${agentShort(char)}の姿`, style: { aspectRatio: String(ratio) } },
-                        h('img', { src: visualPoseSource(v), alt: '', decoding: 'async' })), h('span', { class: 'drama-name' }, agentShort(char))));
+                const v = visualOf('agent', id), char = W.byId.agent.get(id);
+                // An AI brought in from outside has no painted pose sheet yet: its drawn face stands in.
+                const figure = v
+                    ? h('div', { class: 'visual-pose', role: 'img', 'aria-label': `${agentShort(char)}の姿`, style: { aspectRatio: String(v.poseAspect || 1) } },
+                        h('img', { src: visualPoseSource(v), alt: '', decoding: 'async' }))
+                    : h('div', { class: 'visual-pose visual-pose-drawn', role: 'img', 'aria-label': `${agentShort(char)}の姿` }, avatar(W, char));
+                cast.append(h('div', { class: 'drama-actor', dataset: { actor: id } }, figure, h('span', { class: 'drama-name' }, agentShort(char))));
             }
         }
         for (const actor of cast.children) {
