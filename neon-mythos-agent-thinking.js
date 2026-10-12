@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const THINK_ENDPOINT='https://neon-mythos.vercel.app/api/agent-think';
+const THINK_ENDPOINT=''; // Set only after the dedicated Vercel Function is deployed.
 const GOALS=new Set(['district_control','wealth_x3','data_hegemony','contract_network','construction','arbitrage_cycle']);
 const $=(q,r=document)=>r.querySelector(q);
 const fire=(name,detail={})=>window.dispatchEvent(new CustomEvent(name,{detail}));
@@ -9,7 +9,7 @@ let lastAt=new Map(),active=0;
 async function decide(e){
  const d=e.detail||{},task=String(d.text||d.task||'').trim();
  if(!task||!GOALS.has(d.goalKey))return;
- const now=Date.now(),key=String(d.target||'default');
+ if(!THINK_ENDPOINT){const p=ensure();p.classList.add('on');$('.thought',p).textContent='クラウドAIは未接続です。ゲーム内の既存AIはそのまま動作します。';$('ul',p).replaceChildren();$('.meta',p).textContent='Vercelの専用APIを設定するとGroq推論を利用できます。';setTimeout(()=>p.classList.remove('on'),5000);return;}\n const now=Date.now(),key=String(d.target||'default');
  // One request per task key in a short window; do not make the simulation call a model every frame.
  if(now-(lastAt.get(key)||0)<8000)return;
  lastAt.set(key,now);
