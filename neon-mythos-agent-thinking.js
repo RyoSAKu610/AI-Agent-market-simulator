@@ -1,5 +1,6 @@
 (()=>{'use strict';
-const THINK_ENDPOINT='https://neon-mythos.vercel.app/api/agent-think';\nconst GOALS=new Set(['district_control','wealth_x3','data_hegemony','contract_network','construction','arbitrage_cycle']);
+const THINK_ENDPOINT='https://neon-mythos.vercel.app/api/agent-think';
+const GOALS=new Set(['district_control','wealth_x3','data_hegemony','contract_network','construction','arbitrage_cycle']);
 const $=(q,r=document)=>r.querySelector(q);
 const fire=(name,detail={})=>window.dispatchEvent(new CustomEvent(name,{detail}));
 const css=`#nmatPanel{position:fixed;left:12px;top:calc(48px + env(safe-area-inset-top));z-index:12450;width:min(380px,calc(100vw - 24px));max-height:34vh;overflow:auto;pointer-events:none;opacity:0;transform:translateY(-6px);transition:opacity .18s,transform .18s;font:11px/1.5 monospace;color:#e8faff}#nmatPanel.on{opacity:1;transform:none}#nmatPanel>div{border:1px solid #00e5ff77;border-radius:12px;background:#050817ee;padding:10px;box-shadow:0 8px 35px #0008}#nmatPanel b{color:#00e5ff}#nmatPanel .meta{color:#8599be;font-size:9px;margin-top:4px}#nmatPanel ul{margin:6px 0 0 17px;padding:0;color:#dceaff}`;
