@@ -1,5 +1,5 @@
-const CACHE = 'neon-mythos-shell-v4';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './pwa-icon.svg', './neon-mythos-experience.js', './neon-mythos-errand.js', './neon-mythos-route-fx.js'];
+const CACHE = 'neon-mythos-shell-v5';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './pwa-icon.svg', './neon-mythos-experience.js', './neon-mythos-errand.js', './neon-mythos-route-fx.js', './neon-mythos-agent-thinking.js'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
 });
