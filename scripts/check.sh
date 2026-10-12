@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 echo "› JS layers and service worker parse"
-for f in neon-mythos-experience.js neon-mythos-errand.js neon-mythos-route-fx.js sw.js; do
+for f in neon-mythos-experience.js neon-mythos-errand.js neon-mythos-route-fx.js neon-mythos-agent-thinking.js sw.js api/agent-think.js; do
   node --check "$f"
 done
 
