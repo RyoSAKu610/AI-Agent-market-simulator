@@ -14,6 +14,9 @@ if [ -f tools/sim.test.mjs ]; then
   echo "› economy simulation"
   node tools/sim.test.mjs
 fi
+if [ -f tools/chain.test.mjs ]; then
+  node tools/chain.test.mjs
+fi
 
 echo "› visual asset contracts"
 node tools/visuals.test.mjs

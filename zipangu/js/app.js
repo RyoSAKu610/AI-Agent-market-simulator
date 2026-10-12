@@ -18,6 +18,8 @@ import { marketView } from './view-market.js';
 import { agentsView, agentView } from './view-agents.js';
 import { aboutView, correctionsView } from './view-about.js';
 import { visualsView, visualView } from './view-visuals.js';
+import { chainView } from './view-chain.js';
+import { attachChainFx } from './chain-fx.js';
 
 const SECONDS_PER_DAY = 240;          // one in-world day (one 節気) is about four minutes
 const WARM_UP_SECONDS = 150;          // the city is already busy when you arrive
@@ -28,7 +30,7 @@ const SAMPLE_EVERY = 1 / 48;          // history point every half game-hour
 const TAB_OF = {
     home: 'home', place: 'home', district: 'home', bestiary: 'bestiary', creature: 'bestiary',
     library: 'library', work: 'library', market: 'market', agents: 'agents', agent: 'agents',
-    about: 'about', corrections: 'about', visuals: 'visuals', visual: 'visuals'
+    about: 'about', corrections: 'about', visuals: 'visuals', visual: 'visuals', chain: 'chain'
 };
 
 // ------------------------------------------------------------------ storage that may not exist
@@ -104,7 +106,7 @@ async function boot() {
     if (!SPEEDS.includes(speed)) speed = 1;
 
     const hud = createHud(W, eco, { speed, onSpeed: s => { speed = s; store.set('zipangu.speed', String(s)); } });
-    const ctx = { W, eco, history, hud, stories, loadDoc, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status };
+    const ctx = { W, eco, history, hud, stories, loadDoc, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
     let saveBlocked = loaded.blocked;
     const saveNotice = h('div', { class: 'journey-notice' });
     const saveText = h('span', { role: 'status' }, loaded.status);
@@ -126,12 +128,38 @@ async function boot() {
     document.addEventListener('visibilitychange', () => { if (document.hidden) ctx.persistJourney(); });
     window.__zipangu = ctx;      // handy in the console
 
+    // ---------------------------------------------------- ⛓ chain mode (lazy; docs/ONCHAIN.md)
+    // js/chain.js is only fetched once the user turns chain mode on. Until then there is
+    // no chain object, no network request, and the explorer is exactly the simulation.
+    const CHAIN_FLAG = 'zipangu.chain.on';
+    let chainLoading = null;
+    ctx.useChainModule = mod => {              // also the seam for tests: hand it any module with createChain()
+        ctx.chainMod = mod;
+        ctx.chain = mod.createChain(W, eco, {});
+        attachChainFx(ctx.chain);
+        hud.setChain(ctx.chain, mod);
+        return ctx.chain;
+    };
+    ctx.loadChain = () => {
+        if (ctx.chain) return Promise.resolve(ctx.chain);
+        if (!chainLoading) chainLoading = import('./chain.js').then(ctx.useChainModule).catch(err => { chainLoading = null; throw err; });
+        return chainLoading;
+    };
+    ctx.enableChain = async () => {
+        const chain = await ctx.loadChain();
+        store.set(CHAIN_FLAG, '1');
+        await chain.enable();
+        return chain;
+    };
+    ctx.disableChain = () => { store.set(CHAIN_FLAG, '0'); if (ctx.chain) ctx.chain.disable(); };
+    ctx.resetChain = () => { store.set(CHAIN_FLAG, '0'); if (ctx.chain) { ctx.chain.disable(); ctx.chain.reset(); } };
+
     // ---------------------------------------------------- shell
     const emblem = document.getElementById('brand-emblem');
     const fly = jewelButterfly(W);
     if (emblem && fly) emblem.append(creatureCanvas(fly, 44));
     const tools = document.getElementById('top-tools');
-    tools.append(hud.mini, hud.speedEl);
+    tools.append(hud.chainChip, hud.mini, hud.speedEl);
     hud.setSpeed(speed);
     const announcer = document.getElementById('route-announcer');
 
@@ -149,7 +177,8 @@ async function boot() {
         about: () => aboutView(ctx),
         corrections: () => correctionsView(ctx),
         visuals: () => visualsView(ctx),
-        visual: r => visualView(ctx, r.id)
+        visual: r => visualView(ctx, r.id),
+        chain: () => chainView(ctx)
     };
 
     let current = null, firstRender = true;
@@ -216,6 +245,8 @@ async function boot() {
     // hud was built before the first frame; paint it once more with the live clock
     hud.update();
     document.documentElement.classList.add('is-ready');
+    // chain mode was left on last time: pick it up again (this is the only path that touches the network at boot)
+    if (store.get(CHAIN_FLAG) === '1') ctx.enableChain().catch(err => console.warn('chain mode could not start', err));
 }
 
 boot();
