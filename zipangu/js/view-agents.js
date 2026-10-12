@@ -143,6 +143,30 @@ function travellerSection(a) {
             h('p', null, h('a', { href: '#/settings' }, t('settings.title') + ' →'))));
 }
 
+// 🧠 What a resident with a mind said to itself when it chose (js/mind.js).
+function thoughtSection(ctx, a, live) {
+    const mind = ctx.mind;
+    const thinks = !!(mind && mind.wants(a.id));
+    if (!thinks && !(live && live.thought)) {
+        return a.traveller ? { el: h('section', { class: 'sec', 'aria-labelledby': 'ag-mind' }, sectionHead(t('mind.agentTitle'), null, 'ag-mind'),
+            h('p', { class: 'ar-role' }, t('mind.agentOff'), ' ', h('a', { href: '#/settings' }, t('settings.title') + ' →'))) } : null;
+    }
+    const body = h('div', { class: 'mind-thoughts' });
+    let seen = -1;
+    function paint() {
+        const log = mind ? mind.logFor(a.id) : [];
+        const key = log.length ? log[0].at : (live && live.thought ? live.thought.T : 0);
+        if (key === seen) return;
+        seen = key;
+        clear(body);
+        if (!log.length && live && live.thought) log.push({ thought: live.thought.text, model: live.thought.model });
+        if (!log.length) { body.append(h('p', { class: 'ar-role' }, t('mind.agentNone'))); return; }
+        body.append(h('ul', { class: 'mind-log' }, log.slice(0, 6).map(e => h('li', null, `「${e.thought}」`, e.model ? h('small', null, ` ${e.model}`) : null))));
+    }
+    paint();
+    return { el: h('section', { class: 'sec', 'aria-labelledby': 'ag-mind' }, sectionHead(t('mind.agentTitle'), null, 'ag-mind'), plaque({ class: 'lore-card' }, body)), update: paint };
+}
+
 export function agentView(ctx, id) {
     const { W, eco } = ctx;
     const a = W.byId.agent.get(id);
@@ -153,6 +177,7 @@ export function agentView(ctx, id) {
     const talk = () => { conversation.el.querySelector('.character-dialogue').scrollIntoView({ block: 'start' }); conversation.el.querySelector('textarea').focus({ preventScroll: true }); };
     const theatre = dramaPanel(ctx, a, talk);
     const onchain = agentChainPanel(ctx, a);
+    const thoughts = thoughtSection(ctx, a, live);
     const cur = stripParens(W.baseCurrency.name_ja);
     const home = W.byId.district.get(a.home);
     const place = home && W.placeOf(home.id);
@@ -207,6 +232,7 @@ export function agentView(ctx, id) {
                 h('p', { class: 'chips' }, h('button', { type: 'button', class: 'btn btn-primary', onclick: () => theatre.el.scrollIntoView({ block: 'start' }) }, 'いまの劇を観る'), h('button', { type: 'button', class: 'btn', onclick: talk }, '話しかける・お願いする'), h('a', { class: 'btn', href: '#/', onclick: () => { ctx.pendingFocus = id; } }, '地図で追う →'), home ? h('a', { class: 'chip', href: href.district(home.id) }, nameOf(home)) : null, place ? placeLink(place) : null))),
         h('div', { class: 'page-body' },
             theatre.el, panel, onchain.el, conversation.el,
+            thoughts && thoughts.el,
             a.traveller ? travellerSection(a) : null,
             h('section', { class: 'sec', 'aria-labelledby': 'ag-person' }, sectionHead('人となり', null, 'ag-person'),
                 h('p', { class: 'lead' }, tagged(a.personality)),
@@ -220,5 +246,5 @@ export function agentView(ctx, id) {
             rels.length ? h('section', { class: 'sec', 'aria-labelledby': 'ag-rel' }, sectionHead('縁のある人', null, 'ag-rel'), h('ul', { class: 'relations' }, rels)) : null,
             h('p', { class: 'pager' }, link('#/agents', '← 住人たちへ'))));
 
-    return { el, title: agentShort(a), update() { paint(); theatre.update(); conversation.update(); onchain.update(); if (feature) feature.update(); }, destroy() { onchain.destroy(); } };
+    return { el, title: agentShort(a), update() { paint(); theatre.update(); conversation.update(); onchain.update(); if (thoughts && thoughts.update) thoughts.update(); if (feature) feature.update(); }, destroy() { onchain.destroy(); } };
 }

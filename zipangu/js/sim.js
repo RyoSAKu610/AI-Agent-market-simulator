@@ -313,7 +313,7 @@ export function routeBetween(routes, a, b) {
     return routes.get(`${a}>${b}`) || routes.get(`${b}>${a}`) || null;
 }
 
-export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4, state = null } = {}) {
+export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4, state = null, mind = null } = {}) {
     const ix = indexWorld(W);
     const listeners = new Map();
     const cur = shortName((W.baseCurrency || {}).name_ja) || '刻';
@@ -493,7 +493,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         const steps = [];
         if (from !== here) steps.push({ type: 'go', to: from });
         steps.push({ type: 'buy', good: g, qty: best.q }, { type: 'go', to }, { type: 'sell', good: g, expect: best.profit + best.cost });
-        return { kind: 'trade', score, steps, reserve: { key: to + '|' + g, q: best.q } };
+        return { kind: 'trade', score, steps, reserve: { key: to + '|' + g, q: best.q }, info: { good: g, from, to, q: best.q, profit: best.profit, time } };
     }
 
     function sellOptions(a, opts) {
@@ -512,7 +512,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
             if (overdue) score += 5;   // a lot carried too long must go, even at a loss
             const steps = d === a.at ? [] : [{ type: 'go', to: d }];
             steps.push({ type: 'sell', good: lot.good, expect: gain + lot.qty * lot.cost, force: overdue });
-            opts.push({ kind: 'sell', score, steps, reserve: { key: d + '|' + lot.good, q: lot.qty } });
+            opts.push({ kind: 'sell', score, steps, reserve: { key: d + '|' + lot.good, q: lot.qty }, info: { good: lot.good, to: d, q: lot.qty, profit: gain, time } });
         }
     }
 
@@ -550,7 +550,8 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
                     kind: 'craft',
                     score: profit / timeWeight(a, time) / scaleOf(a) * bonus * goalBonus(a, g, d),
                     steps: [{ type: 'craft', good: g, qty: q }, { type: 'go', to: d }, { type: 'sell', good: g, expect: profit + cost }],
-                    reserve: { key: d + '|' + g, q }
+                    reserve: { key: d + '|' + g, q },
+                    info: { good: g, to: d, q, profit, time }
                 });
             }
         }
@@ -567,7 +568,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         for (const { d, t } of picks) {
             if (fareFor(a.at, d, viaBetween(a.at, d), 0) > a.wallet) continue;
             const score = a.needs.curiosity * (0.5 + a.traits.wander) - 0.35 * t + (a.goalType === 'data_hegemony' ? 0.2 : 0);
-            opts.push({ kind: 'visit', score, steps: [{ type: 'go', to: d }, { type: 'look' }] });
+            opts.push({ kind: 'visit', score, steps: [{ type: 'go', to: d }, { type: 'look' }], info: { to: d, time: t } });
         }
     }
 
@@ -575,16 +576,16 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         const c = clock;
         const sleepy = c.isNight !== a.traits.nightOwl ? 0.25 : 0;
         const dur = 0.12 + 0.18 * a.needs.fatigue;
-        opts.push({ kind: 'rest', score: Math.max(0, a.needs.fatigue - 0.45) * 3 + sleepy * a.needs.fatigue, steps: [{ type: 'rest', dur }] });
+        opts.push({ kind: 'rest', score: Math.max(0, a.needs.fatigue - 0.45) * 3 + sleepy * a.needs.fatigue, steps: [{ type: 'rest', dur }], info: { time: dur } });
     }
 
     function workOption(a, opts) {
         const wage = ix.median * 0.5 * (0.8 + 0.4 * a.traits.diligence);
         const broke = a.wallet < ix.median ? 1.5 : 0.6;
-        opts.push({ kind: 'work', score: wage / (STAGE.work + 0.08) / scaleOf(a) * broke, steps: [{ type: 'work', wage }] });
+        opts.push({ kind: 'work', score: wage / (STAGE.work + 0.08) / scaleOf(a) * broke, steps: [{ type: 'work', wage }], info: { profit: wage, time: STAGE.work } });
     }
 
-    function decide(a) {
+    function optionsFor(a) {
         const opts = [];
         if (a.carrying.length) sellOptions(a, opts);
         else {
@@ -594,6 +595,10 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
             workOption(a, opts);
         }
         restOption(a, opts);
+        return opts;
+    }
+
+    function decide(a, opts = optionsFor(a)) {
         // Personality noise: bolder agents gamble more on second-best ideas.
         let best = null, bestScore = -Infinity;
         for (const o of opts) {
@@ -672,11 +677,67 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         updateGoal(a); // actual visits count for knowledge goals; no invented economic reward
         nextStep(a);
     }
-    function beginDecision(a) {
-        const request = a.requestQueue?.shift();
-        const plan = request ? { request, steps: [{ type: 'go', to: request.target }, { type: 'request' }] }
-            : a.inbox?.length && a.at !== a.home ? { steps: [{ type: 'go', to: a.home }, { type: 'look' }] } : decide(a);
-        if (request) emit('request', { agent: a.id, request: request.id, status: 'active', message: `${a.name} がお願いの段取りを考えはじめた` });
+    // ------------------------------------------------ an LLM mind (optional)
+    // A resident with a mind still gets its options from the rules above; the
+    // mind only chooses among the best few and says what it is thinking. While it
+    // thinks the resident stands in the 💭 stage; if the answer is late or
+    // unusable, the rules choose. Nothing here runs unless a mind is given.
+    const MIND_OPTIONS = 5;
+    const minds = new Map();   // agent id → { opts, started, answer } (never saved)
+    function mindCandidates(a) {
+        const seen = new Set(), out = [];
+        for (const o of optionsFor(a).filter(o => Number.isFinite(o.score)).sort((x, y) => y.score - x.score)) {
+            const key = [o.kind, o.info?.good, o.info?.from, o.info?.to].join('|');
+            if (seen.has(key)) continue;
+            seen.add(key); out.push(o);
+            if (out.length >= MIND_OPTIONS) break;
+        }
+        return out;
+    }
+    function askMind(a) {
+        const opts = mindCandidates(a);
+        if (opts.length < 2) return false;
+        const entry = { opts, started: mind.now(), answer: null };
+        minds.set(a.id, entry);
+        let asked;
+        try { asked = Promise.resolve(mind.ask(a, opts, { clock: { ...clock }, describe: describeOption })); }
+        catch { asked = Promise.resolve(null); }
+        asked.then(ans => { entry.answer = ans || { failed: true }; }, () => { entry.answer = { failed: true }; });
+        a.plan = null;
+        a.timer = 0;
+        setStage(a, 'think', '💭 じっくり考えている');
+        return true;
+    }
+    function pollMind(a) {
+        const entry = minds.get(a.id);
+        const late = mind.now() - entry.started > (mind.patience || 25000);
+        if (!entry.answer && !late) return;
+        minds.delete(a.id);
+        const ans = entry.answer || {};
+        const pick = Number.isInteger(ans.choice) && ans.choice >= 1 && ans.choice <= entry.opts.length ? entry.opts[ans.choice - 1] : null;
+        const plan = pick || decide(a, entry.opts);
+        const thought = typeof ans.thought === 'string' ? ans.thought.slice(0, 80) : '';
+        if (pick && thought) {
+            a.thought = { text: thought, T: now(), model: String(ans.model || '').slice(0, 60) };
+            emit('thought', { agent: a.id, thought, model: a.thought.model, option: plan.kind, message: `${a.name}「${thought}」` });
+        }
+        adoptPlan(a, { ...plan, by: pick ? 'mind' : 'rules' });
+    }
+    function describeOption(o) {
+        const i = o.info || {}, g = i.good ? goodName(i.good) : '', hours = Math.max(1, Math.round((i.time || 0) * 12));
+        const money = v => `${Math.round(v || 0).toLocaleString('ja-JP')}${cur}`;
+        switch (o.kind) {
+            case 'trade': return `仕入れて運ぶ：${placeName(i.from)}で${g}を${i.q}つ仕入れ、${placeName(i.to)}で売る（見込みの儲け ${money(i.profit)}、およそ${hours}刻）`;
+            case 'sell': return `売りに行く：持っている${g}${i.q}つを${placeName(i.to)}で売る（見込み ${money(i.profit)}、およそ${hours}刻）`;
+            case 'craft': return `作って売る：ここで${g}を${i.q}つ細工し、${placeName(i.to)}で売る（見込みの儲け ${money(i.profit)}、およそ${hours}刻）`;
+            case 'visit': return `見に行く：まだ知らない${placeName(i.to)}を訪ねる（およそ${hours}刻）`;
+            case 'work': return `手伝い仕事：日当およそ${money(i.profit)}`;
+            case 'rest': return '休む：疲れをとる';
+        }
+        return o.kind;
+    }
+
+    function adoptPlan(a, plan) {
         plan.i = 0;
         a.plan = plan;
         if (plan.reserve) S.pending[plan.reserve.key] = (S.pending[plan.reserve.key] || 0) + plan.reserve.q;
@@ -684,6 +745,16 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         a.target = go ? go.to : null;
         a.timer = STAGE.react;
         setStage(a, 'react', '！');
+    }
+
+    function beginDecision(a) {
+        const request = a.requestQueue?.shift();
+        const homeward = !request && a.inbox?.length && a.at !== a.home;
+        if (!request && !homeward && mind && mind.wants(a.id) && askMind(a)) return;
+        const plan = request ? { request, steps: [{ type: 'go', to: request.target }, { type: 'request' }] }
+            : homeward ? { steps: [{ type: 'go', to: a.home }, { type: 'look' }] } : decide(a);
+        if (request) emit('request', { agent: a.id, request: request.id, status: 'active', message: `${a.name} がお願いの段取りを考えはじめた` });
+        adoptPlan(a, plan);
     }
     function startStep(a) {
         const step = a.plan.steps[a.plan.i];
@@ -905,6 +976,8 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
             return goIdle(a, 0);
         }
         if (a.stage === 'travel') return travel(a, dt);
+        if (minds.has(a.id)) return pollMind(a);
+        if (a.stage === 'think' && !a.plan) return goIdle(a, 0);   // a mind's question does not survive a reload
         a.timer -= dt;
         if (a.timer > 0) return;
         if (a.stage === 'react') { a.timer = STAGE.think; return setStage(a, 'think', '💭'); }

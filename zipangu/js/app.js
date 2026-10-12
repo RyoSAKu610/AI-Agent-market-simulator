@@ -23,6 +23,7 @@ import { attachChainFx } from './chain-fx.js';
 import { summonView, settingsView } from './view-summon.js';
 import { loadCards, addTravellers } from './soul.js';
 import { t, getLang } from './i18n.js';
+import { loadSettings, createMind } from './mind.js';
 
 const SECONDS_PER_DAY = 240;          // one in-world day (one 節気) is about four minutes
 const WARM_UP_SECONDS = 150;          // the city is already busy when you arrive
@@ -109,8 +110,13 @@ async function boot() {
     try { storage = window.localStorage; } catch { storage = { getItem() { throw new Error('unavailable'); }, setItem() { throw new Error('unavailable'); } }; }
     // AIs the visitor brought in (#/summon) join the world before the journey is restored.
     addTravellers(W, loadCards(storage, W));
+    let session;
+    try { session = window.sessionStorage; } catch { session = storage; }
     const loaded = loadJourney(storage, W, seed);
-    const eco = createEconomy(W, { seed, secondsPerDay: SECONDS_PER_DAY, state: loaded.data?.economy || null });
+    // 🧠 Residents think with a large language model only when the visitor turned it on (#/settings).
+    const mindSettings = loadSettings(storage, session);
+    const mind = mindSettings.on ? createMind(W, mindSettings, { lang: getLang() }) : null;
+    const eco = createEconomy(W, { seed, secondsPerDay: SECONDS_PER_DAY, state: loaded.data?.economy || null, mind });
     const history = createHistory(eco, loaded.data?.history || null);
     if (!loaded.data?.history) history.sample();
     let nextSample = Math.floor(eco.time / SAMPLE_EVERY) + 1;
@@ -125,7 +131,7 @@ async function boot() {
     if (!SPEEDS.includes(speed)) speed = 1;
 
     const hud = createHud(W, eco, { speed, onSpeed: s => { speed = s; store.set('zipangu.speed', String(s)); } });
-    const ctx = { W, eco, history, hud, stories, loadDoc, storage, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
+    const ctx = { W, eco, history, hud, stories, loadDoc, storage, session, mind, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
     let saveBlocked = loaded.blocked;
     const saveNotice = h('div', { class: 'journey-notice' });
     const saveText = h('span', { role: 'status' }, loaded.status);
@@ -180,6 +186,21 @@ async function boot() {
     const tools = document.getElementById('top-tools');
     const settingsLink = h('a', { class: 'settings-link', href: '#/settings', title: t('nav.settings'), 'aria-label': t('nav.settings') }, '⚙');
     tools.append(hud.chainChip, hud.mini, hud.speedEl, settingsLink);
+    if (mind) {
+        const mindText = h('span', { class: 'chain-chip-text' });
+        const mindChip = h('a', { class: 'chain-chip mind-chip', href: '#/settings', title: t('mind.chip') },
+            h('span', { class: 'chain-chip-gem', 'aria-hidden': 'true' }, '🧠'), mindText);
+        const paintMind = st => {
+            mindText.textContent = st.state === 'working' ? '…' : st.state === 'error' ? 'ERR' : st.state === 'budget' ? 'MAX' : (String(st.model).split('/').pop() || 'LLM');
+            mindChip.classList.toggle('is-live', st.state === 'ready' || st.state === 'working');
+            mindChip.classList.toggle('is-error', st.state === 'error');
+            settingsLink.classList.toggle('mind-error', st.state === 'error');
+        };
+        settingsLink.classList.add('has-mind');
+        mind.on(paintMind);
+        paintMind(mind.status);
+        tools.insertBefore(mindChip, hud.chainChip);
+    }
     applyChrome();
     hud.setSpeed(speed);
     const announcer = document.getElementById('route-announcer');
