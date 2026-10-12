@@ -11,7 +11,7 @@ The public game remains on GitHub Pages. The optional thought panel calls a sepa
 
 ## Client endpoint
 
-By default, the GitHub Pages site uses its own origin for `/api/agent-think`, because that is the only same-origin URL available without an explicit setting. To use the Vercel function from the GitHub Pages deployment, configure a public, fixed endpoint URL in the client. Do not accept an arbitrary endpoint from query parameters or user input.
+The client calls the fixed endpoint `https://neon-mythos.vercel.app/api/agent-think`. The Vercel project must be linked/deployed and the environment variable must be present for this URL to work. If the project uses a different domain, update the fixed `THINK_ENDPOINT` in `neon-mythos-agent-thinking.js`; never take the endpoint from query parameters or user input.
 
 ## Limits and behaviour
 
