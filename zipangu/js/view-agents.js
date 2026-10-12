@@ -11,9 +11,10 @@ import {
     STAGE_LABEL, liveActivity, goalPct
 } from './components.js';
 import { notFound } from './view-place.js';
+import { t } from './i18n.js';
 
 
-const ORIGIN_LABEL = { neon_mythos: 'NEON MYTHOS の住人', native: '万華京の生え抜き' };
+const ORIGIN_LABEL = { neon_mythos: 'NEON MYTHOS の住人', native: '万華京の生え抜き', traveller: t('origin.traveller') };
 
 function whereIs(W, live) {
     if (live.at) {
@@ -129,6 +130,19 @@ export function agentsView(ctx, query) {
 
 // ---------------------------------------------------------------- one agent
 
+// An AI brought in from outside: where it came from and what it chose to bring (its own words).
+function travellerSection(a) {
+    const tr = a.traveller;
+    const list = (title, items) => (items || []).length ? h('div', { class: 'soul-list' }, h('h3', null, title), h('ul', null, items.map(x => h('li', null, x)))) : null;
+    return h('section', { class: 'sec traveller-sec', 'aria-labelledby': 'ag-trav' }, sectionHead(t('origin.traveller'), `${t('summon.from')}：${tr.from}`, 'ag-trav'),
+        plaque({ class: 'soul-preview' },
+            tr.greeting ? h('p', { class: 'soul-greeting' }, `「${tr.greeting}」`) : null,
+            list(t('summon.memories'), tr.memories),
+            list(t('summon.values'), tr.values),
+            h('p', { class: 'ar-role' }, t('summon.honest')),
+            h('p', null, h('a', { href: '#/settings' }, t('settings.title') + ' →'))));
+}
+
 export function agentView(ctx, id) {
     const { W, eco } = ctx;
     const a = W.byId.agent.get(id);
@@ -193,6 +207,7 @@ export function agentView(ctx, id) {
                 h('p', { class: 'chips' }, h('button', { type: 'button', class: 'btn btn-primary', onclick: () => theatre.el.scrollIntoView({ block: 'start' }) }, 'いまの劇を観る'), h('button', { type: 'button', class: 'btn', onclick: talk }, '話しかける・お願いする'), h('a', { class: 'btn', href: '#/', onclick: () => { ctx.pendingFocus = id; } }, '地図で追う →'), home ? h('a', { class: 'chip', href: href.district(home.id) }, nameOf(home)) : null, place ? placeLink(place) : null))),
         h('div', { class: 'page-body' },
             theatre.el, panel, onchain.el, conversation.el,
+            a.traveller ? travellerSection(a) : null,
             h('section', { class: 'sec', 'aria-labelledby': 'ag-person' }, sectionHead('人となり', null, 'ag-person'),
                 h('p', { class: 'lead' }, tagged(a.personality)),
                 h('dl', { class: 'facts' }, h('dt', null, '得意'), h('dd', null, tagged(a.specialty)))),

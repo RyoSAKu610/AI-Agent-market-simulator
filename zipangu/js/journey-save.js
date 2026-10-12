@@ -1,4 +1,5 @@
 import { decodeHistory } from './history.js';
+import { isTraveller } from './soul.js';
 // One atomic localStorage value keeps clock, positions, promises and memories together.
 export function journeyKey(seed) { return `zipangu.journey.v1:${seed}`; }
 const STAGES = ['idle', 'react', 'think', 'travel', 'trade'];
@@ -11,7 +12,10 @@ export function validateJourney(data, W, seed) {
     const e = data.economy, s = data.stories;
     ensure(e.seed === seed && natural(e.tick) && natural(e.ran) && finite(e.elapsed) && e.elapsed >= 0
         && natural(e.rng) && natural(e.startSekki) && e.startSekki < 24 && natural(e.eventSeq || 0));
-    ensure(Array.isArray(e.agents) && e.agents.length === W.agents.length && new Set(e.agents.map(a => a.id)).size === W.agents.length);
+    // Every built-in resident must be there; an AI brought in later may not be yet (it starts fresh).
+    const savedIds = new Set(Array.isArray(e.agents) ? e.agents.map(a => a.id) : []);
+    ensure(Array.isArray(e.agents) && savedIds.size === e.agents.length
+        && W.agents.every(a => savedIds.has(a.id) || isTraveller(a.id)));
     ensure(Array.isArray(e.schedule) && Array.isArray(e.active) && e.markets && e.stats && e.pending && e.eventMult);
     for (const a of e.agents) {
         ensure(W.byId.agent.has(a.id) && W.byId.district.has(a.home) && (a.at === null || W.byId.district.has(a.at))
@@ -49,9 +53,11 @@ export function validateJourney(data, W, seed) {
         for (const [g, quote] of Object.entries(row)) ensure(W.byId.good.has(g) && finite(quote.anchor) && finite(quote.p));
     }
     ensure(natural(s.nextId) && s.nextId > 0 && natural(s.lastSeq) && s.lastSeq <= (e.eventSeq || 0)
-        && s.people && Object.keys(s.people).length === W.agents.length);
+        && s.people && Object.keys(s.people).every(id => W.byId.agent.has(id))
+        && W.agents.every(a => s.people[a.id] || isTraveller(a.id)));
     for (const a of W.agents) {
         const p = s.people[a.id];
+        if (!p && isTraveller(a.id)) continue;
         ensure(p && natural(p.trust) && p.trust <= 100 && natural(p.practice) && p.bonds && Array.isArray(p.earned) && p.earned.length <= 96);
         for (const [key, max] of [['chat', 24], ['chronicle', 40], ['memories', 8], ['requests', 16]]) ensure(Array.isArray(p[key]) && p[key].length <= max);
         for (const item of [...p.chat, ...p.chronicle, ...p.memories]) ensure(typeof item.text === 'string' && item.text.length <= 2000 && finite(item.T) && natural(item.day));
@@ -93,11 +99,37 @@ export function validateJourney(data, W, seed) {
     inspect(data);
     return data;
 }
+// An AI resident that has been sent off (#/settings) is removed from the saved
+// journey before it is checked, with every trace that names it.
+export function pruneDeparted(data, W) {
+    const gone = id => isTraveller(id) && !W.byId.agent.has(id);
+    const e = data && data.economy, s = data && data.stories;
+    if (!e || !s) return data;
+    if (Array.isArray(e.agents)) {
+        e.agents = e.agents.filter(a => !gone(a.id));
+        for (const a of e.agents) {
+            if (Array.isArray(a.inbox)) a.inbox = a.inbox.filter(l => !gone(l.from));
+            if (Array.isArray(a.requestQueue)) a.requestQueue = a.requestQueue.filter(r => !gone(r.recipient));
+            if (a.plan && a.plan.request && gone(a.plan.request.recipient)) a.plan = null;
+        }
+    }
+    if (Array.isArray(e.encounters)) e.encounters = e.encounters.filter(m => !String(m.pair).split('|').some(gone));
+    if (s.people) for (const id of Object.keys(s.people)) if (gone(id)) delete s.people[id];
+    if (s.drama) {
+        if (Array.isArray(s.drama.scenes)) s.drama.scenes = s.drama.scenes.filter(sc => !gone(sc.agent) && !(sc.cast || []).some(gone));
+        if (s.drama.readers) for (const id of Object.keys(s.drama.readers)) {
+            const r = s.drama.readers[id];
+            if (gone(id) || (r && r.held && (r.held.cast || []).some(gone))) delete s.drama.readers[id];
+        }
+    }
+    return data;
+}
+
 export function loadJourney(storage, W, seed) {
     try {
         const raw = storage.getItem(journeyKey(seed));
         if (!raw) return { data: null, status: 'この端末で旅の記録を始めます。', blocked: false };
-        const data = validateJourney(JSON.parse(raw), W, seed);
+        const data = validateJourney(pruneDeparted(JSON.parse(raw), W), W, seed);
         return { data, status: '保存した時計と旅の続きから再開しました。閉じている間は時間を進めません。', blocked: false };
     } catch { return { data: null, status: '保存記録を読み取れません。元の記録を上書きせず、今回は一時的な世界を表示しています。', blocked: true }; }
 }

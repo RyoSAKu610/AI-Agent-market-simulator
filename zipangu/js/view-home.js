@@ -4,6 +4,8 @@ import { visualFeature } from './visual-art.js';
 // #/ — the kaleidoscope map with the HUD laid over it.
 
 import { createMap } from './map.js';
+import { t, getLang } from './i18n.js';
+import { languagePicker } from './view-summon.js';
 import { VIA } from './sim.js';
 import {
     h, clear, href, placeShort, placeSub, nameOf, agentShort, firstSentence, clip, fmt, accentOf, KIND_LABEL, RARITY_LABEL
@@ -51,12 +53,12 @@ export function homeView(ctx) {
     let pausedArt = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const artStop = h('button', { type: 'button', class: 'map-art-stop', 'aria-pressed': String(pausedArt), onclick: () => {
         pausedArt = !pausedArt; if (map) map.pauseArtwork(pausedArt);
-        artStop.textContent = pausedArt ? '絵を動かす' : '絵を止める'; artStop.setAttribute('aria-pressed', String(pausedArt));
-    } }, pausedArt ? '絵を動かす' : '絵を止める');
+        artStop.textContent = pausedArt ? t('map.playArt') : t('map.stopArt'); artStop.setAttribute('aria-pressed', String(pausedArt));
+    } }, pausedArt ? t('map.playArt') : t('map.stopArt'));
     zoomBox.append(artStop);
 
     const legend = h('details', { class: 'legend' },
-        h('summary', null, '凡例'),
+        h('summary', null, t('map.legend')),
         h('ul', null, Object.entries(VIA_SWATCH).map(([id, [color, note]]) =>
             h('li', null, h('i', { style: { background: color } }), h('b', null, VIA[id] ? VIA[id].label : id), h('span', null, note)))),
         h('p', { class: 'legend-note' }, 'ひし形＝地区　◎＝万世時計　✦＝祭りの最中　丸い光＝エージェント'));
@@ -72,10 +74,12 @@ export function homeView(ctx) {
     const remember = () => { try { window.localStorage.setItem('zipangu.welcome', '1'); } catch { /* private mode: fine */ } };
     const welcome = seen() ? null : plaque({ class: 'welcome', role: 'note', 'aria-label': 'はじめての方へ' },
         h('button', { type: 'button', class: 'info-close', 'aria-label': '閉じる', onclick: () => { remember(); welcome.remove(); } }, '×'),
-        h('p', { class: 'welcome-lead' }, String(W.world.tagline || '').split('／')[0].split('。')[0] + '。'),
-        h('p', { class: 'welcome-text' }, 'AIたちが自分の頭で商いをする街。光る点が住人、「世のうごき」が今の取引。点をタップすると追いかけられる。'),
-        h('p', { class: 'welcome-links' }, h('a', { href: '#/about' }, 'くわしくは 案内 →')));
-    stage.append(h('a', { class: 'visual-map-link', href: '#/visuals' }, '✦ 動く絵の制作帖 →'));
+        h('p', { class: 'welcome-lead' }, getLang() === 'ja' ? String(W.world.tagline || '').split('／')[0].split('。')[0] + '。' : t('welcome.lead')),
+        h('p', { class: 'welcome-text' }, t('welcome.text')),
+        h('p', { class: 'welcome-cta' }, h('a', { class: 'btn btn-primary', href: '#/summon' }, t('welcome.summon'))),
+        h('p', { class: 'welcome-links' }, languagePicker(ctx), h('a', { href: '#/about' }, t('welcome.more'))));
+    stage.append(h('a', { class: 'visual-map-link', href: '#/visuals' }, t('map.atelier')));
+    stage.append(h('a', { class: 'summon-map-link', href: '#/summon' }, t('welcome.summon') + ' →'));
     stage.append(h('h1', { class: 'sr-only' }, '万華京ジパング ・ 地図'), canvas, side, zoomBox, legend, places, welcome);
 
     // ------------------------------------------------ info plaque

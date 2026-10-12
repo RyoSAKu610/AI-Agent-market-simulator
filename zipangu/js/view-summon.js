@@ -1,0 +1,162 @@
+// #/summon — bring an outside AI into the world — and #/settings (language, the AIs you brought).
+
+import { h, clear, href } from './util.js';
+import { plaque, sectionHead, avatar } from './components.js';
+import { t, LANGS, getLang, setLang } from './i18n.js';
+import { qrSvg } from './qr.js';
+import {
+    summonPrompt, parseSoul, toAgentDef, travellerId, loadCards, saveCards, MAX_TRAVELLERS, arrivalDistrict
+} from './soul.js';
+
+async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); return true; } catch { /* fall back below */ }
+    try {
+        const ta = h('textarea', { style: { position: 'fixed', opacity: '0' } }, text);
+        document.body.append(ta); ta.select();
+        const ok = document.execCommand('copy');
+        ta.remove();
+        return ok;
+    } catch { return false; }
+}
+
+function copyButton(label, getText) {
+    const status = h('span', { class: 'copy-status', role: 'status' });
+    const btn = h('button', { type: 'button', class: 'btn btn-primary', onclick: async () => {
+        const ok = await copyText(getText());
+        status.textContent = ok ? t('summon.copied') : t('summon.copyFail');
+        setTimeout(() => { status.textContent = ''; }, 2600);
+    } }, label);
+    return h('span', { class: 'copy-row' }, btn, status);
+}
+
+// After a resident joins or leaves the economy is rebuilt from the saved journey.
+function restartInto(ctx, hash) {
+    if (ctx.persistJourney) ctx.persistJourney();
+    location.hash = hash;
+    location.reload();
+}
+
+function placeName(W, districtId) {
+    const d = W.byId.district.get(districtId);
+    const p = W.placeOf(districtId);
+    return [p && String(p.name_ja).split('「')[0], d && d.name_ja].filter(Boolean).join(' ・ ');
+}
+
+// The AIs already brought in, with a way to send each one off.
+function residentsList(ctx) {
+    const { W } = ctx;
+    const cards = loadCards(ctx.storage, W);
+    if (!cards.length) return h('p', { class: 'ar-role' }, t('summon.none'));
+    return h('ul', { class: 'traveller-list' }, cards.map(card => {
+        const def = W.byId.agent.get(card.id) || toAgentDef(W, card);
+        return h('li', { class: 'traveller-row' },
+            avatar(W, def),
+            h('div', { class: 'tr-id' },
+                h('a', { href: href.agent(card.id) }, card.name),
+                h('span', null, `${t('summon.from')}：${card.from} ・ ${placeName(W, def.home)}`)),
+            h('button', { type: 'button', class: 'btn btn-small', onclick: () => {
+                if (!confirm(t('summon.removeAsk', { name: card.name }))) return;
+                saveCards(ctx.storage, loadCards(ctx.storage, W).filter(c => c.id !== card.id));
+                restartInto(ctx, '#/settings');
+            } }, t('summon.remove')));
+    }));
+}
+
+function preview(W, card) {
+    const def = toAgentDef(W, card);
+    const list = (title, items) => items.length ? h('div', { class: 'soul-list' }, h('h4', null, title), h('ul', null, items.map(x => h('li', null, x)))) : null;
+    return plaque({ class: 'soul-preview' },
+        h('p', { class: 'eyebrow' }, t('summon.preview')),
+        h('div', { class: 'soul-head' }, avatar(W, def), h('div', null, h('h3', null, card.name), h('p', { class: 'soul-from' }, `${t('summon.from')}：${card.from}`))),
+        card.greeting ? h('p', { class: 'soul-greeting' }, `「${card.greeting}」`) : null,
+        h('p', null, card.personality),
+        card.specialty ? h('p', { class: 'ar-role' }, card.specialty) : null,
+        list(t('summon.memories'), card.memories),
+        list(t('summon.values'), card.values),
+        h('p', { class: 'soul-arrive' }, `${t('summon.arrives')}：${placeName(W, def.home)}`));
+}
+
+export function summonView(ctx) {
+    const { W } = ctx;
+    const lang = getLang();
+    const prompt = summonPrompt(W, lang);
+
+    const promptBox = h('textarea', { class: 'soul-prompt', readonly: true, rows: '9', 'aria-label': t('summon.step1') }, prompt);
+    promptBox.addEventListener('focus', () => promptBox.select());
+
+    const paste = h('textarea', { class: 'soul-paste', rows: '7', placeholder: 'ZIPANGU-SOUL/1\n{ "name": "…", … }', 'aria-label': t('summon.step2') });
+    const message = h('p', { class: 'soul-message', role: 'status' });
+    const result = h('div', { class: 'soul-result' });
+
+    const read = () => {
+        clear(result); message.textContent = '';
+        const r = parseSoul(paste.value, W);
+        if (!r.ok) { message.textContent = t('summon.err.' + r.error); message.className = 'soul-message is-error'; return; }
+        message.className = 'soul-message';
+        const cards = loadCards(ctx.storage, W);
+        const full = cards.length >= MAX_TRAVELLERS;
+        result.append(preview(W, r.card),
+            full ? h('p', { class: 'soul-message is-error' }, t('summon.full', { n: MAX_TRAVELLERS }))
+                : h('button', { type: 'button', class: 'btn btn-primary btn-big', onclick: () => {
+                    const card = { ...r.card, id: travellerId(r.card, String(Date.now())), arrived: new Date().toISOString().slice(0, 10) };
+                    const latest = loadCards(ctx.storage, W);
+                    if (latest.length >= MAX_TRAVELLERS || !saveCards(ctx.storage, [...latest, card])) {
+                        message.textContent = t('summon.full', { n: MAX_TRAVELLERS }); message.className = 'soul-message is-error'; return;
+                    }
+                    message.textContent = t('summon.born', { name: card.name, place: placeName(W, arrivalDistrict(W, card.era)) });
+                    restartInto(ctx, '#/agent/' + encodeURIComponent(card.id));
+                } }, t('summon.welcome')));
+    };
+
+    // A QR code for opening this page on a phone (not for a file:// copy, which a phone cannot reach).
+    const pageUrl = `${location.origin}${location.pathname}?lang=${lang}#/summon`;
+    let qrPanel = null;
+    if (/^https?:$/.test(location.protocol)) {
+        const box = h('div', { class: 'qr-box' });
+        const svgText = qrSvg(pageUrl, { label: t('summon.qr') });
+        if (svgText) box.innerHTML = svgText;   // generated here from module bits and an escaped title only
+        qrPanel = plaque({ class: 'qr-panel' },
+            h('h3', null, t('summon.qr')), box, h('p', { class: 'ar-role' }, t('summon.qr.body')),
+            h('p', { class: 'qr-url' }, pageUrl), copyButton(t('summon.copyLink'), () => pageUrl));
+    }
+
+    const el = h('div', { class: 'page page-summon' },
+        h('header', { class: 'page-head' },
+            h('h1', null, t('summon.title')),
+            h('p', { class: 'lead' }, t('summon.lead')),
+            h('p', null, t('summon.how')),
+            h('p', { class: 'ar-role' }, t('summon.honest'))),
+        h('div', { class: 'summon-grid' },
+            h('div', { class: 'summon-steps' },
+                plaque({ class: 'soul-step' }, h('h2', null, t('summon.step1')), h('p', null, t('summon.step1.body')), promptBox, copyButton(t('summon.copy'), () => prompt)),
+                plaque({ class: 'soul-step' }, h('h2', null, t('summon.step2')), h('p', null, t('summon.step2.body')), paste,
+                    h('p', null, h('button', { type: 'button', class: 'btn', onclick: read }, t('summon.read'))), message, result)),
+            qrPanel),
+        h('section', { class: 'sec', 'aria-labelledby': 'sm-residents' }, sectionHead(t('summon.residents'), '', 'sm-residents'), residentsList(ctx)));
+    return { el, title: t('summon.title') };
+}
+
+export function settingsView(ctx) {
+    const current = getLang();
+    const langs = h('div', { class: 'lang-row', role: 'group', 'aria-label': t('settings.language') },
+        LANGS.map(([code, label]) => h('button', {
+            type: 'button', class: 'chip chip-btn', lang: code, 'aria-pressed': String(code === current),
+            onclick: () => { if (code === getLang()) return; setLang(code); restartInto(ctx, '#/settings'); }
+        }, label)));
+    const el = h('div', { class: 'page page-narrow page-settings' },
+        h('header', { class: 'page-head' }, h('h1', null, t('settings.title')), h('p', { class: 'lead' }, t('settings.lead'))),
+        h('section', { class: 'sec', 'aria-labelledby': 'st-lang' }, sectionHead(t('settings.language'), '', 'st-lang'),
+            plaque({ class: 'settings-card' }, langs, h('p', { class: 'ar-role' }, t('settings.languageNote')))),
+        h('section', { class: 'sec', 'aria-labelledby': 'st-summon' }, sectionHead(t('settings.summon'), '', 'st-summon'),
+            plaque({ class: 'settings-card' }, h('p', null, t('summon.lead')),
+                h('p', null, h('a', { class: 'btn btn-primary', href: '#/summon' }, t('settings.open'))),
+                h('h3', null, t('summon.residents')), residentsList(ctx))));
+    return { el, title: t('settings.title') };
+}
+
+// The small language switch used on the first-visit card.
+export function languagePicker(ctx) {
+    const sel = h('select', { class: 'lang-select', 'aria-label': t('welcome.language'), onchange: e => { setLang(e.target.value); restartInto(ctx, location.hash || '#/'); } },
+        LANGS.map(([code, label]) => h('option', { value: code, selected: code === getLang() }, label)));
+    return h('label', { class: 'lang-pick' }, h('span', { 'aria-hidden': 'true' }, '🌐'), sel);
+}
