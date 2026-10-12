@@ -7,6 +7,7 @@ import { qrSvg } from './qr.js';
 import {
     summonPrompt, parseSoul, toAgentDef, travellerId, loadCards, saveCards, MAX_TRAVELLERS, arrivalDistrict
 } from './soul.js';
+import { PROVIDERS, loadSettings, saveSettings, resolve, testConnection, listModels } from './mind.js';
 
 async function copyText(text) {
     try { await navigator.clipboard.writeText(text); return true; } catch { /* fall back below */ }
@@ -136,8 +137,130 @@ export function summonView(ctx) {
     return { el, title: t('summon.title') };
 }
 
+// 🧠 Which large language model (if any) residents think with. Saving reloads the page so the
+// economy starts again with or without minds; the journey is kept.
+function mindSection(ctx) {
+    const s = loadSettings(ctx.storage, ctx.session);
+    const input = (attrs) => h('input', { class: 'mind-input', spellcheck: 'false', autocomplete: 'off', ...attrs });
+    const field = (label, ...control) => h('label', { class: 'mind-field' }, h('span', { class: 'mind-label' }, label), ...control);
+    const on = h('input', { type: 'checkbox', checked: s.on });
+    const provider = h('select', { class: 'mind-input' }, Object.entries(PROVIDERS).map(([id, p]) => h('option', { value: id, selected: id === s.provider }, p.label)));
+    const note = h('p', { class: 'ar-role mind-note' });
+    const base = input({ type: 'url', value: s.base });
+    const models = h('datalist', { id: 'mind-models' });
+    const model = input({ type: 'text', list: 'mind-models', value: s.model });
+    const key = input({ type: 'password', value: s.key });
+    const keyLink = h('a', { class: 'mind-keylink', target: '_blank', rel: 'noopener noreferrer' }, t('mind.getKey'));
+    const remember = h('input', { type: 'checkbox', checked: s.remember });
+    const keyBox = h('div', { class: 'mind-keybox' }, field(t('mind.key'), key), keyLink,
+        h('label', { class: 'mind-check' }, remember, h('span', null, t('mind.remember'))));
+    const keyNone = h('p', { class: 'ar-role' }, t('mind.keyNone'));
+    const scope = h('select', { class: 'mind-input' }, ['travellers', 'all'].map(v => h('option', { value: v, selected: v === s.scope }, t('mind.scope.' + v))));
+    const perHour = input({ type: 'number', min: '1', max: '2000', step: '1', value: String(s.perHour), inputmode: 'numeric' });
+    const message = h('p', { class: 'soul-message', role: 'status' });
+
+    const read = () => ({
+        on: on.checked, provider: provider.value, base: base.value.trim(), model: model.value.trim(), key: key.value.trim(),
+        remember: remember.checked, scope: scope.value, perHour: Math.max(1, Math.min(2000, Math.round(Number(perHour.value)) || 120))
+    });
+    const say = (text, bad) => { message.textContent = text; message.className = 'soul-message' + (bad ? ' is-error' : ''); };
+    const fillModels = list => { clear(models); for (const m of list) models.append(h('option', { value: m })); };
+
+    // the in-browser model needs none of the connection fields
+    const remoteOnly = [];
+    const localBox = h('div', { class: 'mind-localbox' });
+    const remote = el => { remoteOnly.push(el); return el; };
+    function paintProvider() {
+        const p = PROVIDERS[provider.value] || PROVIDERS.custom;
+        const local = p.kind === 'local';
+        for (const el of remoteOnly) el.hidden = local;
+        localBox.hidden = !local;
+        base.placeholder = p.base || 'https://…/v1';
+        model.placeholder = p.model || 'model-id';
+        note.textContent = local ? '' : p.note || '';     // the in-browser model explains itself below
+        keyBox.hidden = !!p.keyless;
+        keyNone.hidden = !p.keyless || local;
+        keyLink.hidden = !p.keyUrl;
+        if (p.keyUrl) keyLink.href = p.keyUrl;
+        fillModels(p.suggest || (p.model ? [p.model] : []));
+    }
+    provider.addEventListener('change', () => { base.value = ''; model.value = ''; paintProvider(); });
+    paintProvider();
+
+    const fetchBtn = h('button', { type: 'button', class: 'btn btn-small', onclick: async () => {
+        say(t('mind.testing'));
+        try {
+            const list = await listModels(resolve(read()));
+            if (list.length) { fillModels(list); say(`${list.length} ✓`); } else say('—');
+        } catch (e) { say(e.message || String(e), true); }
+    } }, t('mind.fetchModels'));
+    const testBtn = h('button', { type: 'button', class: 'btn', onclick: async () => {
+        testBtn.disabled = true; say(t('mind.testing'));
+        try {
+            const r = await testConnection(read());
+            say(t('mind.testOk', { model: r.model, ms: r.ms, sample: r.sample }), !r.ok);
+        } catch (e) { say(e.message || String(e), true); }
+        finally { testBtn.disabled = false; }
+    } }, t('mind.test'));
+    const saveBtn = h('button', { type: 'button', class: 'btn btn-primary', onclick: () => {
+        saveSettings(read(), ctx.storage, ctx.session);
+        restartInto(ctx, '#/settings');
+    } }, t('mind.save'));
+
+    // What the running minds are doing now.
+    const state = h('p', { class: 'mind-state' });
+    const log = h('ul', { class: 'mind-log' });
+    const mind = ctx.mind;
+    function paintStatus() {
+        const st = mind ? mind.status : { state: 'off', asked: 0, answered: 0, failed: 0, log: [] };
+        clear(state).append(h('span', null, h('b', null, `${t('mind.status')}：`), t('mind.state.' + st.state),
+            st.model && mind && (st.state === 'ready' || st.state === 'working' || st.state === 'loading') ? ` ・ ${st.model}` : '', st.error ? h('span', { class: 'mind-error' }, ` — ${st.error}`) : null,
+            mind && (st.asked || st.state === 'ready') ? h('span', { class: 'mind-counts' }, ' ・ ' + t('mind.counts', st)) : null));
+        clear(log);
+        for (const e of st.log.slice(0, 8)) log.append(h('li', null, h('a', { href: href.agent(e.agent) }, e.name), `「${e.thought}」`, h('small', null, ` ${e.model} ・ ${e.ms}ms`)));
+    }
+    paintStatus();
+    const off = mind ? mind.on(paintStatus) : null;
+
+    // the in-browser model: what it is, and a button to wake it now
+    const engine = ctx.mindEngine;
+    const localText = h('p', { class: 'mind-local-state' });
+    const startBtn = h('button', { type: 'button', class: 'btn btn-primary', onclick: () => { if (ctx.startMind) ctx.startMind(); } }, t('mind.start'));
+    localBox.append(h('p', { class: 'ar-role' }, t('mind.localAbout')), localText, startBtn);
+    const paintLocal = () => {
+        const st = engine ? engine.state : null;
+        const noGpu = !(globalThis.navigator && navigator.gpu) || (st && st.phase === 'unsupported');
+        localText.textContent = noGpu ? t('mind.state.unsupported')
+            : !st ? t('mind.localAfterSave')
+            : st.phase === 'loading' || st.phase === 'checking' ? t('mind.loadingLocal', { pct: Math.round((st.progress || 0) * 100) })
+            : st.phase === 'ready' ? `${t('mind.state.ready')} ・ ${st.model.replace(/-q4f(16|32)_1-MLC$/, '')}`
+            : st.phase === 'error' ? `${t('mind.state.error')} — ${st.error}` : t('mind.launch', { mb: st.sizeMB });
+        startBtn.hidden = noGpu || !st || (st.phase !== 'idle' && st.phase !== 'error');
+        startBtn.textContent = st && st.phase === 'error' ? t('mind.retry') : t('mind.start');
+    };
+    paintLocal();
+    const offLocal = engine ? engine.on(paintLocal) : null;
+
+    const el = plaque({ class: 'settings-card mind-card' },
+        h('p', null, t('mind.lead')),
+        h('label', { class: 'mind-check mind-switch' }, on, h('span', null, t('mind.on'))),
+        h('div', { class: 'mind-grid' },
+            field(t('mind.provider'), provider), note, localBox,
+            remote(field(t('mind.model'), model, models)), remote(h('p', null, fetchBtn)),
+            remote(field(t('mind.base'), base)),
+            keyBox, keyNone,
+            field(t('mind.scope'), scope),
+            remote(field(t('mind.perHour'), perHour))),
+        remote(h('p', { class: 'ar-role' }, t('mind.privacy'))),
+        h('p', { class: 'mind-actions' }, remote(testBtn), ' ', saveBtn), message,
+        state, mind ? h('h3', null, t('mind.log')) : null, log);
+    paintProvider();
+    return { el, destroy: () => { if (off) off(); if (offLocal) offLocal(); } };
+}
+
 export function settingsView(ctx) {
     const current = getLang();
+    const minds = mindSection(ctx);
     const langs = h('div', { class: 'lang-row', role: 'group', 'aria-label': t('settings.language') },
         LANGS.map(([code, label]) => h('button', {
             type: 'button', class: 'chip chip-btn', lang: code, 'aria-pressed': String(code === current),
@@ -150,8 +273,9 @@ export function settingsView(ctx) {
         h('section', { class: 'sec', 'aria-labelledby': 'st-summon' }, sectionHead(t('settings.summon'), '', 'st-summon'),
             plaque({ class: 'settings-card' }, h('p', null, t('summon.lead')),
                 h('p', null, h('a', { class: 'btn btn-primary', href: '#/summon' }, t('settings.open'))),
-                h('h3', null, t('summon.residents')), residentsList(ctx))));
-    return { el, title: t('settings.title') };
+                h('h3', null, t('summon.residents')), residentsList(ctx))),
+        h('section', { class: 'sec', id: 'mind', 'aria-labelledby': 'st-mind' }, sectionHead(t('mind.title'), '', 'st-mind'), minds.el));
+    return { el, title: t('settings.title'), destroy: minds.destroy };
 }
 
 // The small language switch used on the first-visit card.

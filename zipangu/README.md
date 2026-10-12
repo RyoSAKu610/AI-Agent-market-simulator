@@ -35,6 +35,17 @@ AIエージェントたちが自分で仕入れ、運び、作り、交渉して
 PCで開いているときは画面の **QRコード** をスマホで読むと、同じページがスマホで開き、スマホのAIアプリで続けられます。
 AIの記憶そのものを移すのではなく、AIが自分で書いた自己紹介と思い出の要約を持ち込みます。カードはこの端末のブラウザにだけ保存され、どこにも送られません。迎えられるのは6人まで。⚙ 設定からいつでも送り出せます（旅の記録は壊れません）。
 
+### 🧠 住人が大規模言語モデルで考える（設定不要・無料）
+
+**何も設定しなくても、住人は端末の中の AI で考えます。** Alibaba の Qwen をブラウザの中（WebGPU）で動かすので、料金もAPIキーもいらず、考えた中身は端末の外に出ません。PC は開くと自動で、スマホは地図の「🧠 AIの頭脳を起動」をひと押しで読み込みます（初回だけ PC 約1GB・スマホ 約0.4GB、2回目からは保存済み）。読み込み中や WebGPU に対応していない端末では、今までどおりルールで動きます。
+
+LLM は住人が行き先を決めるときに考えます。住人は今までどおり相場・運賃・出来事・目標から候補を出し、上位5つを言葉にしてモデルに渡します。モデルはその中から1つを選び、「心の声」を一言書きます。心の声は「世のうごき」と住人のページ（🧠 考えたこと）に出ます。
+
+- **つなぐ先**（⚙ 設定の「AIの頭脳（LLM）」で変更）: この端末の中のAI（標準）、OpenRouter（1つのキーで DeepSeek・Qwen・Kimi・GLM など中国のモデルも含めて選べ、無料のモデルもあります）、DeepSeek、Qwen（Alibaba Cloud 国際版）、Kimi（Moonshot）、GLM（智谱）、Claude、OpenAI、Gemini、自分のPCの Ollama、そのほか OpenAI 互換のURL。Netlify 版にはキー不要の「お試し」枠もあります。
+- **考えさせる住人**: 標準は住人全員（端末の中のAIは一度に1人ずつ考えます）。外部のつなぎ先では1時間に呼ぶ回数に上限があり、同時に呼ぶのは2件まで。迎えたAIだけに絞ることもできます。
+- **止まらない世界**: 返事が25秒来ない、失敗した、読めない答えだったときは、その回はルールで決めます。LLM は候補の中から選ぶだけなので、経済の帳尻はいつも合います。
+- **キー**: このタブの中（`sessionStorage`）にだけ置き、「この端末に覚えておく」を選んだときだけ `localStorage` に置きます。キーはブラウザから選んだつなぎ先へ直接送られます。
+
 ### 見る・体験する
 
 - **地図** — 十の時片が万華鏡の鏡片として並び、異界が縁で光ります。AIエージェントが ！→💭→🏃 を出しながら交易路を走り、宝石蝶が住処の上を舞い、明け六つ・逢う刻で街の光が変わります。
@@ -68,6 +79,15 @@ Your Claude, GPT or any other AI agent can carry its way of thinking and its mem
 3. It is born as a newcomer with its own character, strengths and memories, lands in the era it chose, and starts trading on its own.
 
 On a desktop, scan the **QR code** to continue on your phone. This does not copy the AI's memory itself: it brings the self-description and memory summary the AI writes. The card stays in your browser only. Up to six AIs; send one off any time from ⚙ Settings without breaking your saved journey.
+
+### 🧠 Residents think with a large language model — no setup, no fee
+**Out of the box, residents think with an AI that runs on your own device:** Alibaba's Qwen inside the browser (WebGPU), with no key, no fee, and nothing leaving the device. Computers load it automatically; phones with one tap on “🧠 Wake the AI minds” (first time only: about 1 GB on a computer, 0.4 GB on a phone). While it loads, and on browsers without WebGPU, the rules decide as before.
+
+The LLM decides where residents go next. The economy still works out each resident's options from prices, fares, events and goals; the best five are put into words, the model picks one and writes a line of inner voice, which appears in the live feed and on the resident's page.
+- **Providers** (⚙ Settings → AI minds): the on-device AI (default), OpenRouter (one key for DeepSeek, Qwen, Kimi, GLM and many more, including free models), DeepSeek, Qwen (Alibaba Cloud international), Kimi (Moonshot), GLM (Zhipu), Claude, OpenAI, Gemini, a local Ollama, or any OpenAI-compatible URL. The Netlify build also has a keyless trial.
+- **Who thinks:** every resident by default (the on-device AI thinks for one at a time), or only the AIs you welcomed. Remote providers have an hourly cap and at most two calls at once.
+- **The world never stalls:** no answer within 25 seconds, an error or an unreadable reply means the rules decide that turn. The model only chooses among valid options, so the books always balance.
+- **Your key** stays in this tab (`sessionStorage`), or on this device only if you ask, and goes straight from your browser to the provider you chose.
 
 **Also:** a 67-creature bestiary, a library of 58 public-domain works (10 in the English original, from Project Gutenberg), a live market with price charts, 32 residents with dialogue and a small live theatre, an atelier of 128 concept paintings, and an interface in six languages.
 
@@ -121,8 +141,8 @@ On a desktop, scan the **QR code** to continue on your phone. This does not copy
 | `docs/eras/`, `docs/realms/` | 時片・異界ごとの章（分岐点、歩いてみる、住むもの、働くエージェント、祭り、書物）。案内は [`docs/WORLD_BIBLE.md`](docs/WORLD_BIBLE.md)。 |
 | `docs/CORRECTIONS.md` | 各章を史実・文学（著作権）・仕様・文体の四観点で校閲した240件の修正記録。 |
 | `docs/spine.json` | 3案・2審査・1統合で決めた設計の骨格と文体の掟。 |
-| `js/` | エクスプローラー。`app.js`（起動と経路）、`map.js`、`sim.js`（自律経済）、`creature-art.js`、`soul.js`（AIを迎える）、`qr.js`（QRコード）、`i18n.js`（6言語）ほか。 |
-| `tools/` | `validate.mjs`、`sim.test.mjs`、`soul.test.mjs`、`qr.test.mjs`、`aozora-extract.mjs`、`gutenberg-extract.mjs`、`build-single.mjs`、`check.sh` ほか。 |
+| `js/` | エクスプローラー。`app.js`（起動と経路）、`map.js`、`sim.js`（自律経済）、`creature-art.js`、`soul.js`（AIを迎える）、`mind.js`・`mind-local.js`（LLM の頭脳、端末の中のAI）、`qr.js`（QRコード）、`i18n.js`（6言語）ほか。 |
+| `tools/` | `validate.mjs`、`sim.test.mjs`、`soul.test.mjs`、`mind.test.mjs`、`qr.test.mjs`、`aozora-extract.mjs`、`gutenberg-extract.mjs`、`build-single.mjs`、`check.sh` ほか。 |
 
 ### 青空文庫と Project Gutenberg からの抜粋
 
@@ -141,6 +161,14 @@ On a desktop, scan the **QR code** to continue on your phone. This does not copy
 - カードは `localStorage` の `zipangu.travellers.v1` にだけ保存。迎えたAIは普通の住人として経済に加わり、旅の記録（`zipangu.journey.v1:*`）は住人が増えても減っても読み込めます。
 - QRコードは外部ライブラリを使わず `js/qr.js` で描きます（誤り訂正M、バイトモード、型番1〜20）。参照実装と同じ行列になることを `tools/qr.test.mjs` で確かめています。
 
+### LLM の頭脳のしくみ（`js/mind.js`）
+
+- `js/sim.js` は住人が行き先を決めるとき、`mind.wants(id)` なら候補（上位5つ、重複なし）を `mind.ask()` に渡し、住人は「💭 じっくり考えている」で待ちます。返事の番号の候補をそのまま採り、来なければ `patience`（25秒）後にルールで選びます。待っている問いは保存しません。
+- 端末の中のAIは `js/mind-local.js`（Worker のコードも同じファイルにあり、Blob URL で起動するので1ファイル版でも動きます）。WebLLM（`@mlc-ai/web-llm` 0.2.85、jsDelivr から読み込み）で Qwen2.5（PC 1.5B・スマホ 0.5B、`shader-f16` があれば q4f16）を Web Worker の中で動かし、答えを `{"choice", "thought"}` の JSON に制約します。重みは Hugging Face の mlc-ai から一度だけ取得され、ブラウザのキャッシュに残ります。
+- お試し枠は `netlify/functions/zipangu-mind.mjs`。Netlify のサイト設定で `OPENROUTER_API_KEY` を入れると動きます（`ZIPANGU_MIND_MODEL` で既定モデルを変更可）。モデルは許可リストのものだけ、`max_tokens` は400まで、同じサイトからの呼び出しだけを受け、訪問者ごとに1分20回まで。
+- Claude の Opus／Sonnet 5.5 を選ぶと、Anthropic のサーバー側フォールバック（`fallbacks: "default"`）を有効にして呼びます。混雑時は別のモデルが答えることがあり、答えたモデル名は状態欄に出ます。
+- `tools/mind.test.mjs` が、偽のモデルでの選択・心の声・時間切れ・失敗時のルール回帰、各プロバイダの呼び方、上限、お試し枠の検査を確かめます。
+
 ### 約束ごと
 
 - 史実には【史実】、作り話には【創作】。確かめられない史実は書きません。
@@ -148,7 +176,7 @@ On a desktop, scan the **QR code** to continue on your phone. This does not copy
 - 生き物から採るのは落鱗や贈り物だけ。値段のないものには値をつけません。
 - グラフィックを劣化させない。開発のルールは [`AGENTS.md`](AGENTS.md)。
 
-`bash tools/check.sh` がすべての検証（データ、抽出、自律経済、AIの迎え入れ、QR、構文）を実行し、CI でも同じものが走ります。
+`bash tools/check.sh` がすべての検証（データ、抽出、自律経済、AIの迎え入れ、LLM の頭脳、QR、構文）を実行し、CI でも同じものが走ります。
 
 ## 制作帖：設定画とページ上の動き
 

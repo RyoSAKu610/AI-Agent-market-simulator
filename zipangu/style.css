@@ -1329,3 +1329,36 @@ input::placeholder { color: var(--ink-faint); }
 }
 .visual-pose-drawn { display: grid; place-items: center; aspect-ratio: 1; }
 .visual-pose-drawn .avatar, .visual-pose-drawn canvas { width: 72%; height: auto; }
+
+/* ---------------------------------------------------------- 🧠 AI minds (js/mind.js, #/settings) */
+.mind-chip.is-error { border-color: rgba(255, 140, 140, 0.6); color: #ffc4c4; }
+/* phones: the top bar is full, so the mind shows as a badge on ⚙ instead of its own chip */
+.settings-link.has-mind { position: relative; }
+.settings-link.has-mind::after { content: '🧠'; position: absolute; right: -6px; bottom: -4px; font-size: 12px; line-height: 1; display: none; }
+.settings-link.has-mind.mind-error::after { content: '⚠'; }
+@media (max-width: 600px) { .mind-chip { display: none; } .settings-link.has-mind::after { display: block; } }
+.mind-grid { display: grid; gap: 10px; margin: 12px 0; }
+.mind-field { display: grid; gap: 4px; }
+.mind-label { font-size: 13px; color: var(--gold-soft); }
+.mind-input { width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, 0.3); color: var(--ink); border: 1px solid rgba(232, 195, 106, 0.4); border-radius: 8px; padding: 8px 10px; font: inherit; font-size: 14px; }
+.mind-input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.mind-check { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; margin-top: 6px; }
+.mind-check input { margin-top: 3px; }
+.mind-switch { font-size: 16px; font-weight: 700; }
+.mind-keybox { display: grid; gap: 4px; }
+.mind-keylink { font-size: 13px; }
+.mind-note { margin: -4px 0 0; }
+.mind-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.mind-state { font-size: 14px; overflow-wrap: anywhere; }
+.mind-error { color: #ffb0b0; }
+.mind-counts { color: var(--ink-dim); font-size: 13px; }
+.mind-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.mind-log li { font-family: var(--mincho); font-size: 15px; overflow-wrap: anywhere; }
+.mind-log small { font-family: inherit; font-size: 11px; color: var(--ink-dim); }
+.type-thought .feed-msg { color: #c9ecff; font-style: italic; }
+.mind-launch { position: absolute; left: 18px; bottom: 106px; z-index: 4; padding: 9px 14px; border: 1px solid #b9a6ff99; border-radius: 24px; background: #1a1540e6; color: #e3dcff; font: inherit; font-size: 12px; backdrop-filter: blur(8px); cursor: pointer; }
+.mind-launch:hover:not(:disabled) { color: #fff; border-color: #c9b8ff; box-shadow: 0 0 14px rgba(185, 166, 255, 0.35); }
+.mind-launch:disabled { cursor: progress; opacity: 0.92; }
+.mind-localbox { display: grid; gap: 8px; justify-items: start; }
+.mind-local-state { margin: 0; font-size: 14px; color: #c9ecff; }
+@media (max-width: 600px) { .mind-launch { left: 10px; bottom: 232px; font-size: 11px; padding: 7px 10px; } }

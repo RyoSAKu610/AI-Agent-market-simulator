@@ -24,6 +24,22 @@ const VIA_SWATCH = {
     karasu_bikyaku: ['#c9cdd6', '翼のしるし']
 };
 
+// 🧠 One tap to wake the in-browser model (phones ask first), then its loading progress.
+function mindLaunch(ctx) {
+    const engine = ctx.mindEngine;
+    if (!engine || !(globalThis.navigator && navigator.gpu)) return null;
+    const btn = h('button', { type: 'button', class: 'mind-launch', onclick: () => { ctx.startMind(); } });
+    const paint = st => {
+        const busy = st.phase === 'checking' || st.phase === 'loading';
+        btn.hidden = !((st.phase === 'idle' && !ctx.mindAuto) || busy);    // computers start by themselves
+        btn.disabled = busy;
+        btn.textContent = busy ? t('mind.loadingLocal', { pct: Math.round((st.progress || 0) * 100) }) : t('mind.launch', { mb: st.sizeMB });
+    };
+    const off = engine.on(paint);
+    paint(engine.state);
+    return { el: btn, destroy: off };
+}
+
 export function homeView(ctx) {
     const { W, eco, hud } = ctx;
     const canvas = h('canvas', {
@@ -80,6 +96,8 @@ export function homeView(ctx) {
         h('p', { class: 'welcome-links' }, languagePicker(ctx), h('a', { href: '#/about' }, t('welcome.more'))));
     stage.append(h('a', { class: 'visual-map-link', href: '#/visuals' }, t('map.atelier')));
     stage.append(h('a', { class: 'summon-map-link', href: '#/summon' }, t('welcome.summon') + ' →'));
+    const launch = mindLaunch(ctx);
+    if (launch) stage.append(launch.el);
     stage.append(h('h1', { class: 'sr-only' }, '万華京ジパング ・ 地図'), canvas, side, zoomBox, legend, places, welcome);
 
     // ------------------------------------------------ info plaque
@@ -198,6 +216,7 @@ export function homeView(ctx) {
         el: stage,
         update() { if (current && current.update) current.update(); },
         destroy() {
+            if (launch) launch.destroy();
             ctx.mapView = map.getView();
             map.destroy();
             map = null;

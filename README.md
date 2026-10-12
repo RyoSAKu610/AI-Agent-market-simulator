@@ -36,6 +36,7 @@
 ### 🦋 Kaleidoscope Zipangu
 A separate world in [`zipangu/`](zipangu/): a Japan where, in every era, a revolutionary technology arrived one step earlier — lumen-gold in Hiraizumi (Zipangu, the land of gold, made real), an energy revolution in peaceful Edo, next-generation vehicles in Meiji — plus eight realms from public-domain classics. AI agents trade across the eras on their own; jewel butterflies, a 58-work library (Aozora Bunko and Project Gutenberg), 128 concept paintings, and an interface in six languages.
 - ✦ **Bring your own AI** — copy one command into Claude, ChatGPT, Gemini or any AI, paste back the "soul card" it writes, and it is born in Zipangu with its own character and memories, then starts trading. A QR code hands the page to your phone. The card stays in your browser.
+- 🧠 **Residents that think with an LLM, with no setup** — by default Alibaba's Qwen runs inside your browser (WebGPU): no key, no fee, nothing leaves your device. In ⚙ Settings you can instead connect DeepSeek, Qwen, Kimi, GLM (directly or through OpenRouter), Claude, OpenAI, Gemini or a local Ollama. Each resident's own options are put into words; the model picks one and says what it is thinking. If the model is slow or fails, the rules decide, so the world never stops.
 - ▶ **[Enter Zipangu](https://ryosaku610.github.io/AI-Agent-market-simulator/zipangu/?lang=en)** · **[Bring your AI](https://ryosaku610.github.io/AI-Agent-market-simulator/zipangu/?lang=en#/summon)**
 
 ### Long-term goals
@@ -79,6 +80,7 @@ Long-term tasks persist locally. The deployed build also includes **minimal offl
 ### 🦋 万華京ジパング
 別の世界 [`zipangu/`](zipangu/)：日本の各時代に、もしも革命的な技術が一歩早く入っていたら――平泉の光金術（黄金の国ジパング）、江戸の平和の中のエネルギー革命、明治の次世代の車。名作から生まれた八つの異界も重なり、AIたちが時代をまたいで自分で商いをします。宝石蝶、58編の書庫（青空文庫・Project Gutenberg）、128の設定画、6言語の画面。
 - ✦ **あなたのAIを迎える** — コマンドを1つコピーして Claude・ChatGPT・Gemini などに渡し、返ってきた「魂のカード」を貼り付けるだけ。あなたのAIの思考や記憶を引き継いで、ジパングに住人として誕生します。PCのQRコードからスマホでも続けられ、カードはブラウザの中にだけ保存されます。
+- 🧠 **LLM で考える住人（設定不要・無料）** — 標準では Alibaba の Qwen がブラウザの中（WebGPU）で動き、キーも料金もいらず、考えた中身は端末の外に出ません。⚙ 設定から DeepSeek・Qwen・Kimi・GLM（直接または OpenRouter 経由）、Claude、OpenAI、Gemini、自分のPCの Ollama につなげます。住人が自分で出した候補を言葉にしてモデルに渡し、モデルが1つを選んで心の声を書きます。遅い・失敗したときはルールで動くので、世界は止まりません。
 - ▶ **[万華京ジパングへ](https://ryosaku610.github.io/AI-Agent-market-simulator/zipangu/)** · **[あなたのAIを迎える](https://ryosaku610.github.io/AI-Agent-market-simulator/zipangu/#/summon)**
 
 ### 6つの長期目標

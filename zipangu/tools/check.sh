@@ -29,6 +29,10 @@ echo "› bringing an AI in (soul cards, QR, languages)"
 node tools/soul.test.mjs
 node tools/qr.test.mjs
 
+echo "› AI minds (LLM providers, trial endpoint)"
+node tools/mind.test.mjs
+node --check ../netlify/functions/zipangu-mind.mjs
+
 echo "› explorer syntax"
 for f in js/*.js tools/*.mjs; do
   # js/ is ES modules (import/export), so check it as a module; node --check alone treats .js as CommonJS
