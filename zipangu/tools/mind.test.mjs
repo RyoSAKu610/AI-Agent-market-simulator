@@ -13,6 +13,7 @@ import {
     PROVIDERS, DEFAULTS, loadSettings, saveSettings, resolve, complete, listModels, buildPrompt, parseAnswer, createMind, testConnection
 } from '../js/mind.js';
 import trial, { ALLOWED_MODELS } from '../../netlify/functions/zipangu-mind.mjs';
+import { createLocalEngine, localSupport, pickModel, isPhone, WEBLLM_URL } from '../js/mind-local.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const load = () => {
@@ -44,14 +45,14 @@ assert.equal(Array.from(parseAnswer(`{"choice":1,"thought":"${'あ'.repeat(200)}
     assert.equal(local.getItem('zipangu.mind.key'), 'sk-tab');
     local.setItem('zipangu.mind.v1', '{"provider":"nowhere","perHour":-5}');
     const odd = loadSettings(local, session);
-    assert.equal(odd.provider, 'demo'); assert.equal(odd.perHour, 1, 'clamped');
+    assert.equal(odd.provider, 'browser'); assert.equal(odd.perHour, 1, 'clamped');
     const broken = { getItem() { throw new Error('denied'); }, setItem() { throw new Error('denied'); }, removeItem() { throw new Error('denied'); } };
-    assert.equal(loadSettings(broken, broken).on, false, 'blocked storage still loads');
+    assert.equal(loadSettings(broken, broken).provider, 'browser', 'blocked storage still loads');
     saveSettings({ ...DEFAULTS, key: 'x' }, broken, broken);
 }
 assert.equal(resolve({ provider: 'deepseek', base: 'https://example.test/v1/', model: '' }).base, 'https://example.test/v1');
 assert.equal(resolve({ provider: 'deepseek', base: '', model: '' }).model, 'deepseek-chat');
-for (const [id, p] of Object.entries(PROVIDERS)) assert.ok(p.label && (p.kind === 'openai' || p.kind === 'anthropic'), id);
+for (const [id, p] of Object.entries(PROVIDERS)) assert.ok(p.label && ['openai', 'anthropic', 'local'].includes(p.kind), id);
 
 // ------------------------------------------------ talking to providers
 {
@@ -182,9 +183,9 @@ function trace(eco, seconds) {
     let calls = 0, t = 0;
     const gate = [];
     const fetchImpl = () => { calls++; return new Promise(res => gate.push(() => res(reply(200, { model: 'm', choices: [{ message: { content: '{"choice":1,"thought":"はい"}' } }] })))); };
-    const mind = createMind(W, { ...DEFAULTS, on: true, provider: 'deepseek', key: 'k', perHour: 3 }, { fetchImpl, now: () => t });
+    const mind = createMind(W, { ...DEFAULTS, on: true, provider: 'deepseek', key: 'k', perHour: 3, scope: 'travellers' }, { fetchImpl, now: () => t });
     assert.equal(mind.wants(card.id), true);
-    assert.equal(mind.wants(W.agents.find(x => !x.traveller).id), false, 'only travellers by default');
+    assert.equal(mind.wants(W.agents.find(x => !x.traveller).id), false, 'only travellers when asked');
     const eco = createEconomy(W, { seed: 2 });
     const a = eco.agents.get(card.id);
     const opts = [{ kind: 'rest', info: {} }, { kind: 'work', info: { profit: 3 } }];
@@ -207,6 +208,106 @@ function trace(eco, seconds) {
     const failing = createMind(W, { ...DEFAULTS, on: true, provider: 'deepseek', key: 'k' }, { fetchImpl: async () => reply(200, { choices: [{ message: { content: 'えーと' } }] }) });
     assert.equal(await failing.ask(a, opts, {}), null);
     assert.equal(failing.status.state, 'error'); assert.equal(failing.status.failed, 1);
+}
+
+// ------------------------------------------------ the in-browser model (js/mind-local.js)
+{
+    assert.equal(pickModel({ phone: false, f16: true }), 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC');
+    assert.equal(pickModel({ phone: true, f16: false }), 'Qwen2.5-0.5B-Instruct-q4f32_1-MLC');
+    assert.ok(/@mlc-ai\/web-llm@\d+\.\d+\.\d+\//.test(WEBLLM_URL), 'the library version is pinned');
+    assert.equal(isPhone({ userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0)' }), true);
+    assert.equal(isPhone({ userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)', maxTouchPoints: 5 }), true, 'iPad');
+    assert.equal(isPhone({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', maxTouchPoints: 0 }), false);
+    assert.equal(isPhone({ userAgentData: { mobile: true }, userAgent: '' }), true);
+    const gpu = (features = []) => ({ gpu: { requestAdapter: async () => ({ features: new Set(features) }) } });
+    globalThis.Worker = globalThis.Worker || class {};      // localSupport only checks that workers exist
+    assert.deepEqual(await localSupport({}), { ok: false, reason: 'webgpu' });
+    assert.deepEqual(await localSupport({ gpu: { requestAdapter: async () => null } }), { ok: false, reason: 'webgpu' });
+    assert.deepEqual(await localSupport(gpu(['shader-f16'])), { ok: true, f16: true });
+
+    // a stand-in for js/mind-worker.js: reports progress, then answers
+    const made = [];
+    class FakeWorker {
+        constructor(url, opts) { this.url = String(url); this.opts = opts; this.got = []; made.push(this); }
+        postMessage(m) {
+            this.got.push(m);
+            setTimeout(() => {
+                if (m.type === 'load') {
+                    this.onmessage({ data: { type: 'progress', progress: 0.5, text: 'Fetching param cache[1/2]' } });
+                    this.onmessage({ data: { id: m.id, ok: true } });
+                } else if (this.failChat) this.onmessage({ data: { id: m.id, ok: false, error: 'GPU lost' } });
+                else this.onmessage({ data: { id: m.id, ok: true, text: '{"choice": 2, "thought": "港の様子を見に行こう"}' } });
+            }, 1);
+        }
+        terminate() { this.dead = true; }
+    }
+    const nope = createLocalEngine({ nav: {}, WorkerImpl: FakeWorker, workerUrl: 'w.js' });
+    assert.equal(await nope.start(), false);
+    assert.equal(nope.state.phase, 'unsupported');
+    assert.equal(made.length, 0, 'nothing is fetched without WebGPU');
+
+    const engine = createLocalEngine({ nav: gpu(['shader-f16']), WorkerImpl: FakeWorker, workerUrl: 'w.js', phone: false });
+    assert.equal(engine.state.phase, 'idle', 'nothing starts by itself');
+    const phases = [];
+    engine.on(st => phases.push(st.phase));
+    const mind = createMind(W, { ...DEFAULTS }, { local: engine, now: () => 0 });
+    assert.equal(mind.status.state, 'idle');
+    assert.equal(mind.wants(card.id), false, 'no thinking before the model is ready');
+    assert.equal(mind.covers(card.id), true, 'but the resident is one who will think');
+    await assert.rejects(engine.chat('s', 'u'), /not ready/);
+    assert.equal(await engine.start(), true);
+    assert.equal(made[0].opts.type, 'module');
+    assert.equal(made[0].got[0].model, 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC');
+    assert.equal(made[0].got[0].lib, WEBLLM_URL);
+    assert.ok(phases.includes('checking') && phases.includes('loading') && phases.at(-1) === 'ready');
+    assert.equal(mind.status.state, 'ready');
+    assert.equal(mind.status.model, 'Qwen2.5-1.5B-Instruct');
+    assert.equal(mind.wants(card.id), true, 'every resident by default');
+    assert.equal(mind.wants(W.agents.find(x => !x.traveller).id), true);
+
+    const eco = createEconomy(W, { seed: 4 });
+    const a = eco.agents.get(card.id);
+    const opts = [{ kind: 'rest', info: {} }, { kind: 'work', info: { profit: 3 } }];
+    const p1 = mind.ask(a, opts, {});
+    assert.equal(mind.wants(card.id), false, 'one thought at a time on one GPU');
+    assert.equal(await mind.ask(a, opts, {}), null);
+    assert.deepEqual(await p1, { choice: 2, thought: '港の様子を見に行こう', model: 'Qwen2.5-1.5B-Instruct' });
+    const sent = made[0].got[1];
+    assert.equal(sent.type, 'chat');
+    assert.ok(JSON.parse(sent.schema).required.includes('choice'), 'answers are constrained to the JSON shape');
+    for (let i = 0; i < 200; i++) assert.ok(await mind.ask(a, opts, {}), 'no hourly cap for a model that costs nothing');
+    made[0].failChat = true;
+    assert.equal(await mind.ask(a, opts, {}), null);
+    assert.equal(mind.status.state, 'error');
+    made[0].failChat = false;
+    assert.ok(await mind.ask(a, opts, {}), 'it recovers on the next question');
+    assert.equal(mind.status.state, 'ready');
+
+    // the economy with the in-browser model: thoughts appear, the books stay sound
+    const live = createEconomy(W, { seed: 6, mind });
+    const thoughts = [];
+    live.on('thought', m => thoughts.push(m));
+    for (let s = 0; s < 300 && thoughts.length < 3; s++) { live.step(1); await new Promise(r => setTimeout(r, 2)); }
+    assert.ok(thoughts.length >= 3, `residents think with the local model (${thoughts.length})`);
+    assert.ok([...live.agents.values()].every(x => Number.isFinite(x.wallet) && x.wallet >= 0));
+    engine.stop();
+    assert.ok(made[0].dead && engine.state.phase === 'idle');
+    // a download that breaks off can be started again
+    class BrokenWorker extends FakeWorker {
+        postMessage(m) { if (m.type === 'load' && !BrokenWorker.ok) setTimeout(() => this.onmessage({ data: { id: m.id, ok: false, error: 'Failed to fetch' } }), 1); else super.postMessage(m); }
+    }
+    const flaky = createLocalEngine({ nav: gpu([]), WorkerImpl: BrokenWorker, workerUrl: 'w.js', phone: true });
+    assert.equal(await flaky.start(), false);
+    assert.equal(flaky.state.phase, 'error');
+    assert.equal(flaky.state.model, 'Qwen2.5-0.5B-Instruct-q4f32_1-MLC');
+    BrokenWorker.ok = true;
+    assert.equal(await flaky.start(), true, 'retry after an error');
+    assert.equal(flaky.state.phase, 'ready');
+    // a mind for the browser provider without an engine (no WebGPU at boot) is simply idle
+    const none = createMind(W, { ...DEFAULTS }, {});
+    assert.equal(none.status.state, 'unsupported');
+    assert.equal(none.wants(card.id), false);
+    assert.equal(none.covers(card.id), false);
 }
 
 // ------------------------------------------------ the trial endpoint (netlify/functions/zipangu-mind.mjs)

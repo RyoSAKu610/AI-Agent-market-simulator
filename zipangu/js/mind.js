@@ -6,13 +6,19 @@
 // resident's own voice. If the model is slow, fails or answers nonsense, the
 // rules decide as before, so the world never stalls or breaks.
 //
-// Providers are called straight from this browser with the visitor's own key
-// (kept in sessionStorage, or localStorage if they ask), except the trial
-// endpoint, a Netlify function that holds the site's key. Nothing else is sent anywhere.
+// By default the model runs inside this browser (js/mind-local.js: WebLLM +
+// Qwen on WebGPU), so nothing leaves the device. Other providers are called
+// straight from this browser with the visitor's own key (kept in sessionStorage,
+// or localStorage if they ask), except the trial endpoint, a Netlify function
+// that holds the site's key.
 
 import { isTraveller } from './soul.js';
 
 export const PROVIDERS = {
+    browser: {
+        label: 'この端末の中のAI（Qwen・無料・キー不要）', kind: 'local', base: '', model: 'Qwen2.5', keyless: true,
+        note: 'Alibaba の Qwen をこのブラウザの中（WebGPU）で動かします。料金もキーもいらず、考えた中身は端末の外に出ません。最初だけモデルを読み込みます（PC 約1GB・スマホ 約0.4GB、2回目からは保存済み）。'
+    },
     demo: {
         label: 'お試し（キー不要・このサイトの共有枠）', kind: 'openai', base: '/.netlify/functions/zipangu-mind', path: '',
         model: 'auto', keyless: true,
@@ -43,7 +49,8 @@ export const PROVIDERS = {
 
 const SETTINGS_KEY = 'zipangu.mind.v1';
 const KEY_KEY = 'zipangu.mind.key';
-export const DEFAULTS = { on: false, provider: 'demo', base: '', model: '', scope: 'travellers', perHour: 120, remember: false };
+// Out of the box residents think with the in-browser model: no key, no fee, nothing to set up.
+export const DEFAULTS = { on: true, provider: 'browser', base: '', model: '', scope: 'all', perHour: 120, remember: false };
 
 const safe = (fn, fallback) => { try { return fn(); } catch { return fallback; } };
 
@@ -201,34 +208,59 @@ export function parseAnswer(text, n) {
 
 // ------------------------------------------------------------ the mind the economy talks to
 
-export function createMind(W, settings, { fetchImpl, now = () => (globalThis.performance ? performance.now() : Date.now()), lang = 'ja' } = {}) {
+// `local` is the in-browser engine (js/mind-local.js) when the provider is "browser".
+// Until it is ready, wants() is false and the economy runs exactly as without a mind.
+const LOCAL_STATE = { idle: 'idle', checking: 'loading', loading: 'loading', ready: 'ready', unsupported: 'unsupported', error: 'error' };
+
+export function createMind(W, settings, { fetchImpl, now = () => (globalThis.performance ? performance.now() : Date.now()), lang = 'ja', local = null } = {}) {
     const cfg = resolve(settings);
-    const status = { state: settings.on ? 'ready' : 'off', error: '', asked: 0, answered: 0, failed: 0, model: cfg.model, log: [] };
+    const isLocal = cfg.kind === 'local';
+    const engine = isLocal ? local : null;
+    const status = { state: settings.on ? 'ready' : 'off', error: '', asked: 0, answered: 0, failed: 0, model: cfg.model, progress: 0, log: [] };
     const listeners = new Set();
     const calls = [];          // timestamps of calls in the last hour
     let inFlight = 0;
-    const MAX_PARALLEL = 2;
+    const MAX_PARALLEL = isLocal ? 1 : 2;     // one GPU, one thought at a time
     const recentByAgent = new Map();
     const changed = () => { for (const fn of listeners) { try { fn(status); } catch { /* a listener must not stop the mind */ } } };
 
+    if (isLocal) {
+        const sync = st => {
+            if (!settings.on) return;
+            const next = LOCAL_STATE[st.phase] || 'error';
+            // once running, the busy/ready/error of each call is reported by ask()
+            if (!(st.phase === 'ready' && status.state !== 'loading' && status.state !== 'idle')) status.state = next;
+            status.progress = st.progress || 0;
+            status.model = st.model.replace(/-q4f(16|32)_1-MLC$/, '');
+            status.error = st.phase === 'error' ? st.error || '' : '';
+            changed();
+        };
+        if (engine) { engine.on(sync); sync(engine.state); } else if (settings.on) status.state = 'unsupported';
+    }
+    const ready = () => !isLocal || !!(engine && engine.state.phase === 'ready');
+
+    // whether this resident thinks with the mind at all (whatever the mind is doing right now)
+    function covers(id) {
+        if (!settings.on || status.state === 'unsupported') return false;
+        return settings.scope === 'all' || isTraveller(id);
+    }
     function wants(id) {
-        if (!settings.on) return false;
-        if (settings.scope === 'all') return true;
-        return isTraveller(id);
+        return ready() && inFlight < MAX_PARALLEL && covers(id);
     }
 
     async function ask(a, options, { clock, describe } = {}) {
         const t = now();
         while (calls.length && t - calls[0] > 3600000) calls.shift();
-        if (calls.length >= settings.perHour) { status.state = 'budget'; changed(); return null; }
-        if (inFlight >= MAX_PARALLEL) return null;    // busy: the rules decide this time
+        // the in-browser model costs nothing, so it has no hourly cap
+        if (!isLocal && calls.length >= settings.perHour) { status.state = 'budget'; changed(); return null; }
+        if (inFlight >= MAX_PARALLEL || !ready()) return null;    // busy: the rules decide this time
         calls.push(t);
         inFlight++;
         status.asked++;
         status.state = 'working'; changed();
         try {
             const { system, user } = buildPrompt(W, a, options, { clock, describe, lang, recent: recentByAgent.get(a.id) || [] });
-            const { text, model } = await complete(cfg, system, user, { fetchImpl });
+            const { text, model } = isLocal ? await engine.chat(system, user, { maxTokens: 160 }) : await complete(cfg, system, user, { fetchImpl });
             const ans = parseAnswer(text, options.length);
             if (!ans) throw new MindError('format', 'モデルの返事から選択を読み取れませんでした。');
             status.answered++;
@@ -249,7 +281,7 @@ export function createMind(W, settings, { fetchImpl, now = () => (globalThis.per
     }
 
     return {
-        wants, ask, now, patience: 25000, status, cfg,
+        wants, covers, ask, now, patience: isLocal ? 40000 : 25000, status, cfg, engine,
         on: fn => { listeners.add(fn); return () => listeners.delete(fn); },
         logFor: id => status.log.filter(e => e.agent === id)
     };

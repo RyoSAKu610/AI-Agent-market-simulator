@@ -146,7 +146,7 @@ function travellerSection(a) {
 // 🧠 What a resident with a mind said to itself when it chose (js/mind.js).
 function thoughtSection(ctx, a, live) {
     const mind = ctx.mind;
-    const thinks = !!(mind && mind.wants(a.id));
+    const thinks = !!(mind && mind.covers(a.id));
     if (!thinks && !(live && live.thought)) {
         return a.traveller ? { el: h('section', { class: 'sec', 'aria-labelledby': 'ag-mind' }, sectionHead(t('mind.agentTitle'), null, 'ag-mind'),
             h('p', { class: 'ar-role' }, t('mind.agentOff'), ' ', h('a', { href: '#/settings' }, t('settings.title') + ' →'))) } : null;

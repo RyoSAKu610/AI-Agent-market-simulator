@@ -23,7 +23,8 @@ import { attachChainFx } from './chain-fx.js';
 import { summonView, settingsView } from './view-summon.js';
 import { loadCards, addTravellers } from './soul.js';
 import { t, getLang } from './i18n.js';
-import { loadSettings, createMind } from './mind.js';
+import { loadSettings, createMind, PROVIDERS } from './mind.js';
+import { createLocalEngine, CONSENT_KEY } from './mind-local.js';
 
 const SECONDS_PER_DAY = 240;          // one in-world day (one 節気) is about four minutes
 const WARM_UP_SECONDS = 150;          // the city is already busy when you arrive
@@ -113,9 +114,11 @@ async function boot() {
     let session;
     try { session = window.sessionStorage; } catch { session = storage; }
     const loaded = loadJourney(storage, W, seed);
-    // 🧠 Residents think with a large language model only when the visitor turned it on (#/settings).
+    // 🧠 Residents think with a large language model. By default it is Qwen running inside this
+    // browser (js/mind-local.js); until it has loaded, and on devices without WebGPU, the rules decide.
     const mindSettings = loadSettings(storage, session);
-    const mind = mindSettings.on ? createMind(W, mindSettings, { lang: getLang() }) : null;
+    const localEngine = mindSettings.on && (PROVIDERS[mindSettings.provider] || {}).kind === 'local' ? createLocalEngine() : null;
+    const mind = mindSettings.on ? createMind(W, mindSettings, { lang: getLang(), local: localEngine }) : null;
     const eco = createEconomy(W, { seed, secondsPerDay: SECONDS_PER_DAY, state: loaded.data?.economy || null, mind });
     const history = createHistory(eco, loaded.data?.history || null);
     if (!loaded.data?.history) history.sample();
@@ -131,7 +134,7 @@ async function boot() {
     if (!SPEEDS.includes(speed)) speed = 1;
 
     const hud = createHud(W, eco, { speed, onSpeed: s => { speed = s; store.set('zipangu.speed', String(s)); } });
-    const ctx = { W, eco, history, hud, stories, loadDoc, storage, session, mind, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
+    const ctx = { W, eco, history, hud, stories, loadDoc, storage, session, mind, mindEngine: localEngine, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
     let saveBlocked = loaded.blocked;
     const saveNotice = h('div', { class: 'journey-notice' });
     const saveText = h('span', { role: 'status' }, loaded.status);
@@ -186,17 +189,26 @@ async function boot() {
     const tools = document.getElementById('top-tools');
     const settingsLink = h('a', { class: 'settings-link', href: '#/settings', title: t('nav.settings'), 'aria-label': t('nav.settings') }, '⚙');
     tools.append(hud.chainChip, hud.mini, hud.speedEl, settingsLink);
+    // The in-browser model starts by itself on computers; phones ask first (a large download on
+    // mobile data), and remember the answer.
+    ctx.startMind = () => { store.set(CONSENT_KEY, '1'); return localEngine ? localEngine.start() : Promise.resolve(false); };
+    ctx.mindAuto = !!localEngine && (!localEngine.state.phone || store.get(CONSENT_KEY) === '1');
+    // without WebGPU start() only finds that out (nothing is fetched), so the status says so at once
+    if (ctx.mindAuto || (localEngine && !navigator.gpu)) setTimeout(() => localEngine.start(), ctx.mindAuto ? 2500 : 0);
     if (mind) {
         const mindText = h('span', { class: 'chain-chip-text' });
         const mindChip = h('a', { class: 'chain-chip mind-chip', href: '#/settings', title: t('mind.chip') },
             h('span', { class: 'chain-chip-gem', 'aria-hidden': 'true' }, '🧠'), mindText);
         const paintMind = st => {
-            mindText.textContent = st.state === 'working' ? '…' : st.state === 'error' ? 'ERR' : st.state === 'budget' ? 'MAX' : (String(st.model).split('/').pop() || 'LLM');
+            const shown = st.state !== 'unsupported' && st.state !== 'idle';
+            mindChip.hidden = !shown;
+            settingsLink.classList.toggle('has-mind', shown);
+            mindText.textContent = st.state === 'loading' ? `${Math.round((st.progress || 0) * 100)}%`
+                : st.state === 'working' ? '…' : st.state === 'error' ? '⚠' : st.state === 'budget' ? 'MAX' : (String(st.model).split('/').pop() || 'LLM');
             mindChip.classList.toggle('is-live', st.state === 'ready' || st.state === 'working');
             mindChip.classList.toggle('is-error', st.state === 'error');
             settingsLink.classList.toggle('mind-error', st.state === 'error');
         };
-        settingsLink.classList.add('has-mind');
         mind.on(paintMind);
         paintMind(mind.status);
         tools.insertBefore(mindChip, hud.chainChip);

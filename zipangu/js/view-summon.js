@@ -166,13 +166,20 @@ function mindSection(ctx) {
     const say = (text, bad) => { message.textContent = text; message.className = 'soul-message' + (bad ? ' is-error' : ''); };
     const fillModels = list => { clear(models); for (const m of list) models.append(h('option', { value: m })); };
 
+    // the in-browser model needs none of the connection fields
+    const remoteOnly = [];
+    const localBox = h('div', { class: 'mind-localbox' });
+    const remote = el => { remoteOnly.push(el); return el; };
     function paintProvider() {
         const p = PROVIDERS[provider.value] || PROVIDERS.custom;
+        const local = p.kind === 'local';
+        for (const el of remoteOnly) el.hidden = local;
+        localBox.hidden = !local;
         base.placeholder = p.base || 'https://…/v1';
         model.placeholder = p.model || 'model-id';
-        note.textContent = p.note || '';
+        note.textContent = local ? '' : p.note || '';     // the in-browser model explains itself below
         keyBox.hidden = !!p.keyless;
-        keyNone.hidden = !p.keyless;
+        keyNone.hidden = !p.keyless || local;
         keyLink.hidden = !p.keyUrl;
         if (p.keyUrl) keyLink.href = p.keyUrl;
         fillModels(p.suggest || (p.model ? [p.model] : []));
@@ -207,28 +214,48 @@ function mindSection(ctx) {
     function paintStatus() {
         const st = mind ? mind.status : { state: 'off', asked: 0, answered: 0, failed: 0, log: [] };
         clear(state).append(h('span', null, h('b', null, `${t('mind.status')}：`), t('mind.state.' + st.state),
-            st.model && mind ? ` ・ ${st.model}` : '', st.error ? h('span', { class: 'mind-error' }, ` — ${st.error}`) : null,
-            mind ? h('span', { class: 'mind-counts' }, ' ・ ' + t('mind.counts', st)) : null));
+            st.model && mind && (st.state === 'ready' || st.state === 'working' || st.state === 'loading') ? ` ・ ${st.model}` : '', st.error ? h('span', { class: 'mind-error' }, ` — ${st.error}`) : null,
+            mind && (st.asked || st.state === 'ready') ? h('span', { class: 'mind-counts' }, ' ・ ' + t('mind.counts', st)) : null));
         clear(log);
         for (const e of st.log.slice(0, 8)) log.append(h('li', null, h('a', { href: href.agent(e.agent) }, e.name), `「${e.thought}」`, h('small', null, ` ${e.model} ・ ${e.ms}ms`)));
     }
     paintStatus();
     const off = mind ? mind.on(paintStatus) : null;
 
+    // the in-browser model: what it is, and a button to wake it now
+    const engine = ctx.mindEngine;
+    const localText = h('p', { class: 'mind-local-state' });
+    const startBtn = h('button', { type: 'button', class: 'btn btn-primary', onclick: () => { if (ctx.startMind) ctx.startMind(); } }, t('mind.start'));
+    localBox.append(h('p', { class: 'ar-role' }, t('mind.localAbout')), localText, startBtn);
+    const paintLocal = () => {
+        const st = engine ? engine.state : null;
+        const noGpu = !(globalThis.navigator && navigator.gpu) || (st && st.phase === 'unsupported');
+        localText.textContent = noGpu ? t('mind.state.unsupported')
+            : !st ? t('mind.localAfterSave')
+            : st.phase === 'loading' || st.phase === 'checking' ? t('mind.loadingLocal', { pct: Math.round((st.progress || 0) * 100) })
+            : st.phase === 'ready' ? `${t('mind.state.ready')} ・ ${st.model.replace(/-q4f(16|32)_1-MLC$/, '')}`
+            : st.phase === 'error' ? `${t('mind.state.error')} — ${st.error}` : t('mind.launch', { mb: st.sizeMB });
+        startBtn.hidden = noGpu || !st || (st.phase !== 'idle' && st.phase !== 'error');
+        startBtn.textContent = st && st.phase === 'error' ? t('mind.retry') : t('mind.start');
+    };
+    paintLocal();
+    const offLocal = engine ? engine.on(paintLocal) : null;
+
     const el = plaque({ class: 'settings-card mind-card' },
         h('p', null, t('mind.lead')),
         h('label', { class: 'mind-check mind-switch' }, on, h('span', null, t('mind.on'))),
         h('div', { class: 'mind-grid' },
-            field(t('mind.provider'), provider), note,
-            field(t('mind.model'), model, models), h('p', null, fetchBtn),
-            field(t('mind.base'), base),
+            field(t('mind.provider'), provider), note, localBox,
+            remote(field(t('mind.model'), model, models)), remote(h('p', null, fetchBtn)),
+            remote(field(t('mind.base'), base)),
             keyBox, keyNone,
             field(t('mind.scope'), scope),
-            field(t('mind.perHour'), perHour)),
-        h('p', { class: 'ar-role' }, t('mind.privacy')),
-        h('p', { class: 'mind-actions' }, testBtn, ' ', saveBtn), message,
+            remote(field(t('mind.perHour'), perHour))),
+        remote(h('p', { class: 'ar-role' }, t('mind.privacy'))),
+        h('p', { class: 'mind-actions' }, remote(testBtn), ' ', saveBtn), message,
         state, mind ? h('h3', null, t('mind.log')) : null, log);
-    return { el, destroy: () => { if (off) off(); } };
+    paintProvider();
+    return { el, destroy: () => { if (off) off(); if (offLocal) offLocal(); } };
 }
 
 export function settingsView(ctx) {
