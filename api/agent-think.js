@@ -41,7 +41,7 @@ function fallback(goal, task) {
   };
 }
 
-async function openRouterThink(task, goal, state) {
+async function groqThink(task, goal, state) {
   const key = process.env.GROQ_API_KEY;
   if (!key) return null;
 
@@ -138,7 +138,7 @@ export default async function handler(request) {
   if (task.length > MAX_TEXT) return json({ error: "task_too_long", maxLength: MAX_TEXT }, 400);
 
   try {
-    const result = await openRouterThink(task, goal, state);
+    const result = await groqThink(task, goal, state);
     if (result) return json(result);
   } catch (error) {
     // Do not expose provider error details or credentials to the browser.
