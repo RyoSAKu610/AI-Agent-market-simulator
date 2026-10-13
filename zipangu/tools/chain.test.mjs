@@ -368,4 +368,25 @@ const isTransfer = i => i.t === 'transfer', isMemo = i => i.t === 'memo';
     assert.deepEqual(phases, ['failed']);
 }
 
+{   // inscribe: a memo-only tx paid by the treasury (birth certificates); fee only, no setup needed
+    const net = fakeNet({ lamports: 50_000 });
+    const chain = createChain(W, fakeEco(), { storage: memStore(), loadLib: async () => makeLib(net) });
+    assert.equal((await chain.inscribe('birth', 'zipangu:birth|v=1')).reason, 'off', 'refused before enable');
+    await chain.enable();
+    assert.equal(chain.state, 'needs-funds', 'too little for the token setup');
+    const r = await chain.inscribe('birth', 'zipangu:birth|v=1|id=trav_x|h=' + 'a'.repeat(64));
+    assert.equal(r.ok, true);
+    assert.match(r.sig, /^SIG/);
+    assert.equal(r.slot, 4242);
+    assert.equal(net.sent.at(-1).ixs.length, 1, 'a single memo instruction');
+    assert.equal(net.sent.at(-1).ixs[0].text, 'zipangu:birth|v=1|id=trav_x|h=' + 'a'.repeat(64));
+    assert.equal(chain.txs[0].kind, 'birth');
+    assert.equal((await chain.inscribe('birth', 'not ours')).reason, 'memo');
+    assert.equal((await chain.inscribe('birth', 'zipangu:' + 'x'.repeat(500))).reason, 'memo');
+    net.lamports = 0;
+    assert.equal((await chain.inscribe('birth', 'zipangu:birth|v=1')).reason, 'funds');
+    assert.equal(await chain.parsedTx('SIG1'), null, 'an RPC without the method reads as not found');
+    chain.disable();
+}
+
 console.log('chain.test.mjs ok');

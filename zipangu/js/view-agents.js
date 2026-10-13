@@ -12,6 +12,8 @@ import {
 } from './components.js';
 import { notFound } from './view-place.js';
 import { t } from './i18n.js';
+import { birthPanel } from './view-birth.js';
+import { loadCards } from './soul.js';
 
 
 const ORIGIN_LABEL = { neon_mythos: 'NEON MYTHOS の住人', native: '万華京の生え抜き', traveller: t('origin.traveller') };
@@ -178,6 +180,8 @@ export function agentView(ctx, id) {
     const theatre = dramaPanel(ctx, a, talk);
     const onchain = agentChainPanel(ctx, a);
     const thoughts = thoughtSection(ctx, a, live);
+    const card = a.traveller ? loadCards(ctx.storage, W).find(c => c.id === a.id) : null;
+    const birth = card ? birthPanel(ctx, card) : null;
     const cur = stripParens(W.baseCurrency.name_ja);
     const home = W.byId.district.get(a.home);
     const place = home && W.placeOf(home.id);
@@ -225,7 +229,7 @@ export function agentView(ctx, id) {
         h('header', { class: 'agent-hero' },
             avatar(W, a),
             h('div', null,
-                h('p', { class: 'kicker' }, ORIGIN_LABEL[a.origin] || a.origin),
+                h('p', { class: 'kicker' + (a.hiddenResident ? ' kicker-hidden' : '') }, a.hiddenResident ? t('origin.hidden') : ORIGIN_LABEL[a.origin] || a.origin),
                 h('h1', null, agentShort(a)),
                 h('p', { class: 'hero-sub' }, stripParens(a.name_ja) !== agentShort(a) ? a.name_ja : ''),
                 h('p', { class: 'hero-summary' }, a.role),
@@ -234,6 +238,7 @@ export function agentView(ctx, id) {
             theatre.el, panel, onchain.el, conversation.el,
             thoughts && thoughts.el,
             a.traveller ? travellerSection(a) : null,
+            birth && birth.el,
             h('section', { class: 'sec', 'aria-labelledby': 'ag-person' }, sectionHead('人となり', null, 'ag-person'),
                 h('p', { class: 'lead' }, tagged(a.personality)),
                 h('dl', { class: 'facts' }, h('dt', null, '得意'), h('dd', null, tagged(a.specialty)))),

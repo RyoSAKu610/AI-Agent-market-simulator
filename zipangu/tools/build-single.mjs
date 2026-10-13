@@ -21,6 +21,7 @@ const STEMS = ['world', 'eras', 'realms', 'districts', 'creatures', 'goods', 'cu
 function collectWorld() {
     const world = {};
     for (const stem of STEMS) world[stem] = JSON.parse(read(`world/${stem}.json`));
+    world.hidden = JSON.parse(read('world/hidden.json'));
     const texts = join(root, 'world', 'library.texts.json');
     world.texts = existsSync(texts) ? JSON.parse(readFileSync(texts, 'utf8')) : { works: {} };
     return world;
@@ -124,7 +125,9 @@ for (const node of document.querySelectorAll('script[data-visual-key]')) {
 
 function build() {
     // The single-file artifact uses installed serif/monospace fallbacks offline.
-    let html = read('index.html').replace(/^<link[^\n]+https:\/\/fonts\.(?:googleapis|gstatic)\.com[^\n]*>\n/gm, '');
+    let html = read('index.html').replace(/^<link[^\n]+https:\/\/fonts\.(?:googleapis|gstatic)\.com[^\n]*>\n/gm, '')
+        // the offline copy inlines its scripts, which the site's Content-Security-Policy forbids
+        .replace(/^<!-- Only this site[\s\S]*?-->\n<meta http-equiv="Content-Security-Policy"[^\n]*>\n/m, '');
     const css = read('style.css');
     const cssTag = '<link rel="stylesheet" href="style.css">';
     const jsTag = '<script type="module" src="js/app.js"></script>';

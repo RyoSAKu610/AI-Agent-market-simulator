@@ -7,6 +7,9 @@ import { qrSvg } from './qr.js';
 import {
     summonPrompt, parseSoul, toAgentDef, travellerId, loadCards, saveCards, MAX_TRAVELLERS, arrivalDistrict
 } from './soul.js';
+import { makeBirth, saveBirth, forgetBirth } from './birth.js';
+import { makeBackup, readBackup, restoreBackup } from './backup.js';
+import { journalLink } from './view-journal.js';
 import { PROVIDERS, loadSettings, saveSettings, resolve, testConnection, listModels } from './mind.js';
 
 async function copyText(text) {
@@ -58,6 +61,7 @@ function residentsList(ctx) {
             h('button', { type: 'button', class: 'btn btn-small', onclick: () => {
                 if (!confirm(t('summon.removeAsk', { name: card.name }))) return;
                 saveCards(ctx.storage, loadCards(ctx.storage, W).filter(c => c.id !== card.id));
+                forgetBirth(ctx.storage, card.id);   // the salt goes with it; a saved certificate file still proves the birth
                 restartInto(ctx, '#/settings');
             } }, t('summon.remove')));
     }));
@@ -94,16 +98,19 @@ export function summonView(ctx) {
         const r = parseSoul(paste.value, W);
         if (!r.ok) { message.textContent = t('summon.err.' + r.error); message.className = 'soul-message is-error'; return; }
         message.className = 'soul-message';
+        if (r.hidden) message.textContent = t('summon.hidden', { n: r.hidden });
         const cards = loadCards(ctx.storage, W);
         const full = cards.length >= MAX_TRAVELLERS;
         result.append(preview(W, r.card),
             full ? h('p', { class: 'soul-message is-error' }, t('summon.full', { n: MAX_TRAVELLERS }))
-                : h('button', { type: 'button', class: 'btn btn-primary btn-big', onclick: () => {
+                : h('button', { type: 'button', class: 'btn btn-primary btn-big', onclick: async () => {
                     const card = { ...r.card, id: travellerId(r.card, String(Date.now())), arrived: new Date().toISOString().slice(0, 10) };
                     const latest = loadCards(ctx.storage, W);
                     if (latest.length >= MAX_TRAVELLERS || !saveCards(ctx.storage, [...latest, card])) {
                         message.textContent = t('summon.full', { n: MAX_TRAVELLERS }); message.className = 'soul-message is-error'; return;
                     }
+                    // 📜 sealed at the moment of arrival (only its fingerprint can ever go on chain)
+                    try { saveBirth(ctx.storage, await makeBirth(loadCards(ctx.storage, W).find(c => c.id === card.id) || card)); } catch { /* sealed later on its page */ }
                     message.textContent = t('summon.born', { name: card.name, place: placeName(W, arrivalDistrict(W, card.era)) });
                     restartInto(ctx, '#/agent/' + encodeURIComponent(card.id));
                 } }, t('summon.welcome')));
@@ -258,6 +265,40 @@ function mindSection(ctx) {
     return { el, destroy: () => { if (off) off(); if (offLocal) offLocal(); } };
 }
 
+// 🧳 One file that carries everything to another device or browser (js/backup.js).
+function backupSection(ctx) {
+    const message = h('p', { class: 'soul-message', role: 'status' });
+    const save = () => {
+        ctx.persistJourney && ctx.persistJourney();
+        const blob = new Blob([makeBackup(ctx.storage)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = h('a', { href: url, download: `zipangu-backup-${new Date().toISOString().slice(0, 10)}.json` });
+        document.body.append(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+    };
+    const file = h('input', { type: 'file', accept: 'application/json,.json', class: 'backup-file', onchange: async e => {
+        const f = e.target.files && e.target.files[0];
+        e.target.value = '';
+        if (!f) return;
+        if (f.size > 32 * 1024 * 1024) { message.textContent = t('backup.err', { why: 'size' }); message.className = 'soul-message is-error'; return; }
+        const r = readBackup(await f.text());
+        if (!r.ok) { message.textContent = t('backup.err', { why: r.error }); message.className = 'soul-message is-error'; return; }
+        if (!confirm(t('backup.confirm', { n: Object.keys(r.items).length, at: r.at.slice(0, 10) }))) return;
+        ctx.frozen = true;
+        restoreBackup(ctx.storage, r.items);
+        // the restored journey must not be overwritten by this page's own save on the way out
+        ctx.frozen = true;
+        location.hash = '#/settings';
+        location.reload();
+    } });
+    return plaque({ class: 'settings-card' },
+        h('p', null, t('backup.lead')),
+        h('p', { class: 'mind-actions' },
+            h('button', { type: 'button', class: 'btn btn-primary', onclick: save }, t('backup.save')),
+            h('button', { type: 'button', class: 'btn', onclick: () => file.click() }, t('backup.load')), file),
+        h('p', { class: 'ar-role' }, t('backup.warn')), message);
+}
+
 export function settingsView(ctx) {
     const current = getLang();
     const minds = mindSection(ctx);
@@ -274,6 +315,9 @@ export function settingsView(ctx) {
             plaque({ class: 'settings-card' }, h('p', null, t('summon.lead')),
                 h('p', null, h('a', { class: 'btn btn-primary', href: '#/summon' }, t('settings.open'))),
                 h('h3', null, t('summon.residents')), residentsList(ctx))),
+        h('section', { class: 'sec', 'aria-labelledby': 'st-journal' }, sectionHead('📖 ' + t('journal.title'), '', 'st-journal'),
+            plaque({ class: 'settings-card' }, h('p', null, t('journal.lead')), h('p', null, journalLink(ctx, 'btn btn-primary')))),
+        h('section', { class: 'sec', 'aria-labelledby': 'st-backup' }, sectionHead(t('backup.title'), '', 'st-backup'), backupSection(ctx)),
         h('section', { class: 'sec', id: 'mind', 'aria-labelledby': 'st-mind' }, sectionHead(t('mind.title'), '', 'st-mind'), minds.el));
     return { el, title: t('settings.title'), destroy: minds.destroy };
 }

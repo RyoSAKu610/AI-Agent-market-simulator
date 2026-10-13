@@ -9,7 +9,7 @@ const MIN_SETUP_LAMPORTS = 120_000_000;      // what chain.js wants before it wi
 const HIRE_LAMPORTS = 10_000_000;            // 0.01 SOL
 const FAUCET = 'https://faucet.solana.com/';
 
-const KIND = { trade: '取引', settle: '決算', setup: '開設', fund: '資金', hire: '雇用' };
+const KIND = { trade: '取引', settle: '決算', setup: '開設', fund: '資金', hire: '雇用', birth: '誕生証明' };
 const STATUS = { queued: ['待機', 'pending'], sent: ['送信中', 'pending'], confirmed: ['確定', 'confirmed'], failed: ['失敗', 'failed'] };
 const VERB = { buy: '仕入れ', sell: '売却', craft: '細工' };
 
@@ -53,6 +53,7 @@ export function summarize(W, tx) {
     if (tx.kind === 'settle') return '決算の記録 ' + clip(tx.memo ? tx.memo.replace(/^zipangu:/, '') : '', 54);
     if (tx.kind === 'setup') return 'KOGANE の開設（ミント・口座・委任）';
     if (tx.kind === 'fund') return '財務庫への入金';
+    if (tx.kind === 'birth') return '渡来したAIの誕生証明（指紋だけ。カードの中身は書きません） ' + clip(tx.memo ? (tx.memo.match(/h=([0-9a-f]{12})/) || [])[1] || '' : '', 14);
     if (tx.kind === 'hire') return 'x402 の支払い（雇用） ' + clip(tx.memo ? tx.memo.replace(/^zipangu:/, '') : '', 40);
     return clip(tx.memo || '', 60);
 }

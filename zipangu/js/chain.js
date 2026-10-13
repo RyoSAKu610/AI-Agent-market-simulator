@@ -567,6 +567,24 @@ export function createChain(W, eco, { storage, rpc = 'https://api.devnet.solana.
         }
     }
 
+    // A memo-only transaction paid by the treasury (birth certificates, js/birth.js). It needs
+    // only the fee, not the token setup, so it works as soon as the treasury holds a little SOL.
+    const MIN_FEE_LAMPORTS = 10_000;
+    async function inscribe(kind, memo) {
+        if (!conn || !treasuryKp) return { ok: false, reason: 'off' };
+        if (typeof memo !== 'string' || !memo.startsWith('zipangu:') || byteLen(memo) > MEMO_MAX_BYTES) return { ok: false, reason: 'memo' };
+        await refreshBalance();
+        if (!(treasuryLamports >= MIN_FEE_LAMPORTS)) return { ok: false, reason: 'funds' };
+        const rec = newTx(clean(kind), [], memo);
+        const ok = await submit(rec, [memoIx(memo)], [treasuryKp]);
+        return ok ? { ok: true, sig: rec.sig, slot: rec.slot } : { ok: false, reason: rec.error || 'failed' };
+    }
+    // The parsed transaction as the RPC reports it (for independent checks), or null.
+    async function parsedTx(sig) {
+        if (!conn) return null;
+        try { return await conn.getParsedTransaction(sig, { commitment: 'confirmed', maxSupportedTransactionVersion: 0 }); } catch (e) { return null; }
+    }
+
     async function balanceOf(id) {
         if (!conn || !ata.has(id)) return null;
         try {
@@ -615,7 +633,8 @@ export function createChain(W, eco, { storage, rpc = 'https://api.devnet.solana.
         get queued() { return batcher.size + settleQ.length; },
         addressOf: id => addr.get(id) ?? null,
         ataOf: id => ata.get(id) ?? null,
-        enable, requestAirdrop, fundFromWallet, setup, disable, balanceOf, hire, reset, on,
+        enable, requestAirdrop, fundFromWallet, setup, disable, balanceOf, hire, reset, on, inscribe, parsedTx,
+        save() { if (persistTimer) { clearTimeout(persistTimer); persistTimer = null; } persistNow(); },   // before a reload
         flush   // extra: send one batch now (the timer calls this every ~2.5 s)
     };
     return chain;

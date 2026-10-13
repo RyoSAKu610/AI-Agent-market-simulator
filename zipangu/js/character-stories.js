@@ -6,10 +6,10 @@ const bounded = (a, n) => a.slice(-n);
 export const REQUEST_LABELS = { observe: '現地記録', guide: '本拠への案内', message: '縁のある人へ伝言' };
 export function createStories(W, eco, saved = null, changed = () => {}) {
     const state = saved ? JSON.parse(JSON.stringify(saved)) : { v: 1, nextId: 1, lastSeq: eco.snapshot().eventSeq || 0, people: {} };
-    for (const a of W.agents) if (!state.people[a.id]) state.people[a.id] = {
-        chat: [], chronicle: [], memories: [], requests: [], trust: 0, practice: 0, bonds: {}, earned: []
-    };
-    const person = id => state.people[id];
+    const blank = () => ({ chat: [], chronicle: [], memories: [], requests: [], trust: 0, practice: 0, bonds: {}, earned: [] });
+    for (const a of W.agents) if (!state.people[a.id]) state.people[a.id] = blank();
+    // a resident who arrives while the world runs (a hidden resident met on the way) gets a page of their own on first look
+    const person = id => state.people[id] || (W.byId.agent.has(id) ? (state.people[id] = blank()) : undefined);
     const drama = createDrama(W, eco, state.drama || null, person,
         id => characterArc(CHARACTER_PROFILES[id], id, person(id), eco.agents.get(id)));
     const districtName = id => W.byId.district.get(id)?.name_ja || id || '道中';

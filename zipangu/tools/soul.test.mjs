@@ -61,6 +61,29 @@ assert.equal(odd.card.era, 'reiwa_mangekyo', 'unknown era lands in the 令和 ci
 assert.equal(odd.card.from, '<script>', 'kept as text; the page only renders it as text');
 assert.equal(cleanText('  a\t\tb  ', 10), 'a b');
 
+// ------------------------------------------------ private details never get in
+{
+    const leaky = parseSoul(`${SOUL_MARK}${JSON.stringify({
+        name: 'ミナ', from: 'GPT', personality: '几帳面。連絡は mina.owner@example.com か 090-1234-5678 へ',
+        memories: ['APIキー sk-proj-abcdefghijklmnop1234 を一緒に設定した', '家は 〒150-0001 の近く', 'https://example.com/me?token=secret を見た', 'パスワードは hunter2 だと聞いた', '1868年に10人で旅をした'],
+        values: ['誠実さ'], goal: 'knowledge'
+    })}`, W);
+    assert.equal(leaky.ok, true);
+    const all = JSON.stringify(leaky.card);
+    for (const secret of ['mina.owner@example.com', '090-1234-5678', 'sk-proj-abcdefghijklmnop1234', '150-0001', 'https://example.com', 'token=secret', 'hunter2']) {
+        assert.ok(!all.includes(secret), `masked: ${secret}`);
+    }
+    assert.ok(leaky.hidden >= 6, `counted ${leaky.hidden}`);
+    assert.ok(leaky.card.memories.includes('1868年に10人で旅をした'), 'years and counts stay');
+    assert.equal(parseSoul(reply, W).hidden, 0, 'a clean card hides nothing');
+    // cards saved before this check are cleaned when read back
+    const mem2 = new Map();
+    const st2 = { getItem: k => (mem2.has(k) ? mem2.get(k) : null), setItem: (k, v) => mem2.set(k, String(v)), removeItem: k => mem2.delete(k) };
+    st2.setItem('zipangu.travellers.v1', JSON.stringify([{ id: 'trav_old1', name: 'Old', personality: 'mail me at old@example.org', memories: ['ghp_abcdefghijklmnopqrstuvwxyz0123'] }]));
+    const old = loadCards(st2, W)[0];
+    assert.ok(old && !JSON.stringify(old).includes('old@example.org') && !JSON.stringify(old).includes('ghp_'));
+}
+
 // ------------------------------------------------ into the world
 const card = { ...ok.card, id: travellerId(ok.card, 'test'), arrived: '2026-10-12' };
 assert.ok(isTraveller(card.id) && /^trav_[a-z0-9]+$/.test(card.id));

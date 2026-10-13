@@ -1155,6 +1155,18 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         refreshPrices();
     }
 
+    // A resident who arrives while the world runs (a hidden resident met on the way, js/progress.js).
+    // The definition must already be in W.agents so the map, pages and saves know it.
+    function addResident(def) {
+        if (!def || !def.id || agents.has(def.id)) return null;
+        const a = makeAgent(def, ix, S.seed);
+        a.stageSince = now();
+        agents.set(a.id, a);
+        updateGoal(a);
+        emit('arrive-new', { agent: a.id, district: a.home, message: `✦ ${a.name} が街に住みはじめた` });
+        return a;
+    }
+
     function snapshot() {
         S.rng = rng.s;
         return JSON.parse(JSON.stringify({ ...S, agents: [...agents.values()], clock }));
@@ -1181,6 +1193,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         step,
         on,
         snapshot,
+        addResident,
         priceOf,
         queueRequest
     };

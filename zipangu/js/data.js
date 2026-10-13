@@ -15,6 +15,8 @@ export async function loadWorld(base = 'world/') {
     await Promise.all(STEMS.map(async stem => { raw[stem] = await fetchJson(dir + stem + '.json'); }));
     // The extracted texts are optional: the explorer still works without them.
     raw.texts = await fetchJson(dir + TEXTS_FILE).catch(() => ({ works: {} }));
+    // Hidden residents are optional too: without them nobody secret ever appears.
+    raw.hidden = await fetchJson(dir + 'hidden.json').catch(() => []);
     return buildWorld(raw);
 }
 
@@ -45,6 +47,7 @@ export function buildWorld(raw = {}) {
         agents: list(raw.agents),
         events: list(raw.events),
         library: list(raw.library),
+        hidden: list(raw.hidden),          // residents who appear only after play (js/progress.js)
         texts: raw.texts || raw['library.texts'] || { works: {} }
     };
     if (!W.texts.works) W.texts.works = {};
@@ -61,7 +64,8 @@ export function buildWorld(raw = {}) {
         currency: indexById(W.currencies),
         agent: indexById(W.agents),
         event: indexById(W.events),
-        work: indexById(W.library)
+        work: indexById(W.library),
+        hidden: indexById(W.hidden)
     };
 
     W.baseCurrency = W.currencies.find(c => c.base) || W.currencies[0] ||

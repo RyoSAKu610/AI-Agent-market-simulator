@@ -9,3 +9,20 @@
 # zipangu/js/mind.js "お試し" provider: netlify/functions/zipangu-mind.mjs (needs OPENROUTER_API_KEY)
 [functions]
   directory = "netlify/functions"
+
+# Security headers. Every page: no MIME sniffing, no full URLs leaked to other sites,
+# no camera / microphone / location / payment APIs (nothing here uses them).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+# 万華京ジパング: the same Content-Security-Policy as the <meta> in zipangu/index.html,
+# plus frame-ancestors (header only) so no other site can frame it.
+[[headers]]
+  for = "/zipangu/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://esm.sh 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'; frame-ancestors 'self'"
+    X-Frame-Options = "SAMEORIGIN"

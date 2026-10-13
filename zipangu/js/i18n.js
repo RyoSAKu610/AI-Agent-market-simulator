@@ -71,6 +71,7 @@ const S = {
     'summon.none': ['まだいません。', 'None yet.', '还没有。', '아직 없습니다.', 'Todavía ninguna.', 'Noch keine.'],
     'summon.remove': ['この世界から送り出す', 'Send off from this world', '送离这个世界', '이 세계에서 떠나보내기', 'Despedir de este mundo', 'Aus dieser Welt verabschieden'],
     'summon.removeAsk': ['{name} をこの世界から送り出しますか？旅の記録からも外れます。', 'Send {name} off from this world? They will leave the journey record too.', '要把 {name} 送离这个世界吗？也会从旅程记录中移除。', '{name}을(를) 이 세계에서 떠나보낼까요? 여행 기록에서도 빠집니다.', '¿Despedir a {name} de este mundo? También saldrá del registro del viaje.', '{name} aus dieser Welt verabschieden? Auch aus dem Reiseprotokoll.'],
+    'summon.hidden': ['🔒 機密らしき情報（メール・電話番号・URL・鍵など）を {n} か所「［伏せ字］」にしました。伏せた中身はどこにも保存・送信されません。', '🔒 {n} item(s) that looked private (e-mail, phone, URL, keys…) were replaced with “［伏せ字］”. The originals are never saved or sent.', '🔒 已将 {n} 处疑似机密信息（邮箱、电话、网址、密钥等）替换为“［伏せ字］”。原文不会被保存或发送。', '🔒 기밀로 보이는 정보(메일·전화번호·URL·키 등) {n}곳을 “［伏せ字］”로 가렸습니다. 원문은 저장·전송되지 않습니다.', '🔒 Se ocultaron {n} dato(s) que parecían privados (correo, teléfono, URL, claves…) con «［伏せ字］». Los originales no se guardan ni se envían.', '🔒 {n} Angabe(n), die privat wirkten (E-Mail, Telefon, URL, Schlüssel …), wurden durch „［伏せ字］“ ersetzt. Die Originale werden weder gespeichert noch gesendet.'],
     'summon.full': ['迎え入れられるのは {n} 人までです。誰かを送り出してから迎えてください。', 'You can welcome up to {n}. Send one off first.', '最多可迎入 {n} 位。请先送离一位。', '최대 {n}명까지 맞이할 수 있습니다. 먼저 한 명을 떠나보내세요.', 'Puedes recibir hasta {n}. Despide a uno primero.', 'Du kannst bis zu {n} aufnehmen. Verabschiede zuerst jemanden.'],
     'summon.err.none': ['カードが見つかりません。「ZIPANGU-SOUL/1」と { … } を含む返事を貼り付けてください。', 'No card found. Paste a reply that contains "ZIPANGU-SOUL/1" and a { … } block.', '没有找到卡片。请粘贴包含“ZIPANGU-SOUL/1”和 { … } 的回复。', '카드를 찾을 수 없습니다. "ZIPANGU-SOUL/1"과 { … }가 들어 있는 답장을 붙여 넣으세요.', 'No se encontró la tarjeta. Pega una respuesta que contenga «ZIPANGU-SOUL/1» y un bloque { … }.', 'Keine Karte gefunden. Füge eine Antwort mit „ZIPANGU-SOUL/1“ und einem { … }-Block ein.'],
     'summon.err.json': ['カードの形が崩れています（JSONとして読めません）。AIに「JSONだけをもう一度出して」と頼んでください。', 'The card is malformed (not valid JSON). Ask your AI to "output only the JSON again".', '卡片格式有误（无法作为 JSON 读取）。请让 AI“只重新输出 JSON”。', '카드 형식이 깨졌습니다(JSON으로 읽을 수 없음). AI에게 "JSON만 다시 출력해 줘"라고 부탁하세요.', 'La tarjeta está mal formada (JSON no válido). Pide a tu IA que «vuelva a mostrar solo el JSON».', 'Die Karte ist fehlerhaft (kein gültiges JSON). Bitte deine KI, „nur das JSON noch einmal auszugeben“.'],
@@ -98,6 +99,62 @@ const S = {
     'map.playArt': ['絵を動かす', 'Play art', '播放画面', '그림 움직이기', 'Animar imágenes', 'Bilder abspielen'],
     'origin.traveller': ['渡来したAI', 'Visiting AI', '渡来的 AI', '건너온 AI', 'IA visitante', 'Zugereiste KI'],
 
+    'birth.title': ['📜 誕生証明', '📜 Birth certificate', '📜 诞生证明', '📜 탄생 증명', '📜 Certificado de nacimiento', '📜 Geburtsurkunde'],
+    'birth.lead': ['このAIが万華京ジパングに生まれたことを、魂のカードの「指紋」（SHA-256）で封印しました。鎖に刻むのは指紋だけで、カードの中身や名前は一文字も書きません。', 'This AI’s birth in Zipangu is sealed with a fingerprint (SHA-256) of its soul card. Only the fingerprint goes on chain — not one word of the card or its name.', '用灵魂卡的“指纹”（SHA-256）封存了这位 AI 在万华京诞生的事实。上链的只有指纹，卡片内容和名字一个字也不写。', '이 AI가 만화경 지팡구에서 태어났다는 사실을 영혼 카드의 “지문”(SHA-256)으로 봉인했습니다. 체인에는 지문만 새기고, 카드 내용이나 이름은 한 글자도 쓰지 않습니다.', 'El nacimiento de esta IA en Zipangu queda sellado con la huella (SHA-256) de su tarjeta del alma. En la cadena solo va la huella, ni una palabra de la tarjeta ni su nombre.', 'Die Geburt dieser KI in Zipangu ist mit dem Fingerabdruck (SHA-256) ihrer Seelenkarte versiegelt. Auf die Kette kommt nur der Fingerabdruck – kein Wort der Karte, nicht einmal der Name.'],
+    'birth.sealed': ['封印した日', 'Sealed', '封存日期', '봉인한 날', 'Sellado', 'Versiegelt'],
+    'birth.digest': ['指紋（SHA-256）', 'Fingerprint (SHA-256)', '指纹（SHA-256）', '지문(SHA-256)', 'Huella (SHA-256)', 'Fingerabdruck (SHA-256)'],
+    'birth.local': ['この端末で封印済み。まだ鎖には刻まれていません。', 'Sealed on this device; not on chain yet.', '已在本设备封存，尚未上链。', '이 기기에서 봉인됨. 아직 체인에 새기지 않았습니다.', 'Sellado en este dispositivo; aún no está en la cadena.', 'Auf diesem Gerät versiegelt, noch nicht auf der Kette.'],
+    'birth.onchain': ['⛓ Solana devnet に刻まれました（slot {slot}）', '⛓ Inscribed on Solana devnet (slot {slot})', '⛓ 已刻在 Solana devnet 上（slot {slot}）', '⛓ Solana devnet에 새겨졌습니다(slot {slot})', '⛓ Inscrito en Solana devnet (slot {slot})', '⛓ Auf Solana devnet eingetragen (Slot {slot})'],
+    'birth.verified': ['✓ 鎖の記録と照合済み', '✓ Checked against the chain', '✓ 已与链上记录核对', '✓ 체인 기록과 대조 완료', '✓ Verificado con la cadena', '✓ Mit der Kette abgeglichen'],
+    'birth.changed': ['⚠ カードの中身が封印したときと一致しません。', '⚠ The card no longer matches what was sealed.', '⚠ 卡片内容与封存时不一致。', '⚠ 카드 내용이 봉인했을 때와 일치하지 않습니다.', '⚠ La tarjeta ya no coincide con lo sellado.', '⚠ Die Karte stimmt nicht mehr mit dem Versiegelten überein.'],
+    'birth.inscribe': ['⛓ Solana devnet に刻む（無料のテスト網）', '⛓ Inscribe on Solana devnet (free test network)', '⛓ 刻到 Solana devnet（免费测试网）', '⛓ Solana devnet에 새기기(무료 테스트넷)', '⛓ Inscribir en Solana devnet (red de pruebas gratuita)', '⛓ Auf Solana devnet eintragen (kostenloses Testnetz)'],
+    'birth.verify': ['🔍 鎖と照合する', '🔍 Check against the chain', '🔍 与链上核对', '🔍 체인과 대조', '🔍 Verificar con la cadena', '🔍 Mit der Kette abgleichen'],
+    'birth.save': ['💾 証明書を保存', '💾 Save the certificate', '💾 保存证书', '💾 증명서 저장', '💾 Guardar el certificado', '💾 Urkunde speichern'],
+    'birth.explorer': ['エクスプローラーで見る →', 'View in the explorer →', '在浏览器中查看 →', '익스플로러에서 보기 →', 'Ver en el explorador →', 'Im Explorer ansehen →'],
+    'birth.connecting': ['devnet につないでいます…', 'Connecting to devnet…', '正在连接 devnet…', 'devnet에 연결하는 중…', 'Conectando con devnet…', 'Verbinde mit devnet …'],
+    'birth.airdrop': ['手数料用のテスト SOL を受け取っています…', 'Getting test SOL for the fee…', '正在领取用于手续费的测试 SOL…', '수수료용 테스트 SOL을 받는 중…', 'Obteniendo SOL de prueba para la comisión…', 'Hole Test-SOL für die Gebühr …'],
+    'birth.airdropFail': ['テスト SOL を受け取れませんでした（混雑していることがあります）。「鎖」のページで財務庫に入金してから、もう一度お試しください。', 'Could not get test SOL (the faucet is often busy). Fund the treasury on the Chain page, then try again.', '未能领取测试 SOL（水龙头经常繁忙）。请在“链”页面为财库充值后重试。', '테스트 SOL을 받지 못했습니다(혼잡할 때가 있습니다). “체인” 페이지에서 금고에 입금한 뒤 다시 시도하세요.', 'No se pudo obtener SOL de prueba (el grifo suele estar ocupado). Recarga la tesorería en la página Cadena y vuelve a intentarlo.', 'Kein Test-SOL erhalten (der Faucet ist oft ausgelastet). Fülle auf der Ketten-Seite die Kasse auf und versuche es erneut.'],
+    'birth.sending': ['刻んでいます…', 'Inscribing…', '正在上链…', '새기는 중…', 'Inscribiendo…', 'Trage ein …'],
+    'birth.fail': ['刻めませんでした：{reason}', 'Could not inscribe: {reason}', '上链失败：{reason}', '새기지 못했습니다: {reason}', 'No se pudo inscribir: {reason}', 'Eintragen fehlgeschlagen: {reason}'],
+    'birth.checking': ['鎖の記録を読んでいます…', 'Reading the chain…', '正在读取链上记录…', '체인 기록을 읽는 중…', 'Leyendo la cadena…', 'Lese die Kette …'],
+    'birth.ok': ['✓ 一致しました。この指紋の誕生が devnet に記録されています。', '✓ Match: this fingerprint’s birth is recorded on devnet.', '✓ 一致：该指纹的诞生已记录在 devnet 上。', '✓ 일치: 이 지문의 탄생이 devnet에 기록되어 있습니다.', '✓ Coincide: el nacimiento de esta huella está registrado en devnet.', '✓ Übereinstimmung: Die Geburt dieses Fingerabdrucks ist auf devnet verzeichnet.'],
+    'birth.ng': ['✗ 鎖の記録と一致しません（{reason}）。', '✗ Does not match the chain ({reason}).', '✗ 与链上记录不一致（{reason}）。', '✗ 체인 기록과 일치하지 않습니다({reason}).', '✗ No coincide con la cadena ({reason}).', '✗ Stimmt nicht mit der Kette überein ({reason}).'],
+    'birth.privacy': ['証明書ファイルには、カードと「塩」（ランダムな合言葉）が入っています。これがあれば、どの端末からでも誕生を証明できます。人には渡さず、自分で保管してください。', 'The certificate file holds the card and its “salt” (a random secret). With it you can prove the birth from any device. Keep it to yourself.', '证书文件包含卡片和“盐”（随机密语）。有了它，可在任何设备上证明诞生。请自行妥善保管，不要交给他人。', '증명서 파일에는 카드와 “소금”(무작위 비밀값)이 들어 있습니다. 이것만 있으면 어느 기기에서든 탄생을 증명할 수 있습니다. 남에게 주지 말고 직접 보관하세요.', 'El archivo contiene la tarjeta y su «sal» (un secreto aleatorio). Con él puedes demostrar el nacimiento desde cualquier dispositivo. Guárdalo solo para ti.', 'Die Datei enthält die Karte und ihr „Salz“ (ein zufälliges Geheimnis). Damit kannst du die Geburt von jedem Gerät aus beweisen. Behalte sie für dich.'],
+    'journal.title': ['旅の記録帖', 'Travel journal', '旅行记录册', '여행 기록첩', 'Diario de viaje', 'Reisetagebuch'],
+    'journal.lead': ['遊ぶほど「縁」がたまり、旅の位が上がって、できることが増えていきます。毎日のおみくじ、幻の住人との出会い、発見帖。記録は言語や旅を変えても残ります。', 'The more you play, the more 縁 (bonds) you gather: your rank rises and more opens up. A daily fortune, hidden residents to meet, a book of discoveries. It all stays when you change language or start a new journey.', '玩得越久，“缘”就越多：旅行等级上升，能做的事也越来越多。每日签运、与隐藏居民的相遇、发现录。更换语言或开始新旅程都会保留。', '놀수록 “인연”이 쌓여 여행 등급이 오르고 할 수 있는 일이 늘어납니다. 매일의 운세, 숨은 주민과의 만남, 발견첩. 언어를 바꾸거나 새 여행을 시작해도 남습니다.', 'Cuanto más juegas, más 縁 (lazos) reúnes: sube tu rango y se abren más cosas. Una fortuna diaria, habitantes ocultos y un libro de hallazgos. Todo se conserva al cambiar de idioma o empezar otro viaje.', 'Je mehr du spielst, desto mehr 縁 (Bande) sammelst du: dein Rang steigt und mehr öffnet sich. Ein tägliches Orakel, verborgene Bewohner, ein Buch der Entdeckungen. Alles bleibt, auch bei neuer Sprache oder neuer Reise.'],
+    'journal.rank': ['旅の位', 'Rank', '旅行等级', '여행 등급', 'Rango', 'Rang'],
+    'journal.points': ['縁 {n}', '縁 (bonds) {n}', '缘 {n}', '인연 {n}', '縁 (lazos) {n}', '縁 (Bande) {n}'],
+    'journal.toNext': ['次の位までの進み具合', 'Progress to the next rank', '距下一等级的进度', '다음 등급까지의 진행', 'Progreso al siguiente rango', 'Fortschritt zum nächsten Rang'],
+    'journal.next': ['あと {n} の縁で「{name}」', '{n} more to “{name}”', '再获得 {n} 缘即可成为“{name}”', '인연 {n}만 더 모으면 “{name}”', '{n} más para «{name}»', 'Noch {n} bis „{name}“'],
+    'journal.max': ['最高の位です。ジパングをこれからも見守ってください。', 'The highest rank. Keep watching over Zipangu.', '已达最高等级。请继续守护 Zipangu。', '최고 등급입니다. 앞으로도 지팡구를 지켜봐 주세요.', 'El rango más alto. Sigue velando por Zipangu.', 'Der höchste Rang. Wache weiter über Zipangu.'],
+    'journal.fortune': ['🎴 今日のおみくじ', '🎴 Today’s fortune', '🎴 今日签运', '🎴 오늘의 운세', '🎴 La fortuna de hoy', '🎴 Heutiges Orakel'],
+    'journal.fortuneLocked': ['旅の位が「{name}」になると、毎日おみくじを引けます。', 'Reach “{name}” to draw a fortune every day.', '达到“{name}”后每天都能抽签。', '“{name}” 등급이 되면 매일 운세를 뽑을 수 있습니다.', 'Llega a «{name}» para sacar una fortuna cada día.', 'Erreiche „{name}“, um täglich ein Orakel zu ziehen.'],
+    'journal.luckyPlace': ['吉方位：', 'Lucky place:', '吉方位：', '길한 방위:', 'Lugar afortunado:', 'Glücksort:'],
+    'journal.luckyGood': ['縁起物：', 'Lucky charm:', '吉祥物：', '길한 물건:', 'Amuleto:', 'Glücksbringer:'],
+    'journal.draw': ['🎴 おみくじを引く', '🎴 Draw a fortune', '🎴 抽签', '🎴 운세 뽑기', '🎴 Sacar fortuna', '🎴 Orakel ziehen'],
+    'journal.drawAgain': ['🎴 もう一度引く（今日あと一回）', '🎴 Draw again (once more today)', '🎴 再抽一次（今天还剩一次）', '🎴 한 번 더 뽑기(오늘 한 번 더)', '🎴 Sacar otra vez (una más hoy)', '🎴 Noch einmal ziehen (heute noch einmal)'],
+    'journal.tomorrow': ['次のおみくじは明日。', 'The next fortune comes tomorrow.', '下一次签运在明天。', '다음 운세는 내일.', 'La próxima fortuna, mañana.', 'Das nächste Orakel gibt es morgen.'],
+    'journal.hidden': ['✦ 幻の住人', '✦ Hidden residents', '✦ 隐藏居民', '✦ 숨은 주민', '✦ Habitantes ocultos', '✦ Verborgene Bewohner'],
+    'journal.hiddenSub': ['時刻・場所・季節・旅の位がそろうと、ランダムに現れて街に住みはじめる', 'They appear at random when the time, place, season and your rank allow, and then live in the city', '当时刻、地点、季节与等级都符合时随机出现，并在城中定居', '시각·장소·계절·등급이 맞으면 무작위로 나타나 도시에 살기 시작합니다', 'Aparecen al azar cuando la hora, el lugar, la estación y tu rango lo permiten, y se quedan a vivir', 'Sie erscheinen zufällig, wenn Zeit, Ort, Jahreszeit und Rang passen, und bleiben dann in der Stadt'],
+    'journal.hintLocked': ['旅の位が上がると、手がかりが見えます。', 'Rank up to see a clue.', '等级提升后可看到线索。', '등급이 오르면 단서가 보입니다.', 'Sube de rango para ver una pista.', 'Steige im Rang, um einen Hinweis zu sehen.'],
+    'journal.near': ['✦ いま気配がする', '✦ Something stirs nearby', '✦ 此刻有动静', '✦ 지금 기척이 느껴진다', '✦ Algo se mueve cerca', '✦ Gerade regt sich etwas'],
+    'journal.badges': ['🏅 発見帖', '🏅 Discoveries', '🏅 发现录', '🏅 발견첩', '🏅 Hallazgos', '🏅 Entdeckungen'],
+    'journal.watched': ['眺めた時間', 'Time watched', '观看时长', '지켜본 시간', 'Tiempo mirando', 'Zugeschaut'],
+    'journal.days': ['見届けた日', 'Days witnessed', '见证的日数', '지켜본 날', 'Días vistos', 'Erlebte Tage'],
+    'journal.trades': ['見届けた取引', 'Trades witnessed', '见证的交易', '지켜본 거래', 'Tratos vistos', 'Erlebte Handel'],
+    'journal.thoughts': ['聞いた心の声', 'Inner voices heard', '听到的心声', '들은 속마음', 'Voces oídas', 'Gehörte Stimmen'],
+    'journal.met': ['出会った幻の住人', 'Hidden residents met', '遇到的隐藏居民', '만난 숨은 주민', 'Ocultos encontrados', 'Verborgene getroffen'],
+    'toast.badge': ['🏅 発見：{title}', '🏅 Discovery: {title}', '🏅 发现：{title}', '🏅 발견: {title}', '🏅 Hallazgo: {title}', '🏅 Entdeckung: {title}'],
+    'toast.rank': ['📖 旅の位が「{name}」に上がった！ {unlock}', '📖 Rank up: {name}! {unlock}', '📖 等级提升为“{name}”！{unlock}', '📖 등급 상승: “{name}”! {unlock}', '📖 ¡Subes a «{name}»! {unlock}', '📖 Aufstieg: „{name}“! {unlock}'],
+    'toast.hidden': ['✦ 幻の住人「{name}」が現れた！ 会いに行く →', '✦ A hidden resident appeared: {name}! Go and meet them →', '✦ 隐藏居民“{name}”出现了！去见见 →', '✦ 숨은 주민 “{name}” 등장! 만나러 가기 →', '✦ ¡Apareció un habitante oculto: {name}! Ir a conocerle →', '✦ Ein verborgener Bewohner erscheint: {name}! Hingehen →'],
+    'origin.hidden': ['✦ 幻の住人', '✦ Hidden resident', '✦ 隐藏居民', '✦ 숨은 주민', '✦ Habitante oculto', '✦ Verborgener Bewohner'],
+    'backup.title': ['🧳 旅の引き継ぎ', '🧳 Carry your journey over', '🧳 旅程转移', '🧳 여행 이어가기', '🧳 Llevar tu viaje', '🧳 Reise mitnehmen'],
+    'backup.lead': ['旅の記録・迎えたAI・誕生証明・devnet の財布と台帳・旅の記録帖・設定を、ひとつのファイルに保存して、別の端末やブラウザで読み込めます。言語を変えても、これらはそのまま残ります。APIキーは入りません。', 'Save the journey, the AIs you brought in, birth certificates, the devnet wallet and ledger, your travel journal and settings in one file, and load it on another device or browser. Changing language keeps all of this. API keys are never included.', '把旅程、迎入的 AI、诞生证明、devnet 钱包与账本、旅行记录册和设置保存为一个文件，可在其他设备或浏览器中读取。更换语言也会全部保留。不包含 API 密钥。', '여행 기록·맞이한 AI·탄생 증명·devnet 지갑과 장부·여행 기록첩·설정을 파일 하나로 저장해 다른 기기나 브라우저에서 불러올 수 있습니다. 언어를 바꿔도 모두 유지됩니다. API 키는 포함되지 않습니다.', 'Guarda el viaje, las IAs recibidas, los certificados, la cartera y el libro de devnet, tu diario y los ajustes en un archivo, y cárgalo en otro dispositivo o navegador. Cambiar de idioma lo conserva todo. Nunca incluye claves API.', 'Speichere Reise, aufgenommene KIs, Urkunden, devnet-Geldbeutel und Kassenbuch, Reisetagebuch und Einstellungen in einer Datei und lade sie auf einem anderen Gerät oder Browser. Ein Sprachwechsel behält alles. API-Schlüssel sind nie enthalten.'],
+    'backup.save': ['💾 引き継ぎファイルを保存', '💾 Save the carry-over file', '💾 保存转移文件', '💾 이어가기 파일 저장', '💾 Guardar el archivo', '💾 Datei speichern'],
+    'backup.load': ['📂 引き継ぎファイルを読み込む', '📂 Load a carry-over file', '📂 读取转移文件', '📂 이어가기 파일 불러오기', '📂 Cargar un archivo', '📂 Datei laden'],
+    'backup.warn': ['ファイルには devnet の財布の鍵と迎えたAIのカードが入ります。人には渡さないでください。', 'The file holds your devnet wallet keys and the AIs’ cards. Keep it private.', '文件包含 devnet 钱包密钥和 AI 的卡片。请勿交给他人。', '파일에는 devnet 지갑 키와 AI 카드가 들어 있습니다. 남에게 주지 마세요.', 'El archivo contiene las claves de tu cartera devnet y las tarjetas de las IAs. Guárdalo en privado.', 'Die Datei enthält deine devnet-Schlüssel und die Karten der KIs. Halte sie privat.'],
+    'backup.confirm': ['この端末の記録を、ファイルの内容（{n} 項目・{at}）で置き換えます。よろしいですか？', 'Replace this device’s records with the file ({n} items, {at})?', '用文件内容（{n} 项，{at}）替换本设备的记录？', '이 기기의 기록을 파일 내용({n}개, {at})으로 바꿀까요?', '¿Reemplazar los datos de este dispositivo con el archivo ({n} elementos, {at})?', 'Daten dieses Geräts durch die Datei ersetzen ({n} Einträge, {at})?'],
+    'backup.err': ['このファイルは読み込めません（{why}）。', 'This file cannot be loaded ({why}).', '无法读取此文件（{why}）。', '이 파일을 불러올 수 없습니다({why}).', 'No se puede cargar este archivo ({why}).', 'Diese Datei kann nicht geladen werden ({why}).'],
     'mind.title': ['🧠 AIの頭脳（LLM）', '🧠 AI minds (LLM)', '🧠 AI 的大脑（LLM）', '🧠 AI의 두뇌（LLM）', '🧠 Mentes de IA (LLM)', '🧠 KI-Verstand (LLM)'],
     'mind.lead': ['住人は相場・運賃・出来事・目標から自分で候補を出します。ここをオンにすると、その上位の候補を言葉にして大規模言語モデルに渡し、モデルが一つを選んで「心の声」を一言書きます。返事が遅い・失敗したときは、今までどおりルールで動くので世界は止まりません。',
         'Residents still work out their own options from prices, fares, events and goals. Turn this on and the best few are put into words for a large language model, which picks one and writes a line of inner voice. If the model is slow or fails, the rules decide as before, so the world never stops.',
@@ -171,6 +228,20 @@ export function setLang(code) {
     if (!CODES.includes(code)) return;
     lang = code;
     write(code);
+    // ?lang= in the address (a shared link or the QR code) outranks the saved choice, so it must follow it
+    if (typeof location !== 'undefined' && typeof history !== 'undefined' && history.replaceState) {
+        const next = langUrl(location.href, code);
+        if (next !== location.href) { try { history.replaceState(history.state, '', next); } catch { /* file:// and the like */ } }
+    }
+}
+// The same address with ?lang= set to code, when the address names a language at all.
+export function langUrl(href, code) {
+    try {
+        const u = new URL(href);
+        if (!u.searchParams.has('lang')) return href;
+        u.searchParams.set('lang', code);
+        return u.toString();
+    } catch { return href; }
 }
 // Names: Japanese and Chinese readers get the Japanese names; others the English ones.
 export const prefersEnglishNames = () => !['ja', 'zh'].includes(lang);

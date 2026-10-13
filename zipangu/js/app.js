@@ -25,6 +25,10 @@ import { loadCards, addTravellers } from './soul.js';
 import { t, getLang } from './i18n.js';
 import { loadSettings, createMind, PROVIDERS } from './mind.js';
 import { createLocalEngine, CONSENT_KEY } from './mind-local.js';
+import { createProgress, loadProgress, joinHidden } from './progress.js';
+import { loadBirths } from './birth.js';
+import { journalView } from './view-journal.js';
+import { toast } from './toast.js';
 
 const SECONDS_PER_DAY = 240;          // one in-world day (one 節気) is about four minutes
 const WARM_UP_SECONDS = 150;          // the city is already busy when you arrive
@@ -36,7 +40,7 @@ const TAB_OF = {
     home: 'home', place: 'home', district: 'home', bestiary: 'bestiary', creature: 'bestiary',
     library: 'library', work: 'library', market: 'market', agents: 'agents', agent: 'agents',
     about: 'about', corrections: 'about', visuals: 'visuals', visual: 'visuals', chain: 'chain',
-    summon: 'settings', settings: 'settings'
+    summon: 'settings', settings: 'settings', journal: 'settings'
 };
 
 // ------------------------------------------------------------------ storage that may not exist
@@ -111,6 +115,8 @@ async function boot() {
     try { storage = window.localStorage; } catch { storage = { getItem() { throw new Error('unavailable'); }, setItem() { throw new Error('unavailable'); } }; }
     // AIs the visitor brought in (#/summon) join the world before the journey is restored.
     addTravellers(W, loadCards(storage, W));
+    // 📖 hidden residents met on earlier visits live in the city again, before the journey is restored
+    for (const id of Object.keys(loadProgress(storage).found)) if (W.byId.hidden.has(id)) joinHidden(W, W.byId.hidden.get(id));
     let session;
     try { session = window.sessionStorage; } catch { session = storage; }
     const loaded = loadJourney(storage, W, seed);
@@ -130,16 +136,49 @@ async function boot() {
     if (!loaded.data) for (let s = 0; s < WARM_UP_SECONDS; s += 5) { eco.step(5); sampleIfDue(); }
     const stories = createStories(W, eco, loaded.data?.stories || null);
 
+    // 📖 the traveller's journal: grows with play, keeps across journeys and languages (js/progress.js)
+    let extrasCache = null, extrasAt = 0;
+    const progress = createProgress(W, {
+        storage,
+        extras: () => {
+            if (!extrasCache || Date.now() - extrasAt > 30000) {
+                extrasCache = { cards: loadCards(storage, W).length, onChain: Object.values(loadBirths(storage)).filter(b => b.chain).length };
+                extrasAt = Date.now();
+            }
+            return extrasCache;
+        }
+    });
+    eco.on('trade', () => progress.count('trades'));
+    eco.on('thought', () => progress.count('thoughts'));
+    eco.on('event', () => progress.count('events'));
+    eco.on('goal', () => progress.count('goals'));
+
     let speed = Number(store.get('zipangu.speed')) || 1;
     if (!SPEEDS.includes(speed)) speed = 1;
 
     const hud = createHud(W, eco, { speed, onSpeed: s => { speed = s; store.set('zipangu.speed', String(s)); } });
-    const ctx = { W, eco, history, hud, stories, loadDoc, storage, session, mind, mindEngine: localEngine, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
+    const ctx = { W, eco, history, hud, stories, progress, loadDoc, storage, session, mind, mindEngine: localEngine, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
     let saveBlocked = loaded.blocked;
     const saveNotice = h('div', { class: 'journey-notice' });
     const saveText = h('span', { role: 'status' }, loaded.status);
     saveNotice.append(saveText);
+    progress.on((type, data) => {
+        if (type === 'badge') toast(t('toast.badge', { title: data.title }), { href: '#/journal', kind: 'badge' });
+        else if (type === 'rank') toast(t('toast.rank', { name: data.name, unlock: data.unlock }), { href: '#/journal', kind: 'rank', ms: 8000 });
+        else if (type === 'hidden') {
+            // a hidden resident steps into the running city and stays (saved with the journal and the journey)
+            const a = joinHidden(W, data);
+            if (a) eco.addResident(a);
+            toast(t('toast.hidden', { name: a ? a.name : data.name }), { href: '#/agent/' + encodeURIComponent(data.id), kind: 'hidden', ms: 12000 });
+            progress.save();
+            ctx.persistJourney();
+        }
+    });
     ctx.persistJourney = () => {
+        if (ctx.frozen) return;      // a backup was just restored: this page must not write over it on the way out
+        progress.save();
+        // the devnet wallet and ledger (zipangu.chain.v1) ride along, so a reload (a language change) keeps them
+        if (ctx.chain && ctx.chain.save) { try { ctx.chain.save(); } catch { /* fine */ } }
         if (saveBlocked) return;
         const result = saveJourney(storage, seed, eco, stories, history);
         ctx.journeyStatus = result.status;
@@ -234,10 +273,23 @@ async function boot() {
         visual: r => visualView(ctx, r.id),
         chain: () => chainView(ctx),
         summon: () => summonView(ctx),
-        settings: () => settingsView(ctx)
+        settings: () => settingsView(ctx),
+        journal: () => journalView(ctx)
     };
 
     let current = null, firstRender = true;
+
+    // 📖 what the visitor has opened, and which era/realm they are looking at
+    function noteVisit(name, id) {
+        const placeOfDistrict = d => { const p = d && W.placeOf(d); return p ? p.id : null; };
+        if (name === 'creature' && W.byId.creature.has(id)) progress.see('creature', id);
+        else if (name === 'work' && W.byId.work.has(id)) progress.see('work', id);
+        else if (name === 'visual' && id) progress.see('visual', id);
+        if (name === 'place' && W.byId.place.has(id)) { progress.see('place', id); progress.setHere(id); }
+        else if (name === 'district' && W.byId.district.has(id)) { progress.see('district', id); progress.setHere(placeOfDistrict(id)); }
+        else if (name === 'agent' && W.byId.agent.has(id)) { if (!W.byId.agent.get(id).traveller && !W.byId.agent.get(id).hiddenResident) progress.see('agent', id); progress.setHere(placeOfDistrict(W.byId.agent.get(id).home)); }
+        else if (name === 'home') progress.setHere(null);
+    }
 
     function render() {
         const r = parseHash();
@@ -253,6 +305,7 @@ async function boot() {
         current = view;
         ctx.view = view;
         const name = ROUTES[r.name] ? r.name : 'notfound';
+        noteVisit(name, r.id);
         document.body.className = 'route-' + name;
         main.append(view.el);
         const head = view.el.querySelector && view.el.querySelector('.page-head');
@@ -292,9 +345,13 @@ async function boot() {
     }
     requestAnimationFrame(frame);
 
+    let lastKoku = eco.clock.koku;
     setInterval(() => {
         if (document.hidden) return;
         hud.update();
+        // 📖 a second of watching; each new 刻, one roll of the dice for a hidden resident
+        progress.tick(1, eco.clock);
+        if (eco.clock.koku !== lastKoku) { lastKoku = eco.clock.koku; progress.encounter(eco.clock); }
         if (current && current.update) current.update();
     }, 1000);
     setInterval(() => { if (!document.hidden) hud.flushFeed(); }, 450);

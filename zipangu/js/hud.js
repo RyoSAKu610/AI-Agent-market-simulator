@@ -8,7 +8,7 @@ import { goodQuotes } from './history.js';
 
 export const SPEEDS = [1, 4, 16];
 
-const FEED_ICON = { trade: '◆', arrive: '▸', depart: '↗', event: '✦', settle: '⚖', goal: '★', thought: '💭' };
+const FEED_ICON = { trade: '◆', arrive: '▸', depart: '↗', event: '✦', settle: '⚖', goal: '★', thought: '💭', 'arrive-new': '✦' };
 const FEED_KEEP = 60;
 // Words the feed uses without explaining; shown as a tooltip on the line.
 const VIA_GLOSS = {
