@@ -212,7 +212,7 @@ export function parseAnswer(text, n) {
 // Until it is ready, wants() is false and the economy runs exactly as without a mind.
 const LOCAL_STATE = { idle: 'idle', checking: 'loading', loading: 'loading', ready: 'ready', unsupported: 'unsupported', error: 'error' };
 
-export function createMind(W, settings, { fetchImpl, now = () => (globalThis.performance ? performance.now() : Date.now()), lang = 'ja', local = null } = {}) {
+export function createMind(W, settings, { fetchImpl, now = () => (globalThis.performance ? performance.now() : Date.now()), lang = 'ja', local = null, keepPrompts = false } = {}) {
     const cfg = resolve(settings);
     const isLocal = cfg.kind === 'local';
     const engine = isLocal ? local : null;
@@ -271,7 +271,8 @@ export function createMind(W, settings, { fetchImpl, now = () => (globalThis.per
             const mine = recentByAgent.get(a.id) || [];
             recentByAgent.set(a.id, [...mine, `${describe ? describe(options[ans.choice - 1]).split('：')[0] : entry.option}を選んだ`].slice(-3));
             changed();
-            return { ...ans, model: status.model };
+            // raw text (and, for experiments, the prompt) go only to the decision log (js/research.js)
+            return { ...ans, model: status.model, raw: String(text || '').slice(0, 400), ...(keepPrompts ? { prompt: { system, user } } : {}) };
         } catch (e) {
             status.failed++;
             status.state = 'error'; status.error = e && e.message ? e.message : String(e);

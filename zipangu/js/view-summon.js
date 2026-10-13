@@ -9,6 +9,7 @@ import {
 } from './soul.js';
 import { makeBirth, saveBirth, forgetBirth } from './birth.js';
 import { makeBackup, readBackup, restoreBackup } from './backup.js';
+import { byCondition, toJSONL } from './research.js';
 import { journalLink } from './view-journal.js';
 import { PROVIDERS, loadSettings, saveSettings, resolve, testConnection, listModels } from './mind.js';
 
@@ -318,8 +319,65 @@ export function settingsView(ctx) {
         h('section', { class: 'sec', 'aria-labelledby': 'st-journal' }, sectionHead('📖 ' + t('journal.title'), '', 'st-journal'),
             plaque({ class: 'settings-card' }, h('p', null, t('journal.lead')), h('p', null, journalLink(ctx, 'btn btn-primary')))),
         h('section', { class: 'sec', 'aria-labelledby': 'st-backup' }, sectionHead(t('backup.title'), '', 'st-backup'), backupSection(ctx)),
-        h('section', { class: 'sec', id: 'mind', 'aria-labelledby': 'st-mind' }, sectionHead(t('mind.title'), '', 'st-mind'), minds.el));
+        h('section', { class: 'sec', id: 'mind', 'aria-labelledby': 'st-mind' }, sectionHead(t('mind.title'), '', 'st-mind'), minds.el),
+        h('section', { class: 'sec', id: 'research', 'aria-labelledby': 'st-research' }, sectionHead(t('research.title'), '', 'st-research'), researchSection(ctx)));
     return { el, title: t('settings.title'), destroy: minds.destroy };
+}
+
+// 🔬 The decision log (js/research.js): rules vs an LLM, recorded on this device for research.
+function researchSection(ctx) {
+    const r = ctx.research;
+    const status = h('p', { class: 'ar-role', role: 'status' });
+    const table = h('div', { class: 'research-table' });
+    const toggle = h('button', { type: 'button', class: 'btn btn-primary' });
+    const pct = v => (v == null ? '—' : Math.round(v * 100) + '%');
+    async function paint() {
+        if (!r) return;
+        const on = !!r.rec;
+        toggle.textContent = on ? t('research.stop') : t('research.start');
+        toggle.setAttribute('aria-pressed', String(on));
+        clear(table);
+        if (!r.store) { status.textContent = t('research.off'); return; }
+        const recs = await r.store.all().catch(() => []);
+        status.textContent = t(on ? 'research.on' : 'research.paused', { n: recs.length, run: r.settings.run || '—' });
+        const sums = byCondition(recs);
+        const conds = Object.keys(sums);
+        if (!conds.length) return;
+        const row = (label, fn) => h('tr', null, h('th', { scope: 'row' }, label), ...conds.map(c => h('td', null, fn(sums[c]))));
+        table.append(h('table', null,
+            h('thead', null, h('tr', null, h('th'), ...conds.map(c => h('th', { scope: 'col' }, t('research.cond.' + c) || c)))),
+            h('tbody', null,
+                row(t('research.n'), s => String(s.n)),
+                row(t('research.top1'), s => pct(s.top1)),
+                row(t('research.beta'), s => (s.beta ? String(s.beta.beta) : '—')),
+                row(t('research.entropy'), s => String(s.kindEntropy)),
+                row(t('research.thoughts'), s => (s.thoughts ? String(s.thoughts.n) : '—')))));
+    }
+    toggle.onclick = () => { if (r.rec) ctx.stopResearch(); else ctx.startResearch(); paint(); };
+    const exportIt = async () => {
+        if (!r.store) return;
+        if (r.rec) r.rec.flush();
+        const recs = await r.store.all();
+        const url = URL.createObjectURL(new Blob([toJSONL(recs)], { type: 'application/x-ndjson' }));
+        const a = h('a', { href: url, download: `zipangu-decisions-${new Date().toISOString().slice(0, 10)}.jsonl` });
+        document.body.append(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+    };
+    const wipe = async () => {
+        if (!r.store || !confirm(t('research.clearConfirm'))) return;
+        await r.store.clear();
+        r.settings.run = null;
+        if (r.rec) { ctx.stopResearch(); ctx.startResearch(); }
+        paint();
+    };
+    paint();
+    return plaque({ class: 'settings-card' },
+        h('p', null, t('research.lead')),
+        h('p', { class: 'mind-actions' }, toggle,
+            h('button', { type: 'button', class: 'btn', onclick: exportIt }, t('research.export')),
+            h('button', { type: 'button', class: 'btn btn-small', onclick: wipe }, t('research.clear'))),
+        status, table,
+        h('p', { class: 'ar-role' }, t('research.note')));
 }
 
 // The small language switch used on the first-visit card.

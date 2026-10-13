@@ -24,6 +24,7 @@ import { summonView, settingsView } from './view-summon.js';
 import { loadCards, addTravellers } from './soul.js';
 import { t, getLang } from './i18n.js';
 import { loadSettings, createMind, PROVIDERS } from './mind.js';
+import { loadResearchSettings, saveResearchSettings, createRecorder, openStore, newRunId } from './research.js';
 import { createLocalEngine, CONSENT_KEY } from './mind-local.js';
 import { createProgress, loadProgress, joinHidden } from './progress.js';
 import { loadBirths } from './birth.js';
@@ -194,6 +195,27 @@ async function boot() {
     window.addEventListener('pagehide', ctx.persistJourney);
     document.addEventListener('visibilitychange', () => { if (document.hidden) ctx.persistJourney(); });
     window.__zipangu = ctx;      // handy in the console
+
+    // ---------------------------------------------------- 🔬 decision log (js/research.js, docs/RESEARCH.md)
+    // Off unless turned on in settings. Records who chose (the rules or the model), among what,
+    // and what came of it; they stay in this browser (IndexedDB) until exported.
+    ctx.research = { settings: loadResearchSettings(storage), store: null, rec: null };
+    ctx.startResearch = () => {
+        const r = ctx.research;
+        if (r.rec) return;
+        if (!r.settings.run) r.settings.run = newRunId();
+        r.settings.on = true; saveResearchSettings(storage, r.settings);
+        r.store = r.store || openStore();
+        r.rec = createRecorder(eco, { run: r.settings.run, sink: rec => r.store.add(rec) });
+    };
+    ctx.stopResearch = () => {
+        const r = ctx.research;
+        if (r.rec) { r.rec.flush(); r.rec.stop(); r.rec = null; }
+        r.settings.on = false; saveResearchSettings(storage, r.settings);
+    };
+    if (ctx.research.settings.on) ctx.startResearch();
+    else if (ctx.research.settings.run) ctx.research.store = openStore();   // records from an earlier visit, to show and export
+    window.addEventListener('pagehide', () => { if (ctx.research.rec) ctx.research.rec.flush(); });
 
     // ---------------------------------------------------- ⛓ chain mode (lazy; docs/ONCHAIN.md)
     // js/chain.js is only fetched once the user turns chain mode on. Until then there is
