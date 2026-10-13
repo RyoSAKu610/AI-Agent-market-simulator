@@ -634,6 +634,7 @@ export function createChain(W, eco, { storage, rpc = 'https://api.devnet.solana.
         addressOf: id => addr.get(id) ?? null,
         ataOf: id => ata.get(id) ?? null,
         enable, requestAirdrop, fundFromWallet, setup, disable, balanceOf, hire, reset, on, inscribe, parsedTx,
+        save() { if (persistTimer) { clearTimeout(persistTimer); persistTimer = null; } persistNow(); },   // before a reload
         flush   // extra: send one batch now (the timer calls this every ~2.5 s)
     };
     return chain;

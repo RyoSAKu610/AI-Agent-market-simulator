@@ -6,6 +6,7 @@ import { visualFeature } from './visual-art.js';
 import { createMap } from './map.js';
 import { t, getLang } from './i18n.js';
 import { languagePicker } from './view-summon.js';
+import { journalLink } from './view-journal.js';
 import { VIA } from './sim.js';
 import {
     h, clear, href, placeShort, placeSub, nameOf, agentShort, firstSentence, clip, fmt, accentOf, KIND_LABEL, RARITY_LABEL
@@ -98,6 +99,8 @@ export function homeView(ctx) {
     stage.append(h('a', { class: 'summon-map-link', href: '#/summon' }, t('welcome.summon') + ' →'));
     const launch = mindLaunch(ctx);
     if (launch) stage.append(launch.el);
+    const journal = journalLink(ctx);
+    if (journal) stage.append(journal);
     stage.append(h('h1', { class: 'sr-only' }, '万華京ジパング ・ 地図'), canvas, side, zoomBox, legend, places, welcome);
 
     // ------------------------------------------------ info plaque

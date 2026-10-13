@@ -31,6 +31,7 @@ const currencies = load('currencies.json');
 const agents = load('agents.json');
 const events = load('events.json');
 const library = load('library.json');
+const hidden = load('hidden.json', []);   // optional: residents who appear only after play (js/progress.js)
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
 const ID = /^[a-z][a-z0-9_]*$/;
@@ -72,6 +73,7 @@ function index(file, list) {
 const E = index('eras.json', eras), R = index('realms.json', realms), D = index('districts.json', districts);
 const C = index('creatures.json', creatures), G = index('goods.json', goods), $ = index('currencies.json', currencies);
 const A = index('agents.json', agents), V = index('events.json', events), L = index('library.json', library);
+const H = index('hidden.json', hidden);
 const places = new Map([...E, ...R]);
 
 function refs(file, owner, field, ids, target, targetName) {
@@ -187,6 +189,28 @@ agents.forEach(a => {
     (a.relationships || []).forEach(r => { if (!A.has(r.agent)) err('agents.json', `${a.id}.relationships → unknown agent "${r.agent}"`); });
 });
 
+// hidden residents: full agents plus when and where they can appear
+const SEASONS = ['春', '夏', '秋', '冬'];
+const NEEDS = ['works', 'trades', 'found', 'creatures', 'days'];
+hidden.forEach(a => {
+    req('hidden.json', a, ['name', 'name_ja', 'origin', 'home', 'role', 'personality', 'specialty', 'long_term_ambition', 'routines', 'appear', 'hint', 'profile', 'voices']);
+    if (A.has(a.id)) err('hidden.json', `${a.id}: id already used in agents.json`);
+    if (!String(a.id).startsWith('hidden_')) err('hidden.json', `${a.id}: hidden ids start with hidden_ (saves treat them as residents who may come and go)`);
+    if (!['neon_mythos', 'native'].includes(a.origin)) err('hidden.json', `${a.id}: origin must be neon_mythos or native`);
+    if (!D.has(a.home)) err('hidden.json', `${a.id}.home → unknown district "${a.home}"`);
+    if (!String(a.personality || '').includes('【創作】')) err('hidden.json', `${a.id}: a hidden resident is invented; mark the personality 【創作】`);
+    refs('hidden.json', a.id, 'favored_goods', a.favored_goods, G, 'good');
+    (a.relationships || []).forEach(r => { if (!A.has(r.agent) && !H.has(r.agent)) err('hidden.json', `${a.id}.relationships → unknown agent "${r.agent}"`); });
+    const ap = a.appear || {};
+    if (!Number.isInteger(ap.rank) || ap.rank < 0 || ap.rank > 5) err('hidden.json', `${a.id}.appear.rank must be 0–5`);
+    if (!['any', 'day', 'night', 'twilight'].includes(ap.time)) err('hidden.json', `${a.id}.appear.time must be any/day/night/twilight`);
+    if (ap.place != null && !places.has(ap.place)) err('hidden.json', `${a.id}.appear.place → unknown era/realm "${ap.place}"`);
+    if (ap.season != null && !SEASONS.includes(ap.season)) err('hidden.json', `${a.id}.appear.season must be 春/夏/秋/冬`);
+    if (!(ap.chance > 0 && ap.chance <= 0.5)) err('hidden.json', `${a.id}.appear.chance must be in (0, 0.5]`);
+    for (const [k, v] of Object.entries(ap.need || {})) if (!NEEDS.includes(k) || !(Number.isInteger(v) && v > 0)) err('hidden.json', `${a.id}.appear.need.${k} is not a known positive count`);
+    if (!Array.isArray(a.voices) || a.voices.length < 2) err('hidden.json', `${a.id}.voices needs two lines`);
+});
+
 // events
 events.forEach(v => {
     req('events.json', v, ['name_ja', 'name_en', 'where', 'cadence', 'description', 'effects']);
@@ -224,7 +248,7 @@ const produced = new Set(districts.flatMap(d => d.produces || []).concat(creatur
 goods.forEach(g => { if (!produced.has(g.id)) warnings.push(`goods.json: ${g.id} is produced by no district or creature`); });
 
 const counts = `${eras.length} eras, ${realms.length} realms, ${districts.length} districts, ${creatures.length} creatures, ` +
-    `${goods.length} goods, ${currencies.length} currencies, ${agents.length} agents, ${events.length} events, ${library.length} works`;
+    `${goods.length} goods, ${currencies.length} currencies, ${agents.length} agents (+${hidden.length} hidden), ${events.length} events, ${library.length} works`;
 warnings.forEach(w => console.warn(`warn  ${w}`));
 if (errors.length) {
     errors.forEach(e => console.error(`error ${e}`));

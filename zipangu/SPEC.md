@@ -77,6 +77,16 @@ origin (district id), base_price (number > 0), unit, description, source_creatur
 `id, name, name_ja, origin (neon_mythos | native), home (district id), role, personality, specialty,
 long_term_ambition, routines[], favored_goods[good ids], relationships[{agent, type}], sprite_hint`
 
+## hidden.json (array, optional) — residents who appear only after play
+Every agents.json field (ids start with `hidden_`, must not reuse an agent id; the personality is
+marked 【創作】), plus:
+`appear {rank 0–5, time any|day|night|twilight, place era/realm id|null, season 春|夏|秋|冬|null,
+need {works|trades|found|creatures|days: n}, chance (0, 0.5]}`, `hint` (shown in the journal once the
+rank allows), `profile {mode, task, gesture, answer, wish, mood, message}` and `voices[2]`.
+They are not in the city until met (js/progress.js); a met one joins the running economy
+(`eco.addResident`) and every later journey. Saves treat them like visiting AIs: a journey that
+names one still loads where it was never met.
+
 ## events.json (array)
 `id, name_ja, name_en, where (era/realm/district id), cadence (daily weekly monthly seasonal yearly rare),
 season (optional), description, effects[{good, demand_multiplier}], creatures[ids]`

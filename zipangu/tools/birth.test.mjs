@@ -44,7 +44,7 @@ assert.equal(memoOf(parsed(memo)), memo);
 assert.deepEqual(checkBirthTx(parsed(memo), birth), { ok: true });
 assert.deepEqual(checkBirthTx(null, birth), { ok: false, reason: 'notfound' });
 assert.deepEqual(checkBirthTx(parsed(memo, { InstructionError: [0, 'x'] }), birth), { ok: false, reason: 'failed' });
-assert.deepEqual(checkBirthTx(parsed(memo.replace(/.$/, '0')), birth), { ok: false, reason: 'mismatch' });
+assert.deepEqual(checkBirthTx(parsed(memo.replace(/.$/, c => (c === '0' ? '1' : '0'))), birth), { ok: false, reason: 'mismatch' }, 'one changed character is a mismatch');
 assert.equal(memoOf({ transaction: { message: { instructions: [{ program: 'system', parsed: { type: 'transfer' } }] } } }), null);
 
 // storage keeps only well-formed certificates

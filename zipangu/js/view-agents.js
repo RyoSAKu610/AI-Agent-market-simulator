@@ -229,7 +229,7 @@ export function agentView(ctx, id) {
         h('header', { class: 'agent-hero' },
             avatar(W, a),
             h('div', null,
-                h('p', { class: 'kicker' }, ORIGIN_LABEL[a.origin] || a.origin),
+                h('p', { class: 'kicker' + (a.hiddenResident ? ' kicker-hidden' : '') }, a.hiddenResident ? t('origin.hidden') : ORIGIN_LABEL[a.origin] || a.origin),
                 h('h1', null, agentShort(a)),
                 h('p', { class: 'hero-sub' }, stripParens(a.name_ja) !== agentShort(a) ? a.name_ja : ''),
                 h('p', { class: 'hero-summary' }, a.role),

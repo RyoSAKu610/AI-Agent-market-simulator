@@ -40,8 +40,9 @@ export function birthPanel(ctx, card) {
 
     async function chainReady() {
         if (!ctx.loadChain) throw new Error('chain unavailable');
-        const chain = await ctx.loadChain();
-        if (chain.state === 'off' || chain.state === 'error') await chain.enable();
+        let chain = await ctx.loadChain();
+        // through enableChain, so chain mode (address, balance, ledger) comes back after a reload
+        if (chain.state === 'off' || chain.state === 'error') chain = await (ctx.enableChain ? ctx.enableChain() : chain.enable());
         if (chain.state === 'error') throw new Error(chain.error || 'devnet');
         return chain;
     }

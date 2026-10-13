@@ -1,5 +1,8 @@
 import { decodeHistory } from './history.js';
 import { isTraveller } from './soul.js';
+
+// Residents who may come and go between journeys: AIs brought in (trav_) and hidden residents met (hidden_).
+const isGuest = id => isTraveller(id) || String(id || '').startsWith('hidden_');
 // One atomic localStorage value keeps clock, positions, promises and memories together.
 export function journeyKey(seed) { return `zipangu.journey.v1:${seed}`; }
 const STAGES = ['idle', 'react', 'think', 'travel', 'trade'];
@@ -15,7 +18,7 @@ export function validateJourney(data, W, seed) {
     // Every built-in resident must be there; an AI brought in later may not be yet (it starts fresh).
     const savedIds = new Set(Array.isArray(e.agents) ? e.agents.map(a => a.id) : []);
     ensure(Array.isArray(e.agents) && savedIds.size === e.agents.length
-        && W.agents.every(a => savedIds.has(a.id) || isTraveller(a.id)));
+        && W.agents.every(a => savedIds.has(a.id) || isGuest(a.id)));
     ensure(Array.isArray(e.schedule) && Array.isArray(e.active) && e.markets && e.stats && e.pending && e.eventMult);
     for (const a of e.agents) {
         ensure(W.byId.agent.has(a.id) && W.byId.district.has(a.home) && (a.at === null || W.byId.district.has(a.at))
@@ -54,10 +57,10 @@ export function validateJourney(data, W, seed) {
     }
     ensure(natural(s.nextId) && s.nextId > 0 && natural(s.lastSeq) && s.lastSeq <= (e.eventSeq || 0)
         && s.people && Object.keys(s.people).every(id => W.byId.agent.has(id))
-        && W.agents.every(a => s.people[a.id] || isTraveller(a.id)));
+        && W.agents.every(a => s.people[a.id] || isGuest(a.id)));
     for (const a of W.agents) {
         const p = s.people[a.id];
-        if (!p && isTraveller(a.id)) continue;
+        if (!p && isGuest(a.id)) continue;
         ensure(p && natural(p.trust) && p.trust <= 100 && natural(p.practice) && p.bonds && Array.isArray(p.earned) && p.earned.length <= 96);
         for (const [key, max] of [['chat', 24], ['chronicle', 40], ['memories', 8], ['requests', 16]]) ensure(Array.isArray(p[key]) && p[key].length <= max);
         for (const item of [...p.chat, ...p.chronicle, ...p.memories]) ensure(typeof item.text === 'string' && item.text.length <= 2000 && finite(item.T) && natural(item.day));
@@ -102,7 +105,7 @@ export function validateJourney(data, W, seed) {
 // An AI resident that has been sent off (#/settings) is removed from the saved
 // journey before it is checked, with every trace that names it.
 export function pruneDeparted(data, W) {
-    const gone = id => isTraveller(id) && !W.byId.agent.has(id);
+    const gone = id => isGuest(id) && !W.byId.agent.has(id);
     const e = data && data.economy, s = data && data.stories;
     if (!e || !s) return data;
     if (Array.isArray(e.agents)) {

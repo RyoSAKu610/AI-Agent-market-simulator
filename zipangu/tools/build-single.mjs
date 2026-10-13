@@ -21,6 +21,7 @@ const STEMS = ['world', 'eras', 'realms', 'districts', 'creatures', 'goods', 'cu
 function collectWorld() {
     const world = {};
     for (const stem of STEMS) world[stem] = JSON.parse(read(`world/${stem}.json`));
+    world.hidden = JSON.parse(read('world/hidden.json'));
     const texts = join(root, 'world', 'library.texts.json');
     world.texts = existsSync(texts) ? JSON.parse(readFileSync(texts, 'utf8')) : { works: {} };
     return world;

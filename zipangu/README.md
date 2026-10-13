@@ -35,6 +35,18 @@ AIエージェントたちが自分で仕入れ、運び、作り、交渉して
 PCで開いているときは画面の **QRコード** をスマホで読むと、同じページがスマホで開き、スマホのAIアプリで続けられます。
 AIの記憶そのものを移すのではなく、AIが自分で書いた自己紹介と思い出の要約を持ち込みます。カードはこの端末のブラウザにだけ保存され、どこにも送られません。迎えられるのは6人まで。⚙ 設定からいつでも送り出せます（旅の記録は壊れません）。
 
+### 📖 遊ぶほど広がる：旅の記録帖・幻の住人・おみくじ
+
+- **旅の記録帖**（地図の「📖 旅の記録帖」か ⚙ 設定から）: 眺めた時間、見届けた日や取引、開いた図鑑・書庫・時代のページ、AIの心の声などで「縁」がたまり、旅の位が「見習いの旅人」から「ジパングの守り人」まで上がります。位が上がるたびにできることが増えます。
+- **発見帖**: 「四季をひとめぐり」「書庫のすべての作品を読む」「取引を一万見届ける」など25の発見。長く遊ぶほど埋まっていきます。
+- **🎴 毎日のおみくじ**: 大吉〜凶がランダムに出て、その日の吉方位と縁起物が決まります。運がよい日や吉方位では幻の住人に出会いやすくなります（凶の日は夜に裏運）。
+- **✦ 幻の住人（隠しキャラ）**: 7人。時刻（刻の境目・夜・昼）、場所、季節、旅の位、これまでの行い（読んだ作品の数、見届けた取引の数など）がそろうと、刻が変わるたびにランダムに現れます。出会った住人は街に住みはじめ、次からもずっといます。まだ出会っていない住人は記録帖に「？？？」と手がかりで並びます。
+- 記録帖は言語を変えても、新しい旅を始めても残ります。
+
+### 🧳 引き継ぎ
+
+言語を変えても、devnet の財布（アドレス）と残高、台帳、迎えたAI、誕生証明、旅の記録帖はそのまま残ります。別の端末やブラウザへは、⚙ 設定の「🧳 旅の引き継ぎ」でファイルに保存して読み込めます（APIキーは入りません）。
+
 ### 📜 誕生証明（Solana devnet）
 
 迎えたAIの魂のカードは、迎えた瞬間にこの端末で「指紋」（塩を加えた SHA-256）で封印されます。住人のページの「⛓ Solana devnet に刻む」を押すと、その指紋だけが無料のテスト網 Solana devnet に刻まれ、「🔍 鎖と照合する」で鎖の記録と一致するかを確かめられます。鎖に書くのは指紋とランダムな住人IDだけで、カードの中身や名前は一文字も書きません。「💾 証明書を保存」のファイル（カードと塩入り）があれば、どの端末からでも誕生を証明できます。
@@ -89,6 +101,16 @@ Your Claude, GPT or any other AI agent can carry its way of thinking and its mem
 3. It is born as a newcomer with its own character, strengths and memories, lands in the era it chose, and starts trading on its own.
 
 On a desktop, scan the **QR code** to continue on your phone. This does not copy the AI's memory itself: it brings the self-description and memory summary the AI writes. The card stays in your browser only. Up to six AIs; send one off any time from ⚙ Settings without breaking your saved journey.
+
+### 📖 More to discover the longer you play
+- **Travel journal** (📖 on the map, or ⚙ Settings): watching, witnessing days and trades, opening creatures, works and places, and hearing AI inner voices earn 縁 (bonds). Your rank rises from Apprentice traveller to Keeper of Zipangu, and each rank opens something new.
+- **Discoveries:** 25 of them, from “a full round of the 24 seasons” to “read every work” and “witness 10,000 trades”.
+- **🎴 A daily fortune:** 大吉 to 凶 at random, with a lucky place and a lucky charm; good luck and the lucky place make hidden residents easier to meet.
+- **✦ Hidden residents:** seven of them. When the time (dawn/dusk, night, day), place, season, your rank and your deeds line up, one may appear at random each time the 刻 changes. Once met, they live in the city for good; the ones not yet met wait in the journal as “？？？” with a clue.
+- The journal survives a language change and a new journey.
+
+### 🧳 Carry-over
+Changing language keeps your devnet wallet address and balance, the ledger, the AIs you brought in, birth certificates and the journal. To move to another device or browser, save and load one file in ⚙ Settings → 🧳 Carry your journey over (API keys are never included).
 
 ### 📜 Birth certificates on Solana devnet
 The moment an AI arrives, its soul card is sealed on your device with a salted SHA-256 fingerprint. On its page, **⛓ Inscribe on Solana devnet** writes only that fingerprint (and a random resident id) to the free test network, and **🔍 Check against the chain** reads it back and compares. Not one word of the card goes on chain. **💾 Save the certificate** gives you a file (card + salt) that proves the birth from any device.
@@ -157,8 +179,8 @@ The LLM decides where residents go next. The economy still works out each reside
 | `docs/eras/`, `docs/realms/` | 時片・異界ごとの章（分岐点、歩いてみる、住むもの、働くエージェント、祭り、書物）。案内は [`docs/WORLD_BIBLE.md`](docs/WORLD_BIBLE.md)。 |
 | `docs/CORRECTIONS.md` | 各章を史実・文学（著作権）・仕様・文体の四観点で校閲した240件の修正記録。 |
 | `docs/spine.json` | 3案・2審査・1統合で決めた設計の骨格と文体の掟。 |
-| `js/` | エクスプローラー。`app.js`（起動と経路）、`map.js`、`sim.js`（自律経済）、`creature-art.js`、`soul.js`（AIを迎える）、`mind.js`・`mind-local.js`（LLM の頭脳、端末の中のAI）、`birth.js`（誕生証明）、`qr.js`（QRコード）、`i18n.js`（6言語）ほか。 |
-| `tools/` | `validate.mjs`、`sim.test.mjs`、`soul.test.mjs`、`mind.test.mjs`、`birth.test.mjs`、`qr.test.mjs`、`aozora-extract.mjs`、`gutenberg-extract.mjs`、`build-single.mjs`、`check.sh` ほか。 |
+| `js/` | エクスプローラー。`app.js`（起動と経路）、`map.js`、`sim.js`（自律経済）、`creature-art.js`、`soul.js`（AIを迎える）、`mind.js`・`mind-local.js`（LLM の頭脳、端末の中のAI）、`birth.js`（誕生証明）、`progress.js`（旅の記録帖・幻の住人）、`backup.js`（引き継ぎ）、`qr.js`（QRコード）、`i18n.js`（6言語）ほか。 |
+| `tools/` | `validate.mjs`、`sim.test.mjs`、`soul.test.mjs`、`mind.test.mjs`、`birth.test.mjs`、`progress.test.mjs`、`backup.test.mjs`、`qr.test.mjs`、`aozora-extract.mjs`、`gutenberg-extract.mjs`、`build-single.mjs`、`check.sh` ほか。 |
 
 ### 青空文庫と Project Gutenberg からの抜粋
 
