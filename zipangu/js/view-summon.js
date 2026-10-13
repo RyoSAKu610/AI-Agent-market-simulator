@@ -7,6 +7,7 @@ import { qrSvg } from './qr.js';
 import {
     summonPrompt, parseSoul, toAgentDef, travellerId, loadCards, saveCards, MAX_TRAVELLERS, arrivalDistrict
 } from './soul.js';
+import { makeBirth, saveBirth, forgetBirth } from './birth.js';
 import { PROVIDERS, loadSettings, saveSettings, resolve, testConnection, listModels } from './mind.js';
 
 async function copyText(text) {
@@ -58,6 +59,7 @@ function residentsList(ctx) {
             h('button', { type: 'button', class: 'btn btn-small', onclick: () => {
                 if (!confirm(t('summon.removeAsk', { name: card.name }))) return;
                 saveCards(ctx.storage, loadCards(ctx.storage, W).filter(c => c.id !== card.id));
+                forgetBirth(ctx.storage, card.id);   // the salt goes with it; a saved certificate file still proves the birth
                 restartInto(ctx, '#/settings');
             } }, t('summon.remove')));
     }));
@@ -94,16 +96,19 @@ export function summonView(ctx) {
         const r = parseSoul(paste.value, W);
         if (!r.ok) { message.textContent = t('summon.err.' + r.error); message.className = 'soul-message is-error'; return; }
         message.className = 'soul-message';
+        if (r.hidden) message.textContent = t('summon.hidden', { n: r.hidden });
         const cards = loadCards(ctx.storage, W);
         const full = cards.length >= MAX_TRAVELLERS;
         result.append(preview(W, r.card),
             full ? h('p', { class: 'soul-message is-error' }, t('summon.full', { n: MAX_TRAVELLERS }))
-                : h('button', { type: 'button', class: 'btn btn-primary btn-big', onclick: () => {
+                : h('button', { type: 'button', class: 'btn btn-primary btn-big', onclick: async () => {
                     const card = { ...r.card, id: travellerId(r.card, String(Date.now())), arrived: new Date().toISOString().slice(0, 10) };
                     const latest = loadCards(ctx.storage, W);
                     if (latest.length >= MAX_TRAVELLERS || !saveCards(ctx.storage, [...latest, card])) {
                         message.textContent = t('summon.full', { n: MAX_TRAVELLERS }); message.className = 'soul-message is-error'; return;
                     }
+                    // 📜 sealed at the moment of arrival (only its fingerprint can ever go on chain)
+                    try { saveBirth(ctx.storage, await makeBirth(loadCards(ctx.storage, W).find(c => c.id === card.id) || card)); } catch { /* sealed later on its page */ }
                     message.textContent = t('summon.born', { name: card.name, place: placeName(W, arrivalDistrict(W, card.era)) });
                     restartInto(ctx, '#/agent/' + encodeURIComponent(card.id));
                 } }, t('summon.welcome')));

@@ -339,6 +339,7 @@ function trace(eco, seconds) {
     assert.equal((await trial(new Request('https://x.test/f'), {})).status, 405);
     assert.equal((await trial(post({ messages: msgs }, { origin: 'https://evil.example' }), { ip: '1' })).status, 403);
     assert.equal((await trial(post('{nope'), { ip: '2' })).status, 400);
+    assert.equal((await trial(post({ messages: msgs, pad: 'x'.repeat(40000) }), { ip: '2' })).status, 413, 'oversized bodies are refused');
     assert.equal((await trial(post({ messages: [{ role: 'assistant', content: 'x' }] }), { ip: '2' })).status, 400);
     assert.equal((await trial(post({ messages: [{ role: 'user', content: 'x'.repeat(7000) }] }), { ip: '2' })).status, 400);
     let sent;

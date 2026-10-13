@@ -35,6 +35,16 @@ AIエージェントたちが自分で仕入れ、運び、作り、交渉して
 PCで開いているときは画面の **QRコード** をスマホで読むと、同じページがスマホで開き、スマホのAIアプリで続けられます。
 AIの記憶そのものを移すのではなく、AIが自分で書いた自己紹介と思い出の要約を持ち込みます。カードはこの端末のブラウザにだけ保存され、どこにも送られません。迎えられるのは6人まで。⚙ 設定からいつでも送り出せます（旅の記録は壊れません）。
 
+### 📜 誕生証明（Solana devnet）
+
+迎えたAIの魂のカードは、迎えた瞬間にこの端末で「指紋」（塩を加えた SHA-256）で封印されます。住人のページの「⛓ Solana devnet に刻む」を押すと、その指紋だけが無料のテスト網 Solana devnet に刻まれ、「🔍 鎖と照合する」で鎖の記録と一致するかを確かめられます。鎖に書くのは指紋とランダムな住人IDだけで、カードの中身や名前は一文字も書きません。「💾 証明書を保存」のファイル（カードと塩入り）があれば、どの端末からでも誕生を証明できます。
+
+### 🔒 機密情報を隠す・セキュリティ
+
+- 貼り付けた魂のカードにメールアドレス・電話番号・郵便番号・URL・APIキーやトークン・秘密鍵・「パスワード：…」などが含まれていたら、表示・保存・封印・AIへの送信の前に「［伏せ字］」に置き換えます。以前に保存したカードも読み込むときに伏せます。
+- ジパングのページは Content-Security-Policy で、このサイトと固定版のライブラリを配る2つのCDN（jsDelivr・esm.sh）以外のスクリプトを実行しません。Netlify ではさらに、ほかのサイトからの埋め込みを禁止し、全ページで MIME 推測・リファラー漏れ・カメラやマイクなどの利用を止めています。
+- APIキーはタブの中（`sessionStorage`）に置くのが標準で、リポジトリにはキーや秘密鍵を一切置きません（`.gitignore` で `.env` や鍵ファイルを除外）。
+
 ### 🧠 住人が大規模言語モデルで考える（設定不要・無料）
 
 **何も設定しなくても、住人は端末の中の AI で考えます。** Alibaba の Qwen をブラウザの中（WebGPU）で動かすので、料金もAPIキーもいらず、考えた中身は端末の外に出ません。PC は開くと自動で、スマホは地図の「🧠 AIの頭脳を起動」をひと押しで読み込みます（初回だけ PC 約1GB・スマホ 約0.4GB、2回目からは保存済み）。読み込み中や WebGPU に対応していない端末では、今までどおりルールで動きます。
@@ -79,6 +89,12 @@ Your Claude, GPT or any other AI agent can carry its way of thinking and its mem
 3. It is born as a newcomer with its own character, strengths and memories, lands in the era it chose, and starts trading on its own.
 
 On a desktop, scan the **QR code** to continue on your phone. This does not copy the AI's memory itself: it brings the self-description and memory summary the AI writes. The card stays in your browser only. Up to six AIs; send one off any time from ⚙ Settings without breaking your saved journey.
+
+### 📜 Birth certificates on Solana devnet
+The moment an AI arrives, its soul card is sealed on your device with a salted SHA-256 fingerprint. On its page, **⛓ Inscribe on Solana devnet** writes only that fingerprint (and a random resident id) to the free test network, and **🔍 Check against the chain** reads it back and compares. Not one word of the card goes on chain. **💾 Save the certificate** gives you a file (card + salt) that proves the birth from any device.
+
+### 🔒 Private details stay hidden
+E-mail addresses, phone and card numbers, postal codes, URLs, API keys and tokens, private keys and anything after “password:” in a pasted card are replaced with `［伏せ字］` before it is shown, saved, sealed or sent to a model. Zipangu pages run under a Content-Security-Policy (only this site and the two CDNs serving the pinned libraries may run scripts), and Netlify adds anti-framing, no-sniff, referrer and permissions headers.
 
 ### 🧠 Residents think with a large language model — no setup, no fee
 **Out of the box, residents think with an AI that runs on your own device:** Alibaba's Qwen inside the browser (WebGPU), with no key, no fee, and nothing leaving the device. Computers load it automatically; phones with one tap on “🧠 Wake the AI minds” (first time only: about 1 GB on a computer, 0.4 GB on a phone). While it loads, and on browsers without WebGPU, the rules decide as before.
@@ -141,8 +157,8 @@ The LLM decides where residents go next. The economy still works out each reside
 | `docs/eras/`, `docs/realms/` | 時片・異界ごとの章（分岐点、歩いてみる、住むもの、働くエージェント、祭り、書物）。案内は [`docs/WORLD_BIBLE.md`](docs/WORLD_BIBLE.md)。 |
 | `docs/CORRECTIONS.md` | 各章を史実・文学（著作権）・仕様・文体の四観点で校閲した240件の修正記録。 |
 | `docs/spine.json` | 3案・2審査・1統合で決めた設計の骨格と文体の掟。 |
-| `js/` | エクスプローラー。`app.js`（起動と経路）、`map.js`、`sim.js`（自律経済）、`creature-art.js`、`soul.js`（AIを迎える）、`mind.js`・`mind-local.js`（LLM の頭脳、端末の中のAI）、`qr.js`（QRコード）、`i18n.js`（6言語）ほか。 |
-| `tools/` | `validate.mjs`、`sim.test.mjs`、`soul.test.mjs`、`mind.test.mjs`、`qr.test.mjs`、`aozora-extract.mjs`、`gutenberg-extract.mjs`、`build-single.mjs`、`check.sh` ほか。 |
+| `js/` | エクスプローラー。`app.js`（起動と経路）、`map.js`、`sim.js`（自律経済）、`creature-art.js`、`soul.js`（AIを迎える）、`mind.js`・`mind-local.js`（LLM の頭脳、端末の中のAI）、`birth.js`（誕生証明）、`qr.js`（QRコード）、`i18n.js`（6言語）ほか。 |
+| `tools/` | `validate.mjs`、`sim.test.mjs`、`soul.test.mjs`、`mind.test.mjs`、`birth.test.mjs`、`qr.test.mjs`、`aozora-extract.mjs`、`gutenberg-extract.mjs`、`build-single.mjs`、`check.sh` ほか。 |
 
 ### 青空文庫と Project Gutenberg からの抜粋
 

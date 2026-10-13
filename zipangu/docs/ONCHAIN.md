@@ -113,3 +113,32 @@ export function drawChainFx(ctx, api, t)
   and **雇う (x402)** — shows the HTTP-402-style quote, pays via Phantom, waits
   for verification, then queues the request and the agent visibly sets off.
 - Feed lines from `trade` get a ⛓ link once their tx confirms.
+
+## 📜 Birth certificates (`js/birth.js`, `js/view-birth.js`)
+
+When a visitor brings an AI in (`#/summon`), its soul card is sealed on this
+device with a salted SHA-256 commitment:
+
+```
+digest = SHA-256("ZIPANGU-BIRTH/1\n" + salt + "\n" + canonicalCard(card))
+salt   = 16 random bytes (hex), kept on this device only (localStorage zipangu.births.v1)
+memo   = "zipangu:birth|v=1|id=<trav_… random id>|h=<digest>"
+```
+
+- **What goes on chain:** only the memo above, in a memo-only devnet transaction
+  paid by the treasury (`chain.inscribe('birth', memo)`). It needs only the fee, so
+  it works before the KOGANE setup; if the treasury is empty, one devnet airdrop
+  is tried first.
+- **What never goes on chain:** the card, its name, or the salt. Because of the
+  salt, nobody can test a guessed card against the digest.
+- **Verify:** `chain.parsedTx(sig)` reads the transaction back from the RPC.
+  `checkBirthTx` requires that it succeeded and that its memo equals the
+  certificate's memo. Only then does the page show ✓.
+- **Keep:** "証明書を保存" downloads a JSON file with the canonical card, the salt,
+  the digest and the signature. With it, anyone the owner chooses can recompute
+  the digest and find the memo on devnet. Sending an AI off deletes the local
+  salt; the file still proves the birth.
+- **Privacy before sealing:** `soul.js` masks anything that looks private (e-mail,
+  phone and card numbers, postal codes, URLs, API keys and tokens, private keys,
+  values after "password:") with `［伏せ字］` before a card is shown, saved,
+  hashed or sent to a model. Cards saved earlier are masked when read back.

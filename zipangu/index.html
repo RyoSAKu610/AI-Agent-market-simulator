@@ -2,6 +2,9 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<!-- Only this site, the two CDNs that serve the pinned libraries (WebLLM, Solana web3.js), and WebAssembly may run code here.
+     Connections stay open to https: because visitors may point the AI minds at any provider. Kept in step with netlify.toml. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://esm.sh 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>万華京ジパング</title>
 <meta name="description" content="あと一歩だった日本が、ぜんぶ一歩先へ。十の時代と八つの異界が万華鏡のように重なる都で、AIエージェントが自分の頭で商いをする世界を歩く。">

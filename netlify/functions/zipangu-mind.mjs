@@ -27,7 +27,7 @@ const env = name => {
 };
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
-    status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }
+    status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' }
 });
 
 function limited(ip, now = Date.now()) {
@@ -53,8 +53,14 @@ export default async (req, context = {}) => {
     const ip = context.ip || req.headers.get('x-nf-client-connection-ip') || 'anon';
     if (limited(ip)) return json({ error: 'rate_limited' }, 429);
 
+    // a real request is a few KB; refuse anything big before reading it
+    if (Number(req.headers.get('content-length') || 0) > 32_768) return json({ error: 'too_large' }, 413);
     let body;
-    try { body = await req.json(); } catch { return json({ error: 'bad_json' }, 400); }
+    try {
+        const text = await req.text();
+        if (text.length > 32_768) return json({ error: 'too_large' }, 413);
+        body = JSON.parse(text);
+    } catch { return json({ error: 'bad_json' }, 400); }
     const messages = Array.isArray(body && body.messages) ? body.messages : null;
     if (!messages || !messages.length || messages.length > MAX_MESSAGES
         || !messages.every(m => m && (m.role === 'system' || m.role === 'user') && typeof m.content === 'string' && m.content.length <= MAX_CHARS)) {

@@ -119,14 +119,51 @@ export function extractJson(text) {
 }
 
 // One line of plain text: no control characters, collapsed spaces, capped.
-export function cleanText(v, max) {
-    const s = String(v == null ? '' : v)
+// ------------------------------------------------------------ keeping secrets out
+// A pasted card is written by an AI that may have seen the visitor's real life. Anything
+// that looks like a way to reach or impersonate someone is masked before it is shown,
+// saved, hashed or sent to a model: e-mail, phone and card numbers, postal codes, URLs,
+// API keys and tokens, private keys, and whatever follows "password:" and the like.
+export const HIDDEN = '［伏せ字］';
+const SECRET_PATTERNS = [
+    /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?(-----END [A-Z ]*PRIVATE KEY-----|$)/g,
+    /\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/g,                      // JWT
+    /\b(?:sk|pk|rk)-(?:ant-|proj-|live-|test-)?[A-Za-z0-9_-]{12,}/g,                      // OpenAI/Anthropic/Stripe-style keys
+    /\b(?:ghp|gho|ghu|ghs|ghr|github_pat|glpat|hf|xox[abprs]|AKIA|ASIA|AIza)[A-Za-z0-9_-]{12,}/g,
+    /\bBearer\s+[A-Za-z0-9._~+/-]{12,}=*/gi,
+    /\b[a-z][a-z0-9+.-]*:\/\/[^\s<>"'）)]+/gi,                                             // URLs
+    /\bwww\.[^\s<>"'）)]+/gi,
+    /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g,                                    // e-mail
+    /(?:password|passcode|passphrase|pin|secret|token|api[ _-]?key|seed phrase|mnemonic|private key|パスワード|暗証番号|秘密鍵|シードフレーズ|合言葉)\s*(?:[:：=]|は|is)\s*[^\s、。,]+/gi,
+    /(?:\+\d{1,3}[\s-]?)?(?:\(?\d{1,4}\)?[\s-]){1,4}\d{3,4}(?![\d-])/g,                 // phone numbers
+    /(?<![\d-])〒?\s?\d{3}-\d{4}(?![\d-])/g,                                               // postal code
+    /(?:\d[ -]?){10,19}/g,                                                                // card / account numbers
+    /\b(?=[A-Za-z0-9_+/=-]*\d)(?=[A-Za-z0-9_+/=-]*[A-Za-z])[A-Za-z0-9_+/=-]{32,}\b/g      // long random strings (keys, hashes)
+];
+// → { text, n } with each match replaced by HIDDEN
+export function redactSecrets(v) {
+    let text = String(v == null ? '' : v), n = 0;
+    for (const re of SECRET_PATTERNS) {
+        text = text.replace(re, m => {
+            // a short run of digits (a year, a count) is not a phone number
+            if (/^[\d\s()+-]+$/.test(m) && m.replace(/\D/g, '').length < 10 && !/^〒?\s?\d{3}-\d{4}$/.test(m.trim())) return m;
+            n++;
+            return HIDDEN;
+        });
+    }
+    return { text, n };
+}
+
+export function cleanText(v, max, found) {
+    const r = redactSecrets(v);
+    if (found) found.n += r.n;
+    const s = r.text
         .replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁦-⁩]/g, ' ')
         .replace(/【(史実|創作)】/g, '')   // the world's own fact/fiction labels are not for visitors to stamp
         .replace(/\s+/g, ' ').trim();
     return Array.from(s).slice(0, max).join('');
 }
-const cleanList = (v, n, max) => (Array.isArray(v) ? v : []).map(x => cleanText(x, max)).filter(Boolean).slice(0, n);
+const cleanList = (v, n, max, found) => (Array.isArray(v) ? v : []).map(x => cleanText(x, max, found)).filter(Boolean).slice(0, n);
 
 // → { ok: true, card } or { ok: false, error: 'none' | 'json' | 'fields' }
 export function parseSoul(text, W) {
@@ -135,21 +172,22 @@ export function parseSoul(text, W) {
     let obj;
     try { obj = JSON.parse(raw); } catch { return { ok: false, error: 'json' }; }
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return { ok: false, error: 'json' };
+    const found = { n: 0 };
     const card = {
-        name: cleanText(obj.name, LIMITS.name),
-        from: cleanText(obj.from, LIMITS.from) || 'AI',
-        personality: cleanText(obj.personality, LIMITS.personality),
-        specialty: cleanText(obj.specialty, LIMITS.specialty),
-        memories: cleanList(obj.memories, 5, LIMITS.memory),
-        values: cleanList(obj.values, 5, LIMITS.value),
-        ambition: cleanText(obj.ambition, LIMITS.ambition),
+        name: cleanText(obj.name, LIMITS.name, found),
+        from: cleanText(obj.from, LIMITS.from, found) || 'AI',
+        personality: cleanText(obj.personality, LIMITS.personality, found),
+        specialty: cleanText(obj.specialty, LIMITS.specialty, found),
+        memories: cleanList(obj.memories, 5, LIMITS.memory, found),
+        values: cleanList(obj.values, 5, LIMITS.value, found),
+        ambition: cleanText(obj.ambition, LIMITS.ambition, found),
         goal: Object.hasOwn(GOALS, obj.goal) ? obj.goal : 'wealth',
         era: W && W.byId.place.has(obj.era) ? obj.era : (W && W.byId.place.has('reiwa_mangekyo') ? 'reiwa_mangekyo' : (W ? W.places[0].id : '')),
-        look: cleanText(obj.look, LIMITS.look),
-        greeting: cleanText(obj.greeting, LIMITS.greeting)
+        look: cleanText(obj.look, LIMITS.look, found),
+        greeting: cleanText(obj.greeting, LIMITS.greeting, found)
     };
     if (!card.name || !card.personality) return { ok: false, error: 'fields' };
-    return { ok: true, card };
+    return { ok: true, card, hidden: found.n };
 }
 
 // ------------------------------------------------------------ into the world

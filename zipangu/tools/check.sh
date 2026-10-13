@@ -28,6 +28,7 @@ node tools/character-drama.test.mjs
 echo "› bringing an AI in (soul cards, QR, languages)"
 node tools/soul.test.mjs
 node tools/qr.test.mjs
+node tools/birth.test.mjs
 
 echo "› AI minds (LLM providers, trial endpoint)"
 node tools/mind.test.mjs

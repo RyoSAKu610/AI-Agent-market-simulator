@@ -1362,3 +1362,9 @@ input::placeholder { color: var(--ink-faint); }
 .mind-localbox { display: grid; gap: 8px; justify-items: start; }
 .mind-local-state { margin: 0; font-size: 14px; color: #c9ecff; }
 @media (max-width: 600px) { .mind-launch { left: 10px; bottom: 232px; font-size: 11px; padding: 7px 10px; } }
+
+/* ---------------------------------------------------------- 📜 birth certificates (js/birth.js) */
+.birth-card { border-color: rgba(232, 195, 106, 0.55); }
+.birth-digest { font: 12px/1.5 ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; overflow-wrap: anywhere; word-break: break-all; color: #f3e2b0; }
+.birth-state { font-size: 14px; color: #c9ecff; overflow-wrap: anywhere; }
+.birth-facts dd { min-width: 0; }

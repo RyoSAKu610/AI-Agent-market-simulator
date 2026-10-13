@@ -1,0 +1,10 @@
+# Secrets never belong in this repository (see AGENTS.md).
+.env
+.env.*
+*.pem
+*.key
+*.p12
+id_*.json
+*keypair*.json
+.netlify/
+node_modules/
