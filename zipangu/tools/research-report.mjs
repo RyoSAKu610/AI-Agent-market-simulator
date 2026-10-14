@@ -4,7 +4,7 @@
 //
 //   node tools/research-report.mjs runs/*.jsonl [--window 1] [--out report.md] [--csv windows.csv]
 import { readFileSync, writeFileSync } from 'node:fs';
-import { fromJSONL, byCondition, windows, trend, twoProportions, summarize } from '../js/research.js';
+import { fromJSONL, byCondition, windows, trend, twoProportions, summarize, groupKey, groupOrder } from '../js/research.js';
 
 const args = process.argv.slice(2);
 const opt = (name, def) => { const i = args.indexOf('--' + name); return i < 0 ? def : args[i + 1]; };
@@ -14,12 +14,12 @@ const days = Number(opt('window', 1)) || 1;
 
 const records = files.flatMap(f => fromJSONL(readFileSync(f, 'utf8')));
 const groups = {};
-for (const r of records) { const k = r.by === 'fallback' ? 'fallback' : r.cond || r.by; (groups[k] = groups[k] || []).push(r); }
+for (const r of records) { const k = groupKey(r); (groups[k] = groups[k] || []).push(r); }
 const sums = byCondition(records);
 
 const f = (v, d = 3) => (v == null ? '—' : typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toFixed(d)) : String(v));
 const pct = v => (v == null ? '—' : (v * 100).toFixed(1) + '%');
-const conds = Object.keys(sums).sort();
+const conds = Object.keys(sums).sort(groupOrder);
 const L = [];
 L.push(`# 万華京ジパング — decision log report`, '');
 L.push(`${records.length} decisions from ${files.length} file(s): ${files.join(', ')}. Window: ${days} in-world day(s).`, '');
@@ -28,6 +28,7 @@ L.push('| measure | ' + conds.join(' | ') + ' |', '|---|' + conds.map(() => '---
 const row = (label, fn) => L.push(`| ${label} | ` + conds.map(c => fn(sums[c])).join(' | ') + ' |');
 row('decisions', s => f(s.n));
 row('residents', s => f(s.agents));
+row('model', s => s.model || '—');
 row('top-1 agreement with the rules\' best (top1)', s => pct(s.top1));
 row('mean rank chosen (0 = best)', s => f(s.meanRank));
 row('rationality β (softmax fit)', s => (s.beta ? f(s.beta.beta, 1) + (s.beta.atEdge ? '+' : '') : '—'));
@@ -46,11 +47,14 @@ row('thoughts repeated verbatim', s => (s.thoughts ? pct(s.thoughts.repeatShare)
 for (const k of ['self', 'others', 'memory', 'emotion', 'reason', 'money']) row(`thoughts mentioning ${k}`, s => (s.thoughts ? pct(s.thoughts.share[k]) : '—'));
 L.push('');
 
-if (groups.rules && (groups.llm || groups.mind)) {
-    const other = groups.llm ? 'llm' : 'mind';
-    const a = groups.rules.filter(r => r.chosen >= 0), b = groups[other].filter(r => r.chosen >= 0);
-    const t = twoProportions(a.filter(r => r.chosen === 0).length, a.length, b.filter(r => r.chosen === 0).length, b.length);
-    if (t) L.push(`top-1 agreement, rules − ${other}: ${(t.diff * 100).toFixed(1)} points (z = ${t.z}).`, '');
+if (groups.rules) {
+    const a = groups.rules.filter(r => r.chosen >= 0);
+    for (const other of conds.filter(c => c !== 'rules' && !c.includes('·'))) {
+        const b = groups[other].filter(r => r.chosen >= 0);
+        const t = twoProportions(a.filter(r => r.chosen === 0).length, a.length, b.filter(r => r.chosen === 0).length, b.length);
+        if (t) L.push(`- top-1 agreement, rules − ${other}: ${(t.diff * 100).toFixed(1)} points (z = ${t.z}).`);
+    }
+    L.push('');
 }
 
 L.push('## 2. Change over time', '');

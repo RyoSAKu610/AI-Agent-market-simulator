@@ -212,7 +212,7 @@ export function parseAnswer(text, n) {
 // Until it is ready, wants() is false and the economy runs exactly as without a mind.
 const LOCAL_STATE = { idle: 'idle', checking: 'loading', loading: 'loading', ready: 'ready', unsupported: 'unsupported', error: 'error' };
 
-export function createMind(W, settings, { fetchImpl, now = () => (globalThis.performance ? performance.now() : Date.now()), lang = 'ja', local = null, keepPrompts = false } = {}) {
+export function createMind(W, settings, { fetchImpl, now = () => (globalThis.performance ? performance.now() : Date.now()), lang = 'ja', local = null, keepPrompts = false, maxParallel = null } = {}) {
     const cfg = resolve(settings);
     const isLocal = cfg.kind === 'local';
     const engine = isLocal ? local : null;
@@ -220,7 +220,7 @@ export function createMind(W, settings, { fetchImpl, now = () => (globalThis.per
     const listeners = new Set();
     const calls = [];          // timestamps of calls in the last hour
     let inFlight = 0;
-    const MAX_PARALLEL = isLocal ? 1 : 2;     // one GPU, one thought at a time
+    const MAX_PARALLEL = isLocal ? 1 : Math.max(1, Math.min(64, maxParallel || 2));     // one GPU, one thought at a time
     const recentByAgent = new Map();
     const changed = () => { for (const fn of listeners) { try { fn(status); } catch { /* a listener must not stop the mind */ } } };
 

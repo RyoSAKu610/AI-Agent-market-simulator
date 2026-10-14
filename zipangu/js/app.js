@@ -25,6 +25,7 @@ import { loadCards, addTravellers } from './soul.js';
 import { t, getLang } from './i18n.js';
 import { loadSettings, createMind, PROVIDERS } from './mind.js';
 import { loadResearchSettings, saveResearchSettings, createRecorder, openStore, newRunId } from './research.js';
+import { loadSocietySettings, browserCohorts, assignCohorts, createSociety } from './society.js';
 import { createLocalEngine, CONSENT_KEY } from './mind-local.js';
 import { createProgress, loadProgress, joinHidden } from './progress.js';
 import { loadBirths } from './birth.js';
@@ -125,7 +126,17 @@ async function boot() {
     // browser (js/mind-local.js); until it has loaded, and on devices without WebGPU, the rules decide.
     const mindSettings = loadSettings(storage, session);
     const localEngine = mindSettings.on && (PROVIDERS[mindSettings.provider] || {}).kind === 'local' ? createLocalEngine() : null;
-    const mind = mindSettings.on ? createMind(W, mindSettings, { lang: getLang(), local: localEngine }) : null;
+    // 🧪 a mixed society (js/society.js): some residents choose by the rules alone, the rest with
+    // the model — or, on a remote provider, with several models at once.
+    const societySettings = loadSocietySettings(storage);
+    let mind = null;
+    if (mindSettings.on && societySettings.on) {
+        const cohorts = browserCohorts({ ...societySettings, models: localEngine ? [] : societySettings.models }, localEngine ? 'Qwen' : mindSettings.model || null);
+        const { cohortOf } = assignCohorts([...W.byId.agent.keys()], cohorts, seed);
+        const members = {};
+        for (const c of cohorts) if (c.kind === 'mind') members[c.id] = createMind(W, { ...mindSettings, scope: 'all', ...(localEngine ? {} : { model: c.model || mindSettings.model }) }, { lang: getLang(), local: localEngine });
+        mind = createSociety({ cohorts, members, cohortOf });
+    } else if (mindSettings.on) mind = createMind(W, mindSettings, { lang: getLang(), local: localEngine });
     const eco = createEconomy(W, { seed, secondsPerDay: SECONDS_PER_DAY, state: loaded.data?.economy || null, mind });
     const history = createHistory(eco, loaded.data?.history || null);
     if (!loaded.data?.history) history.sample();
@@ -206,7 +217,7 @@ async function boot() {
         if (!r.settings.run) r.settings.run = newRunId();
         r.settings.on = true; saveResearchSettings(storage, r.settings);
         r.store = r.store || openStore();
-        r.rec = createRecorder(eco, { run: r.settings.run, sink: rec => r.store.add(rec) });
+        r.rec = createRecorder(eco, { run: r.settings.run, sink: rec => r.store.add(rec), ...(mind && mind.society ? { cohortOf: mind.cohortOf, kindOf: mind.kindOf } : {}) });
     };
     ctx.stopResearch = () => {
         const r = ctx.research;

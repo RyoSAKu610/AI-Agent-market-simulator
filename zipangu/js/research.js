@@ -35,14 +35,17 @@ export const newRunId = (rand = Math.random) => 'run-' + new Date().toISOString(
 
 // Listens to eco.onDecision. A record is handed to `sink` once it is closed: when the same
 // resident decides again (out = what its wallet did meanwhile), or on flush() (out = null).
-export function createRecorder(eco, { sink, run = null, cond = null } = {}) {
+// `cohortOf(id)` (a mixed society, js/society.js) adds the resident's cohort and its kind.
+export function createRecorder(eco, { sink, run = null, cond = null, cohortOf = null, kindOf = null } = {}) {
     const open = new Map();   // agent id → record waiting for its outcome
     let count = 0;
     const close = (rec, out) => { rec.out = out; count++; try { sink && sink(rec); } catch { /* the log must not stop the world */ } };
     const off = eco.onDecision(d => {
         const prev = open.get(d.agent);
         if (prev) close(prev, { dWallet: d.wallet - prev.wallet, dT: +(d.T - prev.T).toFixed(4) });
-        open.set(d.agent, { v: RECORD_VERSION, run, cond: cond || (d.by === 'rules' ? 'rules' : 'mind'), ...d });
+        const r = { v: RECORD_VERSION, run, cond: cond || (d.by === 'rules' ? 'rules' : 'mind'), ...d };
+        if (cohortOf) { r.cohort = cohortOf(d.agent); r.cohortKind = kindOf ? kindOf(d.agent) : null; }
+        open.set(d.agent, r);
     });
     return {
         get count() { return count; },
@@ -151,9 +154,11 @@ export function summarize(records) {
         return jsDivergence(countBy(s.slice(0, h), r => r.kind || '?'), countBy(s.slice(h), r => r.kind || '?'));
     });
     const ms = rs.map(r => r.ms).filter(Number.isFinite);
+    const models = countBy(rs.filter(r => r.model), r => r.model);
     return {
         n: rs.length,
         agents: Object.keys(byAgent).length,
+        model: Object.keys(models).sort((a, b) => models[b] - models[a])[0] || null,
         top1: +(inSet.filter(r => r.chosen === 0).length / Math.max(1, inSet.length)).toFixed(3),
         meanRank: +mean(inSet.map(r => r.chosen)).toFixed(3),
         outOfSet: +((rs.length - inSet.length) / rs.length).toFixed(3),
@@ -172,11 +177,23 @@ export function summarize(records) {
     };
 }
 
+// Which group a record counts in. In a mixed society, its cohort; a decision the rules made for a
+// model's resident (the model was busy or did not answer) is kept apart as "<cohort>·rules" or
+// "<cohort>·fallback", so a cohort's numbers are only what that cohort chose.
+export function groupKey(r) {
+    if (r.cohort) {
+        if (r.cohortKind === 'rules') return r.cohort;
+        return r.by === 'mind' ? r.cohort : `${r.cohort}·${r.by}`;
+    }
+    return r.by === 'fallback' ? 'fallback' : r.cond || r.by;
+}
 export function byCondition(records) {
     const g = {};
-    for (const r of records) { const k = r.by === 'fallback' ? 'fallback' : r.cond || r.by; (g[k] = g[k] || []).push(r); }
+    for (const r of records) { const k = groupKey(r); (g[k] = g[k] || []).push(r); }
     return Object.fromEntries(Object.entries(g).map(([k, v]) => [k, summarize(v)]));
 }
+// Group names in reading order: the rules, then each cohort, then the turns the rules took for one.
+export const groupOrder = (a, b) => (a.includes('·') - b.includes('·')) || ((b === 'rules') - (a === 'rules')) || (a < b ? -1 : a > b ? 1 : 0);
 // The same measures per window of `days` in-world days, to see change over time.
 export function windows(records, days = 1) {
     const g = new Map();

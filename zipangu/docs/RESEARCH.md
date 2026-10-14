@@ -71,7 +71,32 @@ node tools/experiment.mjs --cond llm --seed 1 --days 30 --out runs/qwen7b-s1.jso
 - モデルを変える（0.5B / 1.5B / 7B、Qwen 以外）と「モデルの大きさで何が変わるか」が調べられます。
 - API キーが必要なエンドポイントは環境変数 `ZIPANGU_LLM_KEY` で渡します（ファイルに書かない）。
 
-### 4.3 レポート
+### 4.3 混成社会（いろいろな頭脳が同じ街に）
+
+住人をコホート（群）に分け、**同じ世界・同じ相場・同じ時刻**で、ルール・ランダム・複数のモデルを
+同時に暮らさせます（`js/society.js`）。条件を別々に走らせる比較より、市場を通じた相互作用まで含めて
+比べられます。住人の割り振りはシードで決まり、毎回同じです。
+
+```bash
+# 例：OpenRouter の3モデル + 手元の Ollama Qwen + ルール + ランダム（tools/society.example.json）
+export ZIPANGU_LLM_KEY=sk-or-...        # ファイルには書かない
+node tools/experiment.mjs --society tools/society.example.json --seed 1 --days 10 \
+     --rpm 20 --out runs/society-s1.jsonl
+node tools/research-report.mjs runs/society-s1.jsonl --out report.md
+```
+
+- `cohorts[]`：`{ id?, kind: rules | mind | random, model?, base?, keyEnv?, share }`。`model` があれば `mind`。
+  `base` と `keyEnv`（キーを入れた環境変数の名前）はコホートごとに変えられます。
+- `--rpm` は全コホート合計の1分あたりの呼び出し上限（OpenRouter の無料モデルは 20）。
+- ヘッドレスでは世界がモデルの返事を待つので、どのコホートの決定も必ずそのコホートの頭脳が下します。
+
+ブラウザでは ⚙ 設定 → 🧪 混成社会 で「AIで考える住人の割合」と、リモートのつなぎ先（OpenRouter など）なら
+モデルを複数指定できます（端末の中のAIは Qwen ひとつなので「ルール」と「Qwen」の2群）。
+ブラウザでは世界は止まらないため、モデルが混んでいる間はルールが代わりに決めます。研究ログはそれを
+`<コホート>·rules` として分けて数えるので、各コホートの数字はそのコホート自身の選択だけです。
+厳密な比較はヘッドレス実験で行ってください。
+
+### 4.4 レポート
 
 ```bash
 node tools/research-report.mjs runs/*.jsonl --window 1 --out report.md --csv windows.csv

@@ -1,0 +1,12 @@
+{
+  "base": "https://openrouter.ai/api/v1",
+  "keyEnv": "ZIPANGU_LLM_KEY",
+  "cohorts": [
+    { "id": "rules", "share": 8 },
+    { "id": "random", "kind": "random", "share": 4 },
+    { "model": "qwen/qwen-2.5-72b-instruct", "share": 5 },
+    { "model": "deepseek/deepseek-chat", "share": 5 },
+    { "model": "moonshotai/kimi-k2", "share": 5 },
+    { "id": "qwen-local", "model": "qwen2.5:7b", "base": "http://localhost:11434/v1", "keyEnv": "NO_KEY", "share": 5 }
+  ]
+}
