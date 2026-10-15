@@ -10,6 +10,7 @@ import {
 import { makeBirth, saveBirth, forgetBirth } from './birth.js';
 import { makeBackup, readBackup, restoreBackup } from './backup.js';
 import { byCondition, toJSONL, groupOrder, distanceToHuman } from './research.js';
+import { buildDonation, consentOf, consentComplete, newDonorId, loadDonated, saveDonated, undonated, markDonated, sanitizeRecord, DONATE_ENDPOINT, DATA_LICENSE_URL, MAX_RECORDS } from './donate.js';
 import { loadSocietySettings, saveSocietySettings, browserCohorts, assignCohorts } from './society.js';
 import { journalLink } from './view-journal.js';
 import { PROVIDERS, loadSettings, saveSettings, resolve, testConnection, listModels } from './mind.js';
@@ -391,6 +392,97 @@ function decideSection(ctx) {
         h('p', { class: 'ar-role' }, t('decide.how')));
 }
 
+// 🤝 Donating the decision log to research, with consent (js/donate.js, docs/DATA.md).
+function donateSection(ctx) {
+    const r = ctx.research;
+    const box = h('div', { class: 'donate' });
+    const message = h('p', { class: 'soul-message', role: 'status' });
+    const pending = h('p', { class: 'ar-role' });
+    const preview = h('pre', { class: 'donate-preview' });
+    const receipts = h('ul', { class: 'decide-list' });
+    const checks = {};
+    const check = (key, label) => {
+        checks[key] = h('input', { type: 'checkbox', onchange: () => paintButtons() });
+        return h('label', { class: 'mind-check' }, checks[key], h('span', null, ...label));
+    };
+    const sendBtn = h('button', { type: 'button', class: 'btn btn-primary' }, t('donate.send'));
+    const fileBtn = h('button', { type: 'button', class: 'btn' }, t('donate.file'));
+    let fresh = [];
+    const endpoint = () => (/\.netlify\.app$/.test(location.hostname) ? '/.netlify/functions/zipangu-donate' : DONATE_ENDPOINT);
+    const consent = () => consentOf({ license: checks.license.checked, age: checks.age.checked, thirdParty: checks.third.checked });
+    const say = (text, bad) => { message.textContent = text; message.className = 'soul-message' + (bad ? ' is-error' : ''); };
+    function paintButtons() { const ok = consentComplete(consent()) && fresh.length > 0; sendBtn.disabled = !ok; fileBtn.disabled = !ok; }
+    async function paint() {
+        const all = r && r.store ? await r.store.all().catch(() => []) : [];
+        const d = loadDonated(ctx.storage);
+        fresh = undonated(all, d).slice(0, MAX_RECORDS);
+        pending.textContent = fresh.length ? t('donate.pending', { n: fresh.length }) : t('donate.none');
+        const sample = fresh.map(sanitizeRecord).find(Boolean);
+        preview.textContent = sample ? JSON.stringify(sample, null, 1) : '—';
+        clear(receipts);
+        for (const rc of d.receipts.slice().reverse()) {
+            receipts.append(h('li', null, `${String(rc.at).slice(0, 10)} ・ ${rc.n} ・ `, h('code', null, rc.id), ' ',
+                h('button', { type: 'button', class: 'btn btn-small', onclick: () => withdraw(rc) }, t('donate.withdraw'))));
+        }
+        paintButtons();
+    }
+    function pack() {
+        const d = loadDonated(ctx.storage);
+        if (!d.donor) { d.donor = newDonorId(); saveDonated(ctx.storage, d); }
+        return { d, body: buildDonation(fresh, { donor: d.donor, consent: consent() }) };
+    }
+    sendBtn.onclick = async () => {
+        if (r && r.rec) r.rec.flush();
+        await paint();
+        const { d, body } = pack();
+        if (!body.records.length) return;
+        sendBtn.disabled = true; say(t('donate.sending'));
+        try {
+            const res = await fetch(endpoint(), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+            const out = await res.json().catch(() => ({}));
+            if (res.status === 503) { say(t('donate.offline'), true); return; }
+            if (!res.ok || !out.ok) { say(t('donate.fail', { why: out.error || res.status }), true); return; }
+            const next = markDonated(d, fresh);
+            next.receipts = [...d.receipts, { id: out.id, token: out.token, n: out.n, at: new Date().toISOString() }];
+            saveDonated(ctx.storage, next);
+            say(t('donate.done', { n: out.n, id: out.id }));
+        } catch { say(t('donate.offline'), true); } finally { paint(); }
+    };
+    fileBtn.onclick = () => {
+        const { body } = pack();
+        const url = URL.createObjectURL(new Blob([JSON.stringify(body)], { type: 'application/json' }));
+        const a = h('a', { href: url, download: `zipangu-donation-${new Date().toISOString().slice(0, 10)}.json` });
+        document.body.append(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        say(t('donate.fileNote'));
+    };
+    async function withdraw(rc) {
+        if (!confirm(t('donate.withdrawConfirm'))) return;
+        try {
+            const res = await fetch(endpoint(), { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: rc.id, token: rc.token }) });
+            if (!res.ok) { say(t('donate.fail', { why: res.status }), true); return; }
+            const d = loadDonated(ctx.storage);
+            d.receipts = d.receipts.filter(x => x.id !== rc.id);
+            saveDonated(ctx.storage, d);
+            say(t('donate.withdrawn'));
+        } catch { say(t('donate.offline'), true); } finally { paint(); }
+    }
+    box.append(
+        h('h3', null, t('donate.title')),
+        h('p', null, t('donate.lead')),
+        pending,
+        h('details', null, h('summary', null, t('donate.what')), h('p', { class: 'ar-role' }, t('donate.fields')), preview),
+        check('license', [t('donate.license'), ' ', h('a', { href: DATA_LICENSE_URL, target: '_blank', rel: 'noopener noreferrer' }, 'CC BY-NC 4.0')]),
+        check('age', [t('donate.age')]),
+        check('third', [t('donate.thirdParty')]),
+        h('p', { class: 'mind-actions' }, sendBtn, fileBtn),
+        message,
+        h('p', { class: 'ar-role' }, t('donate.receipts')),
+        receipts);
+    paint();
+    return box;
+}
+
 // 🔬 The decision log (js/research.js): rules vs an LLM, recorded on this device for research.
 function researchSection(ctx) {
     const r = ctx.research;
@@ -452,7 +544,8 @@ function researchSection(ctx) {
             h('button', { type: 'button', class: 'btn', onclick: exportIt }, t('research.export')),
             h('button', { type: 'button', class: 'btn btn-small', onclick: wipe }, t('research.clear'))),
         status, table,
-        h('p', { class: 'ar-role' }, t('research.note')));
+        h('p', { class: 'ar-role' }, t('research.note')),
+        donateSection(ctx));
 }
 
 // The small language switch used on the first-visit card.

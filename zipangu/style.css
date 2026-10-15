@@ -1436,3 +1436,8 @@ input::placeholder { color: var(--ink-faint); }
 .decide-n { flex: none; width: 1.6em; height: 1.6em; border-radius: 50%; display: inline-grid; place-items: center; background: rgba(232, 195, 106, 0.18); color: var(--gold-soft); font-variant-numeric: tabular-nums; }
 .decide-list { margin: 8px 0; padding-left: 1.2em; display: grid; gap: 6px; }
 @media (max-width: 600px) { .decide-card { right: 8px; left: 8px; bottom: 8px; width: auto; max-height: calc(100vh - 90px); } }
+
+/* 🤝 donating the research log (js/donate.js) */
+.donate { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(232, 195, 106, 0.25); display: grid; gap: 8px; }
+.donate h3 { margin: 0; }
+.donate-preview { max-height: 220px; overflow: auto; font-size: 12px; background: rgba(0, 0, 0, 0.3); border-radius: 8px; padding: 8px 10px; white-space: pre-wrap; overflow-wrap: anywhere; }
