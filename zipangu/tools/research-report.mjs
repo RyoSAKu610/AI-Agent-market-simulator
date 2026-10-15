@@ -4,7 +4,7 @@
 //
 //   node tools/research-report.mjs runs/*.jsonl [--window 1] [--out report.md] [--csv windows.csv]
 import { readFileSync, writeFileSync } from 'node:fs';
-import { fromJSONL, byCondition, windows, trend, twoProportions, summarize, groupKey, groupOrder } from '../js/research.js';
+import { fromJSONL, byCondition, windows, trend, twoProportions, summarize, groupKey, groupOrder, distanceToHuman } from '../js/research.js';
 
 const args = process.argv.slice(2);
 const opt = (name, def) => { const i = args.indexOf('--' + name); return i < 0 ? def : args[i + 1]; };
@@ -45,6 +45,13 @@ row('thought length (chars)', s => (s.thoughts ? f(s.thoughts.meanLen, 1) : '—
 row('thought distinct-2', s => (s.thoughts ? f(s.thoughts.distinct2) : '—'));
 row('thoughts repeated verbatim', s => (s.thoughts ? pct(s.thoughts.repeatShare) : '—'));
 for (const k of ['self', 'others', 'memory', 'emotion', 'reason', 'money']) row(`thoughts mentioning ${k}`, s => (s.thoughts ? pct(s.thoughts.share[k]) : '—'));
+if (sums.human) {
+    const dist = distanceToHuman(sums);
+    const cell = (k, f2) => (dist[k] && dist[k][f2] != null ? f(dist[k][f2]) : '—');
+    L.push('| **distance to the human: action mix (JS div.)** | ' + conds.map(c => cell(c, 'mix')).join(' | ') + ' |');
+    L.push('| **distance to the human: \\|β − β_human\\|** | ' + conds.map(c => cell(c, 'beta')).join(' | ') + ' |');
+    L.push('| **distance to the human: \\|top1 − top1_human\\|** | ' + conds.map(c => cell(c, 'top1')).join(' | ') + ' |');
+}
 L.push('');
 
 if (groups.rules) {

@@ -9,7 +9,7 @@ import {
 } from './soul.js';
 import { makeBirth, saveBirth, forgetBirth } from './birth.js';
 import { makeBackup, readBackup, restoreBackup } from './backup.js';
-import { byCondition, toJSONL, groupOrder } from './research.js';
+import { byCondition, toJSONL, groupOrder, distanceToHuman } from './research.js';
 import { loadSocietySettings, saveSocietySettings, browserCohorts, assignCohorts } from './society.js';
 import { journalLink } from './view-journal.js';
 import { PROVIDERS, loadSettings, saveSettings, resolve, testConnection, listModels } from './mind.js';
@@ -322,6 +322,7 @@ export function settingsView(ctx) {
         h('section', { class: 'sec', 'aria-labelledby': 'st-backup' }, sectionHead(t('backup.title'), '', 'st-backup'), backupSection(ctx)),
         h('section', { class: 'sec', id: 'mind', 'aria-labelledby': 'st-mind' }, sectionHead(t('mind.title'), '', 'st-mind'), minds.el),
         h('section', { class: 'sec', id: 'society', 'aria-labelledby': 'st-society' }, sectionHead(t('society.title'), '', 'st-society'), societySection(ctx)),
+        h('section', { class: 'sec', id: 'decide', 'aria-labelledby': 'st-decide' }, sectionHead(t('decide.sectionTitle'), '', 'st-decide'), decideSection(ctx)),
         h('section', { class: 'sec', id: 'research', 'aria-labelledby': 'st-research' }, sectionHead(t('research.title'), '', 'st-research'), researchSection(ctx)));
     return { el, title: t('settings.title'), destroy: minds.destroy };
 }
@@ -365,6 +366,31 @@ function societySection(ctx) {
         h('p', { class: 'ar-role' }, cur.on ? t('society.on') : t('society.off')));
 }
 
+// 🙋 "You decide" (js/human.js): the residents the visitor chooses for, and whether time waits.
+function decideSection(ctx) {
+    const list = h('ul', { class: 'decide-list' });
+    const hold = h('input', { type: 'checkbox', checked: ctx.humanSettings ? ctx.humanSettings.holdTime : true,
+        onchange: e => ctx.setHoldTime && ctx.setHoldTime(e.target.checked) });
+    function paint() {
+        clear(list);
+        const ids = ctx.human ? ctx.human.agents : [];
+        if (!ids.length) { list.append(h('li', { class: 'ar-role' }, t('decide.none'))); return; }
+        for (const id of ids) {
+            const a = ctx.W.byId.agent.get(id);
+            list.append(h('li', null, h('a', { href: href.agent(id) }, a ? a.name : id), ' ',
+                h('button', { type: 'button', class: 'btn btn-small', onclick: () => { ctx.releaseResident(id); paint(); } }, t('decide.release'))));
+        }
+    }
+    paint();
+    const st = ctx.human ? ctx.human.status : { asked: 0, answered: 0, skipped: 0 };
+    return plaque({ class: 'settings-card' },
+        h('p', null, t('decide.lead')),
+        list,
+        h('label', { class: 'mind-check' }, hold, h('span', null, t('decide.holdLabel'))),
+        h('p', { class: 'ar-role' }, t('decide.counts', st)),
+        h('p', { class: 'ar-role' }, t('decide.how')));
+}
+
 // 🔬 The decision log (js/research.js): rules vs an LLM, recorded on this device for research.
 function researchSection(ctx) {
     const r = ctx.research;
@@ -390,7 +416,8 @@ function researchSection(ctx) {
         const sums = byCondition(recs);
         const conds = Object.keys(sums).sort(groupOrder);
         if (!conds.length) return;
-        const row = (label, fn) => h('tr', null, h('th', { scope: 'row' }, label), ...conds.map(c => h('td', null, fn(sums[c]))));
+        const row = (label, fn) => h('tr', null, h('th', { scope: 'row' }, label), ...conds.map(c => h('td', null, fn(sums[c], c))));
+        const dist = distanceToHuman(sums);
         table.append(h('table', null,
             h('thead', null, h('tr', null, h('th'), ...conds.map(c => h('th', { scope: 'col' }, condLabel(c))))),
             h('tbody', null,
@@ -398,7 +425,8 @@ function researchSection(ctx) {
                 row(t('research.top1'), s => pct(s.top1)),
                 row(t('research.beta'), s => (s.beta ? String(s.beta.beta) : '—')),
                 row(t('research.entropy'), s => String(s.kindEntropy)),
-                row(t('research.thoughts'), s => (s.thoughts ? String(s.thoughts.n) : '—')))));
+                row(t('research.thoughts'), s => (s.thoughts ? String(s.thoughts.n) : '—')),
+                ...(sums.human ? [row(t('research.toHuman'), (s, c) => (dist[c] && dist[c].mix != null ? dist[c].mix.toFixed(3) : '—'))] : []))));
     }
     toggle.onclick = () => { if (r.rec) ctx.stopResearch(); else ctx.startResearch(); paint(); };
     const exportIt = async () => {

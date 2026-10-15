@@ -37,6 +37,7 @@ node tools/mind.test.mjs
 echo "› research log (rules vs LLM decisions)"
 node tools/research.test.mjs
 node tools/society.test.mjs
+node tools/human.test.mjs
 node --check ../netlify/functions/zipangu-mind.mjs
 
 echo "› explorer syntax"

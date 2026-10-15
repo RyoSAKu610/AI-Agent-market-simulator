@@ -721,7 +721,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
             a.thought = { text: thought, T: now(), model: String(ans.model || '').slice(0, 60) };
             emit('thought', { agent: a.id, thought, model: a.thought.model, option: plan.kind, message: `${a.name}「${thought}」` });
         }
-        if (decisionWatchers.size) report(a, pick ? 'mind' : 'fallback', entry.opts, plan, { ...ans, ms: Math.round(mind.now() - entry.started) });
+        if (decisionWatchers.size) report(a, pick ? (ans.who === 'human' ? 'human' : 'mind') : 'fallback', entry.opts, plan, { ...ans, ms: Number.isFinite(ans.ms) ? ans.ms : Math.round(mind.now() - entry.started) });
         adoptPlan(a, { ...plan, by: pick ? 'mind' : 'rules' });
     }
 
