@@ -684,9 +684,9 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
     // unusable, the rules choose. Nothing here runs unless a mind is given.
     const MIND_OPTIONS = 5;
     const minds = new Map();   // agent id → { opts, started, answer } (never saved)
-    function mindCandidates(a) {
+    function mindCandidates(a, all = optionsFor(a)) {
         const seen = new Set(), out = [];
-        for (const o of optionsFor(a).filter(o => Number.isFinite(o.score)).sort((x, y) => y.score - x.score)) {
+        for (const o of all.filter(o => Number.isFinite(o.score)).sort((x, y) => y.score - x.score)) {
             const key = [o.kind, o.info?.good, o.info?.from, o.info?.to].join('|');
             if (seen.has(key)) continue;
             seen.add(key); out.push(o);
@@ -721,8 +721,37 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
             a.thought = { text: thought, T: now(), model: String(ans.model || '').slice(0, 60) };
             emit('thought', { agent: a.id, thought, model: a.thought.model, option: plan.kind, message: `${a.name}「${thought}」` });
         }
+        if (decisionWatchers.size) report(a, pick ? 'mind' : 'fallback', entry.opts, plan, { ...ans, ms: Math.round(mind.now() - entry.started) });
         adoptPlan(a, { ...plan, by: pick ? 'mind' : 'rules' });
     }
+
+    // ------------------------------------------------ decision log (research, js/research.js)
+    // Who chose (the rules or a mind), among which candidates, and what the resident had at the
+    // time. Off unless someone listens; when off nothing here runs and the world is unchanged.
+    // The candidate list is the same top few a mind is offered, sorted by the rules' score, so
+    // index 0 is always the rules' own best guess and the two kinds of choice compare directly.
+    const decisionWatchers = new Set();
+    function report(a, by, cands, plan, ans = null) {
+        const c = clockAt(now(), S.startSekki);
+        const d = {
+            T: now(), day: c.day, koku: c.koku, season: c.season, agent: a.id, by, goal: a.goalType || null,
+            wallet: Math.round(a.wallet), carrying: a.carrying.reduce((n, l) => n + l.qty, 0), at: a.at || null,
+            traits: { ...a.traits },
+            cands: cands.map(o => ({ kind: o.kind, good: o.info?.good || null, to: o.info?.to || null,
+                profit: Math.round(o.info?.profit || 0), time: +(o.info?.time || 0).toFixed(3), score: +(+o.score || 0).toPrecision(4) })),
+            chosen: cands.indexOf(plan),
+            kind: plan.kind || null
+        };
+        if (ans) {
+            d.model = String(ans.model || '').slice(0, 60) || null;
+            d.thought = typeof ans.thought === 'string' ? ans.thought.slice(0, 80) : null;
+            d.ms = Number.isFinite(ans.ms) ? ans.ms : null;
+            if (ans.raw) d.raw = String(ans.raw).slice(0, 400);
+            if (ans.prompt) d.prompt = ans.prompt;
+        }
+        for (const fn of decisionWatchers) { try { fn(d); } catch { /* a logger must not stop the world */ } }
+    }
+    function onDecision(fn) { decisionWatchers.add(fn); return () => decisionWatchers.delete(fn); }
     function describeOption(o) {
         const i = o.info || {}, g = i.good ? goodName(i.good) : '', hours = Math.max(1, Math.round((i.time || 0) * 12));
         const money = v => `${Math.round(v || 0).toLocaleString('ja-JP')}${cur}`;
@@ -751,8 +780,15 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         const request = a.requestQueue?.shift();
         const homeward = !request && a.inbox?.length && a.at !== a.home;
         if (!request && !homeward && mind && mind.wants(a.id) && askMind(a)) return;
-        const plan = request ? { request, steps: [{ type: 'go', to: request.target }, { type: 'request' }] }
-            : homeward ? { steps: [{ type: 'go', to: a.home }, { type: 'look' }] } : decide(a);
+        let plan;
+        if (request) plan = { request, steps: [{ type: 'go', to: request.target }, { type: 'request' }] };
+        else if (homeward) plan = { steps: [{ type: 'go', to: a.home }, { type: 'look' }] };
+        else if (decisionWatchers.size) {
+            // the same options and the same dice as below, only also written down
+            const all = optionsFor(a);
+            plan = decide(a, all);
+            report(a, 'rules', mindCandidates(a, all), plan);
+        } else plan = decide(a);
         if (request) emit('request', { agent: a.id, request: request.id, status: 'active', message: `${a.name} がお願いの段取りを考えはじめた` });
         adoptPlan(a, plan);
     }
@@ -1192,6 +1228,7 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
         get seed() { return S.seed; },
         step,
         on,
+        onDecision,
         snapshot,
         addResident,
         priceOf,

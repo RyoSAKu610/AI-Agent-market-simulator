@@ -1349,6 +1349,13 @@ input::placeholder { color: var(--ink-faint); }
 .mind-keylink { font-size: 13px; }
 .mind-note { margin: -4px 0 0; }
 .mind-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.society-range { display: flex; align-items: center; gap: 10px; }
+.society-range input { flex: 1; accent-color: var(--gold); }
+.society-share { min-width: 3.5em; text-align: right; font-variant-numeric: tabular-nums; color: var(--gold-soft); }
+.research-table { overflow-x: auto; }
+.research-table table { border-collapse: collapse; font-size: 14px; margin: 8px 0; }
+.research-table th, .research-table td { padding: 4px 10px; text-align: left; border-bottom: 1px solid rgba(232, 195, 106, 0.18); white-space: nowrap; }
+.research-table td { font-variant-numeric: tabular-nums; }
 .mind-state { font-size: 14px; overflow-wrap: anywhere; }
 .mind-error { color: #ffb0b0; }
 .mind-counts { color: var(--ink-dim); font-size: 13px; }

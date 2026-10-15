@@ -8,3 +8,6 @@ id_*.json
 *keypair*.json
 .netlify/
 node_modules/
+
+# Experiment outputs (zipangu/tools/experiment.mjs) are data, not source.
+zipangu/runs/

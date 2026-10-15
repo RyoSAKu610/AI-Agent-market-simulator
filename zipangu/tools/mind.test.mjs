@@ -193,7 +193,7 @@ function trace(eco, seconds) {
     assert.equal(await mind.ask(a, opts, {}), null, 'at most two calls at once');
     assert.equal(mind.status.state, 'working');
     gate.splice(0).forEach(go => go());
-    assert.deepEqual(await p1, { choice: 1, thought: 'はい', model: 'm' });
+    assert.deepEqual(await p1, { choice: 1, thought: 'はい', model: 'm', raw: '{"choice":1,"thought":"はい"}' }, 'the raw answer goes to the decision log; no prompt unless asked');
     await p2;
     assert.equal(mind.logFor(card.id).length, 2);
     const p3 = mind.ask(a, opts, {}); gate.splice(0).forEach(go => go()); await p3;
@@ -286,7 +286,7 @@ function trace(eco, seconds) {
     const p1 = mind.ask(a, opts, {});
     assert.equal(mind.wants(card.id), false, 'one thought at a time on one GPU');
     assert.equal(await mind.ask(a, opts, {}), null);
-    assert.deepEqual(await p1, { choice: 2, thought: '港の様子を見に行こう', model: 'Qwen2.5-1.5B-Instruct' });
+    assert.deepEqual(await p1, { choice: 2, thought: '港の様子を見に行こう', model: 'Qwen2.5-1.5B-Instruct', raw: '{"choice": 2, "thought": "港の様子を見に行こう"}' });
     const sent = made[0].got[1];
     assert.equal(sent.type, 'chat');
     assert.ok(JSON.parse(sent.schema).required.includes('choice'), 'answers are constrained to the JSON shape');
