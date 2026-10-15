@@ -26,6 +26,8 @@ import { t, getLang } from './i18n.js';
 import { loadSettings, createMind, PROVIDERS } from './mind.js';
 import { loadResearchSettings, saveResearchSettings, createRecorder, openStore, newRunId } from './research.js';
 import { loadSocietySettings, browserCohorts, assignCohorts, createSociety } from './society.js';
+import { loadHumanSettings, saveHumanSettings, createHumanMind } from './human.js';
+import { createDecideCard } from './decide-card.js';
 import { createLocalEngine, CONSENT_KEY } from './mind-local.js';
 import { createProgress, loadProgress, joinHidden } from './progress.js';
 import { loadBirths } from './birth.js';
@@ -137,7 +139,10 @@ async function boot() {
         for (const c of cohorts) if (c.kind === 'mind') members[c.id] = createMind(W, { ...mindSettings, scope: 'all', ...(localEngine ? {} : { model: c.model || mindSettings.model }) }, { lang: getLang(), local: localEngine });
         mind = createSociety({ cohorts, members, cohortOf });
     } else if (mindSettings.on) mind = createMind(W, mindSettings, { lang: getLang(), local: localEngine });
-    const eco = createEconomy(W, { seed, secondsPerDay: SECONDS_PER_DAY, state: loaded.data?.economy || null, mind });
+    // 🙋 residents the visitor decides for (js/human.js); everyone else is decided as above
+    const humanSettings = loadHumanSettings(storage);
+    const human = createHumanMind({ base: mind, agents: humanSettings.agents.filter(id => W.byId.agent.has(id)) });
+    const eco = createEconomy(W, { seed, secondsPerDay: SECONDS_PER_DAY, state: loaded.data?.economy || null, mind: human });
     const history = createHistory(eco, loaded.data?.history || null);
     if (!loaded.data?.history) history.sample();
     let nextSample = Math.floor(eco.time / SAMPLE_EVERY) + 1;
@@ -169,7 +174,7 @@ async function boot() {
     if (!SPEEDS.includes(speed)) speed = 1;
 
     const hud = createHud(W, eco, { speed, onSpeed: s => { speed = s; store.set('zipangu.speed', String(s)); } });
-    const ctx = { W, eco, history, hud, stories, progress, loadDoc, storage, session, mind, mindEngine: localEngine, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
+    const ctx = { W, eco, history, hud, stories, progress, loadDoc, storage, session, mind, human, humanSettings, holdTime: false, mindEngine: localEngine, mapView: null, pendingFocus: null, seed, journeyStatus: loaded.status, chain: null, chainMod: null };
     let saveBlocked = loaded.blocked;
     const saveNotice = h('div', { class: 'journey-notice' });
     const saveText = h('span', { role: 'status' }, loaded.status);
@@ -207,6 +212,19 @@ async function boot() {
     document.addEventListener('visibilitychange', () => { if (document.hidden) ctx.persistJourney(); });
     window.__zipangu = ctx;      // handy in the console
 
+    // 🙋 adopt / release a resident to decide for; the card asks when one of them has to choose
+    ctx.adoptResident = id => {
+        if (!human.adopt(id)) return false;
+        humanSettings.agents = human.agents; saveHumanSettings(storage, humanSettings);
+        return true;
+    };
+    ctx.releaseResident = id => {
+        human.release(id);
+        humanSettings.agents = human.agents; saveHumanSettings(storage, humanSettings);
+    };
+    ctx.setHoldTime = on => { humanSettings.holdTime = !!on; saveHumanSettings(storage, humanSettings); if (!on) ctx.holdTime = false; };
+    document.body.append(createDecideCard(ctx));
+
     // ---------------------------------------------------- 🔬 decision log (js/research.js, docs/RESEARCH.md)
     // Off unless turned on in settings. Records who chose (the rules or the model), among what,
     // and what came of it; they stay in this browser (IndexedDB) until exported.
@@ -217,7 +235,7 @@ async function boot() {
         if (!r.settings.run) r.settings.run = newRunId();
         r.settings.on = true; saveResearchSettings(storage, r.settings);
         r.store = r.store || openStore();
-        r.rec = createRecorder(eco, { run: r.settings.run, sink: rec => r.store.add(rec), ...(mind && mind.society ? { cohortOf: mind.cohortOf, kindOf: mind.kindOf } : {}) });
+        r.rec = createRecorder(eco, { run: r.settings.run, sink: rec => r.store.add(rec), cohortOf: human.cohortOf, kindOf: human.kindOf });
     };
     ctx.stopResearch = () => {
         const r = ctx.research;
@@ -369,7 +387,9 @@ async function boot() {
         const dt = Math.min(0.5, (now - last) / 1000);
         last = now;
         acc += dt;
-        if (acc >= STEP_EVERY && !document.hidden) {
+        // the city waits while the visitor decides for a resident (🙋, js/human.js)
+        if (ctx.holdTime) acc = 0;
+        if (acc >= STEP_EVERY && !document.hidden && !ctx.holdTime) {
             eco.step(acc * speed);
             acc = 0;
             sampleIfDue();

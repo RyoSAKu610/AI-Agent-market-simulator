@@ -7,8 +7,11 @@
   status = 200
 
 # zipangu/js/mind.js "お試し" provider: netlify/functions/zipangu-mind.mjs (needs OPENROUTER_API_KEY)
+# zipangu/js/donate.js data donations: netlify/functions/zipangu-donate.mjs (needs ZIPANGU_DONATE_REPO and
+# ZIPANGU_DONATE_TOKEN; see zipangu/docs/DATA.md). esbuild bundles the shared zipangu/js modules it imports.
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 # Security headers. Every page: no MIME sniffing, no full URLs leaked to other sites,
 # no camera / microphone / location / payment APIs (nothing here uses them).

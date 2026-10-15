@@ -147,7 +147,7 @@ function travellerSection(a) {
 
 // 🧠 What a resident with a mind said to itself when it chose (js/mind.js).
 function thoughtSection(ctx, a, live) {
-    const mind = ctx.mind;
+    const mind = ctx.human && ctx.human.has(a.id) ? ctx.human : ctx.mind;
     const thinks = !!(mind && mind.covers(a.id));
     if (!thinks && !(live && live.thought)) {
         return a.traveller ? { el: h('section', { class: 'sec', 'aria-labelledby': 'ag-mind' }, sectionHead(t('mind.agentTitle'), null, 'ag-mind'),
@@ -180,6 +180,20 @@ export function agentView(ctx, id) {
     const theatre = dramaPanel(ctx, a, talk);
     const onchain = agentChainPanel(ctx, a);
     const thoughts = thoughtSection(ctx, a, live);
+    // 🙋 decide for this resident yourself (js/human.js)
+    const decideBtn = h('button', { type: 'button', class: 'btn' });
+    const paintDecide = () => {
+        const on = !!(ctx.human && ctx.human.has(id));
+        decideBtn.textContent = on ? t('decide.release') : t('decide.adopt');
+        decideBtn.setAttribute('aria-pressed', String(on));
+    };
+    decideBtn.onclick = () => {
+        if (!ctx.human) return;
+        if (ctx.human.has(id)) ctx.releaseResident(id);
+        else if (!ctx.adoptResident(id)) alert(t('decide.full'));
+        paintDecide();
+    };
+    paintDecide();
     const card = a.traveller ? loadCards(ctx.storage, W).find(c => c.id === a.id) : null;
     const birth = card ? birthPanel(ctx, card) : null;
     const cur = stripParens(W.baseCurrency.name_ja);
@@ -233,7 +247,7 @@ export function agentView(ctx, id) {
                 h('h1', null, agentShort(a)),
                 h('p', { class: 'hero-sub' }, stripParens(a.name_ja) !== agentShort(a) ? a.name_ja : ''),
                 h('p', { class: 'hero-summary' }, a.role),
-                h('p', { class: 'chips' }, h('button', { type: 'button', class: 'btn btn-primary', onclick: () => theatre.el.scrollIntoView({ block: 'start' }) }, 'いまの劇を観る'), h('button', { type: 'button', class: 'btn', onclick: talk }, '話しかける・お願いする'), h('a', { class: 'btn', href: '#/', onclick: () => { ctx.pendingFocus = id; } }, '地図で追う →'), home ? h('a', { class: 'chip', href: href.district(home.id) }, nameOf(home)) : null, place ? placeLink(place) : null))),
+                h('p', { class: 'chips' }, h('button', { type: 'button', class: 'btn btn-primary', onclick: () => theatre.el.scrollIntoView({ block: 'start' }) }, 'いまの劇を観る'), h('button', { type: 'button', class: 'btn', onclick: talk }, '話しかける・お願いする'), h('a', { class: 'btn', href: '#/', onclick: () => { ctx.pendingFocus = id; } }, '地図で追う →'), decideBtn, home ? h('a', { class: 'chip', href: href.district(home.id) }, nameOf(home)) : null, place ? placeLink(place) : null))),
         h('div', { class: 'page-body' },
             theatre.el, panel, onchain.el, conversation.el,
             thoughts && thoughts.el,

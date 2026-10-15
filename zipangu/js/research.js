@@ -43,7 +43,7 @@ export function createRecorder(eco, { sink, run = null, cond = null, cohortOf = 
     const off = eco.onDecision(d => {
         const prev = open.get(d.agent);
         if (prev) close(prev, { dWallet: d.wallet - prev.wallet, dT: +(d.T - prev.T).toFixed(4) });
-        const r = { v: RECORD_VERSION, run, cond: cond || (d.by === 'rules' ? 'rules' : 'mind'), ...d };
+        const r = { v: RECORD_VERSION, run, cond: cond || (d.by === 'rules' || d.by === 'human' ? d.by : 'mind'), ...d };
         if (cohortOf) { r.cohort = cohortOf(d.agent); r.cohortKind = kindOf ? kindOf(d.agent) : null; }
         open.set(d.agent, r);
     });
@@ -183,7 +183,7 @@ export function summarize(records) {
 export function groupKey(r) {
     if (r.cohort) {
         if (r.cohortKind === 'rules') return r.cohort;
-        return r.by === 'mind' ? r.cohort : `${r.cohort}·${r.by}`;
+        return r.by === 'mind' || r.by === 'human' ? r.cohort : `${r.cohort}·${r.by}`;
     }
     return r.by === 'fallback' ? 'fallback' : r.cond || r.by;
 }
@@ -193,7 +193,25 @@ export function byCondition(records) {
     return Object.fromEntries(Object.entries(g).map(([k, v]) => [k, summarize(v)]));
 }
 // Group names in reading order: the rules, then each cohort, then the turns the rules took for one.
-export const groupOrder = (a, b) => (a.includes('·') - b.includes('·')) || ((b === 'rules') - (a === 'rules')) || (a < b ? -1 : a > b ? 1 : 0);
+export const groupOrder = (a, b) => (a.includes('·') - b.includes('·')) || ((b === 'rules') - (a === 'rules')) || ((b === 'human') - (a === 'human')) || (a < b ? -1 : a > b ? 1 : 0);
+
+// How far each group's way of choosing is from the person's (the "human" group): the
+// Jensen–Shannon divergence of their action mixes (0 = the same mix) and the gap in β.
+// Small numbers mean "chooses more like the person did" — on these measures only.
+export function distanceToHuman(groups) {
+    const human = groups.human;
+    if (!human || !human.n) return {};
+    const out = {};
+    for (const [k, s] of Object.entries(groups)) {
+        if (k === 'human' || !s.n) continue;
+        out[k] = {
+            mix: jsDivergence(s.kinds || {}, human.kinds || {}),
+            beta: s.beta && human.beta ? +Math.abs(s.beta.beta - human.beta.beta).toFixed(2) : null,
+            top1: s.top1 != null && human.top1 != null ? +Math.abs(s.top1 - human.top1).toFixed(3) : null
+        };
+    }
+    return out;
+}
 // The same measures per window of `days` in-world days, to see change over time.
 export function windows(records, days = 1) {
     const g = new Map();
