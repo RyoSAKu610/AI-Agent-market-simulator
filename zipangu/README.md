@@ -69,6 +69,8 @@ LLM は住人が行き先を決めるときに考えます。住人は今まで�
 - **キー**: このタブの中（`sessionStorage`）にだけ置き、「この端末に覚えておく」を選んだときだけ `localStorage` に置きます。キーはブラウザから選んだつなぎ先へ直接送られます。
 - **🔬 研究ログ（ルール vs AI）**: ⚙ 設定でオンにすると、住人が「ルールだけ（完全オフライン）」と「AI」のどちらで、どの候補から何を選び、その後どう稼いだかを端末の中に記録し、JSONL で書き出せます。`tools/experiment.mjs` で同じ世界を条件だけ変えて走らせ、`tools/research-report.mjs` で比べられます（[docs/RESEARCH.md](docs/RESEARCH.md)）。
 - **🧪 混成社会**: ⚙ 設定で、住人の一部をルールだけ、残りを AI で考えさせられます。OpenRouter などなら複数のモデルを並べ、同じ街で Qwen・DeepSeek・Kimi などの住人を暮らさせて比べられます（`tools/experiment.mjs --society`）。
+- **🙋 あなたが決める**: 住人のページで「この住人として決める」を押すと、その住人の番にルールや AI と同じ候補があなたに届きます（決めるまで街の時間は止まります）。あなたの選択は研究ログに「人間」として残り、AI がどれだけ人間に近いかの物差しになります。
+- **🤝 研究に寄付する**: 設定の 🔬 研究ログから、同意したうえで記録を寄付できます（CC BY-NC 4.0、送る項目は許可リストだけ、個人情報は伏せ字、受付番号で取り消し可能）。人のそばで考える「相棒AI」のための公開データセットになります（[docs/DATA.md](docs/DATA.md)）。
 
 ### 見る・体験する
 
@@ -130,6 +132,8 @@ The LLM decides where residents go next. The economy still works out each reside
 - **Your key** stays in this tab (`sessionStorage`), or on this device only if you ask, and goes straight from your browser to the provider you chose.
 - **🔬 Research log (rules vs AI):** turn it on in ⚙ Settings to record, on this device only, whether each resident chose by the rules alone (fully offline) or with the AI, among which options, and what it earned afterwards; export as JSONL. `tools/experiment.mjs` runs the same world under each condition and `tools/research-report.mjs` compares them ([docs/RESEARCH.md](docs/RESEARCH.md)).
 - **🧪 Mixed society:** in ⚙ Settings, let some residents choose by the rules and the rest with AI; with a provider such as OpenRouter, list several models so Qwen, DeepSeek, Kimi and others live side by side in one city (`tools/experiment.mjs --society`).
+- **🙋 You decide:** press “Decide for this resident” on a resident's page; when it has to choose, the same candidates the rules and the AIs get come to you (the city waits). Your choices go into the research log as “human”, the yardstick for how human-like the AIs are.
+- **🤝 Donate to research:** from 🔬 Research log in Settings, donate your records with consent (CC BY-NC 4.0, only whitelisted fields, private details masked, withdrawable by receipt) to an open dataset for companion AIs ([docs/DATA.md](docs/DATA.md)).
 
 **Also:** a 67-creature bestiary, a library of 58 public-domain works (10 in the English original, from Project Gutenberg), a live market with price charts, 32 residents with dialogue and a small live theatre, an atelier of 128 concept paintings, and an interface in six languages.
 
@@ -183,7 +187,7 @@ The LLM decides where residents go next. The economy still works out each reside
 | `docs/eras/`, `docs/realms/` | 時片・異界ごとの章（分岐点、歩いてみる、住むもの、働くエージェント、祭り、書物）。案内は [`docs/WORLD_BIBLE.md`](docs/WORLD_BIBLE.md)。 |
 | `docs/CORRECTIONS.md` | 各章を史実・文学（著作権）・仕様・文体の四観点で校閲した240件の修正記録。 |
 | `docs/spine.json` | 3案・2審査・1統合で決めた設計の骨格と文体の掟。 |
-| `js/` | エクスプローラー。`app.js`（起動と経路）、`map.js`、`sim.js`（自律経済）、`creature-art.js`、`soul.js`（AIを迎える）、`mind.js`・`mind-local.js`（LLM の頭脳、端末の中のAI）、`research.js`（研究ログ）、`society.js`（混成社会）、`birth.js`（誕生証明）、`progress.js`（旅の記録帖・幻の住人）、`backup.js`（引き継ぎ）、`qr.js`（QRコード）、`i18n.js`（6言語）ほか。 |
+| `js/` | エクスプローラー。`app.js`（起動と経路）、`map.js`、`sim.js`（自律経済）、`creature-art.js`、`soul.js`（AIを迎える）、`mind.js`・`mind-local.js`（LLM の頭脳、端末の中のAI）、`research.js`（研究ログ）、`society.js`（混成社会）、`human.js`・`decide-card.js`（あなたが決める）、`donate.js`・`redact.js`（寄付と伏せ字）、`birth.js`（誕生証明）、`progress.js`（旅の記録帖・幻の住人）、`backup.js`（引き継ぎ）、`qr.js`（QRコード）、`i18n.js`（6言語）ほか。 |
 | `tools/` | `validate.mjs`、`sim.test.mjs`、`soul.test.mjs`、`mind.test.mjs`、`birth.test.mjs`、`progress.test.mjs`、`backup.test.mjs`、`qr.test.mjs`、`aozora-extract.mjs`、`gutenberg-extract.mjs`、`build-single.mjs`、`check.sh` ほか。 |
 
 ### 青空文庫と Project Gutenberg からの抜粋

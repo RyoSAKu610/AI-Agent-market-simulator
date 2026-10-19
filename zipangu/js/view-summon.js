@@ -9,7 +9,8 @@ import {
 } from './soul.js';
 import { makeBirth, saveBirth, forgetBirth } from './birth.js';
 import { makeBackup, readBackup, restoreBackup } from './backup.js';
-import { byCondition, toJSONL, groupOrder } from './research.js';
+import { byCondition, toJSONL, groupOrder, distanceToHuman } from './research.js';
+import { buildDonation, consentOf, consentComplete, newDonorId, loadDonated, saveDonated, undonated, markDonated, sanitizeRecord, DONATE_ENDPOINT, DATA_LICENSE_URL, MAX_RECORDS } from './donate.js';
 import { loadSocietySettings, saveSocietySettings, browserCohorts, assignCohorts } from './society.js';
 import { journalLink } from './view-journal.js';
 import { PROVIDERS, loadSettings, saveSettings, resolve, testConnection, listModels } from './mind.js';
@@ -322,6 +323,7 @@ export function settingsView(ctx) {
         h('section', { class: 'sec', 'aria-labelledby': 'st-backup' }, sectionHead(t('backup.title'), '', 'st-backup'), backupSection(ctx)),
         h('section', { class: 'sec', id: 'mind', 'aria-labelledby': 'st-mind' }, sectionHead(t('mind.title'), '', 'st-mind'), minds.el),
         h('section', { class: 'sec', id: 'society', 'aria-labelledby': 'st-society' }, sectionHead(t('society.title'), '', 'st-society'), societySection(ctx)),
+        h('section', { class: 'sec', id: 'decide', 'aria-labelledby': 'st-decide' }, sectionHead(t('decide.sectionTitle'), '', 'st-decide'), decideSection(ctx)),
         h('section', { class: 'sec', id: 'research', 'aria-labelledby': 'st-research' }, sectionHead(t('research.title'), '', 'st-research'), researchSection(ctx)));
     return { el, title: t('settings.title'), destroy: minds.destroy };
 }
@@ -365,6 +367,122 @@ function societySection(ctx) {
         h('p', { class: 'ar-role' }, cur.on ? t('society.on') : t('society.off')));
 }
 
+// 🙋 "You decide" (js/human.js): the residents the visitor chooses for, and whether time waits.
+function decideSection(ctx) {
+    const list = h('ul', { class: 'decide-list' });
+    const hold = h('input', { type: 'checkbox', checked: ctx.humanSettings ? ctx.humanSettings.holdTime : true,
+        onchange: e => ctx.setHoldTime && ctx.setHoldTime(e.target.checked) });
+    function paint() {
+        clear(list);
+        const ids = ctx.human ? ctx.human.agents : [];
+        if (!ids.length) { list.append(h('li', { class: 'ar-role' }, t('decide.none'))); return; }
+        for (const id of ids) {
+            const a = ctx.W.byId.agent.get(id);
+            list.append(h('li', null, h('a', { href: href.agent(id) }, a ? a.name : id), ' ',
+                h('button', { type: 'button', class: 'btn btn-small', onclick: () => { ctx.releaseResident(id); paint(); } }, t('decide.release'))));
+        }
+    }
+    paint();
+    const st = ctx.human ? ctx.human.status : { asked: 0, answered: 0, skipped: 0 };
+    return plaque({ class: 'settings-card' },
+        h('p', null, t('decide.lead')),
+        list,
+        h('label', { class: 'mind-check' }, hold, h('span', null, t('decide.holdLabel'))),
+        h('p', { class: 'ar-role' }, t('decide.counts', st)),
+        h('p', { class: 'ar-role' }, t('decide.how')));
+}
+
+// 🤝 Donating the decision log to research, with consent (js/donate.js, docs/DATA.md).
+function donateSection(ctx) {
+    const r = ctx.research;
+    const box = h('div', { class: 'donate' });
+    const message = h('p', { class: 'soul-message', role: 'status' });
+    const pending = h('p', { class: 'ar-role' });
+    const preview = h('pre', { class: 'donate-preview' });
+    const receipts = h('ul', { class: 'decide-list' });
+    const checks = {};
+    const check = (key, label) => {
+        checks[key] = h('input', { type: 'checkbox', onchange: () => paintButtons() });
+        return h('label', { class: 'mind-check' }, checks[key], h('span', null, ...label));
+    };
+    const sendBtn = h('button', { type: 'button', class: 'btn btn-primary' }, t('donate.send'));
+    const fileBtn = h('button', { type: 'button', class: 'btn' }, t('donate.file'));
+    let fresh = [];
+    const endpoint = () => (/\.netlify\.app$/.test(location.hostname) ? '/.netlify/functions/zipangu-donate' : DONATE_ENDPOINT);
+    const consent = () => consentOf({ license: checks.license.checked, age: checks.age.checked, thirdParty: checks.third.checked });
+    const say = (text, bad) => { message.textContent = text; message.className = 'soul-message' + (bad ? ' is-error' : ''); };
+    function paintButtons() { const ok = consentComplete(consent()) && fresh.length > 0; sendBtn.disabled = !ok; fileBtn.disabled = !ok; }
+    async function paint() {
+        const all = r && r.store ? await r.store.all().catch(() => []) : [];
+        const d = loadDonated(ctx.storage);
+        fresh = undonated(all, d).slice(0, MAX_RECORDS);
+        pending.textContent = fresh.length ? t('donate.pending', { n: fresh.length }) : t('donate.none');
+        const sample = fresh.map(sanitizeRecord).find(Boolean);
+        preview.textContent = sample ? JSON.stringify(sample, null, 1) : '—';
+        clear(receipts);
+        for (const rc of d.receipts.slice().reverse()) {
+            receipts.append(h('li', null, `${String(rc.at).slice(0, 10)} ・ ${rc.n} ・ `, h('code', null, rc.id), ' ',
+                h('button', { type: 'button', class: 'btn btn-small', onclick: () => withdraw(rc) }, t('donate.withdraw'))));
+        }
+        paintButtons();
+    }
+    function pack() {
+        const d = loadDonated(ctx.storage);
+        if (!d.donor) { d.donor = newDonorId(); saveDonated(ctx.storage, d); }
+        return { d, body: buildDonation(fresh, { donor: d.donor, consent: consent() }) };
+    }
+    sendBtn.onclick = async () => {
+        if (r && r.rec) r.rec.flush();
+        await paint();
+        const { d, body } = pack();
+        if (!body.records.length) return;
+        sendBtn.disabled = true; say(t('donate.sending'));
+        try {
+            const res = await fetch(endpoint(), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+            const out = await res.json().catch(() => ({}));
+            if (res.status === 503) { say(t('donate.offline'), true); return; }
+            if (!res.ok || !out.ok) { say(t('donate.fail', { why: out.error || res.status }), true); return; }
+            const next = markDonated(d, fresh);
+            next.receipts = [...d.receipts, { id: out.id, token: out.token, n: out.n, at: new Date().toISOString() }];
+            saveDonated(ctx.storage, next);
+            say(t('donate.done', { n: out.n, id: out.id }));
+        } catch { say(t('donate.offline'), true); } finally { paint(); }
+    };
+    fileBtn.onclick = () => {
+        const { body } = pack();
+        const url = URL.createObjectURL(new Blob([JSON.stringify(body)], { type: 'application/json' }));
+        const a = h('a', { href: url, download: `zipangu-donation-${new Date().toISOString().slice(0, 10)}.json` });
+        document.body.append(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        say(t('donate.fileNote'));
+    };
+    async function withdraw(rc) {
+        if (!confirm(t('donate.withdrawConfirm'))) return;
+        try {
+            const res = await fetch(endpoint(), { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: rc.id, token: rc.token }) });
+            if (!res.ok) { say(t('donate.fail', { why: res.status }), true); return; }
+            const d = loadDonated(ctx.storage);
+            d.receipts = d.receipts.filter(x => x.id !== rc.id);
+            saveDonated(ctx.storage, d);
+            say(t('donate.withdrawn'));
+        } catch { say(t('donate.offline'), true); } finally { paint(); }
+    }
+    box.append(
+        h('h3', null, t('donate.title')),
+        h('p', null, t('donate.lead')),
+        pending,
+        h('details', null, h('summary', null, t('donate.what')), h('p', { class: 'ar-role' }, t('donate.fields')), preview),
+        check('license', [t('donate.license'), ' ', h('a', { href: DATA_LICENSE_URL, target: '_blank', rel: 'noopener noreferrer' }, 'CC BY-NC 4.0')]),
+        check('age', [t('donate.age')]),
+        check('third', [t('donate.thirdParty')]),
+        h('p', { class: 'mind-actions' }, sendBtn, fileBtn),
+        message,
+        h('p', { class: 'ar-role' }, t('donate.receipts')),
+        receipts);
+    paint();
+    return box;
+}
+
 // 🔬 The decision log (js/research.js): rules vs an LLM, recorded on this device for research.
 function researchSection(ctx) {
     const r = ctx.research;
@@ -390,7 +508,8 @@ function researchSection(ctx) {
         const sums = byCondition(recs);
         const conds = Object.keys(sums).sort(groupOrder);
         if (!conds.length) return;
-        const row = (label, fn) => h('tr', null, h('th', { scope: 'row' }, label), ...conds.map(c => h('td', null, fn(sums[c]))));
+        const row = (label, fn) => h('tr', null, h('th', { scope: 'row' }, label), ...conds.map(c => h('td', null, fn(sums[c], c))));
+        const dist = distanceToHuman(sums);
         table.append(h('table', null,
             h('thead', null, h('tr', null, h('th'), ...conds.map(c => h('th', { scope: 'col' }, condLabel(c))))),
             h('tbody', null,
@@ -398,7 +517,8 @@ function researchSection(ctx) {
                 row(t('research.top1'), s => pct(s.top1)),
                 row(t('research.beta'), s => (s.beta ? String(s.beta.beta) : '—')),
                 row(t('research.entropy'), s => String(s.kindEntropy)),
-                row(t('research.thoughts'), s => (s.thoughts ? String(s.thoughts.n) : '—')))));
+                row(t('research.thoughts'), s => (s.thoughts ? String(s.thoughts.n) : '—')),
+                ...(sums.human ? [row(t('research.toHuman'), (s, c) => (dist[c] && dist[c].mix != null ? dist[c].mix.toFixed(3) : '—'))] : []))));
     }
     toggle.onclick = () => { if (r.rec) ctx.stopResearch(); else ctx.startResearch(); paint(); };
     const exportIt = async () => {
@@ -424,7 +544,8 @@ function researchSection(ctx) {
             h('button', { type: 'button', class: 'btn', onclick: exportIt }, t('research.export')),
             h('button', { type: 'button', class: 'btn btn-small', onclick: wipe }, t('research.clear'))),
         status, table,
-        h('p', { class: 'ar-role' }, t('research.note')));
+        h('p', { class: 'ar-role' }, t('research.note')),
+        donateSection(ctx));
 }
 
 // The small language switch used on the first-visit card.
