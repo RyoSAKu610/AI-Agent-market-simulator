@@ -171,6 +171,16 @@ assert.equal(setHash(items), setHash(items.slice().reverse()), 'the order does n
     assert.equal(llm.metrics.answered, items.length);
     assert.equal(llm.metrics.top1, 0, 'it always said 2');
     assert.ok(!JSON.stringify(llm).includes('127.0.0.1'), 'the endpoint is not written into the result');
+    const testResultPath = join(dir, 'results', 'held-back-test.json');
+    r = cli('run', '--set', join(dir, 'sets', 'v2.test.jsonl'), '--player', 'rules', '--out', testResultPath);
+    assert.equal(r.status, 0, r.stderr);
+    r = cli('verify-key', testResultPath);
+    assert.equal(r.status, 0, r.stderr);
+    assert.ok(r.stdout.trim(), 'a held-back test result produces an exact verification key');
+    r = cli('verify-key', join(dir, 'results', 'llm.json'));
+    assert.notEqual(r.status, 0, 'a dev-set result is not eligible for verification');
+    assert.match(r.stderr, /held-back/i);
+
     r = cli('board', join(dir, 'results'), '--out', join(dir, 'leaderboard.json'), '--sets', join(dir, 'sets'));
     assert.equal(r.status, 0, r.stderr);
     const board = JSON.parse(readFileSync(join(dir, 'leaderboard.json'), 'utf8'));
