@@ -101,6 +101,24 @@ class MinuteFlow:
         return snap
 
 
+class SignalGate:
+    """Keep live entry alerts non-overlapping, matching the backtest's fixed holding period."""
+
+    def __init__(self, holding_bars: int) -> None:
+        if holding_bars < 1:
+            raise ValueError("holding_bars must be >= 1")
+        self.holding_bars = holding_bars
+        self.next_entry_after_ms = 0
+
+    def should_emit(self, signal: int, bar_close_ts_ms: int) -> bool:
+        if signal == 0 or bar_close_ts_ms < self.next_entry_after_ms:
+            return False
+        # Backtest entry is the next bar open and exit is holding_bars bars later.
+        # A new signal can therefore be acted on at the close of that exit bar.
+        self.next_entry_after_ms = bar_close_ts_ms + (self.holding_bars + 1) * 60_000
+        return True
+
+
 def signed_threshold(value: float, threshold: float) -> int:
     return 1 if value >= threshold else (-1 if value <= -threshold else 0)
 
@@ -154,10 +172,9 @@ def main() -> None:
     symbol = cfg["symbol"].lower()
     flow = MinuteFlow(int(cfg["window_bars"]))
     webhook = os.getenv("ALERT_WEBHOOK_URL")
-    last_signal = 0
+    gate = SignalGate(int(cfg["hold_bars"]))
 
     def on_message(_ws, raw: str) -> None:
-        nonlocal last_signal
         msg = json.loads(raw)
         snap = flow.update_trade(
             int(msg["T"]),
@@ -169,9 +186,7 @@ def main() -> None:
             return
 
         signal, reason = model_signal(cfg, snap)
-        changed = signal != last_signal
-        last_signal = signal
-        if signal == 0 or not changed:
+        if not gate.should_emit(signal, snap["bar_close_ts_ms"]):
             return
 
         side = "LONG" if signal > 0 else "SHORT"
