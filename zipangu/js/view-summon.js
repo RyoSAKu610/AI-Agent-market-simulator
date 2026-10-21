@@ -389,7 +389,8 @@ function decideSection(ctx) {
         list,
         h('label', { class: 'mind-check' }, hold, h('span', null, t('decide.holdLabel'))),
         h('p', { class: 'ar-role' }, t('decide.counts', st)),
-        h('p', { class: 'ar-role' }, t('decide.how')));
+        h('p', { class: 'ar-role' }, t('decide.how')),
+        h('p', null, h('a', { class: 'btn btn-small', href: '#/bench' }, t('bench.link'))));
 }
 
 // 🤝 Donating the decision log to research, with consent (js/donate.js, docs/DATA.md).
@@ -545,6 +546,7 @@ function researchSection(ctx) {
             h('button', { type: 'button', class: 'btn btn-small', onclick: wipe }, t('research.clear'))),
         status, table,
         h('p', { class: 'ar-role' }, t('research.note')),
+        h('p', null, h('a', { class: 'btn', href: '#/bench' }, t('bench.link'))),
         donateSection(ctx));
 }
 

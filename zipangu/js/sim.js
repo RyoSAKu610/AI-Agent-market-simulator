@@ -734,11 +734,14 @@ export function createEconomy(W, { seed = 1, secondsPerDay = 240, startSekki = 4
     function report(a, by, cands, plan, ans = null) {
         const c = clockAt(now(), S.startSekki);
         const d = {
-            T: now(), day: c.day, koku: c.koku, season: c.season, agent: a.id, by, goal: a.goalType || null,
+            T: now(), day: c.day, koku: c.koku, label: c.label, sekki: c.sekki, season: c.season, agent: a.id, by, goal: a.goalType || null,
             wallet: Math.round(a.wallet), carrying: a.carrying.reduce((n, l) => n + l.qty, 0), at: a.at || null,
+            cargo: a.carrying.map(l => ({ good: l.good, qty: l.qty })),
             traits: { ...a.traits },
+            // `text` is the candidate exactly as a mind (and a person, js/human.js) reads it, so a
+            // benchmark can put the same question to any model later (js/bench.js)
             cands: cands.map(o => ({ kind: o.kind, good: o.info?.good || null, to: o.info?.to || null,
-                profit: Math.round(o.info?.profit || 0), time: +(o.info?.time || 0).toFixed(3), score: +(+o.score || 0).toPrecision(4) })),
+                profit: Math.round(o.info?.profit || 0), time: +(o.info?.time || 0).toFixed(3), score: +(+o.score || 0).toPrecision(4), text: describeOption(o) })),
             chosen: cands.indexOf(plan),
             kind: plan.kind || null
         };

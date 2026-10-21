@@ -11,3 +11,5 @@ node_modules/
 
 # Experiment outputs (zipangu/tools/experiment.mjs) are data, not source.
 zipangu/runs/
+# The held-back benchmark test set never goes into the repository (zipangu/bench/README.md).
+zipangu/bench/sets/*.test.jsonl
