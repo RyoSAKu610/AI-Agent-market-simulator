@@ -80,3 +80,15 @@ exactly as the city words them, and scores how human-like its choices are: chanc
 the action-mix distance, and the first-candidate gap, averaged into a 0–100 score with a bootstrap 95%
 interval. The rules and a random chooser are scored as baselines. Public dev items are published; the
 held-back test set is scored by maintainers. Data: CC BY-NC 4.0.
+
+## Maintainer verification
+
+Participant result files are untrusted input: a `verified` field inside a result JSON is ignored. After re-running a model on the held-back test set, a maintainer can create an exact result key with:
+
+```bash
+node tools/bench.mjs verify-key bench/results/verified-test-result.json
+```
+
+Add the printed string as one `key` entry in `bench/verified.json` in a maintainer-controlled change, then rebuild the board. The verification key includes the result's set identity, model identity, metrics and confidence interval; changing those fields invalidates the approval. Keep test-set files and raw test results out of public pull requests.
+
+The `--dev` split requires a donor ID for every item. Raw research-log JSONL does not carry donor IDs and is rejected for donor-level dev/test splitting; build a combined set without `--dev`, or use consented donation files with donor IDs.
