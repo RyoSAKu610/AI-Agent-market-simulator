@@ -101,13 +101,16 @@ assert.equal(setHash(items), setHash(items.slice().reverse()), 'the order does n
 
 // ------------------------------------------------ split and board
 {
-    const withDonors = items.map((it, i) => ({ ...it, donor: 'd-' + (i % 4) }));
+    const donorIds = ['d-0123456789abcdef', 'd-0', 'd-1', 'd-2'];
+    const withDonors = items.map((it, i) => ({ ...it, donor: donorIds[i % donorIds.length] }));
     const s1 = splitByDonor(withDonors, 0.3, 1), s2 = splitByDonor(withDonors, 0.3, 1);
     assert.deepEqual(s1, s2);
     assert.equal(s1.dev.length + s1.test.length, withDonors.length);
+    assert.ok(s1.dev.length > 0 && s1.test.length > 0, 'both sides of the holdout must be non-empty');
     const devDonors = new Set(s1.dev.map(i => i.donor));
     assert.ok(s1.test.every(i => !devDonors.has(i.donor)), 'a donor is on one side only');
     assert.throws(() => splitByDonor(withDonors.map(({ donor, ...item }) => item), 0.3, 1), /donor/i, 'a donorless source must not be split item by item');
+    assert.throws(() => splitByDonor(withDonors.filter(i => i.donor === donorIds[0]), 0.3, 1), /two distinct donors/i, 'one donor cannot provide independent dev and test sets');
     const res = (name, score, kind = 'llm') => ({ bench: BENCH_VERSION, date: '2026-10-21', set: { name: 'v1.dev', hash: 'abc', n: 40 }, player: { kind, name, model: name }, metrics: { n: 40, score, kappa: 0.2, accuracy: 0.5, mix: 0.1, top1Gap: 0.1 } });
     const fakeVerified = { ...res('self-attested', 100), verified: true };
     assert.equal(cleanResult(fakeVerified).verified, false, 'submitted result JSON cannot self-assert verification');
@@ -128,6 +131,7 @@ assert.equal(setHash(items), setHash(items.slice().reverse()), 'the order does n
     const dir = mkdtempSync(join(tmpdir(), 'zhb-'));
     writeFileSync(join(dir, 'log.jsonl'), toJSONL(recs));
     writeFileSync(join(dir, 'donation.json'), JSON.stringify({ donor: 'd-0123456789abcdef', records: humanRecs.slice(0, 2) }));
+    writeFileSync(join(dir, 'donation2.json'), JSON.stringify({ donor: 'd-0', records: humanRecs.slice(2, 4) }));
     const cli = (...args) => spawnSync(process.execPath, [join(here, 'bench.mjs'), ...args], { encoding: 'utf8', env: { ...process.env, ZIPANGU_LLM_KEY: '' } });
     let r = cli('build', join(dir, 'log.jsonl'), join(dir, 'donation.json'), '--out', join(dir, 'sets', 'v1'));
     assert.equal(r.status, 0, r.stderr);
@@ -136,7 +140,7 @@ assert.equal(setHash(items), setHash(items.slice().reverse()), 'the order does n
     r = cli('build', join(dir, 'log.jsonl'), '--out', join(dir, 'sets', 'v2'), '--dev', '0.5');
     assert.notEqual(r.status, 0, 'raw research logs without donor IDs must not create a misleading donor holdout');
     assert.match(r.stderr, /donor/i);
-    r = cli('build', join(dir, 'donation.json'), '--out', join(dir, 'sets', 'v2'), '--dev', '0.5');
+    r = cli('build', join(dir, 'donation.json'), join(dir, 'donation2.json'), '--out', join(dir, 'sets', 'v2'), '--dev', '0.5');
     assert.equal(r.status, 0, r.stderr);
     assert.ok(existsSync(join(dir, 'sets', 'v2.dev.jsonl')) && existsSync(join(dir, 'sets', 'v2.test.jsonl')));
     for (const p of ['rules', 'random']) {
