@@ -40,10 +40,12 @@ def add_flow_features(df: pd.DataFrame, window: int) -> pd.DataFrame:
 
     if "taker_buy_base" in out.columns:
         actual_sell = (out["volume"] - out["taker_buy_base"]).clip(lower=0)
-        actual_total = out["taker_buy_base"] + actual_sell
+        taker_buy_roll = out["taker_buy_base"].rolling(window, min_periods=window).sum()
+        taker_sell_roll = actual_sell.rolling(window, min_periods=window).sum()
+        actual_total_roll = taker_buy_roll + taker_sell_roll
         out["actual_taker_imbalance"] = np.where(
-            actual_total > 0,
-            (out["taker_buy_base"] - actual_sell) / actual_total,
+            actual_total_roll > 0,
+            (taker_buy_roll - taker_sell_roll) / actual_total_roll,
             np.nan,
         )
     return out
