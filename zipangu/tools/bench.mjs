@@ -118,6 +118,7 @@ if (cmd === 'verify-key') {
     let result;
     try { result = JSON.parse(readFileSync(file, 'utf8')); } catch { die('result file is not valid JSON'); }
     if (!result || result.bench !== BENCH_VERSION || !result.metrics || !result.player || !result.set) die('result does not match this benchmark format');
+    if (typeof result.set.name !== 'string' || !result.set.name.endsWith('.test')) die('only a result evaluated on a held-back *.test set can be verified');
     console.log(verificationKey(result));
     process.exit(0);
 }
