@@ -53,10 +53,16 @@ export function splitByDonor(items, devShare = 0.3, seed = 1) {
         throw new Error('Donor-level holdout requires a donor ID on every item; do not split donorless research logs.');
     }
     if (!(devShare > 0 && devShare < 1)) throw new Error('devShare must be between 0 and 1.');
+    if (new Set(items.map(it => it.donor)).size < 2) {
+        throw new Error('Donor-level dev/test split requires at least two distinct donors.');
+    }
     const dev = [], test = [];
     for (const it of items) {
         const x = parseInt(fnv(seed + ':' + it.donor), 16) / 0xffffffff;
         (x < devShare ? dev : test).push(it);
+    }
+    if (!dev.length || !test.length) {
+        throw new Error('Donor-level split produced an empty dev or test set; collect more donors or choose a different seed/share.');
     }
     return { dev, test };
 }
