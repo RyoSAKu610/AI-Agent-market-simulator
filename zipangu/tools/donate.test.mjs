@@ -24,7 +24,7 @@ const record = (over = {}) => ({
     for (const gone of ['raw', 'prompt', 'extra']) assert.ok(!(gone in s), `${gone} is never donated`);
     assert.ok(!s.thought.includes('example.com') && !s.thought.includes('1234-5678'), 'private details are masked: ' + s.thought);
     assert.ok(s.thought.startsWith('海の向こうへ'));
-    assert.deepEqual(s.cands[1], { kind: 'trade', good: 'g2', to: 'd2', profit: 789, time: 0.08, score: 0.9 });
+    assert.deepEqual(s.cands[1], { kind: 'trade', good: 'g2', to: 'd2', profit: 789, time: 0.08, score: 0.9, text: null });
     assert.equal(s.chosen, 1); assert.equal(s.by, 'human'); assert.equal(s.out.dWallet, 1200);
     assert.equal(sanitizeRecord(record({ cands: [] })), null);
     assert.equal(sanitizeRecord(record({ chosen: 5 })), null, 'a choice outside the candidates');

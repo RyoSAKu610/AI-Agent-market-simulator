@@ -1441,3 +1441,9 @@ input::placeholder { color: var(--ink-faint); }
 .donate { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(232, 195, 106, 0.25); display: grid; gap: 8px; }
 .donate h3 { margin: 0; }
 .donate-preview { max-height: 220px; overflow: auto; font-size: 12px; background: rgba(0, 0, 0, 0.3); border-radius: 8px; padding: 8px 10px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* 🏆 the human-likeness ranking (js/view-bench.js) */
+.bench-status { display: grid; gap: 6px; }
+.bench-status h2 { margin: 0; font-size: 26px; font-variant-numeric: tabular-nums; }
+.bench-board tr.is-baseline { opacity: 0.7; }
+.bench-board th small, .bench-board td small { color: var(--ink-dim); font-size: 12px; }

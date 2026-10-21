@@ -32,6 +32,7 @@ import { createLocalEngine, CONSENT_KEY } from './mind-local.js';
 import { createProgress, loadProgress, joinHidden } from './progress.js';
 import { loadBirths } from './birth.js';
 import { journalView } from './view-journal.js';
+import { benchView } from './view-bench.js';
 import { toast } from './toast.js';
 
 const SECONDS_PER_DAY = 240;          // one in-world day (one 節気) is about four minutes
@@ -44,7 +45,7 @@ const TAB_OF = {
     home: 'home', place: 'home', district: 'home', bestiary: 'bestiary', creature: 'bestiary',
     library: 'library', work: 'library', market: 'market', agents: 'agents', agent: 'agents',
     about: 'about', corrections: 'about', visuals: 'visuals', visual: 'visuals', chain: 'chain',
-    summon: 'settings', settings: 'settings', journal: 'settings'
+    summon: 'settings', settings: 'settings', journal: 'settings', bench: 'settings'
 };
 
 // ------------------------------------------------------------------ storage that may not exist
@@ -325,7 +326,8 @@ async function boot() {
         chain: () => chainView(ctx),
         summon: () => summonView(ctx),
         settings: () => settingsView(ctx),
-        journal: () => journalView(ctx)
+        journal: () => journalView(ctx),
+        bench: () => benchView(ctx)
     };
 
     let current = null, firstRender = true;

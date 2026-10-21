@@ -39,7 +39,7 @@ export function sanitizeRecord(r) {
     for (const c of r.cands) {
         if (!c || !KINDS.has(c.kind)) return null;
         cands.push({ kind: c.kind, good: id(c.good), to: id(c.to), profit: int(Math.round(c.profit), -1e9, 1e9) ?? 0,
-            time: num(c.time, 0, 1000) ?? 0, score: num(c.score, -1e9, 1e9) ?? 0 });
+            time: num(c.time, 0, 1000) ?? 0, score: num(c.score, -1e9, 1e9) ?? 0, text: text(c.text, 200) });
     }
     const chosen = int(r.chosen, -1, cands.length - 1);
     if (chosen === null || !BY.has(r.by) || !id(r.agent)) return null;
@@ -48,8 +48,10 @@ export function sanitizeRecord(r) {
         v: 1,
         run: id(r.run), cond: id(r.cond), cohort: id(r.cohort), cohortKind: id(r.cohortKind),
         T: num(r.T, 0, 1e7) ?? 0, day: int(r.day, 0, 1e7), koku: int(r.koku, 0, 11), season: typeof r.season === 'string' ? r.season.slice(0, 4) : null,
+        label: text(r.label, 12), sekki: text(r.sekki, 12),
         agent: r.agent, by: r.by, goal: id(r.goal), at: id(r.at),
         wallet: int(Math.round(r.wallet), -1e12, 1e12), carrying: int(r.carrying, 0, 1e6),
+        cargo: Array.isArray(r.cargo) ? r.cargo.slice(0, 20).map(l => ({ good: id(l && l.good), qty: int(l && l.qty, 0, 1e6) ?? 0 })).filter(l => l.good) : [],
         traits: { risk: num(t.risk, 0, 1), wander: num(t.wander, 0, 1), diligence: num(t.diligence, 0, 1), nightOwl: t.nightOwl === true, capacity: int(t.capacity, 0, 1000) },
         cands, chosen, kind: KINDS.has(r.kind) ? r.kind : null,
         model: typeof r.model === 'string' && /^[\w.:/@ -]{1,60}$/.test(r.model) ? r.model : null,
