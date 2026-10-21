@@ -49,10 +49,13 @@ export const setHash = items => fnv(items.map(i => i.id + ':' + i.human).sort().
 // Splits items by donor into a public "dev" part and a held-back "test" part, so nobody can tune
 // to the numbers that rank them. The same donor always lands on the same side.
 export function splitByDonor(items, devShare = 0.3, seed = 1) {
+    if (items.some(it => !it || typeof it.donor !== 'string' || !it.donor)) {
+        throw new Error('Donor-level holdout requires a donor ID on every item; do not split donorless research logs.');
+    }
+    if (!(devShare > 0 && devShare < 1)) throw new Error('devShare must be between 0 and 1.');
     const dev = [], test = [];
     for (const it of items) {
-        const key = it.donor || it.id;
-        const x = parseInt(fnv(seed + ':' + key), 16) / 0xffffffff;
+        const x = parseInt(fnv(seed + ':' + it.donor), 16) / 0xffffffff;
         (x < devShare ? dev : test).push(it);
     }
     return { dev, test };
@@ -130,19 +133,41 @@ export function bootstrap(items, picks, { rounds = 500, seed = 7 } = {}) {
 
 // ------------------------------------------------------------ the board
 
+// A stable exact key for the benchmark result values that the public board displays.
+// The allowlist containing these keys is maintained separately from participant result files.
+export function verificationKey(r) {
+    const player = r && r.player || {};
+    const metrics = r && r.metrics || {};
+    const set = r && r.set || {};
+    const ci = r && r.ci || null;
+    return JSON.stringify({
+        bench: r && r.bench || null,
+        set: { name: set.name || null, hash: set.hash || null, n: set.n ?? null },
+        player: { kind: player.kind || null, name: player.name || null, model: player.model || null, lang: player.lang || null },
+        metrics: {
+            n: metrics.n ?? null, answered: metrics.answered ?? null, accuracy: metrics.accuracy ?? null,
+            chance: metrics.chance ?? null, kappa: metrics.kappa ?? null, mix: metrics.mix ?? null,
+            top1: metrics.top1 ?? null, top1Human: metrics.top1Human ?? null, top1Gap: metrics.top1Gap ?? null,
+            beta: metrics.beta ?? null, betaHuman: metrics.betaHuman ?? null, score: metrics.score ?? null
+        },
+        ci
+    });
+}
+
 // A result file → the row the board shows. Unknown or broken results are dropped.
-export function cleanResult(r) {
+// "verified" is never trusted from contributor-supplied result JSON.
+export function cleanResult(r, { verifiedKeys = new Set() } = {}) {
     if (!r || r.bench !== BENCH_VERSION || !r.metrics || !(r.metrics.n > 0) || !r.player || typeof r.player.name !== 'string') return null;
     const m = r.metrics;
     return {
         name: String(r.player.name).slice(0, 60), kind: ['rules', 'random', 'llm', 'human'].includes(r.player.kind) ? r.player.kind : 'llm',
         model: r.player.model ? String(r.player.model).slice(0, 80) : null, baseline: r.player.kind === 'rules' || r.player.kind === 'random',
         set: r.set && typeof r.set.name === 'string' ? { name: r.set.name.slice(0, 40), hash: String(r.set.hash || '').slice(0, 16), n: r.set.n | 0 } : null,
-        date: typeof r.date === 'string' ? r.date.slice(0, 10) : null, verified: r.verified === true,
+        date: typeof r.date === 'string' ? r.date.slice(0, 10) : null, verified: verifiedKeys.has(verificationKey(r)),
         score: m.score, kappa: m.kappa, accuracy: m.accuracy, mix: m.mix, top1Gap: m.top1Gap, n: m.n, ci: r.ci && r.ci.score ? r.ci.score : null
     };
 }
-export function buildBoard(results, { updated = new Date().toISOString().slice(0, 10) } = {}) {
-    const rows = results.map(cleanResult).filter(Boolean).sort((a, b) => b.score - a.score || b.n - a.n || (a.name < b.name ? -1 : 1));
+export function buildBoard(results, { updated = new Date().toISOString().slice(0, 10), verifiedKeys = new Set() } = {}) {
+    const rows = results.map(r => cleanResult(r, { verifiedKeys })).filter(Boolean).sort((a, b) => b.score - a.score || b.n - a.n || (a.name < b.name ? -1 : 1));
     return { bench: BENCH_VERSION, updated, entries: rows };
 }
