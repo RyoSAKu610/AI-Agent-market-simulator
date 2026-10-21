@@ -15,7 +15,7 @@ import { createHumanMind } from '../js/human.js';
 import { sanitizeRecord } from '../js/donate.js';
 import {
     BENCH_VERSION, itemsFromRecords, setHash, splitByDonor, promptFor, rulesPlayer, randomPlayer,
-    scorePicks, bootstrap, cleanResult, buildBoard
+    scorePicks, bootstrap, cleanResult, buildBoard, verificationKey
 } from '../js/bench.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -107,7 +107,15 @@ assert.equal(setHash(items), setHash(items.slice().reverse()), 'the order does n
     assert.equal(s1.dev.length + s1.test.length, withDonors.length);
     const devDonors = new Set(s1.dev.map(i => i.donor));
     assert.ok(s1.test.every(i => !devDonors.has(i.donor)), 'a donor is on one side only');
+    assert.throws(() => splitByDonor(withDonors.map(({ donor, ...item }) => item), 0.3, 1), /donor/i, 'a donorless source must not be split item by item');
     const res = (name, score, kind = 'llm') => ({ bench: BENCH_VERSION, date: '2026-10-21', set: { name: 'v1.dev', hash: 'abc', n: 40 }, player: { kind, name, model: name }, metrics: { n: 40, score, kappa: 0.2, accuracy: 0.5, mix: 0.1, top1Gap: 0.1 } });
+    const fakeVerified = { ...res('self-attested', 100), verified: true };
+    assert.equal(cleanResult(fakeVerified).verified, false, 'submitted result JSON cannot self-assert verification');
+    const key = verificationKey(fakeVerified);
+    const verified = buildBoard([fakeVerified], { verifiedKeys: new Set([key]) });
+    assert.equal(verified.entries[0].verified, true, 'only a matching maintainer manifest key verifies the exact result');
+    const changed = { ...fakeVerified, metrics: { ...fakeVerified.metrics, score: 99 } };
+    assert.equal(buildBoard([changed], { verifiedKeys: new Set([key]) }).entries[0].verified, false, 'editing verified metrics invalidates the key');
     const board = buildBoard([res('B', 60), res('A', 72), res('rules', 41, 'rules'), { bench: 'other' }, null, res('C', 72)], { updated: 'x' });
     assert.deepEqual(board.entries.map(e => e.name), ['A', 'C', 'B', 'rules']);
     assert.equal(board.entries.find(e => e.name === 'rules').baseline, true);
@@ -126,6 +134,9 @@ assert.equal(setHash(items), setHash(items.slice().reverse()), 'the order does n
     const set = join(dir, 'sets', 'v1.jsonl');
     assert.equal(readFileSync(set, 'utf8').trim().split('\n').length, items.length, 'the donated duplicates are not counted twice');
     r = cli('build', join(dir, 'log.jsonl'), '--out', join(dir, 'sets', 'v2'), '--dev', '0.5');
+    assert.notEqual(r.status, 0, 'raw research logs without donor IDs must not create a misleading donor holdout');
+    assert.match(r.stderr, /donor/i);
+    r = cli('build', join(dir, 'donation.json'), '--out', join(dir, 'sets', 'v2'), '--dev', '0.5');
     assert.equal(r.status, 0, r.stderr);
     assert.ok(existsSync(join(dir, 'sets', 'v2.dev.jsonl')) && existsSync(join(dir, 'sets', 'v2.test.jsonl')));
     for (const p of ['rules', 'random']) {
