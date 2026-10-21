@@ -171,7 +171,7 @@ assert.equal(setHash(items), setHash(items.slice().reverse()), 'the order does n
     assert.equal(llm.metrics.answered, items.length);
     assert.equal(llm.metrics.top1, 0, 'it always said 2');
     assert.ok(!JSON.stringify(llm).includes('127.0.0.1'), 'the endpoint is not written into the result');
-    const testResultPath = join(dir, 'results', 'held-back-test.json');
+    const testResultPath = join(dir, 'verify', 'held-back-test.json');
     r = cli('run', '--set', join(dir, 'sets', 'v2.test.jsonl'), '--player', 'rules', '--out', testResultPath);
     assert.equal(r.status, 0, r.stderr);
     r = cli('verify-key', testResultPath);
