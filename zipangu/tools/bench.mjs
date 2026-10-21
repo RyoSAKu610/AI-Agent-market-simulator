@@ -19,7 +19,7 @@ import { resolve as resolveProvider, complete, parseAnswer } from '../js/mind.js
 import { fromJSONL } from '../js/research.js';
 import {
     BENCH_VERSION, itemsFromRecords, setHash, splitByDonor, promptFor, rulesPlayer, randomPlayer,
-    scorePicks, bootstrap, buildBoard
+    scorePicks, bootstrap, buildBoard, verificationKey
 } from '../js/bench.js';
 
 const argv = process.argv.slice(2);
@@ -56,8 +56,11 @@ if (cmd === 'build') {
     mkdirSync(dirname(out), { recursive: true });
     const write = (path, list) => { writeFileSync(path, list.map(i => JSON.stringify(i)).join('\n') + (list.length ? '\n' : '')); console.error(`${path}: ${list.length} items, ${new Set(list.map(i => i.donor || '?')).size} donors, hash ${setHash(list)}`); };
     if (opt('dev')) {
-        const { dev, test } = splitByDonor(uniq, Number(opt('dev')), Number(opt('seed', 1)));
-        write(out + '.dev.jsonl', dev); write(out + '.test.jsonl', test);
+        if (uniq.some(i => !i.donor)) die('--dev requires donor IDs for every item; raw research-log JSONL lacks donor metadata. Build without --dev, or use consented donation files with donor IDs.');
+        let split;
+        try { split = splitByDonor(uniq, Number(opt('dev')), Number(opt('seed', 1))); }
+        catch (e) { die(e.message); }
+        write(out + '.dev.jsonl', split.dev); write(out + '.test.jsonl', split.test);
     } else write(out + '.jsonl', uniq);
     process.exit(0);
 }
@@ -108,11 +111,28 @@ if (cmd === 'run') {
     process.exit(0);
 }
 
+// ------------------------------------------------------------ maintainer verification key
+if (cmd === 'verify-key') {
+    const file = positional[0];
+    if (!file || !existsSync(file)) die('usage: node tools/bench.mjs verify-key <result.json>');
+    let result;
+    try { result = JSON.parse(readFileSync(file, 'utf8')); } catch { die('result file is not valid JSON'); }
+    if (!result || result.bench !== BENCH_VERSION || !result.metrics || !result.player || !result.set) die('result does not match this benchmark format');
+    console.log(verificationKey(result));
+    process.exit(0);
+}
+
 // ------------------------------------------------------------ board
 if (cmd === 'board') {
     const dir = positional[0] || 'bench/results';
     const results = existsSync(dir) ? walk(dir).filter(f => f.endsWith('.json')).map(f => { try { return JSON.parse(readFileSync(f, 'utf8')); } catch { return null; } }).filter(Boolean) : [];
-    const board = buildBoard(results);
+    const verifiedPath = opt('verified', join(dirname(fileURLToPath(import.meta.url)), '..', 'bench', 'verified.json'));
+    let manifest;
+    try { manifest = existsSync(verifiedPath) ? JSON.parse(readFileSync(verifiedPath, 'utf8')) : { bench: BENCH_VERSION, entries: [] }; }
+    catch { die('verification manifest is not valid JSON: ' + verifiedPath); }
+    if (manifest.bench !== BENCH_VERSION || !Array.isArray(manifest.entries)) die('verification manifest must contain this bench version and an entries array');
+    const verifiedKeys = new Set(manifest.entries.map(e => e && e.key).filter(k => typeof k === 'string'));
+    const board = buildBoard(results, { verifiedKeys });
     // the public sets and how many people's decisions they hold (the held-back test set is not listed)
     const setsDir = opt('sets', 'bench/sets');
     board.sets = existsSync(setsDir) ? readdirSync(setsDir).filter(f => f.endsWith('.jsonl') && !f.endsWith('.test.jsonl')).map(f => {
