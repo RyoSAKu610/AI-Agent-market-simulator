@@ -49,4 +49,7 @@ for f in js/*.js tools/*.mjs; do
   case "$f" in js/*) [ -e "$f" ] && node --input-type=module --check < "$f" ;; *) [ -e "$f" ] && node --check "$f" ;; esac
 done
 
+echo "› single-file build (its one module script parses; nothing is written)"
+node tools/build-single.mjs --module | node --input-type=module --check
+
 echo "All zipangu checks passed."
