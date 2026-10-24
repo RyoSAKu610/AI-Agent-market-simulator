@@ -3,9 +3,11 @@
 // is folded into one module script, and the css goes into a <style>.
 //
 //   node tools/build-single.mjs
+//   node tools/build-single.mjs --module   # only that module script, to stdout; writes nothing
 //
-// The modules use a small, regular import/export style, so the bundler is a
-// few regular expressions rather than a dependency.
+// The modules use a small, regular import/export style (`import { a } from './x.js';`,
+// `export const/let/function/class`, `export { a };`), so the bundler is a few regular
+// expressions rather than a dependency. Any other import or export declaration is an error.
 
 import { readFileSync, writeFileSync, appendFileSync, statSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
@@ -87,11 +89,15 @@ function wrap(mod) {
         .replace(EXPORT_DECL_RE, (match, name) => { exported.push(name); return match.replace(/^export\s+/, ''); });
     if (/^export\s+default/m.test(body) || /import\.meta/.test(body)) throw new Error(`${mod.file}: default exports and import.meta are not supported by the bundler`);
     if (/^import\s/m.test(body)) throw new Error(`${mod.file}: an import the bundler could not read`);
+    if (/^export\b/m.test(body)) throw new Error(`${mod.file}: an export the bundler could not read (write \`export … from\` as an import plus \`export { … };\`)`);
     return `const ${idOf(mod.file)} = (() => {\n${body}\nreturn { ${exported.join(', ')} };\n})();`;
 }
 
 // The entry module has no exports; wrapping it just runs it, last.
 const bundle = entry => order(entry).map(wrap).join('\n\n');
+
+// The module script exactly as the page carries it.
+const pageModule = () => bundle('app.js').replace(/<\/script/gi, '<\\/script');
 
 // ------------------------------------------------------------------ assemble
 
@@ -133,11 +139,11 @@ function build() {
     const jsTag = '<script type="module" src="js/app.js"></script>';
     if (!html.includes(cssTag) || !html.includes(jsTag)) throw new Error('index.html no longer has the stylesheet/script tags the builder replaces');
 
-    const code = bundle('app.js');
+    const code = pageModule();
     const data = `<script>window.__ZIPANGU_WORLD__ = ${inlineJson(collectWorld())};\nwindow.__ZIPANGU_DOCS__ = ${inlineJson(collectDocs())};\n${visualLoader}</script>`;
     html = html
         .replace(cssTag, () => `<style>\n${css}\n</style>`)
-        .replace(jsTag, () => `__ZIPANGU_PNG_BLOCKS__${data}\n<script type="module">\n${code.replace(/<\/script/gi, '<\\/script')}\n</script>`);
+        .replace(jsTag, () => `__ZIPANGU_PNG_BLOCKS__${data}\n<script type="module">\n${code}\n</script>`);
 
     mkdirSync(join(root, 'dist'), { recursive: true });
     const out = join(root, 'dist', 'zipangu-single.html');
@@ -149,4 +155,7 @@ function build() {
     console.log(`wrote ${out} (${(statSync(out).size / 1024).toFixed(0)} KB, ${files.length} original PNG blocks)`);
 }
 
-build();
+// --module lets tools/check.sh parse exactly what the single file runs, without
+// writing the hundreds of megabytes of inlined PNGs.
+if (process.argv.includes('--module')) process.stdout.write(pageModule() + '\n');
+else build();

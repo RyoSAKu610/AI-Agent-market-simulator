@@ -10,6 +10,7 @@
 
 import { CHARACTER_PROFILES } from './character-profiles.js';
 import { DRAMA_VOICES } from './character-drama.js';
+import { HIDDEN, redactSecrets } from './redact.js';
 
 export const SOUL_MARK = 'ZIPANGU-SOUL/1';
 export const MAX_TRAVELLERS = 6;
@@ -118,8 +119,8 @@ export function extractJson(text) {
     return null;
 }
 
-export { HIDDEN, redactSecrets } from './redact.js';
-import { redactSecrets } from './redact.js';
+// The masking lives in redact.js, shared with the donation endpoint; it is still exported from here.
+export { HIDDEN, redactSecrets };
 
 // One line of plain text: no control characters, collapsed spaces, capped.
 export function cleanText(v, max, found) {
