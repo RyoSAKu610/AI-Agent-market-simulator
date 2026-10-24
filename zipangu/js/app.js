@@ -20,6 +20,7 @@ import { aboutView, correctionsView } from './view-about.js';
 import { visualsView, visualView } from './view-visuals.js';
 import { chainView } from './view-chain.js';
 import { attachChainFx } from './chain-fx.js';
+import { NETWORK_KEY, DEFAULT_NETWORK, isNetwork, networkOf, explorerTxOf, explorerAddrOf } from './networks.js';
 import { summonView, settingsView } from './view-summon.js';
 import { loadCards, addTravellers } from './soul.js';
 import { t, getLang } from './i18n.js';
@@ -195,7 +196,7 @@ async function boot() {
     ctx.persistJourney = () => {
         if (ctx.frozen) return;      // a backup was just restored: this page must not write over it on the way out
         progress.save();
-        // the devnet wallet and ledger (zipangu.chain.v1) ride along, so a reload (a language change) keeps them
+        // the test-network wallet and ledger (zipangu.chain.v1 and the like) ride along, so a reload (a language change) keeps them
         if (ctx.chain && ctx.chain.save) { try { ctx.chain.save(); } catch { /* fine */ } }
         if (saveBlocked) return;
         const result = saveJourney(storage, seed, eco, stories, history);
@@ -248,21 +249,37 @@ async function boot() {
     window.addEventListener('pagehide', () => { if (ctx.research.rec) ctx.research.rec.flush(); });
 
     // ---------------------------------------------------- ⛓ chain mode (lazy; docs/ONCHAIN.md)
-    // js/chain.js is only fetched once the user turns chain mode on. Until then there is
-    // no chain object, no network request, and the explorer is exactly the simulation.
+    // The engine of the chosen test network (js/networks.js) is only fetched once the user turns
+    // chain mode on. Until then there is no chain object, no network request, and the explorer is
+    // exactly the simulation.
     const CHAIN_FLAG = 'zipangu.chain.on';
+    const ENGINES = { solana: () => import('./chain.js'), evm: () => import('./chain-evm.js'), zcash: () => import('./chain-zcash.js') };
+    ctx.chainNet = isNetwork(store.get(NETWORK_KEY)) ? store.get(NETWORK_KEY) : DEFAULT_NETWORK;
     let chainLoading = null;
     ctx.useChainModule = mod => {              // also the seam for tests: hand it any module with createChain()
-        ctx.chainMod = mod;
-        ctx.chain = mod.createChain(W, eco, {});
+        const net = ctx.chainNet;
+        ctx.chainMod = { ...mod, explorerTx: id => explorerTxOf(net, id), explorerAddr: a => explorerAddrOf(net, a) };
+        ctx.chain = mod.createChain(W, eco, { network: net });
         attachChainFx(ctx.chain);
-        hud.setChain(ctx.chain, mod);
+        hud.setChain(ctx.chain, ctx.chainMod);
         return ctx.chain;
     };
     ctx.loadChain = () => {
         if (ctx.chain) return Promise.resolve(ctx.chain);
-        if (!chainLoading) chainLoading = import('./chain.js').then(ctx.useChainModule).catch(err => { chainLoading = null; throw err; });
+        if (!chainLoading) chainLoading = ENGINES[networkOf(ctx.chainNet).family]().then(ctx.useChainModule).catch(err => { chainLoading = null; throw err; });
         return chainLoading;
+    };
+    // Another network: the current one stops (its keys and ledger stay on this device under their
+    // own key) and the next one starts from its own.
+    ctx.setChainNetwork = id => {
+        if (!isNetwork(id) || id === ctx.chainNet) return;
+        if (ctx.chain) { try { ctx.chain.save(); ctx.chain.disable(); } catch { /* fine */ } }
+        ctx.chain = null; ctx.chainMod = null; chainLoading = null;
+        attachChainFx(null);
+        hud.setChain(null, null);
+        ctx.chainNet = id;
+        store.set(NETWORK_KEY, id);
+        store.set(CHAIN_FLAG, '0');
     };
     ctx.enableChain = async () => {
         const chain = await ctx.loadChain();

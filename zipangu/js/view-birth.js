@@ -3,9 +3,11 @@
 import { h, clear } from './util.js';
 import { plaque, sectionHead } from './components.js';
 import { t } from './i18n.js';
-import { makeBirth, saveBirth, loadBirths, verifyBirth, birthMemo, checkBirthTx, certificateFile } from './birth.js';
+import { makeBirth, saveBirth, loadBirths, verifyBirth, birthMemo, checkBirthMemo, certificateFile } from './birth.js';
+import { networkOf, explorerTxOf } from './networks.js';
+import { readMemo } from './chain-read.js';
 
-const explorer = sig => `https://explorer.solana.com/tx/${encodeURIComponent(sig)}?cluster=devnet`;
+const WHERE = { solana: 'slot', evm: 'block', zcash: 'block' };
 
 export function birthPanel(ctx, card) {
     const storage = ctx.storage;
@@ -15,7 +17,7 @@ export function birthPanel(ctx, card) {
     const facts = h('dl', { class: 'facts facts-compact birth-facts' });
     const state = h('p', { class: 'birth-state' });
     const message = h('p', { class: 'soul-message', role: 'status' });
-    const inscribeBtn = h('button', { type: 'button', class: 'btn btn-primary', onclick: () => inscribe() }, t('birth.inscribe'));
+    const inscribeBtn = h('button', { type: 'button', class: 'btn btn-primary', onclick: () => inscribe() }, t('birth.inscribe', { net: networkOf(ctx.chainNet).name }));
     const verifyBtn = h('button', { type: 'button', class: 'btn', onclick: () => verify() }, t('birth.verify'));
     const saveBtn = h('button', { type: 'button', class: 'btn', onclick: () => save() }, t('birth.save'));
     const say = (text, bad) => { message.textContent = text; message.className = 'soul-message' + (bad ? ' is-error' : ''); };
@@ -27,9 +29,11 @@ export function birthPanel(ctx, card) {
             h('dt', null, t('birth.sealed')), h('dd', null, String(birth.at).slice(0, 10)),
             h('dt', null, t('birth.digest')), h('dd', null, h('code', { class: 'birth-digest', title: birth.digest }, birth.digest)));
         clear(state);
+        inscribeBtn.textContent = t('birth.inscribe', { net: networkOf(ctx.chainNet).name });
         if (birth.chain) {
-            state.append(t('birth.onchain', { slot: birth.chain.slot ?? '—' }), ' ',
-                h('a', { href: explorer(birth.chain.sig), target: '_blank', rel: 'noopener noreferrer' }, t('birth.explorer')));
+            const net = networkOf(birth.chain.net);
+            state.append(t('birth.onchain', { net: net.name, where: birth.chain.slot != null ? `${WHERE[net.family]} ${birth.chain.slot}` : '—' }), ' ',
+                h('a', { href: explorerTxOf(net.id, birth.chain.sig), target: '_blank', rel: 'noopener noreferrer' }, t('birth.explorer')));
             if (birth.chain.verified) state.append(h('br'), t('birth.verified'));
         } else state.append(t('birth.local'));
         if (!intact) state.append(h('br'), h('span', { class: 'mind-error' }, t('birth.changed')));
@@ -43,27 +47,30 @@ export function birthPanel(ctx, card) {
         let chain = await ctx.loadChain();
         // through enableChain, so chain mode (address, balance, ledger) comes back after a reload
         if (chain.state === 'off' || chain.state === 'error') chain = await (ctx.enableChain ? ctx.enableChain() : chain.enable());
-        if (chain.state === 'error') throw new Error(chain.error || 'devnet');
+        if (chain.state === 'error') throw new Error(chain.error || chain.network.name);
         return chain;
     }
 
     async function inscribe() {
         if (busy || !birth || birth.chain) return;
-        busy = true; paint(); say(t('birth.connecting'));
+        busy = true; paint(); say(t('birth.connecting', { net: networkOf(ctx.chainNet).name }));
         try {
             const chain = await chainReady();
-            const memo = birthMemo(birth);
+            const net = chain.network;
+            const memo = birthMemo(birth, net.id);
             say(t('birth.sending'));
             let r = await chain.inscribe('birth', memo);
-            if (!r.ok && r.reason === 'funds') {
+            if (!r.ok && r.reason === 'funds' && chain.canAirdrop) {
                 say(t('birth.airdrop'));
                 const a = await chain.requestAirdrop();
                 if (!a.ok) { say(t('birth.airdropFail'), true); return; }
                 say(t('birth.sending'));
                 r = await chain.inscribe('birth', memo);
             }
+            if (!r.ok && r.reason === 'funds') { say(t('birth.funds', { net: net.name, symbol: net.currency.symbol }), true); return; }
+            if (!r.ok && r.reason === 'busy') { say(t('birth.busy'), true); return; }
             if (!r.ok) { say(t('birth.fail', { reason: String(r.reason).slice(0, 120) }), true); return; }
-            birth = { ...birth, chain: { sig: r.sig, slot: r.slot, cluster: 'devnet', verified: false, at: new Date().toISOString() } };
+            birth = { ...birth, chain: { net: net.id, sig: r.sig, slot: r.slot, verified: false, at: new Date().toISOString() } };
             saveBirth(storage, birth);
             busy = false;
             await verify();
@@ -72,21 +79,25 @@ export function birthPanel(ctx, card) {
         } finally { busy = false; paint(); }
     }
 
-    // Read the transaction back from the RPC and compare its memo with this certificate.
+    // Read the transaction back from the network it was written to (whichever network chain mode
+    // is on now) and compare its memo with this certificate.
     async function verify() {
         if (busy || !birth || !birth.chain) return;
         busy = true; paint(); say(t('birth.checking'));
         try {
-            const chain = await chainReady();
-            let verdict = { ok: false, reason: 'notfound' };
+            const net = networkOf(birth.chain.net);
+            let verdict = { ok: false, reason: 'notfound' }, slot = birth.chain.slot;
             for (let i = 0; i < 6; i++) {
-                verdict = checkBirthTx(await chain.parsedTx(birth.chain.sig), birth);
+                const read = await readMemo(net.id, birth.chain.sig, { storage });
+                verdict = checkBirthMemo(read, birth, net.id);
+                if (read.slot != null) slot = read.slot;
                 if (verdict.ok || verdict.reason !== 'notfound') break;
                 await new Promise(r => setTimeout(r, 800));
             }
-            birth = { ...birth, chain: { ...birth.chain, verified: verdict.ok } };
+            if (verdict.reason === 'pending') { say(t('birth.pending')); return; }
+            birth = { ...birth, chain: { ...birth.chain, slot, verified: verdict.ok } };
             saveBirth(storage, birth);
-            say(verdict.ok ? t('birth.ok') : t('birth.ng', { reason: verdict.reason }), !verdict.ok);
+            say(verdict.ok ? t('birth.ok', { net: net.name }) : t('birth.ng', { reason: verdict.reason }), !verdict.ok);
         } catch (e) {
             say(t('birth.ng', { reason: String(e && e.message || e).slice(0, 120) }), true);
         } finally { busy = false; paint(); }

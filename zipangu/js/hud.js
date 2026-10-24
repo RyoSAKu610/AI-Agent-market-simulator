@@ -137,7 +137,7 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
     // ---------------------------------------------------- ⛓ chain chip and feed links (docs/ONCHAIN.md)
     // The chip says SIM until js/chain.js is live; it never shows a chain number it was not given.
     const chipText = h('span', { class: 'chain-chip-text' }, 'SIM');
-    const chainChip = h('a', { class: 'chain-chip', href: '#/chain', title: 'オンチェーン：住人の取引を Solana devnet に刻む（いまはシミュレーションのみ）' },
+    const chainChip = h('a', { class: 'chain-chip', href: '#/chain', title: 'オンチェーン：住人の取引をテストネットに刻む（いまはシミュレーションのみ）' },
         h('span', { class: 'chain-chip-gem', 'aria-hidden': 'true' }, '⛓'), chipText);
     let chain = null, chainMod = null, unsubChain = null;
     const linkable = [];                 // feed lines still waiting for a confirmed tx
@@ -146,11 +146,12 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
     function paintChip() {
         const live = chain && chain.state === 'live';
         const st = chain ? chain.state : 'off';
+        const net = chain && chain.network ? chain.network : { short: 'DEVNET', name: 'Solana devnet' };
         let text = 'SIM', full = '';
         if (live) {
             const s = chain.stats || {};
             text = '';
-            chipText.replaceChildren(h('span', { class: 'chain-chip-more' }, 'DEVNET '), h('span', { class: 'chain-chip-mid' }, 'LIVE · '), `${fmt(s.confirmed || 0)} tx`);
+            chipText.replaceChildren(h('span', { class: 'chain-chip-more' }, `${net.short} `), h('span', { class: 'chain-chip-mid' }, 'LIVE · '), `${fmt(s.confirmed || 0)} tx`);
             full = ` · ${fmt(s.volume || 0)} KOGANE`;
         } else if (st === 'loading' || st === 'setting-up') text = st === 'loading' ? '読込中…' : '開設中…';
         else if (st === 'needs-funds') text = '資金待ち';
@@ -158,7 +159,7 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
         if (!live) chipText.textContent = text;
         else chipText.append(h('span', { class: 'chain-chip-more' }, full));
         chainChip.classList.toggle('is-live', !!live);
-        chainChip.title = live ? 'Solana devnet に実際に刻まれた取引（確定分）。クリックで台帳へ' : 'オンチェーン：住人の取引を Solana devnet に刻む（いまは SIM = シミュレーションのみ）';
+        chainChip.title = live ? `${net.name} に実際に刻まれた取引（確定分）。クリックで台帳へ` : `オンチェーン：住人の取引を ${net.name} に刻む（いまは SIM = シミュレーションのみ）`;
     }
 
     function linkLines() {
@@ -178,7 +179,7 @@ export function createHud(W, eco, { speed = 1, onSpeed = () => {} } = {}) {
                 L.li.append(h('a', {
                     class: 'feed-chain', target: '_blank', rel: 'noopener noreferrer',
                     href: ex ? ex(tx.sig) : `https://explorer.solana.com/tx/${tx.sig}?cluster=devnet`,
-                    title: 'Solana devnet で確定：' + tx.sig.slice(0, 12) + '…', 'aria-label': 'この取引を Explorer で見る（devnet）'
+                    title: `${chain.network ? chain.network.name : 'Solana devnet'} で確定：` + tx.sig.slice(0, 12) + '…', 'aria-label': 'この取引を Explorer で見る（テストネット）'
                 }, '⛓'));
                 linkable.splice(i, 1);
                 break;

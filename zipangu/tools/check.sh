@@ -15,7 +15,12 @@ if [ -f tools/sim.test.mjs ]; then
   node tools/sim.test.mjs
 fi
 if [ -f tools/chain.test.mjs ]; then
+  echo "› chain mode on test networks (Solana devnet, Robinhood Chain, Arc, Zcash)"
   node tools/chain.test.mjs
+  node tools/networks.test.mjs
+  node tools/chain-evm.test.mjs
+  node tools/zcash.test.mjs
+  node tools/chain-zcash.test.mjs
 fi
 
 echo "› visual asset contracts"
@@ -42,6 +47,7 @@ node tools/donate.test.mjs
 node tools/bench.test.mjs
 node --check ../netlify/functions/zipangu-donate.mjs
 node --check ../netlify/functions/zipangu-mind.mjs
+node --check ../netlify/functions/zipangu-zcash.mjs
 
 echo "› explorer syntax"
 for f in js/*.js tools/*.mjs; do
