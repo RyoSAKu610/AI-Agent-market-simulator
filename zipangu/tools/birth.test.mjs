@@ -2,7 +2,7 @@
 // a devnet memo that carries only the digest, and checks against a parsed transaction.
 import assert from 'node:assert/strict';
 import {
-    BIRTH_MARK, canonicalCard, commitment, makeBirth, birthMemo, verifyBirth, memoOf, checkBirthTx,
+    BIRTH_MARK, canonicalCard, commitment, makeBirth, birthMemo, verifyBirth, memoOf, checkBirthTx, checkBirthMemo,
     loadBirths, saveBirth, forgetBirth, certificateFile, newSalt
 } from '../js/birth.js';
 
@@ -55,7 +55,7 @@ assert.equal(saveBirth(storage, { ...birth, id: 'evil' }), false);
 assert.equal(saveBirth(storage, { ...birth, digest: 'nothex' }), false);
 assert.ok(saveBirth(storage, { ...birth, chain: { sig: '5'.repeat(88), slot: 7, verified: true, cluster: 'mainnet-beta' } }));
 const back = loadBirths(storage)[card.id];
-assert.deepEqual(back.chain, { sig: '5'.repeat(88), slot: 7, cluster: 'devnet', verified: true, at: '' }, 'only devnet is ever recorded');
+assert.deepEqual(back.chain, { net: 'solana-devnet', sig: '5'.repeat(88), slot: 7, verified: true, at: '' }, 'a record without a known network was written on Solana devnet');
 assert.ok(saveBirth(storage, { ...birth, chain: { sig: '<img src=x>' } }));
 assert.equal(loadBirths(storage)[card.id].chain, null, 'a signature that is not base58 is dropped');
 mem.set('zipangu.births.v1', '{"a":{"v":1,"id":"trav_x","digest":"zz","salt":"zz"},"b":7}');
@@ -70,6 +70,36 @@ assert.deepEqual(loadBirths(storage), {});
 const file = JSON.parse(certificateFile(card, { ...birth, chain: { sig: 'S1G', slot: 9 } }));
 assert.equal(file.format, BIRTH_MARK);
 assert.equal(file.chain.memo, memo);
+assert.equal(file.chain.network, 'solana-devnet');
 assert.equal(await commitment(file.card, file.salt), file.digest, 'card + salt in the file reproduce the digest');
+
+// ------------------------------------------------ other test networks
+// each network keeps its own kind of transaction id
+const evmHash = '0x' + 'ab'.repeat(32), zTxid = 'cd'.repeat(32);
+assert.ok(saveBirth(storage, { ...birth, chain: { net: 'arc-testnet', sig: evmHash, slot: 12, verified: true } }));
+assert.deepEqual(loadBirths(storage)[card.id].chain, { net: 'arc-testnet', sig: evmHash, slot: 12, verified: true, at: '' });
+assert.ok(saveBirth(storage, { ...birth, chain: { net: 'robinhood-testnet', sig: '5'.repeat(88) } }));
+assert.equal(loadBirths(storage)[card.id].chain, null, 'a base58 signature is not an EVM hash');
+assert.ok(saveBirth(storage, { ...birth, chain: { net: 'zcash-testnet', sig: zTxid, slot: 4500001 } }));
+assert.equal(loadBirths(storage)[card.id].chain.net, 'zcash-testnet');
+assert.ok(saveBirth(storage, { ...birth, chain: { net: 'zcash-testnet', sig: evmHash } }));
+assert.equal(loadBirths(storage)[card.id].chain, null, 'a 0x hash is not a Zcash txid');
+// the same memo on Solana and the EVM networks; a compact one in a Zcash OP_RETURN (80 bytes)
+assert.equal(birthMemo(birth, 'arc-testnet'), memo);
+assert.equal(birthMemo(birth, 'robinhood-testnet'), memo);
+const zmemo = birthMemo(birth, 'zcash-testnet');
+assert.match(zmemo, /^zipangu:b1\|trav_abc123\|[A-Za-z0-9_-]{43}$/);
+assert.ok(new TextEncoder().encode(birthMemo({ ...birth, id: 'trav_' + 'z'.repeat(13) }, 'zcash-testnet')).length <= 80, 'the longest id still fits');
+assert.equal(Buffer.from(zmemo.split('|')[2], 'base64url').toString('hex'), birth.digest, 'the compact memo carries the whole digest');
+for (const word of ['ソラ', 'Claude', SALT, birth.salt]) assert.ok(!zmemo.includes(word));
+// the check, on the shape js/chain-read.js returns
+assert.deepEqual(checkBirthMemo({ status: 'ok', memo: zmemo }, birth, 'zcash-testnet'), { ok: true });
+assert.deepEqual(checkBirthMemo({ status: 'ok', memo }, birth, 'zcash-testnet'), { ok: false, reason: 'mismatch' }, 'each network’s own memo');
+assert.deepEqual(checkBirthMemo({ status: 'pending', memo: zmemo }, birth, 'zcash-testnet'), { ok: false, reason: 'pending' });
+assert.deepEqual(checkBirthMemo({ status: 'failed', memo }, birth, 'arc-testnet'), { ok: false, reason: 'failed' });
+assert.deepEqual(checkBirthMemo({ status: 'notfound', memo: null }, birth, 'arc-testnet'), { ok: false, reason: 'notfound' });
+assert.deepEqual(checkBirthMemo(null, birth), { ok: false, reason: 'notfound' });
+const zfile = JSON.parse(certificateFile(card, { ...birth, chain: { net: 'zcash-testnet', sig: zTxid, slot: 4500001 } }));
+assert.deepEqual([zfile.chain.network, zfile.chain.memo, zfile.chain.explorer], ['zcash-testnet', zmemo, 'https://testnet.zcashexplorer.app/transactions/' + zTxid]);
 
 console.log('birth tests passed');

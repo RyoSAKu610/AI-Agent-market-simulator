@@ -1,0 +1,25 @@
+{
+ "source": "https://github.com/zcash/zcash-test-vectors/blob/master/test-vectors/json/zip_0320.json (t_addr and p2pkh_bytes of the first 5 vectors; MIT OR Apache-2.0)",
+ "vectors": [
+  [
+   "t1V9mnyk5Z5cTNMCkLbaDwSskgJZucTLdgW",
+   "7bb83570b8fae146e03c5331a020b1e0892f631d"
+  ],
+  [
+   "t1LZdE42PAt1wREUv1YMYRFwJDPHPW8toLL",
+   "1d81e86791c72d292f906e7c039a729e4b1ff7fc"
+  ],
+  [
+   "t1M5AgJw56FNFRBNGtzAGX4AHfQh7ZCxd4w",
+   "231839e305c0a02ed681406faf222585f6623904"
+  ],
+  [
+   "t1bh6KjXccz6Ed45vFc3GeqoxWbwPxe8w2n",
+   "c3755398b8b77f633fca7ccbda900831478979c9"
+  ],
+  [
+   "t1WvCtHojWHSHBdDtCFgorUN1TzUFV8sCth",
+   "8f17950e22b08886ac4832e22e24f2e8f3cb6b21"
+  ]
+ ]
+}

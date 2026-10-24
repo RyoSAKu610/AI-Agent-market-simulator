@@ -9,6 +9,8 @@
 # zipangu/js/mind.js "お試し" provider: netlify/functions/zipangu-mind.mjs (needs OPENROUTER_API_KEY)
 # zipangu/js/donate.js data donations: netlify/functions/zipangu-donate.mjs (needs ZIPANGU_DONATE_REPO and
 # ZIPANGU_DONATE_TOKEN; see zipangu/docs/DATA.md). esbuild bundles the shared zipangu/js modules it imports.
+# zipangu/js/chain-zcash.js Zcash testnet chain mode: netlify/functions/zipangu-zcash.mjs (needs
+# ZIPANGU_ZCASH_RPC_URL, a testnet node; see zipangu/docs/ONCHAIN.md).
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"

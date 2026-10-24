@@ -4,11 +4,15 @@
 //
 //     digest = SHA-256("ZIPANGU-BIRTH/1\n" + salt + "\n" + canonical card)
 //
-// Only the digest (and the resident's random id) is ever written on chain, as a
-// Solana devnet memo, so the chain proves *that* this AI was born here and when,
-// without revealing a word of its card. The 128-bit salt stays on this device
-// (and in the certificate file the visitor can save), so nobody can confirm a
-// guessed card against the chain; with the card and the salt, anyone can check it.
+// Only the digest (and the resident's random id) is ever written on chain, as a memo
+// on the test network chain mode runs on (js/networks.js), so the chain proves *that*
+// this AI was born here and when, without revealing a word of its card. The 128-bit
+// salt stays on this device (and in the certificate file the visitor can save), so
+// nobody can confirm a guessed card against the chain; with the card and the salt,
+// anyone can check it.
+
+import { networkOf, isNetwork, explorerTxOf } from './networks.js';
+import { readSolana, memoFromSolana } from './chain-read.js';
 
 export const BIRTH_MARK = 'ZIPANGU-BIRTH/1';
 const STORE_KEY = 'zipangu.births.v1';
@@ -47,8 +51,13 @@ export async function makeBirth(card, { salt, cryptoImpl, now = () => new Date()
     return { v: 1, id: card.id, digest: await commitment(card, s, cryptoImpl), salt: s, at: now(), chain: null };
 }
 
-// The memo written on devnet: no names, no text from the card.
-export const birthMemo = birth => `zipangu:birth|v=1|id=${birth.id}|h=${birth.digest}`;
+// The memo written on chain: no names, no text from the card. A Zcash OP_RETURN holds 80 bytes,
+// so there the digest is base64url and the field names go (73 bytes at most).
+const b64url = hex => btoa(String.fromCharCode(...hex.match(/../g).map(x => parseInt(x, 16)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+export function birthMemo(birth, net = 'solana-devnet') {
+    if (networkOf(net).family === 'zcash') return `zipangu:b1|${birth.id}|${b64url(birth.digest)}`;
+    return `zipangu:birth|v=1|id=${birth.id}|h=${birth.digest}`;
+}
 
 // Does this card (with this salt) match the certificate?
 export async function verifyBirth(card, birth, cryptoImpl) {
@@ -57,29 +66,32 @@ export async function verifyBirth(card, birth, cryptoImpl) {
     return (await commitment(card, birth.salt, cryptoImpl)) === birth.digest;
 }
 
-// The memo text of a parsed devnet transaction (getParsedTransaction), or null.
-export function memoOf(parsed) {
-    const ixs = (parsed && parsed.transaction && parsed.transaction.message && parsed.transaction.message.instructions) || [];
-    const ix = ixs.find(i => i && (i.program === 'spl-memo' || String(i.programId || '') === 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'));
-    return ix && typeof ix.parsed === 'string' ? ix.parsed : null;
-}
+// The memo text of a parsed Solana devnet transaction (getParsedTransaction), or null.
+export const memoOf = memoFromSolana;
 
-// Is this transaction the birth of exactly this certificate, and did it succeed?
-export function checkBirthTx(parsed, birth) {
-    if (!parsed) return { ok: false, reason: 'notfound' };
-    if (parsed.meta && parsed.meta.err) return { ok: false, reason: 'failed' };
-    return memoOf(parsed) === birthMemo(birth) ? { ok: true } : { ok: false, reason: 'mismatch' };
+// Is this transaction (as js/chain-read.js reads it: { status, memo }) the birth of exactly this
+// certificate on that network, and did it succeed?
+export function checkBirthMemo(read, birth, net = 'solana-devnet') {
+    if (!read || read.status === 'notfound') return { ok: false, reason: 'notfound' };
+    if (read.status === 'failed') return { ok: false, reason: 'failed' };
+    if (read.status === 'pending') return { ok: false, reason: 'pending' };
+    return read.memo === birthMemo(birth, net) ? { ok: true } : { ok: false, reason: 'mismatch' };
 }
+// The same check on a parsed Solana devnet transaction.
+export const checkBirthTx = (parsed, birth) => checkBirthMemo(readSolana(parsed), birth, 'solana-devnet');
 
 // ------------------------------------------------------------ storage (this device only)
 
-const SIG = /^[1-9A-HJ-NP-Za-km-z]{43,90}$/;     // base58 transaction signature
+// A transaction id as each network prints it: a base58 signature, a 0x hash, a txid.
+const SIG = { solana: /^[1-9A-HJ-NP-Za-km-z]{43,90}$/, evm: /^0x[0-9a-f]{64}$/i, zcash: /^[0-9a-f]{64}$/ };
 function cleanBirth(b) {
     if (!b || b.v !== 1 || !/^trav_[a-z0-9]{1,13}$/.test(String(b.id))
         || !/^[0-9a-f]{64}$/.test(String(b.digest)) || !/^[0-9a-f]{32}$/.test(String(b.salt))) return null;
-    const c = b.chain && SIG.test(String(b.chain.sig)) ? {
-        sig: String(b.chain.sig), slot: Number.isFinite(b.chain.slot) ? b.chain.slot : null,
-        cluster: 'devnet', verified: b.chain.verified === true, at: String(b.chain.at || '').slice(0, 32)
+    // certificates from before there were several networks were all written on Solana devnet
+    const net = b.chain && isNetwork(b.chain.net) ? b.chain.net : 'solana-devnet';
+    const c = b.chain && SIG[networkOf(net).family].test(String(b.chain.sig)) ? {
+        net, sig: String(b.chain.sig), slot: Number.isFinite(b.chain.slot) ? b.chain.slot : null,
+        verified: b.chain.verified === true, at: String(b.chain.at || '').slice(0, 32)
     } : null;
     return { v: 1, id: String(b.id), digest: String(b.digest), salt: String(b.salt), at: String(b.at || '').slice(0, 32), chain: c };
 }
@@ -113,6 +125,9 @@ export function certificateFile(card, birth) {
         about: 'Kaleidoscope Zipangu birth certificate. digest = SHA-256("ZIPANGU-BIRTH/1\\n" + salt + "\\n" + card). Keep this file private: the salt and card prove the birth; the chain holds only the digest.',
         card: JSON.parse(canonicalCard(card)),
         salt: birth.salt, digest: birth.digest, sealed: birth.at,
-        chain: birth.chain ? { cluster: 'devnet', memo: birthMemo(birth), signature: birth.chain.sig, slot: birth.chain.slot } : null
+        chain: birth.chain ? {
+            network: birth.chain.net || 'solana-devnet', memo: birthMemo(birth, birth.chain.net), signature: birth.chain.sig, slot: birth.chain.slot,
+            explorer: explorerTxOf(birth.chain.net || 'solana-devnet', birth.chain.sig)
+        } : null
     }, null, 2);
 }

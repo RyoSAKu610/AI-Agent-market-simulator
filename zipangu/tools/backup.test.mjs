@@ -11,6 +11,7 @@ const store = (init = {}) => {
 const src = store({
     'zipangu.journey.v1:1': '{"v":1}', 'zipangu.travellers.v1': '[]', 'zipangu.births.v1': '{}', 'zipangu.progress.v1': '{"v":1}',
     'zipangu.chain.v1': '{"v":1,"treasury":[1,2,3]}', 'zipangu.chain.on': '1', 'zipangu.lang': 'en', 'zipangu.mind.v1': '{}',
+    'zipangu.chain.net': 'arc-testnet', 'zipangu.chain.arc-testnet.v1': '{"v":1,"net":"arc-testnet"}', 'zipangu.chain.zcash-testnet.v1': '{"v":1}', 'zipangu.chain.zcash.rpc': 'https://node.example/',
     'zipangu.mind.key': 'sk-secret-key-must-stay', 'neonMythos.ltt.v1': '{}', 'other': 'x'
 });
 const text = makeBackup(src, { now: () => '2026-10-13T00:00:00Z' });
@@ -19,8 +20,9 @@ assert.ok(!text.includes('neonMythos') && !text.includes('"other"'), 'only this 
 const r = readBackup(text);
 assert.equal(r.ok, true);
 assert.equal(r.at, '2026-10-13T00:00:00Z');
-assert.deepEqual(Object.keys(r.items).sort(), ['zipangu.births.v1', 'zipangu.chain.on', 'zipangu.chain.v1', 'zipangu.journey.v1:1', 'zipangu.lang', 'zipangu.mind.v1', 'zipangu.progress.v1', 'zipangu.travellers.v1']);
+assert.deepEqual(Object.keys(r.items).sort(), ['zipangu.births.v1', 'zipangu.chain.arc-testnet.v1', 'zipangu.chain.net', 'zipangu.chain.on', 'zipangu.chain.v1', 'zipangu.chain.zcash-testnet.v1', 'zipangu.chain.zcash.rpc', 'zipangu.journey.v1:1', 'zipangu.lang', 'zipangu.mind.v1', 'zipangu.progress.v1', 'zipangu.travellers.v1']);
 assert.equal(r.items['zipangu.chain.v1'], '{"v":1,"treasury":[1,2,3]}', 'the devnet wallet and balance-bearing ledger come along');
+assert.equal(r.items['zipangu.chain.arc-testnet.v1'], '{"v":1,"net":"arc-testnet"}', 'so do the other test networks’ wallets and the chosen network');
 
 // a hostile or broken file
 assert.deepEqual(readBackup('nope'), { ok: false, error: 'json' });
@@ -31,12 +33,12 @@ assert.deepEqual(Object.keys(mixed.items), ['zipangu.lang'], 'unknown keys, API 
 
 // restoring writes only allowed keys and leaves the rest alone
 const dst = store({ 'zipangu.mind.key': 'mine', 'zipangu.speed': '4' });
-assert.equal(restoreBackup(dst, { ...r.items, 'zipangu.mind.key': 'theirs' }), 8);
+assert.equal(restoreBackup(dst, { ...r.items, 'zipangu.mind.key': 'theirs' }), 12);
 assert.equal(dst.getItem('zipangu.mind.key'), 'mine');
 assert.equal(dst.getItem('zipangu.speed'), '4');
 assert.equal(dst.getItem('zipangu.chain.v1'), src.getItem('zipangu.chain.v1'));
 for (const k of ['zipangu.journey.v1:12', 'zipangu.chain.on', 'zipangu.welcome']) assert.ok(backupAllowed(k), k);
-for (const k of ['zipangu.mind.key', 'zipangu.journey.v1:', 'zipangu.x', 'neonMythos.ltt.v1']) assert.ok(!backupAllowed(k), k);
+for (const k of ['zipangu.mind.key', 'zipangu.journey.v1:', 'zipangu.x', 'neonMythos.ltt.v1', 'zipangu.chain.mainnet.v1', 'zipangu.chain.solana-devnet.v1']) assert.ok(!backupAllowed(k), k);
 
 // a language change keeps ?lang= in step with the choice
 assert.equal(langUrl('https://x.test/zipangu/?lang=en#/summon', 'ja'), 'https://x.test/zipangu/?lang=ja#/summon');

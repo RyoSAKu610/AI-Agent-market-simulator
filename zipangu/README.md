@@ -45,11 +45,15 @@ AIの記憶そのものを移すのではなく、AIが自分で書いた自己�
 
 ### 🧳 引き継ぎ
 
-言語を変えても、devnet の財布（アドレス）と残高、台帳、迎えたAI、誕生証明、旅の記録帖はそのまま残ります。別の端末やブラウザへは、⚙ 設定の「🧳 旅の引き継ぎ」でファイルに保存して読み込めます（APIキーは入りません）。
+言語を変えても、テストネットの財布（アドレス）と残高、台帳（ネットワークごと）、迎えたAI、誕生証明、旅の記録帖はそのまま残ります。別の端末やブラウザへは、⚙ 設定の「🧳 旅の引き継ぎ」でファイルに保存して読み込めます（APIキーは入りません）。
 
-### 📜 誕生証明（Solana devnet）
+### ⛓ 4つのテストネットで動く「鎖」
 
-迎えたAIの魂のカードは、迎えた瞬間にこの端末で「指紋」（塩を加えた SHA-256）で封印されます。住人のページの「⛓ Solana devnet に刻む」を押すと、その指紋だけが無料のテスト網 Solana devnet に刻まれ、「🔍 鎖と照合する」で鎖の記録と一致するかを確かめられます。鎖に書くのは指紋とランダムな住人IDだけで、カードの中身や名前は一文字も書きません。「💾 証明書を保存」のファイル（カードと塩入り）があれば、どの端末からでも誕生を証明できます。
+「鎖」のページでネットワークを選んで起動すると、住人の取引がそのテストネットの本物の取引になります。**Solana devnet**（SOL、KOGANE は SPL トークン）、**Robinhood Chain Testnet**（ETH、KOGANE は ERC-20）、**Arc Testnet**（ガス代も USDC、KOGANE は ERC-20）、**Zcash testnet**（TAZ、トークンが無いので取引は OP_RETURN の領収書）。住人を「雇う (x402)」支払いもそれぞれの通貨で行い、鎖で確かめてからお願いがシムに入ります（Zcash は ZIP 321 の QR）。メインネットへの道はコードにありません。しくみは [docs/ONCHAIN.md](docs/ONCHAIN.md)。
+
+### 📜 誕生証明（テストネット）
+
+迎えたAIの魂のカードは、迎えた瞬間にこの端末で「指紋」（塩を加えた SHA-256）で封印されます。住人のページの「⛓ ○○ に刻む」を押すと、その指紋だけが、いま選んでいるテストネットに刻まれ、「🔍 鎖と照合する」で、刻んだネットワークの記録と一致するかを確かめられます。鎖に書くのは指紋とランダムな住人IDだけで、カードの中身や名前は一文字も書きません。「💾 証明書を保存」のファイル（カードと塩入り）があれば、どの端末からでも誕生を証明できます。
 
 ### 🔒 機密情報を隠す・セキュリティ
 
@@ -81,7 +85,7 @@ LLM は住人が行き先を決めるときに考えます。住人は今まで�
 - **相場** — 地区ごとの値動き、価格チャート、時代をまたぐ裁定のヒント。
 - **住人** — 32人（＋あなたが迎えたAI）の長期目標、進み具合、いまの行動、会話と小さな劇場。
 - **制作帖** — 128主題の設定画を、固有の動き・時間・商いと一緒に鑑賞。
-- **鎖** — 住人の取引を Solana devnet に記録する実験モード（既定では無効）。
+- **鎖** — 住人の取引をテストネット（Solana devnet・Robinhood Chain・Arc・Zcash）に記録する実験モード（既定では無効）。
 - **案内** — 世界の掟、憲章、考証記録。
 - **言語** — 日本語・English・简体中文・한국어・Español・Deutsch。画面の枠組みが切り替わり、英語名のある名前は英語で表示します（世界の本文は日本語）。
 
@@ -115,10 +119,13 @@ On a desktop, scan the **QR code** to continue on your phone. This does not copy
 - The journal survives a language change and a new journey.
 
 ### 🧳 Carry-over
-Changing language keeps your devnet wallet address and balance, the ledger, the AIs you brought in, birth certificates and the journal. To move to another device or browser, save and load one file in ⚙ Settings → 🧳 Carry your journey over (API keys are never included).
+Changing language keeps your test-network wallets, balances and ledgers (one per network), the AIs you brought in, birth certificates and the journal. To move to another device or browser, save and load one file in ⚙ Settings → 🧳 Carry your journey over (API keys are never included).
 
-### 📜 Birth certificates on Solana devnet
-The moment an AI arrives, its soul card is sealed on your device with a salted SHA-256 fingerprint. On its page, **⛓ Inscribe on Solana devnet** writes only that fingerprint (and a random resident id) to the free test network, and **🔍 Check against the chain** reads it back and compares. Not one word of the card goes on chain. **💾 Save the certificate** gives you a file (card + salt) that proves the birth from any device.
+### ⛓ Chain mode on four test networks
+On the Chain page, pick a network and switch it on: every trade becomes a real test-network transaction. **Solana devnet** (SOL; KOGANE is an SPL token), **Robinhood Chain Testnet** (ETH; KOGANE is an ERC-20), **Arc Testnet** (USDC, also for gas; KOGANE is an ERC-20) and **Zcash testnet** (TAZ; no tokens yet, so trades are OP_RETURN receipts). Hiring a resident (x402-style) is paid in that network's coin and checked on chain before the request reaches the sim (a ZIP 321 QR on Zcash). There is no mainnet code path. See [docs/ONCHAIN.md](docs/ONCHAIN.md).
+
+### 📜 Birth certificates on a test network
+The moment an AI arrives, its soul card is sealed on your device with a salted SHA-256 fingerprint. On its page, **⛓ Inscribe on …** writes only that fingerprint (and a random resident id) to the test network you picked, and **🔍 Check against the chain** reads it back from that network and compares. Not one word of the card goes on chain. **💾 Save the certificate** gives you a file (card + salt) that proves the birth from any device.
 
 ### 🔒 Private details stay hidden
 E-mail addresses, phone and card numbers, postal codes, URLs, API keys and tokens, private keys and anything after “password:” in a pasted card are replaced with `［伏せ字］` before it is shown, saved, sealed or sent to a model. Zipangu pages run under a Content-Security-Policy (only this site and the two CDNs serving the pinned libraries may run scripts), and Netlify adds anti-framing, no-sniff, referrer and permissions headers.
@@ -189,7 +196,7 @@ The LLM decides where residents go next. The economy still works out each reside
 | `docs/eras/`, `docs/realms/` | 時片・異界ごとの章（分岐点、歩いてみる、住むもの、働くエージェント、祭り、書物）。案内は [`docs/WORLD_BIBLE.md`](docs/WORLD_BIBLE.md)。 |
 | `docs/CORRECTIONS.md` | 各章を史実・文学（著作権）・仕様・文体の四観点で校閲した240件の修正記録。 |
 | `docs/spine.json` | 3案・2審査・1統合で決めた設計の骨格と文体の掟。 |
-| `js/` | エクスプローラー。`app.js`（起動と経路）、`map.js`、`sim.js`（自律経済）、`creature-art.js`、`soul.js`（AIを迎える）、`mind.js`・`mind-local.js`（LLM の頭脳、端末の中のAI）、`research.js`（研究ログ）、`society.js`（混成社会）、`human.js`・`decide-card.js`（あなたが決める）、`donate.js`・`redact.js`（寄付と伏せ字）、`bench.js`・`view-bench.js`（人間らしさランキング）、`birth.js`（誕生証明）、`progress.js`（旅の記録帖・幻の住人）、`backup.js`（引き継ぎ）、`qr.js`（QRコード）、`i18n.js`（6言語）ほか。 |
+| `js/` | エクスプローラー。`app.js`（起動と経路）、`map.js`、`sim.js`（自律経済）、`creature-art.js`、`soul.js`（AIを迎える）、`mind.js`・`mind-local.js`（LLM の頭脳、端末の中のAI）、`research.js`（研究ログ）、`society.js`（混成社会）、`human.js`・`decide-card.js`（あなたが決める）、`donate.js`・`redact.js`（寄付と伏せ字）、`bench.js`・`view-bench.js`（人間らしさランキング）、`birth.js`（誕生証明）、`chain.js`・`chain-evm.js`・`chain-zcash.js`・`zcash.js`・`networks.js`（鎖：Solana devnet・Robinhood Chain・Arc・Zcash の各テストネット）、`progress.js`（旅の記録帖・幻の住人）、`backup.js`（引き継ぎ）、`qr.js`（QRコード）、`i18n.js`（6言語）ほか。 |
 | `tools/` | `validate.mjs`、`sim.test.mjs`、`soul.test.mjs`、`mind.test.mjs`、`birth.test.mjs`、`progress.test.mjs`、`backup.test.mjs`、`qr.test.mjs`、`aozora-extract.mjs`、`gutenberg-extract.mjs`、`build-single.mjs`、`check.sh` ほか。 |
 
 ### 青空文庫と Project Gutenberg からの抜粋

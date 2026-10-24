@@ -1252,6 +1252,26 @@ input::placeholder { color: var(--ink-faint); }
 .chain-danger { margin-top: 28px; max-width: 760px; }
 .chain-danger summary { cursor: pointer; color: var(--ink-faint); font-size: 13px; }
 
+/* the test network picker and ZIP 321 payment requests (Zcash) */
+.net-picker { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; max-width: 900px; }
+.net-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 12px 14px; border-radius: 14px; text-align: left;
+  border: 1px solid rgba(232, 195, 106, 0.22); background: rgba(14, 19, 66, 0.55); color: var(--ink); font: inherit; cursor: pointer;
+}
+.net-card b { font: 700 15px var(--mincho); color: var(--gold-soft); }
+.chain-page .net-card small { margin: 0; font: 12px var(--sans); letter-spacing: 0; color: var(--ink-dim); line-height: 1.5; }
+.net-kind { font: 11px var(--dot); color: var(--ink-faint); letter-spacing: 0.08em; }
+.net-card:hover { border-color: var(--gold); }
+.net-card.is-on { border-color: var(--gold); background: linear-gradient(135deg, rgba(232, 195, 106, 0.16), rgba(139, 92, 246, 0.12)); box-shadow: 0 0 14px rgba(232, 195, 106, 0.25); }
+.net-card:disabled { opacity: 0.5; cursor: not-allowed; }
+.net-node summary { cursor: pointer; color: var(--ink-dim); font-size: 13px; margin: 6px 0; }
+.net-rpc { flex: 1 1 260px; min-width: 0; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.06); color: var(--ink); font: 13px var(--dot); }
+.zip321 { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; margin: 8px 0; width: 100%; }
+.zip321-qr { flex: 0 0 168px; width: 168px; padding: 6px; border-radius: 10px; background: #fff; }
+.zip321-qr svg { display: block; width: 100%; height: auto; }
+.zip321 > div:last-child { flex: 1 1 220px; min-width: 0; }
+.zip321-uri { display: block; font-size: 12px; word-break: break-all; }
+
 .agent-chain { margin: 24px 0 0; padding: 14px 16px; border: 1px solid rgba(232, 195, 106, 0.32); border-radius: 14px; background: linear-gradient(135deg, rgba(14, 19, 66, 0.7), rgba(40, 24, 86, 0.5)); }
 .agent-chain h2 { font-size: 17px; margin-bottom: 6px; }
 .agent-chain h2 small { font: 500 11px var(--dot); color: var(--ink-faint); letter-spacing: 0.1em; margin-left: 6px; }

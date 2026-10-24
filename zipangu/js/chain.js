@@ -3,8 +3,16 @@
 // (@solana/web3.js, @solana/spl-token) are loaded lazily inside enable().
 // Honesty rules: a signature/slot/balance is shown only if the RPC returned it; the
 // sim stays the source of truth (this module only reads sim events).
+// The other networks have their own engines with the same interface: js/chain-evm.js
+// (Robinhood Chain and Arc testnets) and js/chain-zcash.js (Zcash testnet).
 
+import { toBaseUnits, fromUnits, opsFromTrade, encodeMemo, createBatcher, byteLen, clean, hireMemo } from './chain-core.js';
+import { NETWORKS } from './networks.js';
+import { readSolana } from './chain-read.js';
+
+export { toBaseUnits, opsFromTrade, encodeMemo, createBatcher };
 export const CLUSTER = 'devnet';
+const NET = NETWORKS['solana-devnet'];
 const SDK = {
     web3: ['https://esm.sh/@solana/web3.js@1.98.0', 'https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/+esm'],
     token: ['https://esm.sh/@solana/spl-token@0.4.9', 'https://cdn.jsdelivr.net/npm/@solana/spl-token@0.4.9/+esm']
@@ -15,6 +23,7 @@ export const STORAGE_KEY = 'zipangu.chain.v1';
 
 const DECIMALS = 2;
 const MEMO_MAX_BYTES = 400;
+const utf8 = new TextEncoder();
 const FLUSH_MS = 2500;
 const TX_CAP = 300;
 const VAULT_LIQUIDITY = 1_000_000;       // KOGANE minted into each place vault
@@ -28,77 +37,7 @@ export const explorerTx = sig => `https://explorer.solana.com/tx/${sig}?cluster=
 export const explorerAddr = a => `https://explorer.solana.com/address/${a}?cluster=${CLUSTER}`;
 
 // ------------------------------------------------------------------ pure helpers
-
-// KOGANE ui amount → integer base units (2 decimals). Never negative / NaN / Infinity.
-export function toBaseUnits(amount) {
-    const n = Number(amount);
-    if (!Number.isFinite(n) || n <= 0) return 0;
-    return Math.min(Math.round(n * 10 ** DECIMALS), Number.MAX_SAFE_INTEGER);
-}
-const fromUnits = u => u / 10 ** DECIMALS;
-
-// sim 'trade' event → one transfer op, or null when it cannot be mapped honestly.
-// buy/craft move agent → place vault, sell moves vault → agent.
-export function opsFromTrade(W, ev) {
-    if (!ev || !['buy', 'sell', 'craft'].includes(ev.action) || !ev.agent) return null;
-    const place = W && W.placeOf ? W.placeOf(ev.district) : null;
-    const units = toBaseUnits(ev.total);
-    if (!place || !units) return null;
-    return {
-        action: ev.action, agent: ev.agent, district: ev.district, place: place.id,
-        good: ev.good || null, qty: Number(ev.qty) || 0, amount: fromUnits(units), seq: ev.seq ?? null
-    };
-}
-
-const utf8 = new TextEncoder();
-const byteLen = s => utf8.encode(s).length;
-const clean = v => String(v ?? '').replace(/[\s|;=]+/g, '_');
-const ACT = { buy: 'b', craft: 'c', sell: 's' };
-
-// Memo text. Always starts with `zipangu:`, always ≤ 400 UTF-8 bytes: ops are dropped from
-// the tail (counted as `+N`) and, as a last resort, characters are trimmed.
-export function encodeMemo(kind, ops = [], extra = {}) {
-    const head = [`zipangu:${clean(kind)}`];
-    if (ops.some(o => o && o.merged)) head.push('batched');
-    for (const [k, v] of Object.entries(extra || {})) if (v != null && v !== false) head.push(`${clean(k)}=${clean(v)}`);
-    const parts = ops.map(o => `${ACT[o.action] || '?'}:${clean(o.agent)}@${clean(o.place)}:${clean(o.good)}x${o.qty}=${o.amount}`);
-    const build = n => {
-        const shown = parts.slice(0, n).join(';');
-        const dropped = parts.length - n;
-        return head.join('|') + (shown ? '|' + shown : '') + (dropped ? `|+${dropped}` : '');
-    };
-    let n = parts.length, s = build(n);
-    while (byteLen(s) > MEMO_MAX_BYTES && n > 0) s = build(--n);
-    while (byteLen(s) > MEMO_MAX_BYTES) s = s.slice(0, -1);   // head alone too long: trim chars
-    return s;
-}
-
-// Pending-op queue. take() hands out ≤ maxOps; once the queue holds `cap` ops, a new op
-// folds into an existing one with the same (agent, place, direction) and is flagged `merged`.
-export function createBatcher({ maxOps = 4, cap = 60 } = {}) {
-    const items = [];
-    const dir = o => (o.action === 'sell' ? 'in' : 'out');
-    return {
-        push(op) {
-            if (!op || !toBaseUnits(op.amount)) return false;
-            if (items.length >= cap) {
-                const hit = items.find(o => o.agent === op.agent && o.place === op.place && dir(o) === dir(op));
-                if (hit) {
-                    hit.amount = fromUnits(toBaseUnits(hit.amount) + toBaseUnits(op.amount));
-                    hit.qty += op.qty || 0;
-                    hit.merged = (hit.merged || 1) + 1;
-                    return true;
-                }
-            }
-            items.push({ ...op });
-            return true;
-        },
-        take() { return items.splice(0, maxOps); },
-        get size() { return items.length; },
-        peek() { return items.slice(); },
-        clear() { items.length = 0; }
-    };
-}
+// (toBaseUnits, opsFromTrade, encodeMemo and createBatcher live in js/chain-core.js.)
 
 // Checks a parsed devnet tx (getParsedTransaction) really paid `quote.amount` lamports from
 // `payer` to `quote.payTo` with exactly `quote.memo`. Pure so it can be unit-tested.
@@ -537,13 +476,23 @@ export function createChain(W, eco, { storage, rpc = 'https://api.devnet.solana.
         }
     }
 
+    // The HTTP-402-style quote for hiring an agent (shown before anything is paid).
+    function quote(agentId, requestId, lamports = Number(NET.hire.amount)) {
+        if (!addr.has(agentId) || !agentKp.has(agentId)) return null;
+        return {
+            status: 402, network: NET.id, payTo: addr.get(agentId), amount: lamports, currency: 'SOL', cluster: CLUSTER,
+            amountText: `${lamports / 1e9} SOL`, memo: hireMemo(requestId), agent: agentId
+        };
+    }
+
     // x402-style hire: 402 quote → Phantom signs → confirm → verify the parsed tx → only then ok.
-    async function hire(agentId, { lamports, request } = {}) {
+    async function hire(agentId, { lamports, amount, request } = {}) {
         const fail = reason => { emit('hire', { phase: 'failed', agentId, reason }); return { ok: false, reason }; };
+        if (lamports === undefined && amount !== undefined) lamports = Number(amount);
         if (!conn || !addr.has(agentId) || !agentKp.has(agentId)) return fail('エージェントのアドレスがありません / agent address unavailable (enable chain mode)');
         if (!request || typeof request.id !== 'string' || !request.id) return fail('依頼が正しくありません / invalid request');
         if (!Number.isInteger(lamports) || lamports <= 0 || lamports > MAX_HIRE_LAMPORTS) return fail('金額が正しくありません / invalid amount');
-        const quote = { status: 402, payTo: addr.get(agentId), amount: lamports, currency: 'SOL', cluster: CLUSTER, memo: `zipangu:x402:${request.id}`, agent: agentId };
+        const quote = { status: 402, payTo: addr.get(agentId), amount: lamports, currency: 'SOL', cluster: CLUSTER, memo: hireMemo(request.id), agent: agentId };
         emit('hire', { phase: 'quote', agentId, quote });
         const rec = newTx('hire', [{ action: 'hire', agent: agentId, district: null, place: null, good: null, qty: 1, amount: lamports / 1e9 }], quote.memo);
         try {
@@ -584,6 +533,8 @@ export function createChain(W, eco, { storage, rpc = 'https://api.devnet.solana.
         if (!conn) return null;
         try { return await conn.getParsedTransaction(sig, { commitment: 'confirmed', maxSupportedTransactionVersion: 0 }); } catch (e) { return null; }
     }
+    // The same shape every engine answers (js/chain-read.js): { status, memo, slot }.
+    async function readMemo(sig) { return readSolana(await parsedTx(sig)); }
 
     async function balanceOf(id) {
         if (!conn || !ata.has(id)) return null;
@@ -615,10 +566,15 @@ export function createChain(W, eco, { storage, rpc = 'https://api.devnet.solana.
     }
 
     const chain = {
+        network: NET,
+        hasSetup: true, canAirdrop: true, balanceSymbol: 'KOGANE',
         get state() { return state; },
         get error() { return error; },
         get treasury() { return treasuryKp ? addr.get('treasury') : null; },
         get treasuryLamports() { return treasuryLamports; },
+        get balance() { return treasuryLamports == null ? null : treasuryLamports / 1e9; },   // SOL
+        get setupNeed() { return MIN_SETUP_LAMPORTS / 1e9; },
+        get contract() { return mintKp ? mintKp.publicKey.toBase58() : null; },
         get mint() { return mintKp ? mintKp.publicKey.toBase58() : null; },
         get txs() { return txs; },
         get stats() {
@@ -633,7 +589,9 @@ export function createChain(W, eco, { storage, rpc = 'https://api.devnet.solana.
         get queued() { return batcher.size + settleQ.length; },
         addressOf: id => addr.get(id) ?? null,
         ataOf: id => ata.get(id) ?? null,
-        enable, requestAirdrop, fundFromWallet, setup, disable, balanceOf, hire, reset, on, inscribe, parsedTx,
+        walletPresent: () => !!phantom(),
+        checkFunds: afterFunding,         // after a faucet sent SOL: read the balance and continue
+        enable, requestAirdrop, fundFromWallet, setup, disable, balanceOf, quote, hire, reset, on, inscribe, parsedTx, readMemo,
         save() { if (persistTimer) { clearTimeout(persistTimer); persistTimer = null; } persistNow(); },   // before a reload
         flush   // extra: send one batch now (the timer calls this every ~2.5 s)
     };
