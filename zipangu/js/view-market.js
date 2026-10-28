@@ -1,6 +1,7 @@
 import { visualArt } from './visual-art.js';
 import { visualOf, visualKey, visualSource } from './visual-manifest.js';
 import { priceChart } from './price-chart.js';
+import { t } from './i18n.js';
 // #/market — currencies, arbitrage hints and the price board.
 
 import { goodQuotes } from './history.js';
@@ -285,7 +286,7 @@ export function marketView(ctx, query) {
     const paintLive = () => { liveNote.textContent = `この取引は動いています。いままでに ${fmt(eco.stats.trades)} 件、出来高 ${fmt(eco.stats.volume)} ${cur}。`; };
     paintLive();
     let artworkStopped = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const stopArt = h('button', { class: 'btn market-stop', type: 'button', 'aria-pressed': String(artworkStopped), onclick: () => { artworkStopped = !artworkStopped; el.classList.toggle('is-still', artworkStopped); stopArt.textContent=artworkStopped?'絵を動かす':'絵を止める';stopArt.setAttribute('aria-pressed',String(artworkStopped)); } }, artworkStopped?'絵を動かす':'絵を止める');
+    const stopArt = h('button', { class: 'btn market-stop', type: 'button', 'aria-pressed': String(artworkStopped), onclick: () => { artworkStopped = !artworkStopped; el.classList.toggle('is-still', artworkStopped); stopArt.textContent=artworkStopped?t('map.playArt'):t('map.stopArt');stopArt.setAttribute('aria-pressed',String(artworkStopped)); } }, artworkStopped?t('map.playArt'):t('map.stopArt'));
     chartPanel.prepend(stopArt);
     const el = h('div', { class: 'page' + (artworkStopped ? ' is-still' : '') },
         h('header', { class: 'page-head' },

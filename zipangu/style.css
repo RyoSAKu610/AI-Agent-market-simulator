@@ -1012,10 +1012,10 @@ input::placeholder { color: var(--ink-faint); }
 @media(max-width: 899px) { .zoom-box { display: flex; } }
 
 /* The market's selected instrument stays near the list, like a chart terminal. */
-.market-workspace { display: grid; gap: 24px; align-items: start; }
+.market-workspace { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
 .market-chart-panel { min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: #101638; box-shadow: 0 12px 35px #03061655; }
 .market-chart-panel[hidden] { display: none; }
-.chart-selectors { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 14px; }
+.chart-selectors { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin: 10px 0 14px; }
 .chart-selectors select:first-child { grid-column: 1 / -1; }
 .chart-origin-note { color: #aab9d4; margin: 5px 0; font: 10px/1.5 var(--sans); }
 .chart-selectors select { width: 100%; min-width: 0; font-size: 12px; }
@@ -1045,7 +1045,7 @@ input::placeholder { color: var(--ink-faint); }
 @media(max-width: 1099px) {
   .market-chart-panel { position: sticky; top: 62px; z-index: 6; padding: 12px; }
   .market-chart-panel .kicker, .market-chart-panel .chart-disclaimer, .market-origin figcaption { display: none; }
-  .market-chart-identity { grid-template-columns: 48px 1fr; gap: 9px; }
+  .market-chart-identity { grid-template-columns: 48px minmax(0, 1fr); gap: 9px; }
   .market-chart-identity h2 { font-size: 17px; margin-bottom: 3px; }
   .chart-selectors { margin: 0 0 7px; }
   .chart-scope, .chart-change { font-size: 10px; line-height: 1.5; }
@@ -1070,7 +1070,7 @@ input::placeholder { color: var(--ink-faint); }
  .chart-expand { display:block;width:100%;margin-top:8px;min-height:34px;font-size:11px; }
  .market-chart-panel.is-compact .chart-selectors, .market-chart-panel.is-compact .price-chart-wrap, .market-chart-panel.is-compact .chart-origin-note, .market-chart-panel.is-compact .chart-scope, .market-chart-panel.is-compact .market-stop { display:none; }
  .market-chart-panel.is-compact { padding:8px 12px; }
- .market-chart-panel.is-compact .market-chart-identity { grid-template-columns:32px 1fr; }
+ .market-chart-panel.is-compact .market-chart-identity { grid-template-columns:32px minmax(0,1fr); }
  .market-chart-panel.is-compact .market-origin { height:32px;overflow:hidden; }
  .market-chart-panel.is-compact .market-chart-identity h2 { font-size:14px; }
  .market-chart-panel.is-compact .chart-change { font-size:9px; }
