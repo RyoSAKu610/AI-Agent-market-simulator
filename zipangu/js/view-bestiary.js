@@ -1,4 +1,5 @@
 import { creatureCanvas } from './creature-art.js';
+import { t } from './i18n.js';
 import { visualFeature } from './visual-art.js';
 // #/bestiary and #/creature/<id>
 
@@ -29,8 +30,8 @@ export function bestiaryView(ctx, query) {
     grid.classList.toggle('is-still', stopped);
     const stop = h('button', { type: 'button', class: 'btn bestiary-stop', 'aria-pressed': String(stopped), onclick: () => {
         stopped = !stopped; grid.classList.toggle('is-still', stopped);
-        stop.textContent = stopped ? '絵を動かす' : '絵を止める'; stop.setAttribute('aria-pressed', String(stopped));
-    } }, stopped ? '絵を動かす' : '絵を止める');
+        stop.textContent = stopped ? t('map.playArt') : t('map.stopArt'); stop.setAttribute('aria-pressed', String(stopped));
+    } }, stopped ? t('map.playArt') : t('map.stopArt'));
     const count = h('p', { class: 'result-count', 'aria-live': 'polite' });
 
     const toggle = (key, value, label, cls = '') => {
