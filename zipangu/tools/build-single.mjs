@@ -3,13 +3,16 @@
 // is folded into one module script, and the css goes into a <style>.
 //
 //   node tools/build-single.mjs
+//   node tools/build-single.mjs --check   # only bundle the modules and parse the result (CI)
 //
 // The modules use a small, regular import/export style, so the bundler is a
 // few regular expressions rather than a dependency.
 
-import { readFileSync, writeFileSync, appendFileSync, statSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, appendFileSync, statSync, mkdirSync, readdirSync, existsSync, rmSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { tmpdir } from 'node:os';
+import { spawnSync } from 'node:child_process';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = rel => readFileSync(join(root, rel), 'utf8');
@@ -46,11 +49,15 @@ const inlineJson = value => JSON.stringify(value).replace(/</g, '\\u003c').repla
 const IMPORT_RE = /^import\s*\{([^}]*)\}\s*from\s*'\.\/([^']+)';?[ \t]*$/gm;
 const EXPORT_DECL_RE = /^export\s+(?:async\s+)?(?:function\*?|const|let|class)\s+([A-Za-z0-9_$]+)/gm;
 const EXPORT_LIST_RE = /^export\s*\{([^}]*)\};?[ \t]*$/gm;
+const EXPORT_FROM_RE = /^export\s*\{([^}]*)\}\s*from\s*'\.\/([^']+)';?[ \t]*$/gm;
+// import('./chain.js') of a module of ours: it is in the bundle already
+const DYNAMIC_RE = /\bimport\(\s*'\.\/([^']+)'\s*\)/g;
 
 function parseModule(file) {
     const src = read(`js/${file}`);
     const deps = [];
-    for (const m of src.matchAll(IMPORT_RE)) deps.push(m[2]);
+    for (const re of [IMPORT_RE, EXPORT_FROM_RE]) for (const m of src.matchAll(re)) deps.push(m[2]);
+    for (const m of src.matchAll(DYNAMIC_RE)) deps.push(m[1]);
     return { file, src, deps };
 }
 
@@ -72,6 +79,12 @@ const idOf = file => '__m_' + basename(file, '.js').replace(/[^A-Za-z0-9_]/g, '_
 function wrap(mod) {
     const exported = [];
     let body = mod.src
+        .replace(EXPORT_FROM_RE, (_, names, from) => {
+            const pairs = names.split(',').map(s => s.trim()).filter(Boolean).map(s => s.split(/\s+as\s+/));
+            pairs.forEach(([a, b]) => exported.push(b ? `${b}: ${idOf(from)}.${a}` : `${a}: ${idOf(from)}.${a}`));
+            return '';
+        })
+        .replace(DYNAMIC_RE, (_, from) => `Promise.resolve(${idOf(from)})`)
         .replace(IMPORT_RE, (_, names, from) => {
             const list = names.split(',').map(s => s.trim()).filter(Boolean)
                 .map(s => { const [a, b] = s.split(/\s+as\s+/); return b ? `${a}: ${b}` : a; });
@@ -123,6 +136,16 @@ for (const node of document.querySelectorAll('script[data-visual-key]')) {
     } });
 }`;
 
+// The bundled modules must parse: node --check on a copy in the temp folder.
+function checkBundle() {
+    const file = join(tmpdir(), `zipangu-bundle-${process.pid}.mjs`);
+    writeFileSync(file, bundle('app.js'));
+    const r = spawnSync(process.execPath, ['--check', file], { encoding: 'utf8' });
+    rmSync(file, { force: true });
+    if (r.status !== 0) { console.error(r.stderr); process.exit(1); }
+    console.log('single-file bundle parses');
+}
+
 function build() {
     // The single-file artifact uses installed serif/monospace fallbacks offline.
     let html = read('index.html').replace(/^<link[^\n]+https:\/\/fonts\.(?:googleapis|gstatic)\.com[^\n]*>\n/gm, '')
@@ -149,4 +172,5 @@ function build() {
     console.log(`wrote ${out} (${(statSync(out).size / 1024).toFixed(0)} KB, ${files.length} original PNG blocks)`);
 }
 
-build();
+if (process.argv.includes('--check')) checkBundle();
+else build();
