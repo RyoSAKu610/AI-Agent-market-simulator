@@ -213,7 +213,8 @@ addresses, rate-limited per visitor, and refuses everything if the node is not o
 | `ZIPANGU_ZCASH_ORIGINS` | optional extra allowed origins (default: the site and https://ryosaku610.github.io) |
 
 On `#/chain` a visitor can instead give their own node's URL (stored as `zipangu.chain.zcash.rpc`;
-https, or http on localhost), e.g. a local Zebra behind a CORS proxy.
+https, or http on localhost), e.g. a local Zebra behind a CORS proxy. Such a URL can hold an access
+token, so backup files (`js/backup.js`) leave it out; set it again on the new device.
 
 ## 📜 Birth certificates (`js/birth.js`, `js/view-birth.js`)
 
