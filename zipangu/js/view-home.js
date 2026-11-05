@@ -4,6 +4,7 @@ import { visualFeature } from './visual-art.js';
 // #/ — the kaleidoscope map with the HUD laid over it.
 
 import { createMap } from './map.js';
+import { createLiveCamera } from './live-camera.js';
 import { t, getLang } from './i18n.js';
 import { languagePicker } from './view-summon.js';
 import { journalLink } from './view-journal.js';
@@ -84,8 +85,10 @@ export function homeView(ctx) {
     const places = h('nav', { class: 'sr-places', 'aria-label': '時片と異界の一覧' },
         h('ul', null, W.places.map(p => h('li', null, h('a', { href: href.place(p.id) }, placeShort(p) + (placeSub(p) ? '：' + placeSub(p) : ''))))));
 
-    // On wide screens the HUD, the info plaque and the feed share one column beside the map.
-    const side = h('div', { class: 'side' }, hud.clockPanel, hud.ticker, info, hud.feed);
+    // 📡 a live camera that cuts from resident to resident; tapping it follows them on the map
+    const live = createLiveCamera(ctx, { onPick: id => { if (map) map.focus(id); select({ type: 'agent', id }); } });
+    // On wide screens the HUD, the live camera, the info plaque and the feed share one column beside the map.
+    const side = h('div', { class: 'side' }, hud.clockPanel, live.el, hud.ticker, info, hud.feed);
     // first visit: what this place is, in three lines (dismissed for good with ×)
     const seen = () => { try { return window.localStorage.getItem('zipangu.welcome') === '1'; } catch { return false; } };
     const remember = () => { try { window.localStorage.setItem('zipangu.welcome', '1'); } catch { /* private mode: fine */ } };
@@ -220,6 +223,7 @@ export function homeView(ctx) {
         update() { if (current && current.update) current.update(); },
         destroy() {
             if (launch) launch.destroy();
+            live.destroy();
             ctx.mapView = map.getView();
             map.destroy();
             map = null;
