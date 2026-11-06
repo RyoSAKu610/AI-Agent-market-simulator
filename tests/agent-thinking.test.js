@@ -18,5 +18,5 @@ assert.ok(client.includes('credentials:\'omit\''), 'cross-origin calls must not 
 assert.ok(client.includes('THINK_ENDPOINT'), 'client must use fixed endpoint');
 assert.ok(experience.includes('loadAgentThinking()'), 'optional client layer must be loaded');
 assert.ok(sw.includes('neon-mythos-agent-thinking.js'), 'PWA cache shell must include new layer');
-assert.ok(sw.includes('neon-mythos-shell-v5'), 'PWA cache version must be updated');
+assert.ok(sw.includes('neon-mythos-shell-v6'), 'PWA cache version must be updated');
 console.log('Agent thinking checks passed.');

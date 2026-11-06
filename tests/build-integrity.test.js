@@ -24,6 +24,7 @@ const CONTRACT = {
         './neon-mythos-experience.js',
         './neon-mythos-errand.js',
         './neon-mythos-route-fx.js',
+        './neon-mythos-desk.js',
         '"data-agent-id": id',
         'nm:ltt-command',
         'nm:create-companion',
@@ -35,7 +36,8 @@ const CONTRACT = {
     ],
     'neon-mythos-experience.js': ['nm:errand-request', 'nm:ltt-command', 'nm:create-companion'],
     'neon-mythos-errand.js': ['nm:errand-request', 'nm:route-agent', 'nm:agent-routed'],
-    'neon-mythos-route-fx.js': ['nm:agent-routed', 'data-agent-id']
+    'neon-mythos-route-fx.js': ['nm:agent-routed', 'data-agent-id'],
+    'neon-mythos-desk.js': ['nm:errand-request', 'nm:ltt-command', 'nm:route-agent', 'nm:agent-routed', 'nm:ltt-event']
 };
 
 function testBuildsAreComplete() {
