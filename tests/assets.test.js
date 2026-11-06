@@ -16,6 +16,7 @@ const SOURCES = [
     'neon-mythos-experience.js',
     'neon-mythos-errand.js',
     'neon-mythos-route-fx.js',
+    'neon-mythos-desk.js',
     'sw.js',
     'docs/index.html',
     'docs/neon-mythos-codex-pets.html'

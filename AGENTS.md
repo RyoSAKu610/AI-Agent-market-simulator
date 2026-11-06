@@ -47,6 +47,7 @@ All development goes into **one build**: `index.html` plus the
 | `neon-mythos-experience.js` | Live | Mobile hub, chat, buddy creation, daily mission, demo wallet, highlights. |
 | `neon-mythos-errand.js` | Live | Errand flow: receive → reply → think → depart → result card. |
 | `neon-mythos-route-fx.js` | Live | `! → 💭 → 🏃` head reactions and the temporary neon route. |
+| `neon-mythos-desk.js` | Live | Desk mode: the buddy on your desk (placed or Pepper's ghost hologram), voice, presence. See `DESK_MODE.md`. |
 | `sw.js`, `manifest.webmanifest`, `pwa-icon.svg` | Live (PWA) | Bump `CACHE` in `sw.js` whenever a file in its `SHELL` list changes. |
 | `neon-mythos-districts.html` | Variant, maintenance only | Fix bugs that break it. No refactors, perf or security sweeps. |
 | `NeonMythosCity_Start.html` | x402 / Solana experiment, maintenance only | Same as above. |
@@ -72,7 +73,7 @@ will be closed. If you find the same issue in `index.html`, fix it there.
   `window` `CustomEvent`s named `nm:*`: `nm:ltt-command`, `nm:ltt-event`,
   `nm:create-companion`, `nm:companion-created`, `nm:quick-start`,
   `nm:game-ready`, `nm:agent-command`, `nm:errand-request`,
-  `nm:route-agent`, `nm:agent-routed`, `nm:agent-detail`. Do not rename
+  `nm:route-agent`, `nm:agent-routed`, `nm:agent-detail`, `nm:open-desk`. Do not rename
   them; `tests/build-integrity.test.js` checks the bridge.
 - Building lookups: use `getBld(x, y)` and `BUILDING_BY_ID.get(id)`. Do not
   add `BUILDINGS.find(...)` to per-tick or per-render code.

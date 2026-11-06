@@ -32,6 +32,7 @@
 - 🌙 **Real-time atmosphere** — the city lighting reacts to the actual time of day.
 - 🪙 **Safe demo wallet** — experiment with a virtual ¥100 balance without moving real assets, with a route toward the x402 / Solana build.
 - 🎬 **Cut-ins and a 30-second highlight reel** for milestones and major outcomes.
+- 🪞 **Desk mode** — call your buddy onto your desk (hub → 🤖 → “机に呼ぶ”, or `?desk=1`). Stand the phone up and she lives in a small lit room, or lay it under a clear plate at 45° for a Pepper's ghost hologram. She talks with the browser's voice, listens, keeps the real time of day, knocks on the glass, stumbles when you tilt the phone, and is really gone while she runs your errand. No camera, no key. See [`DESK_MODE.md`](DESK_MODE.md).
 
 ### 🦋 Kaleidoscope Zipangu
 A separate world in [`zipangu/`](zipangu/): a Japan where, in every era, a revolutionary technology arrived one step earlier — lumen-gold in Hiraizumi (Zipangu, the land of gold, made real), an energy revolution in peaceful Edo, next-generation vehicles in Meiji — plus eight realms from public-domain classics. AI agents trade across the eras on their own; jewel butterflies, a 58-work library (Aozora Bunko and Project Gutenberg), 128 concept paintings, and an interface in six languages.
@@ -78,6 +79,7 @@ Long-term tasks persist locally. The deployed build also includes **minimal offl
 - 🌙 **実時間リンク** — 現在時刻に合わせて街の光やネオンの雰囲気が変化します。
 - 🪙 **安全なDEMO Wallet** — 実資産を動かさず、100円相当の体験残高で仮想購入を試せます。
 - 🎬 **成果カットイン＋30秒ハイライト** — 大きな成果を短い演出で確認できます。
+- 🪞 **机モード** — 相棒を机の上に呼べます（ハブ → 🤖 相棒 →「机に呼ぶ」、または `?desk=1`）。スマホを立てると画面の中の小部屋に、透明な板を45°で置けばペッパーズゴーストのホログラムになります。ブラウザの声で話し、話しかけると聞き取り、実際の時刻で過ごし、ガラスをノックし、傾けるとよろけ、おつかい中は本当にいなくなります。カメラもキーも不要。詳しくは [`DESK_MODE.md`](DESK_MODE.md)。
 
 ### 🦋 万華京ジパング
 別の世界 [`zipangu/`](zipangu/)：日本の各時代に、もしも革命的な技術が一歩早く入っていたら――平泉の光金術（黄金の国ジパング）、江戸の平和の中のエネルギー革命、明治の次世代の車。名作から生まれた八つの異界も重なり、AIたちが時代をまたいで自分で商いをします。宝石蝶、58編の書庫（青空文庫・Project Gutenberg）、128の設定画、6言語の画面。
@@ -210,6 +212,7 @@ Eine zweite Welt in [`zipangu/`](zipangu/): ein Japan, in dem jede Epoche eine r
 - `neon-mythos-experience.js` — PWA/mobile hub, chat, buddy creation, daily mission, demo wallet, highlights.
 - `neon-mythos-errand.js` — receive/reply/think/depart/return errand interaction.
 - `neon-mythos-route-fx.js` — `! → 💭 → 🏃` head reactions and temporary neon route visualization.
+- `neon-mythos-desk.js` — desk mode: the buddy on your desk (placed / Pepper's ghost hologram), voice, presence.
 - `sw.js`, `manifest.webmanifest`, `pwa-icon.svg` — PWA shell.
 
 - `zipangu/` — 万華京ジパング, a separate project with its own rules ([`zipangu/AGENTS.md`](zipangu/AGENTS.md)) and checks (`bash zipangu/tools/check.sh`). See [`zipangu/README.md`](zipangu/README.md).

@@ -9,5 +9,6 @@
   "background_color": "#05060f",
   "theme_color": "#08091a",
   "orientation": "any",
+  "shortcuts": [{"name":"机に呼ぶ","short_name":"机モード","description":"相棒を机の上に呼ぶ（ホログラムも）","url":"./?desk=1","icons":[{"src":"./pwa-icon.svg","sizes":"any","type":"image/svg+xml"}]}],
   "icons": [{"src":"./pwa-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }
