@@ -37,13 +37,13 @@ function preload(src) {
     return p;
 }
 
-export function createLiveCamera(ctx, { onPick } = {}) {
+export function createLiveCamera(ctx, { onPick, big = false } = {}) {
     const { W, eco } = ctx;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     // A visitor who asked to save data gets the place's colours instead of its painting.
     const saveData = !!(navigator.connection && navigator.connection.saveData);
     const prefs = loadPrefs();
-    let paused = prefs.paused ?? reduced, folded = !!prefs.folded;
+    let paused = prefs.paused ?? reduced, folded = !big && !!prefs.folded;      // the arena's big screen never folds
     const director = createDirector();
     const off = eco.on('*', msg => director.note(msg));
     let current = null, partner = null, meeting = '', elapsed = 0, last = performance.now(), pending = null, waited = 0;
@@ -62,10 +62,12 @@ export function createLiveCamera(ctx, { onPick } = {}) {
     const nextBtn = h('button', { type: 'button', class: 'live-btn live-next', 'aria-label': t('live.next'), title: t('live.next'), onclick: () => { pending = null; prepare(); cutWhenReady(true); } }, '⏭');
     const foldBtn = h('button', { type: 'button', class: 'live-btn', 'aria-label': t('live.hide'), title: t('live.hide'), onclick: () => { folded = true; remember(); paint(); } }, '▁');
     const unfold = h('button', { type: 'button', class: 'live-unfold', onclick: () => { folded = false; remember(); paint(); if (!current) cutNow(); } }, t('live.show'));
-    const el = h('section', { class: 'live-cam', 'aria-label': t('live.title') },
-        screen, h('div', { class: 'live-controls' }, pauseBtn, nextBtn, foldBtn), unfold);
+    // on the map: a way to the arena, where the same camera fills the screen
+    const bigLink = h('a', { class: 'live-btn live-expand', href: '#/live', 'aria-label': t('arena.open'), title: t('arena.open') }, '⛶');
+    const el = h('section', { class: 'live-cam' + (big ? ' live-cam-big' : ''), 'aria-label': t('live.title') },
+        screen, h('div', { class: 'live-controls' }, pauseBtn, nextBtn, big ? null : bigLink, big ? null : foldBtn), unfold);
 
-    function remember() { savePrefs({ paused, folded }); }
+    function remember() { savePrefs({ paused, folded: big ? !!prefs.folded : folded }); }
     function paint() {
         el.classList.toggle('is-paused', paused);
         el.classList.toggle('is-folded', folded);

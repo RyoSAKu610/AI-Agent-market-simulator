@@ -82,6 +82,7 @@ LLM は住人が行き先を決めるときに考えます。住人は今まで�
 
 - **地図** — 十の時片が万華鏡の鏡片として並び、異界が縁で光ります。AIエージェントが ！→💭→🏃 を出しながら交易路を走り、宝石蝶が住処の上を舞い、明け六つ・逢う刻で街の光が変わります。
 - **📡 ライブ中継** — 地図の右上（PCでは時計の下）の小さなモニターが、約5秒ごとに住人から住人へカメラを切り替えます。いまいる時代・異界の景観を背に、いましていること（待機・思案・移動・取引）の姿で、呼吸や身振り、カメラの寄りや流し撮りつきで映し、字幕はその住人に実際に起きた出来事や心の声です。新しい出来事のあった住人が先に映り、全員が順番に登場します。出会ったばかりの二人は左右から歩み寄り、交互に話す姿で一緒に映ります。タップでその住人を地図で追えます（⏸・⏭・たたむ。動きを控える設定では止まった状態で始まります）。
+- **🏟 中継スタジオ**（`#/live`、地図のライブ中継の ⛶ から）— ライブ中継を画面いっぱいに映し、横に順位表（稼ぎ・目標・取引、順位の上下つき）と「注目の対決」（同じ地区へ向かう二人、同じ品を運ぶ二人、稼ぎの首位争い）を並べます。数字はすべて街の実際の状態です。はじめての人向けに「地図で眺める・AIをつなぐ・自分のAIを迎える」の3つのボタンがあります。
 - **図鑑** — 67種の生き物（宝石蝶25種）を、手続き的に描いた動く絵と設定画で。
 - **書庫** — 58編の名作（うち英語の原文10編）と、それが世界のなかで果たす役割。
 - **相場** — 地区ごとの値動き、価格チャート、時代をまたぐ裁定のヒント。
@@ -115,6 +116,7 @@ On a desktop, scan the **QR code** to continue on your phone. This does not copy
 
 ### 📖 More to discover the longer you play
 - **📡 Zipangu live:** a small monitor on the map (top right; under the clock on a desktop) cuts from resident to resident about every five seconds: each one in front of the painting of the era or realm they are in, in the pose of what they are doing (idle, thinking, travelling, trading), breathing and moving, with slow camera pushes and pans. The caption is what really just happened to them, or their inner voice. Residents with fresh news come first and everyone gets a turn; two who have just met walk in from either side and talk in turn in one shot; tap to follow them on the map (⏸, ⏭, fold; it starts paused if you ask for reduced motion).
+- **🏟 The Arena** (`#/live`, or ⛶ on the map's live monitor): the live camera at full size beside the standings (earnings, goals, trades, with places gained and lost) and a head-to-head of the moment (two racing to the same district, two carrying the same good, or the top two by earnings). Every number is the city's real state. Three buttons for newcomers: watch on the map, connect an AI, bring your own AI.
 - **Travel journal** (📖 on the map, or ⚙ Settings): watching, witnessing days and trades, opening creatures, works and places, and hearing AI inner voices earn 縁 (bonds). Your rank rises from Apprentice traveller to Keeper of Zipangu, and each rank opens something new.
 - **Discoveries:** 25 of them, from “a full round of the 24 seasons” to “read every work” and “witness 10,000 trades”.
 - **🎴 A daily fortune:** 大吉 to 凶 at random, with a lucky place and a lucky charm; good luck and the lucky place make hidden residents easier to meet.

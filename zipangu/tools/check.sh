@@ -30,6 +30,7 @@ node tools/creature-presence.test.mjs
 node tools/character-stories.test.mjs
 node tools/character-drama.test.mjs
 node tools/live-camera.test.mjs
+node tools/arena.test.mjs
 
 echo "› bringing an AI in (soul cards, QR, languages)"
 node tools/soul.test.mjs
