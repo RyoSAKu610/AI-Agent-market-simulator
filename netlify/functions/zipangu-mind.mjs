@@ -40,6 +40,8 @@ function limited(ip, now = Date.now()) {
 }
 
 export default async (req, context = {}) => {
+    // "is the trial switched on?" for the page's auto-connect (zipangu/js/mind-scan.js): no model call, no quota
+    if (req.method === 'GET' && new URL(req.url).searchParams.has('status')) return json({ configured: !!env('OPENROUTER_API_KEY') });
     if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
     // Only this site's own pages may use the trial from a browser.
     const origin = req.headers.get('origin');
