@@ -1605,3 +1605,24 @@ input::placeholder { color: var(--ink-faint); }
 @media (prefers-reduced-motion: reduce) {
   .live-shot[data-duo="true"] .live-actor, .live-shot[data-duo="true"] .live-figure, .live-shot[data-duo="true"] .live-bubble { animation: none !important; }
 }
+/* ⚡ auto-connect (js/mind-scan.js): one button, then a live checklist of the minds found */
+.scan-card { margin: 14px 0; padding: 16px; border: 1px solid #7fe3d866; border-radius: 16px; background: linear-gradient(140deg, #10224a99, #1a154099); }
+.scan-card h3 { margin: 0 0 4px; font-size: 18px; color: #bff3ec; }
+.scan-card p { margin: 0 0 10px; }
+.scan-btn { width: 100%; }
+.scan-say { margin: 10px 0 0 !important; font-size: 13.5px; color: var(--gold-soft); min-height: 1.4em; }
+.scan-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+.scan-list[hidden] { display: none; }
+.scan-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 10px; border: 1px solid #ffffff1a; border-radius: 12px; font-size: 13.5px; }
+.scan-row.is-best { border-color: var(--gold-soft); background: rgba(232, 195, 106, 0.08); }
+.scan-dot { width: 10px; height: 10px; border-radius: 50%; background: #ffffff33; flex: none; }
+.scan-row[data-state="looking"] .scan-dot { background: #7fe3d8; animation: scan-pulse 0.9s ease-in-out infinite alternate; }
+.scan-row[data-state="found"] .scan-dot { background: #7fe3a8; box-shadow: 0 0 8px #7fe3a8; }
+.scan-row[data-state="missing"] { opacity: 0.6; }
+.scan-name { flex: 1; min-width: 9em; }
+.scan-result { color: var(--ink-dim); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.scan-row[data-state="found"] .scan-result { color: #bff3ec; }
+.mind-advanced { margin: 12px 0; }
+.mind-advanced > summary { cursor: pointer; color: var(--ink-dim); font-size: 13.5px; padding: 6px 0; }
+@keyframes scan-pulse { from { opacity: 0.35; transform: scale(0.8); } to { opacity: 1; transform: scale(1.15); } }
+@media (prefers-reduced-motion: reduce) { .scan-row .scan-dot { animation: none !important; } }

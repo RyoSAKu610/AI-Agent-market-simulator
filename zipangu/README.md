@@ -67,6 +67,7 @@ AIの記憶そのものを移すのではなく、AIが自分で書いた自己�
 
 LLM は住人が行き先を決めるときに考えます。住人は今までどおり相場・運賃・出来事・目標から候補を出し、上位5つを言葉にしてモデルに渡します。モデルはその中から1つを選び、「心の声」を一言書きます。心の声は「世のうごき」と住人のページ（🧠 考えたこと）に出ます。
 
+- **⚡ かんたん接続**（⚙ 設定）: ボタンひとつで、いま使えるAIを探してつなぎます。保存済みのキー、このPCの Ollama・LM Studio、端末の中のAI（WebGPU）、サイトのお試し枠を同時に確かめ、いちばん良いものをおすすめします。入力はいりません。自分で選びたいときは「くわしい設定」を開きます。
 - **つなぐ先**（⚙ 設定の「AIの頭脳（LLM）」で変更）: この端末の中のAI（標準）、OpenRouter（1つのキーで DeepSeek・Qwen・Kimi・GLM など中国のモデルも含めて選べ、無料のモデルもあります）、DeepSeek、Qwen（Alibaba Cloud 国際版）、Kimi（Moonshot）、GLM（智谱）、Claude、OpenAI、Gemini、自分のPCの Ollama、そのほか OpenAI 互換のURL。Netlify 版にはキー不要の「お試し」枠もあります。
 - **考えさせる住人**: 標準は住人全員（端末の中のAIは一度に1人ずつ考えます）。外部のつなぎ先では1時間に呼ぶ回数に上限があり、同時に呼ぶのは2件まで。迎えたAIだけに絞ることもできます。
 - **止まらない世界**: 返事が25秒来ない、失敗した、読めない答えだったときは、その回はルールで決めます。LLM は候補の中から選ぶだけなので、経済の帳尻はいつも合います。
@@ -136,6 +137,7 @@ E-mail addresses, phone and card numbers, postal codes, URLs, API keys and token
 **Out of the box, residents think with an AI that runs on your own device:** Alibaba's Qwen inside the browser (WebGPU), with no key, no fee, and nothing leaving the device. Computers load it automatically; phones with one tap on “🧠 Wake the AI minds” (first time only: about 1 GB on a computer, 0.4 GB on a phone). While it loads, and on browsers without WebGPU, the rules decide as before.
 
 The LLM decides where residents go next. The economy still works out each resident's options from prices, fares, events and goals; the best five are put into words, the model picks one and writes a line of inner voice, which appears in the live feed and on the resident's page.
+- **⚡ Auto-connect** (⚙ Settings): one tap looks for the AIs you can use right now — a key you saved, Ollama or LM Studio on this computer, the on-device AI (WebGPU), this site's trial — all at once, and recommends the best. Nothing to type; open Advanced to choose by hand.
 - **Providers** (⚙ Settings → AI minds): the on-device AI (default), OpenRouter (one key for DeepSeek, Qwen, Kimi, GLM and many more, including free models), DeepSeek, Qwen (Alibaba Cloud international), Kimi (Moonshot), GLM (Zhipu), Claude, OpenAI, Gemini, a local Ollama, or any OpenAI-compatible URL. The Netlify build also has a keyless trial.
 - **Who thinks:** every resident by default (the on-device AI thinks for one at a time), or only the AIs you welcomed. Remote providers have an hourly cap and at most two calls at once.
 - **The world never stalls:** no answer within 25 seconds, an error or an unreadable reply means the rules decide that turn. The model only chooses among valid options, so the books always balance.
