@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { buildWorld } from '../js/data.js';
 import { createEconomy } from '../js/sim.js';
 import { visualOf } from '../js/visual-manifest.js';
-import { pickNext, createDirector, shotFor, captionFor, whereabouts, CUT_SECONDS, FRESH_DAYS } from '../js/live-director.js';
+import { pickNext, createDirector, shotFor, captionFor, partnerFor, speakerAt, TURN_SECONDS, whereabouts, CUT_SECONDS, FRESH_DAYS } from '../js/live-director.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'world'), raw = {};
 for (const stem of ['world', 'eras', 'realms', 'districts', 'creatures', 'goods', 'currencies', 'agents', 'events', 'library']) raw[stem] = JSON.parse(readFileSync(join(root, stem + '.json')));
@@ -96,6 +96,30 @@ assert.equal(new Set([0, 1, 2].map(cut => shotFor(W, { id: 'x', stage: 'idle', h
     const thinking = { ...live, thought: { text: '月の道を確かめたい', T: 10 } };
     assert.deepEqual(captionFor(thinking, news, 10.01), { kind: 'voice', text: '月の道を確かめたい' }, 'a fresh inner voice comes first');
     assert.equal(captionFor({ ...live, thought: { text: '', T: 10 } }, null, 10).kind, 'activity', 'an empty thought is not a voice');
+}
+
+// ------------------------------------------------ a two-shot only for a meeting that really happened
+{
+    const eco2 = createEconomy(W, { seed: 9 }), d = createDirector();
+    let met = null;
+    eco2.on('*', msg => { d.note(msg); if (msg.type === 'encounter' && !met) met = msg; });
+    for (let i = 0; i < 4000 && !met; i++) eco2.step(0.01);
+    assert.ok(met, 'the city has a meeting');
+    const { agent: a, other: b } = met;
+    assert.equal(partnerFor(a, d.news.get(a), eco2.agents, eco2.time), b, 'the two who met are filmed together');
+    assert.equal(partnerFor(b, d.news.get(b), eco2.agents, eco2.time), a, 'whichever of them the camera picks');
+    assert.equal(partnerFor(a, d.news.get(a), eco2.agents, eco2.time + FRESH_DAYS * 2), null, 'not long after the meeting is over');
+    const moved = new Map(eco2.agents); moved.set(b, { ...eco2.agents.get(b), at: null, trip: { to: 'x' } });
+    assert.equal(partnerFor(a, d.news.get(a), moved, eco2.time), null, 'not once one of them has left');
+    assert.equal(partnerFor(a, { cut: 1, msg: { type: 'trade', agent: a, other: b, T: eco2.time } }, eco2.agents, eco2.time), null, 'a trade is not a meeting');
+    assert.equal(partnerFor(a, null, eco2.agents, eco2.time), null);
+    // the partner counts as shown, so the same meeting is not filmed twice in a row
+    let cur = d.next(roster, null);
+    while (cur !== a && cur !== b) cur = d.next(roster, cur);
+    d.mark(cur === a ? b : a);
+    const after = d.next(roster, cur);
+    assert.ok(after !== a && after !== b, 'the camera moves on from the pair');
+    assert.deepEqual([0, TURN_SECONDS - 0.01, TURN_SECONDS, TURN_SECONDS * 2].map(speakerAt), ['a', 'a', 'b', 'a'], 'they talk in turn');
 }
 
 console.log(`live camera: ${roster.length} residents rotate, news first without starving anyone, shots framed where they are — passed`);

@@ -10,7 +10,7 @@ import { h, agentShort, nameOf, placeShort } from './util.js';
 import { t } from './i18n.js';
 import { avatar } from './components.js';
 import { visualOf, visualSource, visualPoseSource } from './visual-manifest.js';
-import { CUT_SECONDS, createDirector, shotFor, captionFor } from './live-director.js';
+import { CUT_SECONDS, createDirector, shotFor, captionFor, partnerFor, speakerAt } from './live-director.js';
 
 const STORE_KEY = 'zipangu.live.v1';
 const loadPrefs = () => { try { return JSON.parse(window.localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; } };
@@ -46,7 +46,7 @@ export function createLiveCamera(ctx, { onPick } = {}) {
     let paused = prefs.paused ?? reduced, folded = !!prefs.folded;
     const director = createDirector();
     const off = eco.on('*', msg => director.note(msg));
-    let current = null, elapsed = 0, last = performance.now(), pending = null, waited = 0;
+    let current = null, partner = null, meeting = '', elapsed = 0, last = performance.now(), pending = null, waited = 0;
 
     const shots = h('div', { class: 'live-shots' });
     const camNo = h('span', { class: 'live-cam-no' });
@@ -87,37 +87,49 @@ export function createLiveCamera(ctx, { onPick } = {}) {
         const s = shotFor(W, live, director.cut);
         const pose = visualOf('agent', id);
         const scene = s.place && visualOf(s.placeKind, s.place);
-        const p = { id, ready: false };
-        Promise.all([pose && preload(visualPoseSource(pose)), scene && !saveData && preload(visualSource(scene))]).then(() => { p.ready = true; });
+        // two residents who have just met are filmed together
+        const other = partnerFor(id, director.news.get(id), eco.agents, eco.time);
+        if (other) director.mark(other);
+        const pose2 = other && visualOf('agent', other);
+        const p = { id, partner: other, meeting: other ? director.news.get(id).msg.message : '', ready: false };
+        Promise.all([pose && preload(visualPoseSource(pose)), pose2 && preload(visualPoseSource(pose2)), scene && !saveData && preload(visualSource(scene))]).then(() => { p.ready = true; });
         pending = p;
         waited = 0;
     }
 
-    function buildShot(s) {
-        const char = W.byId.agent.get(s.id);
-        const pose = visualOf('agent', s.id);
+    function buildActor(id, frame, bubble, role) {
+        const char = W.byId.agent.get(id);
+        const pose = visualOf('agent', id);
+        // An AI brought in from outside has no painted pose sheet yet: its drawn face stands in.
+        const figure = pose
+            ? h('div', { class: 'live-figure visual-pose', dataset: { frame: String(frame) } }, h('img', { src: visualPoseSource(pose), alt: '', decoding: 'async' }))
+            : h('div', { class: 'live-figure live-figure-drawn' }, char ? avatar(W, char) : null);
+        return h('div', { class: 'live-actor', dataset: { actor: id, role }, style: { '--pose-aspect': String((pose && pose.poseAspect) || 1) } },
+            figure, h('span', { class: 'live-bubble' }, bubble));
+    }
+
+    function buildShot(s, other) {
         const place = s.place && W.byId.place.get(s.place);
         const scene = place && visualOf(s.placeKind, place.id);
         const pal = (place && place.aesthetic && place.aesthetic.palette) || ['#1b2150', '#0b1030'];
         const bg = scene && !saveData
             ? h('img', { class: 'live-bg', src: visualSource(scene), alt: '', decoding: 'async' })
             : h('div', { class: 'live-bg live-bg-plain', style: { background: `radial-gradient(120% 90% at 50% 30%, ${pal[1] || pal[0]}66, ${pal[0]}33 45%, #070a1c 100%)` } });
-        // An AI brought in from outside has no painted pose sheet yet: its drawn face stands in.
-        const figure = pose
-            ? h('div', { class: 'live-figure visual-pose', dataset: { frame: String(s.frame) } }, h('img', { src: visualPoseSource(pose), alt: '', decoding: 'async' }))
-            : h('div', { class: 'live-figure live-figure-drawn' }, char ? avatar(W, char) : null);
-        const bubble = h('span', { class: 'live-bubble' }, s.bubble);
-        const actor = h('div', { class: 'live-actor', style: { '--pose-aspect': String((pose && pose.poseAspect) || 1) } }, figure, bubble);
-        return h('div', { class: 'live-shot', dataset: { move: s.move, side: s.side, close: String(s.close), stage: s.stage } }, bg, actor);
+        // A meeting: the two walk in from either side, stand facing the middle and talk in turn.
+        if (other) return h('div', { class: 'live-shot', dataset: { duo: 'true', move: 'meet', side: 'duo', close: 'false', stage: 'meet', speaker: 'a' } },
+            bg, buildActor(s.id, 0, '💬', 'a'), buildActor(other, 0, '💬', 'b'));
+        return h('div', { class: 'live-shot', dataset: { move: s.move, side: s.side, close: String(s.close), stage: s.stage } }, bg, buildActor(s.id, s.frame, s.bubble, 'solo'));
     }
 
-    function cut(id) {
+    function cut(id, other = null, met = '') {
         const live = eco.agents.get(id);
         if (!live) return;
         current = id;
+        partner = other && eco.agents.has(other) ? other : null;
+        meeting = met;
         elapsed = 0;
         const s = shotFor(W, live, director.cut);
-        const shot = buildShot(s);
+        const shot = buildShot(s, partner);
         shots.append(shot);
         // two frames so the browser has painted the new shot at opacity 0 before it fades in
         requestAnimationFrame(() => requestAnimationFrame(() => shot.classList.add('is-on')));
@@ -130,10 +142,10 @@ export function createLiveCamera(ctx, { onPick } = {}) {
         refresh(true);
     }
 
-    function cutNow() { prepare(); if (pending) { const id = pending.id; pending = null; cut(id); } }
+    function cutNow() { prepare(); if (pending) { const p = pending; pending = null; cut(p.id, p.partner, p.meeting); } }
     function cutWhenReady(force = false) {
         if (!pending) return;
-        if (pending.ready || force || waited >= PATIENCE) { const id = pending.id; pending = null; cut(id); }
+        if (pending.ready || force || waited >= PATIENCE) { const p = pending; pending = null; cut(p.id, p.partner, p.meeting); }
     }
 
     // What changes while a shot is on screen: the pose, the mark, the caption, the hour.
@@ -144,18 +156,25 @@ export function createLiveCamera(ctx, { onPick } = {}) {
         const shot = shots.lastElementChild;
         if (!live || !shot) return;
         const s = shotFor(W, live, director.cut);
-        const figure = shot.querySelector('.live-figure');
-        if (figure && figure.dataset.frame !== undefined && figure.dataset.frame !== String(s.frame)) figure.dataset.frame = String(s.frame);
-        const bubble = shot.querySelector('.live-bubble');
-        if (bubble.textContent !== s.bubble) bubble.textContent = s.bubble;
-        if (shot.dataset.stage !== s.stage) shot.dataset.stage = s.stage;
+        if (partner) {
+            const turn = speakerAt(elapsed);
+            if (shot.dataset.speaker !== turn) shot.dataset.speaker = turn;
+        } else {
+            const figure = shot.querySelector('.live-figure');
+            if (figure && figure.dataset.frame !== undefined && figure.dataset.frame !== String(s.frame)) figure.dataset.frame = String(s.frame);
+            const bubble = shot.querySelector('.live-bubble');
+            if (bubble.textContent !== s.bubble) bubble.textContent = s.bubble;
+            if (shot.dataset.stage !== s.stage) shot.dataset.stage = s.stage;
+        }
         const char = W.byId.agent.get(current);
         const district = s.district && W.byId.district.get(s.district);
         const place = s.place && W.byId.place.get(s.place);
-        const c = captionFor(live, director.news.get(current), eco.time);
+        // a two-shot keeps the meeting itself as its caption for the whole cut
+        const c = partner ? { kind: 'news', text: meeting } : captionFor(live, director.news.get(current), eco.time);
         const text = c.kind === 'voice' ? `${t('live.voice')}「${c.text}」` : c.text;
+        const who = [char, partner && W.byId.agent.get(partner)].filter(Boolean).map(agentShort).join(' × ') || current;
         if (fresh || caption.textContent !== text) {
-            name.textContent = char ? agentShort(char) : current;
+            name.textContent = who;
             where.textContent = [place && placeShort(place), district && nameOf(district)].filter(Boolean).join(' ・ ');
             caption.textContent = text;
             caption.dataset.kind = c.kind;

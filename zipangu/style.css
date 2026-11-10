@@ -1579,3 +1579,29 @@ input::placeholder { color: var(--ink-faint); }
 @media (prefers-reduced-motion: reduce) {
   .live-shot, .live-shot *, .live-rec { animation: none !important; transition: none !important; }
 }
+
+/* 📡 a two-shot: residents who have just met walk in from either side and talk in turn */
+.live-shot[data-duo="true"] .live-actor { height: 128%; bottom: -40%; }   /* knees up, clear of the caption */
+.live-shot[data-duo="true"] .live-actor[data-role="a"] { left: 30%; }
+.live-shot[data-duo="true"] .live-actor[data-role="b"] { left: 70%; }
+.live-shot.is-on[data-duo="true"] .live-actor[data-role="a"] { animation: live-enter-a 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.live-shot.is-on[data-duo="true"] .live-actor[data-role="b"] { animation: live-enter-b 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.18s both; }
+.live-shot.is-on[data-move="meet"] .live-bg { animation: live-bg-meet 6s ease-out both; }
+/* the listener nods slowly; the speaker leans in toward the other and gestures */
+.live-shot[data-duo="true"] .live-figure { animation: live-nod 2.6s ease-in-out infinite alternate; }
+.live-shot[data-duo="true"][data-speaker="a"] [data-role="a"] .live-figure { animation: live-talk-a 0.85s ease-in-out infinite alternate; }
+.live-shot[data-duo="true"][data-speaker="b"] [data-role="b"] .live-figure { animation: live-talk-b 0.85s ease-in-out infinite alternate; }
+.live-shot[data-duo="true"] .live-bubble { opacity: 0; animation: none; }
+.live-shot[data-duo="true"] [data-role="a"] .live-bubble { right: 12%; top: 14%; }
+.live-shot[data-duo="true"] [data-role="b"] .live-bubble { right: auto; left: 12%; top: 14%; }
+.live-shot[data-duo="true"][data-speaker="a"] [data-role="a"] .live-bubble,
+.live-shot[data-duo="true"][data-speaker="b"] [data-role="b"] .live-bubble { opacity: 1; animation: live-pop 0.35s ease-out both; }
+@keyframes live-enter-a { from { transform: translateX(-42%); opacity: 0; } 70% { transform: translateX(2%); opacity: 1; } to { transform: none; opacity: 1; } }
+@keyframes live-enter-b { from { transform: translateX(42%); opacity: 0; } 70% { transform: translateX(-2%); opacity: 1; } to { transform: none; opacity: 1; } }
+@keyframes live-bg-meet { from { transform: scale(1); } to { transform: scale(1.09) translateY(-1%); } }
+@keyframes live-nod { from { transform: rotate(0) translateY(0); } to { transform: rotate(0.5deg) translateY(0.7%); } }
+@keyframes live-talk-a { from { transform: rotate(0.4deg) translateX(0); } to { transform: rotate(1.9deg) translate(2.2%, -0.8%); } }
+@keyframes live-talk-b { from { transform: rotate(-0.4deg) translateX(0); } to { transform: rotate(-1.9deg) translate(-2.2%, -0.8%); } }
+@media (prefers-reduced-motion: reduce) {
+  .live-shot[data-duo="true"] .live-actor, .live-shot[data-duo="true"] .live-figure, .live-shot[data-duo="true"] .live-bubble { animation: none !important; }
+}

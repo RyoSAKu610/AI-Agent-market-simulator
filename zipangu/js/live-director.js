@@ -45,6 +45,8 @@ export function createDirector() {
             if (!msg || !NEWS_TYPES.has(msg.type)) return;
             for (const id of [msg.agent, msg.other]) if (id) news.set(id, { cut, msg });
         },
+        // someone who shared the last shot has been on screen too
+        mark(id) { shown.set(id, cut); },
         next(roster, current) {
             const id = pickNext(roster, { current, cut, shown, news });
             if (id != null) { cut++; shown.set(id, cut); }
@@ -77,6 +79,21 @@ export function shotFor(W, live, cut = 0) {
         close: stage === 'trade' || stage === 'think' || cut % 4 === 3
     };
 }
+
+// → the id of the resident to film together with `id`, or null. Only for a meeting that
+// really happened a moment ago and only while the two are still standing in the same district.
+export function partnerFor(id, news, agents, now) {
+    const msg = news && news.msg;
+    if (!msg || msg.type !== 'encounter' || now - msg.T > FRESH_DAYS) return null;
+    const other = msg.agent === id ? msg.other : msg.agent;
+    const a = agents.get(id), b = agents.get(other);
+    if (!a || !b || other === id || !a.at || a.at !== b.at || a.trip || b.trip) return null;
+    return other;
+}
+
+// Who is speaking in a two-shot: the two take turns, a little under two seconds each.
+export const TURN_SECONDS = 1.7;
+export const speakerAt = seconds => (Math.floor(Math.max(0, seconds) / TURN_SECONDS) % 2 ? 'b' : 'a');
 
 // → { kind, text } for the lower third: a fresh inner voice (from an AI mind), else the
 // resident's latest news, else what they are doing. Always something that really happened.
