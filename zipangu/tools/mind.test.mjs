@@ -337,6 +337,8 @@ function trace(eco, seconds) {
     assert.deepEqual(await (await trial(post({ messages: msgs }), {})).json(), { error: 'not_configured' });
     process.env.OPENROUTER_API_KEY = 'or-secret';
     assert.equal((await trial(new Request('https://x.test/f'), {})).status, 405);
+    // auto-connect's status question: answered without a model call or the visitor's quota
+    for (let i = 0; i < 30; i++) assert.equal((await trial(new Request('https://x.test/f?status'), { ip: 'scan' })).status, 200);
     assert.equal((await trial(post({ messages: msgs }, { origin: 'https://evil.example' }), { ip: '1' })).status, 403);
     assert.equal((await trial(post('{nope'), { ip: '2' })).status, 400);
     assert.equal((await trial(post({ messages: msgs, pad: 'x'.repeat(40000) }), { ip: '2' })).status, 413, 'oversized bodies are refused');

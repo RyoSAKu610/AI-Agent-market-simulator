@@ -6,7 +6,7 @@
 //   browser  this device can run the in-browser model (WebGPU)
 //   demo     this site's keyless trial is switched on
 // Nothing is sent anywhere except a "which models do you have?" question to each place;
-// the trial is probed with an empty request, which costs no model call.
+// the trial is asked only whether it is switched on, which costs no model call and no quota.
 
 import { PROVIDERS, resolve, listModels } from './mind.js';
 import { localSupport } from './mind-local.js';
@@ -24,11 +24,13 @@ export function pickLocalModel(list) {
     return chat.find(m => CHAT_HINT.test(m)) || chat[0] || '';
 }
 
+// The deadline covers the whole answer, body included: a server that sends headers and
+// then stalls is cut off too, so the timer is left to run out rather than cleared.
 function withTimeout(fetchImpl, ms) {
     return (url, init = {}) => {
         const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), ms);
-        return fetchImpl(url, { ...init, signal: ctrl.signal }).finally(() => clearTimeout(timer));
+        setTimeout(() => ctrl.abort(), ms);
+        return fetchImpl(url, { ...init, signal: ctrl.signal });
     };
 }
 
@@ -45,6 +47,8 @@ const PROBES = {
     async saved({ settings, fetchImpl }) {
         const p = PROVIDERS[settings.provider];
         if (!settings.key || !p || p.keyless) return miss('saved', 'no_key');
+        // without a full address the question (and the key) would go to this site instead
+        if (!/^https?:\/\//i.test(resolve(settings).base)) return miss('saved', 'no_endpoint');
         try {
             await listModels(resolve(settings), { fetchImpl });
             return { id: 'saved', ok: true, model: resolve(settings).model, provider: settings.provider, settings: { provider: settings.provider, base: settings.base || '', model: settings.model || '', key: settings.key, remember: !!settings.remember } };
@@ -59,10 +63,12 @@ const PROBES = {
     async demo({ fetchImpl, origin }) {
         if (!/^https?:/.test(origin || '')) return miss('demo', 'absent');
         try {
-            // an empty request: 400 means the trial is there and switched on, 503 that it is not
-            const res = await fetchImpl(PROVIDERS.demo.base, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
-            return res.status === 400 ? { id: 'demo', ok: true, model: 'auto', settings: { provider: 'demo', base: '', model: '' } }
-                : miss('demo', res.status === 503 ? 'not_configured' : res.status === 429 ? 'busy' : 'absent');
+            // the endpoint's own status question: outside the trial's per-visitor request quota
+            const res = await fetchImpl(PROVIDERS.demo.base + '?status');
+            if (!res.ok) return miss('demo', 'absent');
+            const body = await res.json();
+            return body && body.configured === true ? { id: 'demo', ok: true, model: 'auto', settings: { provider: 'demo', base: '', model: '' } }
+                : miss('demo', body && body.configured === false ? 'not_configured' : 'absent');
         } catch { return miss('demo', 'absent'); }
     }
 };
@@ -72,7 +78,9 @@ export async function scanMinds({ settings = {}, fetchImpl = globalThis.fetch, s
     const f = withTimeout(fetchImpl, timeoutMs);
     return Promise.all(SCAN_ORDER.map(async id => {
         let r;
-        try { r = await PROBES[id]({ settings, fetchImpl: f, support, origin }); } catch { r = miss(id, 'absent'); }
+        // no source may hold the others up, whatever it does
+        const late = new Promise(done => setTimeout(() => done(miss(id, 'timeout')), timeoutMs + 500));
+        try { r = await Promise.race([PROBES[id]({ settings, fetchImpl: f, support, origin }), late]); } catch { r = miss(id, 'absent'); }
         if (onResult) onResult(r);
         return r;
     }));
