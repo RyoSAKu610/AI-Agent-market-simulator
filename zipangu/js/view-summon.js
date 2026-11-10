@@ -14,6 +14,8 @@ import { buildDonation, consentOf, consentComplete, newDonorId, loadDonated, sav
 import { loadSocietySettings, saveSocietySettings, browserCohorts, assignCohorts } from './society.js';
 import { journalLink } from './view-journal.js';
 import { PROVIDERS, loadSettings, saveSettings, resolve, testConnection, listModels } from './mind.js';
+import { scanMinds, pickBest, settingsFor, SCAN_ORDER } from './mind-scan.js';
+import { CONSENT_KEY } from './mind-local.js';
 
 async function copyText(text) {
     try { await navigator.clipboard.writeText(text); return true; } catch { /* fall back below */ }
@@ -251,8 +253,38 @@ function mindSection(ctx) {
     paintLocal();
     const offLocal = engine ? engine.on(paintLocal) : null;
 
+    // ⚡ one tap: find every mind this visitor can use right now and connect the best (js/mind-scan.js)
+    const rows = new Map(SCAN_ORDER.map(id => [id, h('li', { class: 'scan-row', dataset: { state: 'idle' } },
+        h('span', { class: 'scan-dot', 'aria-hidden': 'true' }), h('span', { class: 'scan-name' }, t('mind.auto.src.' + id)), h('span', { class: 'scan-result' }))]));
+    const scanList = h('ul', { class: 'scan-list', hidden: true }, [...rows.values()]);
+    const scanSay = h('p', { class: 'scan-say', role: 'status' });
+    const connect = found => {
+        if (found.id === 'browser') { try { ctx.storage.setItem(CONSENT_KEY, '1'); } catch { /* asked again on the map */ } }
+        saveSettings(settingsFor(found, loadSettings(ctx.storage, ctx.session)), ctx.storage, ctx.session);
+        restartInto(ctx, '#/');
+    };
+    const paintRow = (r, best) => {
+        const row = rows.get(r.id), out = row.querySelector('.scan-result');
+        row.dataset.state = r.ok ? 'found' : 'missing';
+        row.classList.toggle('is-best', !!best);
+        clear(out).append(r.ok ? `${t('mind.auto.found')}${r.model && r.model !== 'auto' ? ' ・ ' + r.model : ''}` : t('mind.auto.missing'));
+        if (r.ok) out.append(' ', h('button', { type: 'button', class: best ? 'btn btn-primary btn-small' : 'btn btn-small', onclick: () => connect(r) }, best ? `★ ${t('mind.auto.use')}` : t('mind.auto.use')));
+    };
+    const scanBtn = h('button', { type: 'button', class: 'btn btn-primary btn-big scan-btn', onclick: async () => {
+        scanBtn.disabled = true; scanList.hidden = false; scanSay.textContent = t('mind.auto.scanning');
+        for (const row of rows.values()) { row.dataset.state = 'looking'; row.classList.remove('is-best'); clear(row.querySelector('.scan-result')); }
+        const results = await scanMinds({ settings: loadSettings(ctx.storage, ctx.session), onResult: r => paintRow(r, false) });
+        const best = pickBest(results);
+        if (best) paintRow(best, true);
+        scanSay.textContent = best ? t('mind.auto.done', { name: t('mind.auto.src.' + best.id) }) : t('mind.auto.none');
+        scanBtn.disabled = false;
+    } }, t('mind.auto.scan'));
+    const auto = h('div', { class: 'scan-card' }, h('h3', null, t('mind.auto.title')), h('p', null, t('mind.auto.lead')), scanBtn, scanSay, scanList);
+
     const el = plaque({ class: 'settings-card mind-card' },
         h('p', null, t('mind.lead')),
+        auto,
+        h('details', { class: 'mind-advanced', open: !!(s.key || (s.provider !== 'browser' && s.provider !== 'demo')) }, h('summary', null, t('mind.advanced')),
         h('label', { class: 'mind-check mind-switch' }, on, h('span', null, t('mind.on'))),
         h('div', { class: 'mind-grid' },
             field(t('mind.provider'), provider), note, localBox,
@@ -262,7 +294,7 @@ function mindSection(ctx) {
             field(t('mind.scope'), scope),
             remote(field(t('mind.perHour'), perHour))),
         remote(h('p', { class: 'ar-role' }, t('mind.privacy'))),
-        h('p', { class: 'mind-actions' }, remote(testBtn), ' ', saveBtn), message,
+        h('p', { class: 'mind-actions' }, remote(testBtn), ' ', saveBtn), message),
         state, mind ? h('h3', null, t('mind.log')) : null, log);
     paintProvider();
     return { el, destroy: () => { if (off) off(); if (offLocal) offLocal(); } };
