@@ -11,7 +11,7 @@ import { el, f, PAPER } from './lib/ink.js';
 import { lerp } from './lib/motion.js';
 import {
     SP, P, S, B, C, G, rect, wallRect, oval, text, tileRoof, hisashi, thatchRoof, koshi, mushiko, shojiGrid, brick, pane,
-    noren, chochin, lamp, smoke, kokuDial, banner, pine, blossomTree, roundTree, bamboo, barrel, well, bench, water, GOLD
+    noren, chochin, lamp, smoke, kokuDial, banner, pine, blossomTree, roundTree, bamboo, barrel, well, bench, water, GOLD, hoshigaki, asagao
 } from './kit.js';
 import { createSitter } from './sitter.js';
 import { signName } from './layout.js';
@@ -90,8 +90,8 @@ function machiya(ctx, x0, x1, { label, task = 'abacus', noren: norenColour, uppe
     // upper floor: plaster with a window that lights at night
     if (storeys > 1) {
         const wy0 = -H1 - H2 + 12, wy1 = -H1 - 8;
-        if (upper === 'mushiko') win(ctx, x0 + w * 0.22, wy0, x1 - w * 0.22, wy1, 'mushiko');
-        else { win(ctx, x0 + 16, wy0, x0 + w * 0.46, wy1, 'shoji'); win(ctx, x0 + w * 0.54, wy0, x1 - 16, wy1, 'shoji'); }
+        if (upper === 'mushiko') win(ctx, x0 + w * 0.22, wy0, x1 - w * 0.22, wy1, 'mushiko', { sil: 'wave', silAt: 0.3, thr: 0.18 });
+        else { win(ctx, x0 + 16, wy0, x0 + w * 0.46, wy1, 'shoji', { sil: 'wave', thr: 0.18 }); win(ctx, x0 + w * 0.54, wy0, x1 - 16, wy1, 'shoji', { sil: 'sit', silAt: 0.6 }); }
         P(g, `M${f(x0 + 6)} ${f(-H1 - 2)} L${f(x1 - 6)} ${f(-H1 - 2)}`, SP * 0.9);
     }
     tileRoof(g, { x0: x0 - 4, x1: x1 + 4, eave, ridge, inset: 22 });
@@ -106,11 +106,20 @@ function machiya(ctx, x0, x1, { label, task = 'abacus', noren: norenColour, uppe
         P(g, tat.join(' '), SP * 0.3);
         sitter(ctx, lerp(sx0, sx1, 0.38), -12, { task });
         win(ctx, sx0 + 2, -H1 + 5, sx1 - 2, -H1 + 8, 'plain', { thr: 0.05, lateOff: rnd() < 0.5 ? 1.04 : 9 });
+        // the shop's lamplight spills onto the street after dark
+        const sp = pane(g, ctx.gl, sx0 + 4, -2, sx1 - 4, 0, rnd, { thr: 0.12, lateOff: 9, spill: true });
+        sp.n.setAttribute('d', ''); ctx.live.windows.push(sp);
     }
     // the other bay: lattice front or doors
     if (door === 'koshi') koshi(g, sx1 + 2, x1 - 8, -H1 + 6, -1);
     else if (door === 'shoji') { win(ctx, sx1 + 2, -H1 + 8, x1 - 8, -2, 'shoji'); }
     hisashi(g, x0 - 2, x1 + 2, -H1 - 2, 8);
+    if (ctx.d && /^(sangaku|raiden)_/.test(ctx.d.id)) {
+        // 干し柿 under the eave and a morning glory by the door: somebody lives here
+        ctx.live.swing.push(hoshigaki(g, x1 - 18, -H1 + 2, 5 + Math.floor(rnd() * 3)));
+        ctx.live.swing.push(hoshigaki(g, x1 - 24, -H1 + 2, 4 + Math.floor(rnd() * 3)));
+        asagao(g, x1 - 12);
+    }
     if (norenColour) ctx.live.norens.push(noren(g, sx0 + 4, sx1 - 4, -H1 + 6, 20, Math.max(2, Math.round((sx1 - sx0) / 22)), label || '', { colour: norenColour, rnd }));
     if (lantern) ctx.live.lanterns.push(chochin(g, ctx.gl, x1 - 12, -H1 + 2, rnd, { red: rnd() < 0.5 }));
     return { H1, H2, eave, ridge, sx0, sx1 };
@@ -135,7 +144,8 @@ function nagaya(ctx, x0, x1, units, { open = -1, task = 'write', kids = false } 
             }
             win(ctx, a + 4, -H + 7, b - 4, -H + 10, 'plain', { thr: 0.05 });
         } else {
-            win(ctx, a + 4, -H + 10, a + w * 0.55, -6, 'shoji');
+            win(ctx, a + 4, -H + 10, a + w * 0.55, -6, 'shoji', i % 2 ? { sil: 'sit', silAt: 0.5 } : {});
+            if (i === units - 1) asagao(g, b - 6);
             S(g, rect(a + w * 0.6, -H + 12, b - 4, 0), SP * 0.7);
             P(g, `M${f(a + w * 0.6 + 2)} ${f(-H + 22)} l${f(w * 0.4 - 8)} 0`, SP * 0.4);
         }
@@ -680,7 +690,12 @@ const FAMILY = {
         const pts2 = blossomTree(g, w * 0.24, 84 + rnd() * 20, rnd);
         ctx.live.blossoms.push(...pts, ...pts2);
         if (has(d, '木戸')) { P(g, `M-12 0 L-12 -50 M12 0 L12 -50 M-16 -48 L16 -48 M-14 -42 L14 -42`, SP * 1.2); }
-        if (has(d, '花筵')) C(g, rect(-26, -3, 26, 0), '#c8403a', SP * 0.6);
+        if (has(d, '花筵')) {
+            // 花見: two people kneeling on the red felt under the blossoms, tea between them
+            C(g, rect(-30, -2, 30, 0), '#c8403a', SP * 0.6);
+            sitter(ctx, -14, -2, { task: 'tea', dir: 1, colour: '#e8a8bd', hair: 'bun' });
+            sitter(ctx, 12, -2, { task: 'pour', dir: -1, colour: '#6a4a8a' });
+        }
         if (has(d, 'しじま')) S(g, rect(-10, -14, 10, 0), SP * 0.9);
         ctx.live.lanterns.push(chochin(g, ctx.gl, -w * 0.22 + 14, -50, rnd, { r: 4.6, h: 10 }));
         sign(ctx, 0, -40, 10, { vertical: true, h: 0 });

@@ -50,7 +50,7 @@ export function createSky(root, glow, defs) {
 
     const sunArc = u => [VW * 0.04 + VW * 0.92 * u, horizon - (horizon - VH * 0.1) * Math.sin(Math.PI * u)];
     const moonArc = u => [VW * 0.06 + VW * 0.88 * u, horizon - (horizon - VH * 0.14) * 0.92 * Math.sin(Math.PI * u)];
-    const trainPath = u => [lerp(-60, VW + 60, u), VH * 0.34 - Math.sin(Math.PI * u) * VH * 0.2 + u * VH * 0.08];
+    const trainPath = u => [lerp(-60, VW + 60, u), VH * 0.5 - Math.sin(Math.PI * u) * VH * 0.2 + u * VH * 0.06];
 
     return {
         resize(w, h, hz) {
@@ -85,7 +85,7 @@ export function createSky(root, glow, defs) {
                 b.x += (1.6 + wind * 3) * dt;
                 const span = VW + b.w + 120;
                 const x = ((b.u * VW + b.x) % span + span) % span - b.w - 60;
-                b.n.setAttribute('d', cloudD(x, b.v * horizon, b.w));
+                b.n.setAttribute('d', cloudD(x, Math.max(VH * 0.27, b.v * horizon), b.w));
             }
             // the night train: runs only after dark, a crossing every ~50 s
             const on = smooth(0.3, 0.7, night);

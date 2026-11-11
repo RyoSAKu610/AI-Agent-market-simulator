@@ -32,7 +32,7 @@ main { width: min(1180px, 100%); display: flex; flex-direction: column; align-it
 #stage svg .sign { cursor: pointer; }
 #stage svg .sign:hover path:first-of-type { stroke-width: 1.3; }
 
-.hud { position: absolute; color: var(--ink); pointer-events: none; font-family: var(--mincho); margin: 0; }
+.hud { position: absolute; color: var(--ink); pointer-events: none; font-family: var(--mincho); margin: 0; text-shadow: 0 0 4px var(--paper, #fdfcf8), 0 0 8px var(--paper, #fdfcf8); }
 .hud-clock { left: 2.2%; top: 3%; letter-spacing: .06em; }
 .hud-clock p { margin: 0; }
 .hud-clock b { font-weight: 700; font-size: clamp(14px, 1.6vw, 18px); }

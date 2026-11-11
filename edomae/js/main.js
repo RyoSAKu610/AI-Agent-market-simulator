@@ -62,6 +62,7 @@ grad('e-gateglow', [[0, '#fff1c9', 0.55], [0.6, '#ffd9a0', 0.18], [1, '#ffd9a0',
 grad('e-sunglow', [[0, '#ffd9a0', 0.55], [1, '#ffd9a0', 0]]);
 grad('e-sunglow2', [[0, '#ffe7a8', 0.5], [1, '#ffe7a8', 0]]);
 grad('e-moonglow', [[0, '#e9e4ff', 0.35], [1, '#e9e4ff', 0]]);
+grad('e-spill', [[0, '#ffcf7e', 0.42], [1, '#ffcf7e', 0]], false, { x1: 0, y1: 0, x2: 0, y2: 1 });
 grad('e-cateye', [[0, '#e8ff9a', 1], [1, '#c8ff6a', 0]]);
 grad('e-cone', [[0, '#fff1c2', 0.5], [1, '#fff1c2', 0]], false, { x1: 0, y1: 0, x2: 0, y2: 1 });
 
@@ -302,7 +303,15 @@ function drawPlace(pl, t, dt) {
             w.lit = lerp(w.lit, lit, DEBUG || reduce ? 1 : 0.08);
             w.n.style.fill = rgb(mix(P.paper, mix(WIN_A, WIN_B, w.warmth), w.lit * 0.92));
             w.glow.setAttribute('opacity', f(w.lit * 0.8));
+            if (w.sil) w.sil.setAttribute('opacity', f(w.lit * 0.62));
+            if (w.spill) w.spill.setAttribute('opacity', f(w.lit * 0.9));
         }
+    }
+    const dusk = smooth(0.25, 0.4, P.lamp) * (1 - smooth(0.62, 0.78, P.lamp));
+    for (const w of L.windows) if (w.wave) {
+        const o = w.lit * dusk;
+        w.wave.setAttribute('opacity', f(o * 0.62)); w.sil.setAttribute('opacity', f(Math.max(o, 0) * 0.62 + (1 - dusk) * 0));
+        if (o > 0.01) { const [x, y, k] = w.waveAt, a = -0.9 + Math.sin(t * 5) * 0.35; w.wave.setAttribute('d', `M${f(x)} ${f(y)} Q${f(x + 5 * k)} ${f(y - 4 * k)} ${f(x + 6 * k + Math.cos(a) * 3 * k)} ${f(y - 10 * k + Math.sin(a) * 3 * k)}`); }
     }
     for (const n of L.norens) n.draw(t, dt, wind.value, tau, P);
     for (const l of L.lanterns) l.draw(t, dt, wind.value, P);

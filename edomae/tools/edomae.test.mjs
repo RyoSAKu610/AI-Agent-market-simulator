@@ -9,10 +9,11 @@ const load = path => import(moduleUrl(readFileSync(new URL('../../' + path, impo
 const { buildWorld } = await load('zipangu/js/data.js');
 const { clockAt } = await load('zipangu/js/sim.js');
 const { ringLayout, ringOrder, signName, arcDelta, standSpot } = await load('edomae/js/layout.js');
-const { tauOf, tOfTau } = await load('edomae/js/clock.js');
+const { tauOf, tOfTau, warm } = await load('edomae/js/clock.js');
 const { palette } = await load('edomae/js/lib/daynight.js');
 const { gait } = await load('edomae/js/lib/gait.js');
-const { lookOf, lookKey } = await load('edomae/js/looks.js');
+const { lookOf, lookKey, companionOf } = await load('edomae/js/looks.js');
+const news = await load('edomae/js/news.js');
 
 const read = stem => JSON.parse(readFileSync(new URL('../../zipangu/world/' + stem + '.json', import.meta.url), 'utf8'));
 const W = buildWorld(Object.fromEntries(['world', 'eras', 'realms', 'districts', 'creatures', 'goods', 'currencies', 'agents', 'events', 'library'].map(k => [k, read(k)])));
@@ -129,4 +130,61 @@ const keys = new Set(looks.map(lookKey));
 assert.ok(keys.size >= W.agents.length - 1, `residents are told apart (${keys.size} distinct of ${W.agents.length})`);
 assert.ok(new Set(looks.map(l => l.garment)).size >= 4 && new Set(looks.map(l => l.hat)).size >= 6 && new Set(looks.map(l => l.prop)).size >= 8, 'variety in garments, hats and props');
 
-console.log(`edomae: ${L.places.length} places, ${slots.length} districts on a ring of radius ${Math.round(L.R)}; tauOf, contrast, planted feet and ${keys.size} distinct residents ok`);
+// ---------------------------------------------------------------- warm paper keeps its contrast
+for (const tau of [0.3, 0.5, 0.72, 0.8, 0.95, 0.24]) {
+    const P = warm(palette(tau));
+    const diff = Math.abs(lum(P.ink) - lum(P.paper));
+    assert.ok(diff > 0.4, `warm paper: ink and paper stay apart at τ=${tau} (${diff.toFixed(2)})`);
+}
+assert.ok(warm(palette(0.5)).paper[2] < palette(0.5).paper[2], 'warm paper is warmer than the reference by day');
+
+// ---------------------------------------------------------------- headlines come from the economy's own feed
+{
+    const { createEconomy } = await load('zipangu/js/sim.js');
+    const eco = createEconomy(W, { seed: 1 });
+    const feed = [];
+    eco.on('*', m => { if (m && m.message) feed.push(m); });
+    eco.step(120);
+    assert.ok(feed.length > 10, 'the economy produced a feed');
+    const edo = new Set(L.byPlace.get('edo_raiden').districts.map(d => d.id));
+    const m = news.pickHeadline(feed, edo);
+    assert.ok(m && feed.includes(m), 'the headline is a real line from the feed');
+    const h = news.headline(m, 40);
+    assert.ok(h.length > 0 && h.length <= 40 && !/\s/.test(h), 'headline trimmed for a sheet');
+    assert.ok(String(m.message).replace(/\s+/g, '').replace(/（[^）]*）/g, '').startsWith(h.replace(/…$/, '')), 'headline text is the message itself, not invented');
+    const local = feed.slice(-60).filter(x => [x.district, x.from, x.to].some(d => edo.has(d)) && x.type in { event: 1, settle: 1, trade: 1, arrive: 1, depart: 1, encounter: 1, goal: 1 });
+    if (local.length) assert.ok([m.district, m.from, m.to].some(d => edo.has(d)), 'a line about the place is preferred');
+    assert.equal(news.pickHeadline([], edo), null, 'no feed, no headline');
+    assert.equal(news.pickHeadline(feed, edo), m, 'deterministic for the same feed');
+}
+
+// ---------------------------------------------------------------- money: the right form for the place and the sim's own amount
+assert.equal(news.moneyOf('edo', 10), 'zeni');
+assert.equal(news.moneyOf('edo', 5000), 'koban', 'a large sum in Edo is gold');
+assert.equal(news.moneyOf('sakura', 100), 'none', '桜の森 asks no price (charter)');
+assert.equal(news.moneyOf('ginga', 10), 'ticket');
+for (const fam of new Set(L.places.map(p => p.family))) assert.ok(news.MONEY[fam], `${fam} has a form of money`);
+assert.equal(news.kanjiNumber(1234), '千二百三十四');
+assert.equal(news.kanjiNumber(10), '十');
+assert.equal(news.kanjiNumber(20500), '二万五百');
+const raidenIds = new Set(L.byPlace.get('edo_raiden').districts.map(d => d.id));
+const hotaru = news.currencyFor(W.currencies, raidenIds, W.baseCurrency);
+assert.equal(hotaru.id, 'hotarusen', 'Late Edo pays in 蛍銭 (issued there)');
+assert.equal(news.amountText(12, hotaru), '二十四蛍銭', 'amount converted with to_base');
+assert.equal(news.currencyFor(W.currencies, new Set(['nowhere']), W.baseCurrency).id, W.baseCurrency.id, 'elsewhere: the base currency');
+for (const c of ['food', 'material', 'energy', 'knowledge', 'luxury', 'service']) assert.ok(news.goodsOf(c), `goods for ${c}`);
+assert.equal(news.goodsOf('service'), 'none', 'a service is paid with a bow and nothing handed back');
+// ambient pacing is deterministic and inside its bounds
+for (let n = 0; n < 50; n++) { const d = news.ambientDelay(7412, n, 6, 13); assert.ok(d >= 6 && d < 13); assert.equal(d, news.ambientDelay(7412, n, 6, 13)); }
+
+// ---------------------------------------------------------------- companions
+const comps = W.agents.map(a => [a.id, companionOf(a)]);
+for (const [id, c] of comps) assert.deepEqual(c, companionOf(W.byId.agent.get(id)), `${id}: companion is deterministic`);
+assert.equal(companionOf(W.byId.agent.get('kitsune')), null, 'the fox resident has no pet');
+assert.equal(companionOf(W.byId.agent.get('yami')), null, 'nor the cat');
+assert.equal((companionOf(W.byId.agent.get('nego')) || {}).kind, 'fox', 'NEGO-CHAN: 足元に伊曽保狐');
+assert.equal((companionOf(W.byId.agent.get('hakuuchi')) || {}).kind, 'bird', 'HAKUUCHI: 足元に銀杏鳥');
+const withPets = comps.filter(([, c]) => c).length;
+assert.ok(withPets >= 6 && withPets <= 18, `some residents walk with an animal (${withPets})`);
+
+console.log(`edomae: ${L.places.length} places, ${slots.length} districts on a ring of radius ${Math.round(L.R)}; tauOf, warm contrast, planted feet, ${keys.size} distinct residents, headlines, money and ${withPets} companions ok`);
