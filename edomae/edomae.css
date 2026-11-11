@@ -24,7 +24,7 @@ main { width: min(1180px, 100%); display: flex; flex-direction: column; align-it
 }
 .card:focus-visible { box-shadow: 0 0 0 2px #2a2622, 0 18px 50px -18px rgba(40,34,26,.35); }
 .card.dragging, .card.dragging * { cursor: grabbing !important; }
-@media (max-aspect-ratio: 1/1) { .card { aspect-ratio: 4 / 5; max-height: none; } }
+@media (max-aspect-ratio: 1/1) { .card { aspect-ratio: 1.2 / 1; max-height: none; } }
 #stage, #stage svg { display: block; position: absolute; inset: 0; width: 100%; height: 100%; user-select: none; -webkit-user-select: none; }
 #stage svg .pp { fill: var(--paper, #fdfdfc); }
 #stage svg .pp-stroke { stroke: var(--paper, #fdfdfc); }
@@ -33,14 +33,13 @@ main { width: min(1180px, 100%); display: flex; flex-direction: column; align-it
 #stage svg .sign:hover path:first-of-type { stroke-width: 1.3; }
 
 .hud { position: absolute; color: var(--ink); pointer-events: none; font-family: var(--mincho); margin: 0; }
-.hud-clock { left: 2.2%; top: 3%; font-size: clamp(13px, 1.6vw, 18px); letter-spacing: .08em; opacity: .9; }
-.hud-clock b { font-weight: 700; }
-.hud-clock span { margin-left: .6em; font-size: .8em; }
-.hud-place { left: 0; right: 0; top: 9%; text-align: center; transition: opacity .4s; }
-.hud-place b { display: block; font-size: clamp(22px, 3.6vw, 40px); font-weight: 600; letter-spacing: .3em; line-height: 1.1; }
-.hud-place span { display: block; font-size: clamp(10px, 1.1vw, 13px); letter-spacing: .12em; margin-top: 4px; }
-#hint { left: 0; right: 0; bottom: 3%; text-align: center; font-size: clamp(11px, 1.15vw, 13px); opacity: .7; transition: opacity 1.2s; }
-#hint span { font-style: italic; margin-left: .4em; }
+.hud-clock { left: 2.2%; top: 3%; letter-spacing: .06em; }
+.hud-clock p { margin: 0; }
+.hud-clock b { font-weight: 700; font-size: clamp(14px, 1.6vw, 18px); }
+.hud-clock span { margin-left: .6em; font-size: clamp(11px, 1.2vw, 14px); opacity: .85; }
+.hud-place { font-size: clamp(13px, 1.5vw, 17px); font-weight: 600; letter-spacing: .2em; margin-top: 2px !important; transition: opacity .4s; }
+.hud-sub { font-size: clamp(10px, 1vw, 12px); letter-spacing: .06em; opacity: .55; max-width: 46vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#hint { right: 2.2%; top: 3.2%; font-size: 11px; opacity: .5; white-space: nowrap; transition: opacity 1.2s; letter-spacing: .04em; }
 #hint.gone { opacity: 0; }
 
 .caption {
@@ -54,13 +53,13 @@ main { width: min(1180px, 100%); display: flex; flex-direction: column; align-it
 .caption a { color: var(--ink); font-weight: 600; margin-top: 2px; }
 .caption button { position: absolute; right: 4px; top: 2px; background: none; border: 0; color: var(--ink); font: inherit; font-size: 18px; cursor: pointer; padding: 2px 6px; }
 
-.foot { font-size: 11.5px; opacity: .7; margin: 10px 0 0; text-align: center; max-width: 60em; }
-.foot a { color: inherit; }
 
 @media (max-width: 600px) {
   body { padding: 10px 8px 16px; }
   .page-head .lead { font-size: 12px; }
-  .hud-place { top: 8%; }
+  .hud-sub { max-width: 70vw; }
+  #hint { top: auto; right: 0; left: 0; bottom: 3%; text-align: center; }
   .caption { left: 3%; right: 3%; max-width: none; }
 }
 @media (prefers-reduced-motion: reduce) { .hud-place, #hint { transition: none; } }
+.caption a[hidden] { display: none; }

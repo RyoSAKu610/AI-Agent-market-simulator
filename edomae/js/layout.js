@@ -1,6 +1,6 @@
 // 江戸前 Edomae — the ring layout: where every place and district stands on the
 // globe seen from the side. Pure: no DOM, no imports, deterministic, so Node tests
-// (zipangu/tools/edomae.test.mjs) load it as is.
+// (edomae/tools/edomae.test.mjs) load it as is.
 //
 // The street runs around the globe. Positions are arc lengths `s` (scene units)
 // measured along the street from the start of the first place; the globe radius is

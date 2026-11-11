@@ -35,3 +35,17 @@ export function kokuOfTau(tau) {
     if (tau >= 0.25 && tau < 0.75) return KOKU[Math.min(5, Math.floor((tau - 0.25) / 0.5 * 6))];
     return KOKU[6 + Math.min(5, Math.floor(wrap(tau - 0.75) / 0.5 * 6))];
 }
+
+// A warmer sheet of paper: the reference palette, nudged toward a warm 和紙 by day and
+// a warmer indigo at night (pure, so the contrast test covers it).
+const W_DAY = [246, 236, 218], W_NIGHT = [40, 36, 64];
+const mix3 = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+export function warm(P) {
+    const d = 1 - P.inkT;
+    return {
+        ...P,
+        paper: mix3(P.paper, d > 0.5 ? W_DAY : W_NIGHT, d > 0.5 ? 0.42 * d : 0.3 * (1 - d)),
+        bottom: mix3(P.bottom, [250, 226, 196], 0.22 * d),
+        top: mix3(P.top, [236, 226, 210], 0.12 * d)
+    };
+}

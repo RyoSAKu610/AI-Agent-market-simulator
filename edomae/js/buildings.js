@@ -24,7 +24,7 @@ const has = (d, ...w) => { const s = lm(d); return w.some(x => s.includes(x)); }
 // A signboard is a link to the district page in the explorer (a tap on it is the way in).
 function sign(ctx, x, y, w, { vertical = false, h = 0, colour = null, light = false } = {}) {
     const d = ctx.d, name = signName(d);
-    const a = el('a', { href: `../#/district/${d.id}`, class: 'sign' }, ctx.g);
+    const a = el('a', { href: `../zipangu/#/district/${d.id}`, class: 'sign' }, ctx.g);
     el('title', {}, a).textContent = `${name} — ${d.name_en || ''}`;
     if (vertical) {
         const hh = h || Math.min(70, name.length * 7.2 + 8);

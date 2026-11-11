@@ -56,6 +56,7 @@ All development goes into **one build**: `index.html` plus the
 | `character-assets/`, `character-pets/`, `pet-portable-bundle/`, `lumen-export/`, `music/` | Assets loaded by relative path | Do not rename or move. |
 | `tests/`, `scripts/check.sh` | Checks | Add tests here. |
 | `zipangu/` | Separate project: 万華京ジパング (world data + explorer) | Follow `zipangu/AGENTS.md`; it has its own checks (`zipangu/tools/check.sh`). |
+| `edomae/` | Separate project: 江戸前 Edomae (Zipangu's world as a line-art globe seen from the side) | Follow `edomae/AGENTS.md`; checks in `edomae/tools/check.sh`. Reads `zipangu/` as a read-only upstream. |
 
 A perf, security or refactor change to a maintenance-only or frozen file
 will be closed. If you find the same issue in `index.html`, fix it there.

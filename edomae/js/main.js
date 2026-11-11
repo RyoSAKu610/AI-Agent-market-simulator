@@ -10,14 +10,17 @@
 //        ?speed=N (economy speed) · ?at=<placeId> (start facing a place)
 // Nothing is written to localStorage; the explorer's saves are never touched.
 
-import { loadWorld } from '../../js/data.js';
-import { createEconomy } from '../../js/sim.js';
+import { loadWorld } from '../../zipangu/js/data.js';
+import { createEconomy } from '../../zipangu/js/sim.js';
 import { el, inkDefs, f, pt, PAPER } from './lib/ink.js';
 import { palette, applyPalette, rgb, nightTint, mix, toRGB } from './lib/daynight.js';
 const WIN_A = toRGB('#ffd58a'), WIN_B = toRGB('#f0a24e');
 import { pointerWind, clamp, lerp, smooth, seeded } from './lib/motion.js';
 import { ringLayout, arcDelta, placeShortJa, placeSubJa, districtShortJa, hash01 } from './layout.js';
-import { tauOf, kokuOfTau } from './clock.js';
+import { tauOf, kokuOfTau, warm } from './clock.js';
+import { createTown } from './town.js';
+import { companionOf } from './looks.js';
+import { headline, pickHeadline, SHEET_TITLE } from './news.js';
 import { buildDistrict, emptyLive } from './buildings.js';
 import { torii as makeTorii, SP, oval } from './kit.js';
 import { createSky } from './sky.js';
@@ -35,7 +38,7 @@ const stage = document.getElementById('stage');
 const card = document.getElementById('card');
 const hud = { koku: document.getElementById('koku'), sekki: document.getElementById('sekki'), place: document.getElementById('place-name'), placeSub: document.getElementById('place-sub'), hint: document.getElementById('hint'), cap: document.getElementById('caption') };
 
-const W = await loadWorld('../world/');
+const W = await loadWorld('../zipangu/world/');
 const eco = createEconomy(W, { seed: 1 });
 // the city is already busy when you arrive, and it is afternoon, so dusk comes soon
 for (let i = 0; i < 600; i++) { const ta = tauOf(eco.clock); if (ta > 0.6 && ta < 0.72) break; eco.step(0.5); }
@@ -59,6 +62,7 @@ grad('e-gateglow', [[0, '#fff1c9', 0.55], [0.6, '#ffd9a0', 0.18], [1, '#ffd9a0',
 grad('e-sunglow', [[0, '#ffd9a0', 0.55], [1, '#ffd9a0', 0]]);
 grad('e-sunglow2', [[0, '#ffe7a8', 0.5], [1, '#ffe7a8', 0]]);
 grad('e-moonglow', [[0, '#e9e4ff', 0.35], [1, '#e9e4ff', 0]]);
+grad('e-cateye', [[0, '#e8ff9a', 1], [1, '#c8ff6a', 0]]);
 grad('e-cone', [[0, '#fff1c2', 0.5], [1, '#fff1c2', 0]], false, { x1: 0, y1: 0, x2: 0, y2: 1 });
 
 const skyL = el('g', {}, svg);
@@ -78,6 +82,7 @@ const ringG = el('g', {}, worldG);
 const placesL = el('g', {}, ringG);
 const walkersL = el('g', {}, ringG);
 const lifeL = el('g', {}, ringG);
+const fxL = el('g', {}, ringG);              // townsfolk decor, money and goods in flight
 const glowRing = el('g', {}, glowWorld);
 const placeGlowL = el('g', {}, glowRing);
 const walkerGlowL = el('g', {}, glowRing);
@@ -140,16 +145,41 @@ function groundFor(pg, entry, rnd) {
     return [p1, p2];
 }
 
+// ------------------------------------------------------------------ the economy's feed (what the 瓦版 print)
+const feed = [];
+eco.on('*', m => { if (m && m.message) { feed.push(m); if (feed.length > 80) feed.splice(0, 40); } });
+const districtsOfPlace = new Map(layout.places.map(p => [p.id, new Set(p.districts.map(d => d.id))]));
+
+// ------------------------------------------------------------------ townsfolk, animals, money
+const town = createTown({
+    layer: walkersL, glowLayer: walkerGlowL, fxLayer: fxL, layout, W,
+    onReaderTap: p => showReader(p),
+    onFolkTap: () => {}
+});
+
 // ------------------------------------------------------------------ residents
 let selected = null;
 const residents = createResidents({
-    layer: walkersL, glowLayer: walkerGlowL, layout, W, eco, toriiOf: id => toriiByPlace.get(id), passerPlaces: ['edo_sangaku', 'edo_raiden'],
-    onTap: r => { residents.greet(r); showResident(r); }
+    layer: walkersL, glowLayer: walkerGlowL, layout, W, eco, toriiOf: id => toriiByPlace.get(id),
+    onTap: r => { residents.greet(r); showResident(r); },
+    onTrade: (r, m) => town.residentTrade(r, m, W.byId.good.get(m.good))
 });
+// companions that walk with some residents (a dog, or a fox at the heel)
+for (const r of residents.list) {
+    const c = companionOf(r.def);
+    if (c && (c.kind === 'dog' || c.kind === 'fox')) town.dogs.push(town.makeDog(r, c.colour, c.kind === 'fox'));
+}
 eco.on('depart', m => residents.depart(m));
 eco.on('arrive', m => residents.arrive(m));
 eco.on('trade', m => residents.trade(m));
 for (const p of places) for (const c of p.life.critters) c.g.addEventListener('pointerup', e => { if (!e.__dragged) showCreature(c.c); });
+
+// what a reader is reading: the newest newsworthy line about their place
+function refreshHeadline(p) {
+    const m = pickHeadline(feed, districtsOfPlace.get(p.pe.id));
+    p.headline = m; p.fig.setHeadline(m ? headline(m, 40) : '');
+    return m;
+}
 
 // ------------------------------------------------------------------ view: rotation, drag, inertia
 const startPlace = layout.byPlace.get(START_AT) || layout.byPlace.get('edo_sangaku');
@@ -161,9 +191,9 @@ const wind = pointerWind(svg, 0.25);
 function resize() {
     const r = stage.getBoundingClientRect();
     const cw = Math.max(200, r.width), ch = Math.max(160, r.height);
-    ppu = clamp(cw / 640, 1.04, 1.9);
+    ppu = cw < 560 ? clamp(cw / 276, 1.1, 1.5) : clamp(cw / 600, 1.1, 2.1);
     VW = cw / ppu; VH = ch / ppu;
-    GY = VH - clamp(VH * 0.18, 58, 170);
+    GY = VH - clamp(VH * 0.17, 48, 150);
     svg.setAttribute('viewBox', `0 0 ${f(VW)} ${f(VH)}`);
     worldG.setAttribute('transform', `translate(${f(VW / 2)} ${f(GY + R)})`);
     glowWorld.setAttribute('transform', `translate(${f(VW / 2)} ${f(GY + R)})`);
@@ -196,7 +226,7 @@ svg.addEventListener('pointerup', e => { if (drag.id === e.pointerId && drag.mov
 const endDrag = e => {
     if (drag.id !== e.pointerId) return;
     if (drag.moved) { vel = reduce ? 0 : clamp(drag.v, -2400, 2400); drag.wasDrag = true; setTimeout(() => { drag.wasDrag = false; }, 0); }
-    else if (!e.target.closest || !e.target.closest('.resident, .critter, .sign')) hideCaption();
+    else if (!e.target.closest || !e.target.closest('.resident, .critter, .sign, .animal, .flock')) hideCaption();
     drag.id = null; card.classList.remove('dragging');
 };
 svg.addEventListener('pointerup', endDrag);
@@ -222,19 +252,26 @@ function showResident(r) {
     const a = r.a, d = W.byId.district.get(a.at || r.district || a.home);
     const pl = d ? W.byId.place.get(d.home) : null;
     const where = a.at ? `${districtShortJa(d)}・${placeShortJa(pl)}` : a.target ? `${districtShortJa(W.byId.district.get(a.target))}へ移動中` : '';
-    fillCaption(r.def.name || r.def.name_ja, a.activity || '', where, `../#/agent/${r.id}`, '住人のページへ →');
+    fillCaption(r.def.name || r.def.name_ja, a.activity || '', where, `../zipangu/#/agent/${r.id}`, '住人のページへ →');
+}
+function showReader(p) {
+    selected = null;
+    const m = refreshHeadline(p);
+    p.showT = 4.5;
+    const kind = SHEET_TITLE[p.look.sheet] || '瓦版';
+    fillCaption(`${kind}：${m ? headline(m, 60) : 'きょうの刷りはまだ'}`, m ? `${m.label || ''}の刷り` : '', placeShortJa(p.pe.place), m && m.agent ? `../zipangu/#/agent/${m.agent}` : null, '記事の住人へ →');
 }
 function showCreature(c) {
     selected = null;
     const homes = (c.home || []).map(id => districtShortJa(W.byId.district.get(id))).filter(Boolean).slice(0, 2).join('・');
-    fillCaption((c.name_ja || '').replace(/（[^）]*）/g, ''), c.name_en || '', homes, `../#/creature/${c.id}`, '図鑑で見る →');
+    fillCaption((c.name_ja || '').replace(/（[^）]*）/g, ''), c.name_en || '', homes, `../zipangu/#/creature/${c.id}`, '図鑑で見る →');
 }
 function fillCaption(title, line, where, href, label) {
     const cap = hud.cap;
     cap.querySelector('b').textContent = title;
     cap.querySelector('.cap-line').textContent = line;
     cap.querySelector('.cap-where').textContent = where;
-    const a = cap.querySelector('a'); a.href = href; a.textContent = label;
+    const a = cap.querySelector('a'); if (href) { a.href = href; a.textContent = label; a.hidden = false; } else a.hidden = true;
     cap.hidden = false;
 }
 function hideCaption() { hud.cap.hidden = true; selected = null; }
@@ -242,10 +279,13 @@ hud.cap.querySelector('button').addEventListener('click', hideCaption);
 
 let hintOn = true;
 function hint(on) { if (hintOn && !on) { hintOn = false; hud.hint.classList.add('gone'); } }
-setTimeout(() => hint(false), 14000);
+setTimeout(() => hint(false), 10000);
+for (const ev of ['pointerdown', 'keydown', 'wheel']) card.addEventListener(ev, () => hint(false), { passive: true });
 
 // ------------------------------------------------------------------ the frame
-let T = 0, P = palette(PIN ?? tauOf(eco.clock)), tau = 0;
+let T = 0, P = warm(palette(PIN ?? tauOf(eco.clock))), tau = 0;
+const visiblePlaces = new Set();
+let headlineT = 0;
 const sinceDuskOf = x => (x - 0.75 + 1) % 1;
 let lastLabel = '', lastPlace = '';
 
@@ -292,7 +332,7 @@ function frame(t, dt, stepSim = true) {
     if (!drag.moved && Math.abs(vel) > 1) { view += vel * dt; vel *= Math.exp(-2.6 * dt); if (Math.abs(vel) < 4) vel = 0; }
     view = ((view % LEN) + LEN) % LEN;
     tau = PIN ?? tauOf(eco.clock);
-    P = palette(tau);
+    P = warm(palette(tau));
     applyPalette(svg, P);
     card.style.setProperty('--ink', rgb(P.ink));
     card.style.setProperty('--paper', rgb(P.paper));
@@ -302,23 +342,32 @@ function frame(t, dt, stepSim = true) {
     glowRing.setAttribute('transform', `rotate(${f(deg)})`);
     sky.draw(tau, t, dt, P, wind.value, P.night);
     let best = null, bestD = Infinity;
+    visiblePlaces.clear();
     for (const pl of places) {
         const e = pl.entry;
         const d0 = arcDelta(view, e.s0, LEN), d1 = arcDelta(view, e.s1, LEN);
         const vis = !(d0 > half || d1 < -half) || (d0 > d1);
         const show = vis && Math.min(Math.abs(d0), Math.abs(d1), Math.abs(arcDelta(view, e.mid, LEN))) < (e.s1 - e.s0) + half;
         if (pl.shown !== show) { pl.shown = show; const v = show ? '' : 'none'; pl.g.style.display = v; pl.gl.style.display = v; pl.lg.style.display = v; }
-        if (show) drawPlace(pl, t, dt);
+        if (show) { drawPlace(pl, t, dt); visiblePlaces.add(e.id); }
         const dm = Math.abs(arcDelta(view, e.mid, LEN));
         if (dm < bestD) { bestD = dm; best = pl; }
     }
     residents.update(t, dt, P, wind.value, { s: view, half });
+    town.update(t, dt, P, wind.value, { s: view, half }, visiblePlaces, placeId => {
+        const out = [];
+        for (const r of residents.list) if (r.visible && r.go > 0.3 && (layout.byDistrict.get(r.district) || {}).place === placeId) out.push(r.s);
+        return out;
+    });
+    // readers in view turn to the newest lines now and then
+    headlineT -= dt;
+    if (headlineT < 0) { headlineT = 12; for (const id of visiblePlaces) for (const p of town.places.get(id).readers) if (!(p.showT > 0)) refreshHeadline(p); }
     // the name of the place at the top, in faint ink
     if (best) {
         const span = (best.entry.s1 - best.entry.s0) / 2;
         const o = clamp(1 - bestD / span, 0, 1);
         if (lastPlace !== best.entry.id) { lastPlace = best.entry.id; hud.place.textContent = placeShortJa(best.entry.place); hud.placeSub.textContent = [placeSubJa(best.entry.place), (best.entry.place.name_en || '').split(' — ')[0]].filter(Boolean).join(' · '); }
-        hud.place.parentElement.style.opacity = f(0.18 + 0.4 * o);
+        hud.place.style.opacity = f(0.45 + 0.4 * o);
     }
     const label = PIN === null ? eco.clock.label : kokuOfTau(PIN);
     const sk = `${eco.clock.sekki || ''}`;
@@ -330,6 +379,7 @@ let fps = { n: 0, since: performance.now(), value: 0 };
 function render() { if (reduce || DEBUG) frame(T, 0, false); }
 
 const api = {
+    town, feed,
     W, eco, layout, residents, places, sky,
     get view() { return view; }, set view(v) { view = v; render(); },
     get tau() { return tau; },

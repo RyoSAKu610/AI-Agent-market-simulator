@@ -28,7 +28,7 @@ export function createSky(root, glow, defs) {
     const r = 14;
     moonDisk.setAttribute('d', `M0 ${-r} A${r} ${r} 0 1 1 0 ${r} A${r * 0.62} ${r} 0 1 0 0 ${-r}Z`);
     const mist = el('g', { opacity: 0.6 }, g);
-    const bands = [[0.12, 0.22, 150], [0.55, 0.14, 190], [0.8, 0.3, 130], [0.33, 0.36, 100]].map(([u, v, w]) => ({ u, v, w, x: 0, n: pen(mist, 0.6) }));
+    const bands = [[0.12, 0.42, 150], [0.55, 0.3, 190], [0.8, 0.5, 130], [0.33, 0.56, 100]].map(([u, v, w]) => ({ u, v, w, x: 0, n: pen(mist, 0.6) }));
     const cloudD = (x, y, w) => {
         const curl = (cx, cy, s) => `M${f(cx)} ${f(cy)} q${5 * s} 0 ${5 * s} -4 q0 -3.2 ${-3.2 * s} -3.2 q-2.2 0 -2.2 2.2 q0 1.4 1.4 1.4`;
         return `M${f(x)} ${f(y)} L${f(x + w)} ${f(y)} ${curl(x + w, y, 1)} ${curl(x, y, -1)} M${f(x + w * 0.18)} ${f(y - 7)} L${f(x + w * 0.66)} ${f(y - 7)} ${curl(x + w * 0.66, y - 7, 1)} M${f(x + w * 0.42)} ${f(y + 6.5)} L${f(x + w * 0.92)} ${f(y + 6.5)} ${curl(x + w * 0.42, y + 6.5, -1)}`;

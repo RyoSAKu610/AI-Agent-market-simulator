@@ -94,7 +94,6 @@ const S = {
     'settings.summon': ['あなたのAIをこの世界へ', 'Bring your AI into this world', '让你的 AI 来到这个世界', '당신의 AI를 이 세계로', 'Trae tu IA a este mundo', 'Bring deine KI in diese Welt'],
     'settings.open': ['迎え入れのページを開く →', 'Open the welcome page →', '打开迎接页面 →', '맞이하기 페이지 열기 →', 'Abrir la página de bienvenida →', 'Willkommensseite öffnen →'],
     'map.legend': ['凡例', 'Legend', '图例', '범례', 'Leyenda', 'Legende'],
-    'map.edomae': ['江戸前：横から見る線画の町 →', 'Edomae: the world in line art, from the side →', '江户前：从侧面看的线描街市 →', '에도마에: 옆에서 본 선화의 거리 →', 'Edomae: el mundo a línea, visto de lado →', 'Edomae: die Welt als Strichzeichnung, von der Seite →'],
     'map.atelier': ['✦ 動く絵の制作帖 →', '✦ The living-picture atelier →', '✦ 会动的画帖 →', '✦ 움직이는 그림 화첩 →', '✦ El taller de imágenes vivas →', '✦ Das Atelier der lebenden Bilder →'],
     'map.stopArt': ['絵を止める', 'Pause art', '暂停画面', '그림 멈추기', 'Pausar imágenes', 'Bilder anhalten'],
     'map.playArt': ['絵を動かす', 'Play art', '播放画面', '그림 움직이기', 'Animar imágenes', 'Bilder abspielen'],

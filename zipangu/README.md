@@ -87,7 +87,6 @@ LLM は住人が行き先を決めるときに考えます。住人は今まで�
 - **相場** — 地区ごとの値動き、価格チャート、時代をまたぐ裁定のヒント。
 - **住人** — 32人（＋あなたが迎えたAI）の長期目標、進み具合、いまの行動、会話と小さな劇場。
 - **制作帖** — 128主題の設定画を、固有の動き・時間・商いと一緒に鑑賞。
-- **江戸前**（[`edomae/`](edomae/)、地図の「江戸前」から）— 同じ世界を横から見た線画の地球。ドラッグで地球をまわすと18の時片・異界が地平線から現れ、江戸の店先の奥で人が働き、住人は時層鳥居をくぐって旅をします。万世時計の不定時法で昼と夜が移ろい、夜は銀河鉄道が空を渡ります（読むだけで、探索の記録には書き込みません）。
 - **鎖** — 住人の取引をテストネット（Solana devnet・Robinhood Chain・Arc・Zcash）に記録する実験モード（既定では無効）。
 - **案内** — 世界の掟、憲章、考証記録。
 - **言語** — 日本語・English・简体中文・한국어・Español・Deutsch。画面の枠組みが切り替わり、英語名のある名前は英語で表示します（世界の本文は日本語）。
@@ -148,8 +147,6 @@ The LLM decides where residents go next. The economy still works out each reside
 - **🙋 You decide:** press “Decide for this resident” on a resident's page; when it has to choose, the same candidates the rules and the AIs get come to you (the city waits). Your choices go into the research log as “human”, the yardstick for how human-like the AIs are.
 - **🤝 Donate to research:** from 🔬 Research log in Settings, donate your records with consent (CC BY-NC 4.0, only whitelisted fields, private details masked, withdrawable by receipt) to an open dataset for companion AIs ([docs/DATA.md](docs/DATA.md)).
 - **🏆 Human-likeness ranking** (`#/bench`): moments where people decided are put to AIs in exactly the same words, and AIs are ranked by how human-like their choices are. Anyone can enter a model with an OpenAI-compatible URL ([bench/README.md](bench/README.md)).
-
-- **Edomae** ([`edomae/`](edomae/), linked from the map): the same world as a line-art globe seen from the side. Drag to turn it and the eighteen places come over the horizon; people work inside open Edo shop fronts, residents travel through the time-gates at a real walking pace, and day and night follow the 万世時計 (read-only: it never writes to your journey).
 
 **Also:** a 67-creature bestiary, a library of 58 public-domain works (10 in the English original, from Project Gutenberg), a live market with price charts, 32 residents with dialogue and a small live theatre, an atelier of 128 concept paintings, and an interface in six languages.
 

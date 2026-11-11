@@ -1,19 +1,20 @@
 // 江戸前 Edomae: the pure logic behind the line-art globe.
-// Run: node tools/edomae.test.mjs
+// Run: node edomae/tools/edomae.test.mjs
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 // As in visuals.test.mjs, load browser modules as data: URLs (they import nothing).
 const moduleUrl = source => 'data:text/javascript;base64,' + Buffer.from(source).toString('base64');
-const load = path => import(moduleUrl(readFileSync(new URL('../' + path, import.meta.url), 'utf8')));
-const { buildWorld } = await load('js/data.js');
-const { clockAt } = await load('js/sim.js');
+// paths are from the repository root: edomae/ reads the world and the economy from zipangu/ (upstream, read-only)
+const load = path => import(moduleUrl(readFileSync(new URL('../../' + path, import.meta.url), 'utf8')));
+const { buildWorld } = await load('zipangu/js/data.js');
+const { clockAt } = await load('zipangu/js/sim.js');
 const { ringLayout, ringOrder, signName, arcDelta, standSpot } = await load('edomae/js/layout.js');
 const { tauOf, tOfTau } = await load('edomae/js/clock.js');
 const { palette } = await load('edomae/js/lib/daynight.js');
 const { gait } = await load('edomae/js/lib/gait.js');
 const { lookOf, lookKey } = await load('edomae/js/looks.js');
 
-const read = stem => JSON.parse(readFileSync(new URL('../world/' + stem + '.json', import.meta.url), 'utf8'));
+const read = stem => JSON.parse(readFileSync(new URL('../../zipangu/world/' + stem + '.json', import.meta.url), 'utf8'));
 const W = buildWorld(Object.fromEntries(['world', 'eras', 'realms', 'districts', 'creatures', 'goods', 'currencies', 'agents', 'events', 'library'].map(k => [k, read(k)])));
 
 // ---------------------------------------------------------------- ring layout
