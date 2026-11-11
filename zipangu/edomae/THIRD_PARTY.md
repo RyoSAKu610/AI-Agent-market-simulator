@@ -1,0 +1,32 @@
+# Third-party code in 江戸前 Edomae
+
+`js/lib/ink.js`, `js/lib/gait.js`, `js/lib/motion.js` and `js/lib/daynight.js` are
+plain-JavaScript ports (types stripped, same API) of `lib/ink.ts`, `lib/gait.ts`,
+`lib/motion.ts` and `lib/daynight.ts` from **line-art-animation** by JDhruv14 —
+https://github.com/JDhruv14/line-art-animation — used under the MIT License below.
+The characters, buildings and scenes of Edomae are new drawings; none of the
+reference's example scene, characters or media are copied.
+
+```
+MIT License
+
+Copyright (c) 2026 JDhruv14
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

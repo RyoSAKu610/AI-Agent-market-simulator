@@ -104,6 +104,8 @@ export function homeView(ctx) {
     if (launch) stage.append(launch.el);
     const journal = journalLink(ctx);
     if (journal) stage.append(journal);
+    // 江戸前: the same world in line art, seen from the side (a separate page, so not in the single-file build)
+    if (!window.__ZIPANGU_WORLD__) stage.append(h('a', { class: 'edomae-map-link', href: 'edomae/' }, t('map.edomae')));
     stage.append(h('h1', { class: 'sr-only' }, '万華京ジパング ・ 地図'), canvas, side, zoomBox, legend, places, welcome);
 
     // ------------------------------------------------ info plaque

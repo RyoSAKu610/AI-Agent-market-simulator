@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<!-- The same policy as ../index.html (and netlify.toml for /zipangu/*): only this site may run code here. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://esm.sh 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>江戸前 Edomae — 万華京ジパング</title>
+<meta name="description" content="万華京ジパングを横から見た線画の地球。江戸の町並みで住人が商い、考え、時層鳥居をくぐって旅をする。不定時法の万世時計にあわせて昼と夜が移ろう。 / Kaleidoscope Zipangu seen from the side in line art: an Edo street on a turning globe, alive from dawn to night.">
+<meta name="theme-color" content="#ebe8e2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23fdfcf8'/%3E%3Cpath d='M5 25 Q16 15 27 25' fill='none' stroke='%231c1c1c' stroke-width='1.6'/%3E%3Cpath d='M9 22 L9 12 L23 12 L23 22 M7 12 L25 12 L22 8 L10 8Z' fill='none' stroke='%231c1c1c' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="edomae.css">
+</head>
+<body>
+<header class="page-head">
+  <a class="back" href="../">← 万華京ジパング <span>Kaleidoscope Zipangu</span></a>
+  <h1>江戸前 <span>Edomae</span></h1>
+  <p class="lead">万華京ジパングを横から見た、線画の地球。住人は自分で商い、考え、時層鳥居をくぐって旅をします。<span>The same world, seen from the side in ink: residents trade, think and travel through the time-gates on their own.</span></p>
+</header>
+
+<main>
+  <div class="card" id="card" tabindex="0" aria-describedby="hint">
+    <div id="stage"></div>
+    <div class="hud hud-clock" aria-live="polite"><b id="koku"></b><span id="sekki"></span></div>
+    <div class="hud hud-place"><b id="place-name"></b><span id="place-sub"></span></div>
+    <p class="hud" id="hint">ドラッグで地球をまわす · 人や看板にふれる <span>drag to turn the world · tap people and signboards</span></p>
+    <div class="caption" id="caption" hidden>
+      <button type="button" aria-label="閉じる / close">×</button>
+      <b></b>
+      <span class="cap-line"></span>
+      <span class="cap-where"></span>
+      <a href="../"></a>
+    </div>
+  </div>
+  <p class="foot">← → でも回せます / arrow keys turn it too · 読むだけの窓：探索の記録には書き込みません / read-only: your journey in the explorer is untouched · 線画の道具は <a href="THIRD_PARTY.md">line-art-animation (MIT)</a> より</p>
+</main>
+<noscript><p class="foot">江戸前は JavaScript で動きます。 / Edomae needs JavaScript.</p></noscript>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
