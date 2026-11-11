@@ -73,3 +73,22 @@ Hash routes: `#/` (map + HUD), `#/place/<id>`, `#/district/<id>`, `#/bestiary`, 
 `#/library`, `#/work/<id>`, `#/market`, `#/agents`, `#/agent/<id>`, `#/about`.
 HUD: 万世時計 dial (不定時法), live feed of trades/events, base-currency ticker.
 Japanese first, English names alongside. Mobile first (390×844), also 1280×800.
+
+## edomae/ — 江戸前, the world in line art seen from the side
+A separate page (`edomae/index.html`, same CSP) built from the same world and economy:
+`loadWorld('../world/')`, `createEconomy(W, { seed: 1 })`, stepped in its own frame loop. Read-only:
+it writes nothing to localStorage. Not part of the single-file bundle (the map link hides there).
+```js
+// pure (no DOM, no imports; tools/edomae.test.mjs loads them in Node)
+edomae/js/layout.js   ringLayout(W) → { R, total, places: [{ id, family, s0, s1, mid, torii, districts: [{ id, s, w, x0, x1, seed }] }], byPlace, byDistrict }
+                      // street positions s are arc lengths; the ring closes: R = total / 2π. ringOrder(W), signName(d), standSpot(layout, agentId, districtId), arcDelta
+edomae/js/clock.js    tauOf(clock) → τ ∈ [0,1): [dawn, dusk] → [0.25, 0.75], night → the rest (midnight = 0); tOfTau, kokuOfTau
+edomae/js/looks.js    lookOf(agentDef, place, family) → { garment, gaitKind, main, sub, accent, hat, hair, prop, … } (deterministic)
+edomae/js/lib/*.js    ink, gait, motion, daynight: ports of line-art-animation (MIT, see edomae/THIRD_PARTY.md), same API
+// DOM
+edomae/js/figure.js   createFigure(parent, glow, look) → { g, body, glowRoot, gait, update({ phase, go, t, dt, P, wind, act }) }
+edomae/js/residents.js createResidents({ layer, glowLayer, layout, W, eco, onTap, toriiOf }) — depart → walk to the torii and fade;
+                      arrive → step out and walk to the district; events queue, off-screen walks snap. trade → bow / hand-over; stage think → hand to chin
+edomae/js/buildings.js, kit.js, sitter.js, sky.js, life.js — architecture by era family, sky and night train, creatures by kind
+edomae/js/main.js     the page. Flags: ?debug (window.__step(s)), ?tau=, ?speed=, ?at=<placeId>; handles on window.__edomae
+```
