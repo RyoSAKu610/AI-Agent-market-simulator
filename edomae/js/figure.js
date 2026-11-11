@@ -660,8 +660,8 @@ function buildSheet(up, kind) {
             if (hold < 0.02) { g.style.display = 'none'; return; }
             g.style.display = '';
             const c = L2(nh, fh, 0.5);
-            const k = 0.62 + 0.62 * show;
-            g.setAttribute('transform', `translate(${f(c[0] + 1 + show * 1)} ${f(c[1] - 9 + show * 2)}) scale(${f(k)}) rotate(${f(-4 + show * 3)})`);
+            const k = 0.86 + 0.6 * show;
+            g.setAttribute('transform', `translate(${f(c[0] + 2 + show * 2)} ${f(c[1] - 11 + show * 3)}) scale(${f(k)}) rotate(${f(-4 + show * 3)})`);
         }
     };
 }

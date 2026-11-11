@@ -163,8 +163,9 @@ export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, on
         const span = [pe.s0 + 20, pe.s1 - 20];
         if (kind === 'cat') {
             const cat = createCat(layer, glowLayer, { colour: pr() < 0.5 ? '#ece6d8' : '#4a4442', patch: pr() < 0.5 ? '#d08a4a' : '#2c2a2a', scale: 0.6 });
-            const onBench = pr() < 0.6;
-            const s = onBench ? benchS + 12 : lerp(span[0], span[1], pr());
+            // on the 縁台 beside a lone sitter; on a busy bench it curls up on the ground beside it
+            const onBench = !pe.hero && pr() < 0.7;
+            const s = onBench ? benchS + 10 : pe.hero ? benchS + 26 : lerp(span[0], span[1], pr());
             cat.place(trAt(s, onBench ? 3.6 : 3, onBench ? 11 : 0), pr() < 0.5 ? 1 : -1);
             cat.hit.addEventListener('pointerup', e => { if (!e.__dragged) cat.poke(); });
             return { kind, a: cat, s, update(dt, t, P) { cat.update(dt, t, P, (x, y) => ringXY(s, onBench ? 3.6 : 3, x * cat.dir * cat.scale, y * cat.scale - (onBench ? 11 : 0))); } };
