@@ -137,13 +137,13 @@ export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, on
         C(bg, 'M-17 -11 L17 -11 L17 -12.8 L-17 -12.8Z', '#c8403a', SP * 0.6);                // red felt on the bench
         drawBench(bg, -16, 16, 11);
         const benchSitters = [];
-        const task = pe.hero ? 'read' : pick(['tea', 'read', 'tea', 'feed']);
+        const task = pe.hero ? 'read' : ({ sakura: 'read', tsuki: 'tea', jomon: 'feed', yume: 'read', ihatov: 'read', showa: 'read' })[fam] || pick(['tea', 'read', 'tea', 'feed']);
         benchSitters.push(createSitter(bg, { x: -7, y: -11 + 11 - 0.5, scale: FS, kind: 'bench', task, colour: KEEPER_COLOURS[Math.floor(pr() * KEEPER_COLOURS.length)], hair: pick(['topknot', 'bun', 'cap']), seed: pr() }));
         if (pe.hero) benchSitters.push(createSitter(bg, { x: 7, y: 0, scale: FS, kind: 'bench', task: 'tea', colour: '#6a4a6a', hair: 'bun', seed: pr() }));
         T.benches.push({ g: bg, sitters: benchSitters, s: bs });
         // a food stall with steam where the street has one
         if (STALL[fam]) {
-            const ss = pe.s0 + 30 + (pe.districts[0] ? 0 : 0);
+            const ss = pe.s0 + 26;               // in the place's opening pad, clear of the first front
             const sg = el('g', { transform: trAt(ss, 3) }, T.decor);
             const gl = el('g', { transform: trAt(ss, 3) }, glowLayer);
             drawStall(sg, gl, T, STALL[fam], pr);

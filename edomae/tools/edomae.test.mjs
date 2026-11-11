@@ -14,6 +14,7 @@ const { palette } = await load('edomae/js/lib/daynight.js');
 const { gait } = await load('edomae/js/lib/gait.js');
 const { lookOf, lookKey, companionOf } = await load('edomae/js/looks.js');
 const news = await load('edomae/js/news.js');
+const { frameFor, TALLEST } = await load('edomae/js/frame.js');
 
 const read = stem => JSON.parse(readFileSync(new URL('../../zipangu/world/' + stem + '.json', import.meta.url), 'utf8'));
 const W = buildWorld(Object.fromEntries(['world', 'eras', 'realms', 'districts', 'creatures', 'goods', 'currencies', 'agents', 'events', 'library'].map(k => [k, read(k)])));
@@ -187,4 +188,21 @@ assert.equal((companionOf(W.byId.agent.get('hakuuchi')) || {}).kind, 'bird', 'HA
 const withPets = comps.filter(([, c]) => c).length;
 assert.ok(withPets >= 6 && withPets <= 18, `some residents walk with an animal (${withPets})`);
 
-console.log(`edomae: ${L.places.length} places, ${slots.length} districts on a ring of radius ${Math.round(L.R)}; tauOf, warm contrast, planted feet, ${keys.size} distinct residents, headlines, money and ${withPets} companions ok`);
+// ---------------------------------------------------------------- framing: portrait vs landscape
+// card sizes as the page lays them out (css px) and the HUD band height
+const cards = { '360x640': [344, 541], '390x844': [374, 745], '430x932': [414, 833], '844x390': [820, 347], '768x1024': [744, 894], '1280x800': [1180, 536] };
+for (const [name, [cw, ch]] of Object.entries(cards)) {
+    const F = frameFor(cw, ch, { hudPx: 82 });
+    assert.ok(Math.abs(F.VW * F.ppu - cw) < 1e-6 && Math.abs(F.VH * F.ppu - ch) < 1e-6, `${name}: the viewBox fills the card`);
+    assert.ok(F.GY - TALLEST * 0.92 >= F.skyTop - 1, `${name}: the tallest fronts stay under the HUD band`);
+    assert.ok(F.GY < F.VH - 40, `${name}: the street and the kerb are inside the card`);
+    if (F.portrait) {
+        assert.ok(F.GY / F.VH >= 0.6 && F.GY / F.VH <= 0.8, `${name}: in portrait the street sits in the lower middle (${(F.GY / F.VH).toFixed(2)})`);
+        assert.ok(48 * F.ppu >= 60, `${name}: people are drawn large on a phone (${(48 * F.ppu).toFixed(0)} px)`);
+    } else assert.ok(F.GY / F.VH > 0.75, `${name}: in landscape the street runs low with the sky above`);
+}
+assert.equal(frameFor(374, 745, { hudPx: 82 }).portrait, true);
+assert.equal(frameFor(820, 347, { hudPx: 82 }).portrait, false);
+assert.deepEqual(frameFor(374, 745), frameFor(374, 745), 'framing is deterministic');
+
+console.log(`edomae: ${L.places.length} places, ${slots.length} districts on a ring of radius ${Math.round(L.R)}; tauOf, warm contrast, planted feet, ${keys.size} distinct residents, headlines, money, ${withPets} companions and framing ok`);

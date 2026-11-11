@@ -2,29 +2,50 @@
    with the time of day; everything inside the card is ink on paper. */
 :root { --page: #ebe8e2; --page-ink: #2a2622; --mincho: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif; }
 * { box-sizing: border-box; }
-html, body { margin: 0; background: var(--page); color: var(--page-ink); }
-body { min-height: 100vh; font: 15px/1.6 var(--mincho); display: flex; flex-direction: column; align-items: center; padding: 14px 12px 20px; }
+html, body { margin: 0; background: var(--page); color: var(--page-ink); overflow-x: hidden; }
+body { min-height: 100vh; min-height: 100dvh; font: 15px/1.6 var(--mincho); display: flex; flex-direction: column; align-items: center;
+  padding: max(14px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
 
 .page-head { width: min(1180px, 100%); display: grid; grid-template-columns: 1fr; gap: 2px; margin-bottom: 10px; }
 .page-head h1 { margin: 0; font-size: clamp(24px, 3.4vw, 34px); font-weight: 700; letter-spacing: .08em; line-height: 1.2; }
 .page-head h1 span { font-size: .5em; letter-spacing: .14em; margin-left: .4em; opacity: .7; }
 .page-head .lead { margin: 0; font-size: 13px; max-width: 64em; opacity: .85; }
 .page-head .lead span { display: block; font-size: 12px; opacity: .75; }
+.page-head .lead-short { display: none; margin: 0; font-size: 12px; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .back { color: var(--page-ink); text-decoration: none; font-size: 13px; opacity: .8; }
 .back span { font-size: 11px; opacity: .7; }
 .back:hover { opacity: 1; text-decoration: underline; }
 
-main { width: min(1180px, 100%); display: flex; flex-direction: column; align-items: center; }
+main { width: min(1180px, 100%); display: flex; flex-direction: column; align-items: center; flex: 1 1 auto; min-height: 0; }
 .card {
-  position: relative; width: 100%; aspect-ratio: 2.2 / 1; max-height: calc(100vh - 150px);
-  border-radius: 18px; overflow: hidden; isolation: isolate; touch-action: pan-y; outline: none;
+  position: relative; width: 100%; aspect-ratio: 2.2 / 1; max-height: calc(100vh - 150px); max-height: calc(100dvh - 150px);
+  border-radius: 18px; overflow: hidden; isolation: isolate; touch-action: none; outline: none;
   background: var(--paper, #fdfcf8); --ink: #1c1c1c;
   box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 0 0 1px rgba(40,34,26,.10), 0 18px 50px -18px rgba(40,34,26,.35), 0 4px 14px -6px rgba(40,34,26,.18);
   cursor: grab;
 }
 .card:focus-visible { box-shadow: 0 0 0 2px #2a2622, 0 18px 50px -18px rgba(40,34,26,.35); }
 .card.dragging, .card.dragging * { cursor: grabbing !important; }
-@media (max-aspect-ratio: 1/1) { .card { aspect-ratio: 1.2 / 1; max-height: none; } }
+/* a phone held upright: the card takes the rest of the screen under a short header */
+@media (max-aspect-ratio: 1/1) {
+  body { height: 100vh; height: 100dvh; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+  .card { aspect-ratio: auto; flex: 1 1 auto; height: auto; min-height: 320px; max-height: none; }
+}
+/* phones (upright or on their side): title and one short line */
+@media (max-width: 600px), (max-height: 500px) {
+  .page-head { margin-bottom: 8px; gap: 0; }
+  .page-head .lead { display: none; }
+  .page-head .lead-short { display: block; }
+  .page-head h1 { font-size: 22px; }
+  .back { font-size: 12px; }
+}
+/* a phone on its side: the card fills the height */
+@media (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  body { height: 100vh; height: 100dvh; padding-top: max(6px, env(safe-area-inset-top)); padding-bottom: max(6px, env(safe-area-inset-bottom)); }
+  .page-head { display: flex; align-items: baseline; gap: 14px; }
+  .page-head h1 { font-size: 18px; }
+  .card { aspect-ratio: auto; flex: 1 1 auto; max-height: none; }
+}
 #stage, #stage svg { display: block; position: absolute; inset: 0; width: 100%; height: 100%; user-select: none; -webkit-user-select: none; }
 #stage svg .pp { fill: var(--paper, #fdfdfc); }
 #stage svg .pp-stroke { stroke: var(--paper, #fdfdfc); }
@@ -33,12 +54,12 @@ main { width: min(1180px, 100%); display: flex; flex-direction: column; align-it
 #stage svg .sign:hover path:first-of-type { stroke-width: 1.3; }
 
 .hud { position: absolute; color: var(--ink); pointer-events: none; font-family: var(--mincho); margin: 0; text-shadow: 0 0 4px var(--paper, #fdfcf8), 0 0 8px var(--paper, #fdfcf8); }
-.hud-clock { left: 2.2%; top: 3%; letter-spacing: .06em; }
+.hud-clock { left: 10px; top: 10px; letter-spacing: .06em; max-width: calc(100% - 20px); padding: 4px 10px 5px; border-radius: 10px; background: color-mix(in srgb, var(--paper, #fdfcf8) 78%, transparent); }
 .hud-clock p { margin: 0; }
 .hud-clock b { font-weight: 700; font-size: clamp(14px, 1.6vw, 18px); }
 .hud-clock span { margin-left: .6em; font-size: clamp(11px, 1.2vw, 14px); opacity: .85; }
 .hud-place { font-size: clamp(13px, 1.5vw, 17px); font-weight: 600; letter-spacing: .2em; margin-top: 2px !important; transition: opacity .4s; }
-.hud-sub { font-size: clamp(10px, 1vw, 12px); letter-spacing: .06em; opacity: .55; max-width: 46vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hud-sub { font-size: clamp(10px, 1vw, 12px); letter-spacing: .06em; opacity: .6; max-width: min(46vw, 520px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #hint { right: 2.2%; top: 3.2%; font-size: 11px; opacity: .5; white-space: nowrap; transition: opacity 1.2s; letter-spacing: .04em; }
 #hint.gone { opacity: 0; }
 
@@ -57,7 +78,7 @@ main { width: min(1180px, 100%); display: flex; flex-direction: column; align-it
 @media (max-width: 600px) {
   body { padding: 10px 8px 16px; }
   .page-head .lead { font-size: 12px; }
-  .hud-sub { max-width: 70vw; }
+  .hud-sub { max-width: calc(100vw - 60px); }
   #hint { top: auto; right: 0; left: 0; bottom: 3%; text-align: center; }
   .caption { left: 3%; right: 3%; max-width: none; }
 }

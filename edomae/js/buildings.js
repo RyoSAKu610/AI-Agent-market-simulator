@@ -322,6 +322,245 @@ const EDO = {
     }
 };
 
+
+// ------------------------------------------------------------------ the six quieter places, drawn from their landmarks
+
+// a round window that lights (丸窓)
+function roundWin(ctx, x, y, r, opts) {
+    const w = pane(ctx.g, ctx.gl, x - r, y - r, x + r, y + r, ctx.rnd, opts);
+    w.n.setAttribute('d', oval(x, y, r, r));
+    P(ctx.g, `${oval(x, y, r, r)} M${f(x - r)} ${f(y)} L${f(x + r)} ${f(y)}`, SP * 0.6);
+    ctx.live.windows.push(w);
+    return w;
+}
+// an open room seen from the street, with someone at work in it
+function openRoom(ctx, x0, x1, y0, task, opts = {}) {
+    const { g } = ctx;
+    S(g, rect(x0, y0, x1, 0), SP * 0.6);
+    S(g, rect(x0, -10, x1, -8.6), SP * 0.7);
+    const lamp = win(ctx, x0 + 2, y0 + 1, x1 - 2, y0 + 4, 'plain', { thr: 0.04, spill: true });
+    sitter(ctx, lerp(x0, x1, opts.at ?? 0.4), -10, { task, ...opts });
+    return lamp;
+}
+const THIN = {
+    // 月の都
+    ryugu_fuji_dana(ctx, w) {
+        FAMILY.tsuki(ctx, w);
+        const { g, rnd } = ctx;
+        // 地球をのぞむ縁側: a veranda where someone sits with tea looking at the earth
+        S(g, rect(-w * 0.2, -12, w * 0.2, -9), SP * 0.8); posts(g, [-w * 0.18, w * 0.18], -9, 0, SP);
+        sitter(ctx, -w * 0.05, -12, { task: 'tea', colour: '#8f78c8', hair: 'bun' });
+        // 燕の軒: a swallow's nest under the beam, a swallow on its rim
+        S(g, `M${f(w * 0.3)} -64 q4 6 8 0Z`, SP * 0.6); B(g, `M${f(w * 0.31)} -66 q2 -2 4 -1 l3 -1 l-2 2 q-2 2 -5 0Z`);
+        ctx.live.lanterns.push(chochin(g, ctx.gl, w * 0.2, -60, rnd, { r: 4.4, h: 10 }));
+    },
+    ryugu_kaguya_chaya(ctx, w) {
+        const { g, rnd } = ctx;
+        // かぐや茶屋: a thatched tea house open to the street, tea being served in 一服の間
+        const x0 = -w * 0.44, x1 = w * 0.18;
+        S(g, wallRect(x0, -50, x1, 0, 0.4));
+        thatchRoof(g, { x0: x0 - 10, x1: x1 + 10, eave: -48, ridge: -80, inset: 18, rnd });
+        openRoom(ctx, x0 + 4, lerp(x0, x1, 0.62), -46, 'pour', { colour: '#a9b98a', hair: 'bun' });
+        sitter(ctx, lerp(x0, x1, 0.5), -10, { task: 'tea', dir: -1, colour: '#6a4a8a' });
+        // 空き釘の壁: a row of empty pegs (the robe is never worn)
+        P(g, Array.from({ length: 5 }, (_, i) => `M${f(lerp(x0, x1, 0.68) + i * 4)} -40 l1.6 1.6`).join(' '), SP * 0.9);
+        win(ctx, lerp(x0, x1, 0.68), -32, x1 - 4, -12, 'shoji', { sil: 'sit' });
+        // 物語の秤: a balance hanging at the door
+        P(g, `M${f(x1 - 6)} -46 L${f(x1 - 6)} -38 M${f(x1 - 12)} -38 L${f(x1)} -38 M${f(x1 - 12)} -38 l-2 5 l4 0Z M${f(x1)} -38 l-2 5 l4 0Z`, SP * 0.6);
+        // 光る竹の坪庭: bamboo whose nodes glow at night
+        bamboo(g, w * 0.26, 76, rnd);
+        for (let i = 0; i < 4; i++) { const n = pane(g, ctx.gl, w * 0.26 + (i % 2) * 4.4 - 1, -18 - i * 14, w * 0.26 + (i % 2) * 4.4 + 1.4, -16 - i * 14, rnd, { thr: 0.1 + i * 0.05 }); ctx.live.windows.push(n); }
+        sign(ctx, -w * 0.12, -66, 46, { h: 9 });
+    },
+    ryugu_gyusha_eki(ctx, w) {
+        const { g, rnd } = ctx;
+        // 牛車溜まり: an ox-carriage at rest, its shafts down; 銀の航路標 glowing on a post
+        const cx = -w * 0.12;
+        C(g, `M${f(cx - 22)} -16 L${f(cx - 22)} -46 Q${f(cx)} -54 ${f(cx + 22)} -46 L${f(cx + 22)} -16Z`, '#2c2a2a');
+        S(g, rect(cx - 18, -42, cx + 18, -18), SP * 0.6);
+        const sl = []; for (let y = -40; y < -18; y += 2.2) sl.push(`M${f(cx - 18)} ${f(y)} L${f(cx + 18)} ${f(y)}`); P(g, sl.join(' '), SP * 0.3);
+        win(ctx, cx - 16, -40, cx + 16, -20, 'plain', { thr: 0.1, sil: 'sit' });
+        S(g, oval(cx - 4, -15, 15, 15), SP * 0.9);
+        P(g, `${oval(cx - 4, -15, 11, 11)} ${Array.from({ length: 8 }, (_, i) => { const a = i * Math.PI / 4; return `M${f(cx - 4)} -15 L${f(cx - 4 + Math.cos(a) * 11)} ${f(-15 + Math.sin(a) * 11)}`; }).join(' ')}`, SP * 0.5);
+        P(g, `M${f(cx + 22)} -22 L${f(cx + 52)} -2 M${f(cx + 22)} -26 L${f(cx + 52)} -4`, SP * 0.9);
+        ctx.live.lamps.push(lamp(g, ctx.gl, w * 0.34, -64, rnd, { kind: 'post', tint: '#dfe6ff', thr: 0.05 }));
+        sign(ctx, w * 0.24, -40, 10, { vertical: true, h: 0 });
+    },
+    ryugu_nandai_no_ma(ctx, w) {
+        FAMILY.tsuki(ctx, w);
+        const { g, rnd } = ctx;
+        // 難題札の掲示板 and a 火鉢 still smoking
+        S(g, rect(w * 0.3, -30, w * 0.46, -12), SP * 0.7); P(g, `M${f(w * 0.38)} -12 l0 12`, SP * 0.8);
+        for (let i = 0; i < 5; i++) S(g, rect(w * 0.31 + i * 4.2, -28, w * 0.31 + i * 4.2 + 3, -18), SP * 0.4);
+        C(g, `M${f(-w * 0.46)} 0 L${f(-w * 0.45)} -7 L${f(-w * 0.35)} -7 L${f(-w * 0.34)} 0Z`, '#5a4a3a', SP * 0.6);
+        ctx.live.smokes.push(smoke(g, -w * 0.4, -8, rnd, { rate: 0.8, max: 4 }));
+    },
+    ryugu_mochitsuki_no_hara(ctx, w) {
+        FAMILY.tsuki(ctx, w);
+        const { g } = ctx;
+        // 望月米の棚田: terraces stepping up behind the mortar
+        P(g, [0, 1, 2, 3].map(i => `M${f(w * 0.06 + i * 10)} ${f(-6 - i * 7)} L${f(w * 0.46)} ${f(-6 - i * 7)} M${f(w * 0.06 + i * 10)} ${f(-6 - i * 7)} l-2 7`).join(' '), SP * 0.6);
+        const rice = []; for (let i = 0; i < 18; i++) rice.push(`M${f(w * 0.12 + (i % 6) * 6 + Math.floor(i / 6) * 10)} ${f(-8 - Math.floor(i / 6) * 7)} l-1 -3 M${f(w * 0.12 + (i % 6) * 6 + Math.floor(i / 6) * 10)} ${f(-8 - Math.floor(i / 6) * 7)} l1 -3`); P(g, rice.join(' '), SP * 0.4);
+    },
+    // イーハトーヴ
+    kenji_donguri_saibansho(ctx, w) {
+        FAMILY.ihatov(ctx, w);
+        const { g, rnd } = ctx;
+        // 黄金いろの草地 and 白いきのこの馬車寄せ
+        const gr = []; for (let i = 0; i < 30; i++) { const x = rnd(-w / 2 + 4, w / 2 - 4); gr.push(`M${f(x)} 0 q${f(rnd(-2, 2))} -4 ${f(rnd(-3, 3))} -7`); } P(g, gr.join(' '), SP * 0.4);
+        for (const [x, h] of [[-w * 0.44, 14], [w * 0.42, 10]]) { S(g, `M${f(x - 7)} ${f(-h)} Q${f(x)} ${f(-h - 9)} ${f(x + 7)} ${f(-h)}Z`, SP * 0.7); S(g, rect(x - 2, -h, x + 2, 0), SP * 0.6); }
+        sitter(ctx, w * 0.24, 0, { kind: 'stand', task: 'write', colour: '#5e6b2a' });
+    },
+    kenji_yamanekoken(ctx, w) {
+        FAMILY.ihatov(ctx, w);
+        const { g, rnd } = ctx;
+        // 白熊のような犬の詰所: a kennel by the door, its big white dog asleep
+        S(g, `M${f(w / 2 - 30)} 0 L${f(w / 2 - 30)} -14 L${f(w / 2 - 20)} -22 L${f(w / 2 - 10)} -14 L${f(w / 2 - 10)} 0Z`, SP * 0.8);
+        B(g, `M${f(w / 2 - 24)} 0 L${f(w / 2 - 24)} -8 Q${f(w / 2 - 20)} -12 ${f(w / 2 - 16)} -8 L${f(w / 2 - 16)} 0Z`);
+        S(g, `M${f(w / 2 - 8)} 0 Q${f(w / 2 - 9)} -8 ${f(w / 2)} -8 Q${f(w / 2 + 8)} -8 ${f(w / 2 + 8)} 0Z`, SP * 0.8);
+        ctx.live.lamps.push(lamp(g, ctx.gl, -w / 2 + 2, -52, rnd));
+    },
+    kenji_yamanashi_tanigawa(ctx, w) {
+        FAMILY.ihatov(ctx, w);
+        const { g, rnd } = ctx;
+        // 光の網の淵: light nets on the water; 蟹の親子の穴: two crabs at their holes
+        C(g, Array.from({ length: 6 }, (_, i) => `M${f(-w * 0.4 + i * 14)} -4 q3 -2 6 0 q3 2 6 0`).join(' '), 'none', SP * 0.5).setAttribute('stroke', '#d9a928');
+        for (const x of [-w * 0.1, w * 0.1]) { C(g, `M${f(x - 3)} -1 Q${f(x)} -5 ${f(x + 3)} -1Z`, '#b8432f', SP * 0.5); P(g, `M${f(x - 3)} -1 l-2 1 M${f(x + 3)} -1 l2 1 M${f(x - 1)} -4 l-1 -2 M${f(x + 1)} -4 l1 -2`, SP * 0.4); }
+    },
+    kenji_neko_jimusho(ctx, w) {
+        const { g, rnd } = ctx;
+        // 猫の第六事務所: an office open to the street, clerks at their desks with the 大原簿
+        const x0 = -w * 0.42, x1 = w * 0.22;
+        S(g, wallRect(x0, -60, x1, 0, 0.4));
+        tileRoof(g, { x0: x0 - 8, x1: x1 + 8, eave: -60, ridge: -80, inset: 14, oni: false });
+        openRoom(ctx, x0 + 4, x1 - 4, -52, 'write', { colour: '#2c2a2a', hair: 'cap', at: 0.3 });
+        sitter(ctx, lerp(x0, x1, 0.68), -10, { task: 'abacus', colour: '#2c2a2a', hair: 'cap' });
+        shelves(g, x0 + 6, x0 + 30, -50, -22, rnd);
+        // かま猫の竈 with smoke; 電柱の列 with wires
+        ctx.live.smokes.push(smoke(g, x1 - 6, -82, rnd));
+        P(g, `M${f(w * 0.36)} 0 L${f(w * 0.36)} -96 M${f(w * 0.3)} -88 L${f(w * 0.42)} -88 M${f(w * 0.36)} -88 Q${f(w * 0.6)} -76 ${f(w * 0.8)} -86`, SP * 0.9);
+        ctx.live.perches.push({ x0: w * 0.3, x1: w * 0.42, y: -88 });
+        sign(ctx, (x0 + x1) / 2, -74, 54, { h: 9 });
+    },
+    kenji_isado_yoichi(ctx, w) {
+        FAMILY.ihatov(ctx, w);
+        const { g, rnd } = ctx;
+        // 烏瓜の灯の並木: a row of blue snake-gourd lanterns; 幻燈の帳: a lantern-slide screen
+        for (let i = 0; i < 5; i++) { const x = -w / 2 + 10 + i * (w - 20) / 4; P(g, `M${f(x)} 0 L${f(x)} -58`, SP * 0.6); const l = chochin(g, ctx.gl, x, -56, rnd, { r: 3.4, h: 7, thr: 0.05 }); ctx.live.lanterns.push(l); }
+        const scr = pane(g, ctx.gl, w * 0.1, -50, w * 0.36, -30, rnd, { thr: 0.02 }); ctx.live.windows.push(scr);
+        P(g, `${rect(w * 0.1, -50, w * 0.36, -30)} M${f(w * 0.12)} -30 L${f(w * 0.12)} 0 M${f(w * 0.34)} -30 L${f(w * 0.34)} 0 M${f(w * 0.16)} -36 q4 -8 8 0 q4 -6 8 0`, SP * 0.6);
+    },
+    // 昭和
+    showa_kokubunji_pencil(ctx, w) {
+        FAMILY.showa(ctx, w);
+        const { g, rnd } = ctx;
+        // 筆箭町工場の並び: little workshops with sawtooth roofs and lit panes
+        for (let i = 0; i < 2; i++) { const a = -w * 0.48 + i * 22; P(g, `M${f(a)} -24 l6 -8 l0 8 l6 -8 l0 8 l6 -8 l0 8`, SP * 0.7); win(ctx, a + 2, -20, a + 16, -8, 'grid', { thr: 0.1 + i * 0.2 }); }
+        sitter(ctx, w * 0.31, -34 + 34, { kind: 'stand', task: 'hammer', colour: '#3a5a8a', hair: 'cap' });
+    },
+    showa_tokyowan_kaijo(ctx, w) {
+        FAMILY.showa(ctx, w);
+        const { g, rnd } = ctx;
+        // 丸窓団地と給水塔: round-windowed flats on the stilts, a water tower above
+        for (let i = 0; i < 4; i++) roundWin(ctx, -w * 0.33 + i * w * 0.21, -82 - 10, 4.4, { thr: 0.1 + i * 0.12, sil: i % 2 ? 'sit' : null });
+        S(g, oval(w * 0.32, -118, 10, 7), SP * 0.8); P(g, `M${f(w * 0.26)} -112 L${f(w * 0.24)} -86 M${f(w * 0.38)} -112 L${f(w * 0.4)} -86`, SP * 0.8);
+    },
+    showa_uchinoura_kumoito(ctx, w) {
+        FAMILY.showa(ctx, w);
+        const { g, rnd } = ctx;
+        // 蓮池の蜘蛛座: a lotus pond at the foot of the tower; 方丈ステーション hut with its window lit
+        ctx.live.waters.push(water(g, -w * 0.46, -w * 0.14, -6, 0, rnd));
+        C(g, [-w * 0.4, -w * 0.3, -w * 0.2].map(x => oval(x, -6, 4, 1.4)).join(' '), '#4f7a55', SP * 0.4);
+        C(g, oval(-w * 0.3, -9, 2, 2.4), '#e8a8bd', SP * 0.4);
+        win(ctx, w * 0.22, -24, w * 0.38, -12, 'grid', { thr: 0.05, sil: 'sit' });
+    },
+    showa_banpaku_jima(ctx, w) {
+        FAMILY.showa(ctx, w);
+        const { g, rnd } = ctx;
+        // 月面茶室の予約窓口 with a clerk; 未来の花壇 in bloom
+        win(ctx, -w * 0.3, -24, -w * 0.12, -10, 'plain', { thr: 0.05, spill: true });
+        sitter(ctx, -w * 0.21, -10 + 10 - 0.01, { kind: 'stand', task: 'abacus', colour: '#d9813a' });
+        C(g, Array.from({ length: 8 }, (_, i) => oval(w * 0.1 + i * 5, -4 - (i % 2) * 2, 1.8, 1.8)).join(' '), '#e8b84a', SP * 0.4);
+        P(g, Array.from({ length: 8 }, (_, i) => `M${f(w * 0.1 + i * 5)} 0 l0 ${f(-3 - (i % 2) * 2)}`).join(' '), SP * 0.4);
+    },
+    // 夢十夜回廊
+    tenshu_yume_no_roka(ctx, w) {
+        FAMILY.yume(ctx, w);
+        const { g } = ctx;
+        // 赤い日の天井 and the 文替所 window with its clerk
+        C(g, oval(-w * 0.3, -66, 5, 5), '#c9482f', SP * 0.6);
+        sitter(ctx, w * 0.2, -0.01, { kind: 'stand', task: 'write', colour: '#1f2a44' });
+    },
+    tenshu_hyakunen_yurizono(ctx, w) {
+        FAMILY.yume(ctx, w);
+        const { g, rnd } = ctx;
+        // 暁の星の東屋: a small arbour; a gardener with the pearl-shell spoon
+        posts(g, [w * 0.14, w * 0.4], -42, 0, SP);
+        tileRoof(g, { x0: w * 0.08, x1: w * 0.46, eave: -42, ridge: -56, inset: 12, tile: 4.6, oni: false });
+        ctx.live.lanterns.push(chochin(g, ctx.gl, w * 0.27, -40, rnd, { r: 3.6, h: 8 }));
+        sitter(ctx, -w * 0.1, 0, { kind: 'stand', task: 'feed', colour: '#f2ead6' });
+    },
+    tenshu_unkei_no_yamamon(ctx, w) {
+        FAMILY.yume(ctx, w);
+        const { g } = ctx;
+        // 薪の山 and 木の聞き台: a woodpile and a log on a stand being carved
+        P(g, Array.from({ length: 4 }, (_, i) => `${oval(-w * 0.44 + i * 5, -3, 2.4, 2.4)} ${oval(-w * 0.42 + i * 5, -7.6, 2.4, 2.4)}`).join(' '), SP * 0.5);
+        S(g, rect(w * 0.08, -24, w * 0.16, 0), SP * 0.8);
+        sitter(ctx, w * 0.02, 0, { kind: 'stand', task: 'hammer', colour: '#3b3a40', hair: 'cap' });
+    },
+    tenshu_koi_no_ike(ctx, w) {
+        FAMILY.yume(ctx, w);
+        const { g } = ctx;
+        // 鱗見の石 and a painter-monk washing his brush at the edge
+        S(g, `M${f(w * 0.32)} -6 Q${f(w * 0.34)} -16 ${f(w * 0.42)} -14 Q${f(w * 0.46)} -8 ${f(w * 0.44)} -6Z`, SP * 0.7);
+        sitter(ctx, -w * 0.36, -4, { task: 'write', colour: '#3b3a40', hair: 'cap' });
+    },
+    // 桜の森の満開の下
+    tono_sakura_kido(ctx, w) {
+        FAMILY.sakura(ctx, w);
+        const { g } = ctx;
+        // 停市の鐘 with its tongue tied in paper; 足袋の棚 by the gate
+        P(g, `M${f(w * 0.32)} 0 L${f(w * 0.32)} -44 M${f(w * 0.28)} -44 L${f(w * 0.44)} -44 M${f(w * 0.4)} -44 l0 4`, SP * 0.9);
+        S(g, `M${f(w * 0.37)} -40 L${f(w * 0.43)} -40 L${f(w * 0.44)} -30 L${f(w * 0.36)} -30Z`, SP * 0.7);
+        P(g, `M${f(w * 0.39)} -30 l0 3 M${f(w * 0.38)} -28 l2 0`, SP * 0.5);
+        S(g, rect(-w * 0.46, -18, -w * 0.3, 0), SP * 0.6); P(g, `M${f(-w * 0.46)} -9 l${f(w * 0.16)} 0`, SP * 0.4);
+    },
+    tono_sakura_hanamushiro(ctx, w) {
+        FAMILY.sakura(ctx, w);
+        const { g, rnd } = ctx;
+        // 甘酒の釜: a sweet-sake kettle steaming at the edge of the felt
+        C(g, `M${f(w * 0.4)} 0 L${f(w * 0.38)} -10 Q${f(w * 0.43)} -14 ${f(w * 0.48)} -10 L${f(w * 0.46)} 0Z`, '#5a4a3a', SP * 0.6);
+        ctx.live.smokes.push(smoke(g, w * 0.43, -14, rnd, { rate: 1.4, max: 4 }));
+    },
+    tono_sakura_shijima(ctx, w) {
+        FAMILY.sakura(ctx, w);
+        // 満開の下の空き地: one person sits alone and quiet under the blossoms
+        sitter(ctx, -w * 0.06, -0.01, { task: 'tea', colour: '#f2efe4', hair: 'bun' });
+    },
+    // 縄文
+    jomon_roppon_yagura(ctx, w) {
+        FAMILY.jomon(ctx, w);
+        const { g, rnd } = ctx;
+        // 森の暦の石輪: a ring of standing stones; 野焼きの窯場: the open firing pit, smoking
+        S(g, Array.from({ length: 6 }, (_, i) => `M${f(-w * 0.48 + i * 5)} 0 L${f(-w * 0.48 + i * 5 + 0.6)} ${f(-6 - (i % 3) * 2)} L${f(-w * 0.48 + i * 5 + 3)} ${f(-5 - (i % 2) * 2)} L${f(-w * 0.48 + i * 5 + 3.4)} 0Z`).join(' '), SP * 0.6);
+        ctx.live.smokes.push(smoke(g, w * 0.44, -4, rnd, { rate: 1.6, max: 5 }));
+        C(g, `M${f(w * 0.38)} 0 Q${f(w * 0.44)} -6 ${f(w * 0.5)} 0Z`, '#9c5538', SP * 0.6);
+    },
+    jomon_hisui_kei(ctx, w) {
+        FAMILY.jomon(ctx, w);
+        // 大珠の研ぎ場: someone polishing a jade bead at the river stones
+        sitter(ctx, w * 0.12, -2, { task: 'sew', colour: '#9c5538', hair: 'bun' });
+    },
+    jomon_kokuyo_no_watashi(ctx, w) {
+        FAMILY.jomon(ctx, w);
+        const { g } = ctx;
+        // 貝の丘: the shell mound; 黒曜の検め台: obsidian laid out on a board
+        C(g, Array.from({ length: 10 }, (_, i) => `M${f(w * 0.06 + i * 4)} ${f(-2 - (i % 3) * 2)} q2 -3 4 0Z`).join(' '), '#efe4d0', SP * 0.4);
+        S(g, rect(-w * 0.02, -8, w * 0.04 + 2, -6), SP * 0.5);
+        B(g, [0, 1, 2].map(i => `M${f(-w * 0.01 + i * 3)} -8 l1 -2.4 l1.4 2.4Z`).join(' '));
+    }
+};
+
 function buildEdo(ctx, w) {
     const fn = EDO[ctx.d.id];
     if (fn) return fn(ctx, w);
@@ -796,6 +1035,7 @@ export function buildDistrict(entry, ctx) {
     const w = entry.w;
     ctx.d = entry.district;
     if (entry.family === 'edo') return buildEdo(ctx, w);
+    if (THIN[entry.id]) return THIN[entry.id](ctx, w);
     const fn = FAMILY[entry.family] || FAMILY.reiwa;
     fn(ctx, w);
 }

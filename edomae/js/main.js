@@ -19,6 +19,7 @@ import { pointerWind, clamp, lerp, smooth, seeded } from './lib/motion.js';
 import { ringLayout, arcDelta, placeShortJa, placeSubJa, districtShortJa, hash01 } from './layout.js';
 import { tauOf, kokuOfTau, warm } from './clock.js';
 import { createTown } from './town.js';
+import { frameFor } from './frame.js';
 import { companionOf } from './looks.js';
 import { headline, pickHeadline, SHEET_TITLE } from './news.js';
 import { buildDistrict, emptyLive } from './buildings.js';
@@ -137,12 +138,48 @@ function groundFor(pg, entry, rnd) {
     if (entry.family === 'ginga') {
         for (const r of [R - 12, R - 15]) { const a = ringPt(0, r), b = ringPt(span / 2, r), c = ringPt(span, r); under.push(`M${pt(a)} A${f(r)} ${f(r)} 0 0 1 ${pt(c)}`); }
     }
-    for (let i = 0; i < Math.round(span / 70); i++) {
-        const u = rnd(10, span - 10), r = R - rnd(40, 200), [x, y] = ringPt(u, r), w = rnd(2, 6);
+    for (let i = 0; i < Math.round(span / 40); i++) {
+        const u = rnd(10, span - 10), r = R - rnd(34, 230), [x, y] = ringPt(u, r), w = rnd(2, 6);
         under.push(i % 3 ? oval(x, y, w, w * 0.6) : `M${f(x - w)} ${f(y)} q${f(w)} ${f(-w * 0.6)} ${f(w * 2)} 0`);
     }
+    // the earth in cut-away: wavy strata that follow the globe, broken now and then
+    const strata = [];
+    for (const [r0, amp, gapP] of [[R - 38, 1.6, 0.18], [R - 62, 2.4, 0.12], [R - 96, 3, 0.2], [R - 140, 3.4, 0.16], [R - 196, 4, 0.22]]) {
+        let u = rnd(0, 20), first = true;
+        while (u < span) {
+            const len = rnd(60, 180), d = [];
+            for (let v = u; v < Math.min(span, u + len); v += 8) d.push(`${d.length ? 'L' : 'M'}${pt(ringPt(v, r0 + Math.sin(v * 0.05 + r0) * amp + rnd(-0.6, 0.6)))}`);
+            if (d.length > 1) strata.push(d.join(' '));
+            u += len + (rnd() < gapP ? rnd(30, 80) : rnd(6, 14));
+            first = false;
+        }
+    }
+    // under each district: stone footings beneath buildings, roots beneath trees and fields
+    const foot = [], roots = [];
+    const rooted = ['jomon', 'tono', 'sakura', 'heian', 'yume', 'ihatov', 'tsuki', 'hiraizumi'].includes(entry.family);
+    for (const d of entry.districts) {
+        const u0 = d.x0 - entry.s0, u1 = d.x1 - entry.s0;
+        if (rooted) for (let k = 0; k < 3; k++) {
+            const u = lerp(u0 + 20, u1 - 20, rnd()), dep = rnd(30, 70);
+            let [x, y] = ringPt(u, R - 22); const path = [`M${pt([x, y])}`];
+            let uu = u; for (let i = 1; i <= 5; i++) { uu += rnd(-6, 6); path.push(`L${pt(ringPt(uu, R - 22 - dep * i / 5))}`); }
+            roots.push(path.join(' '));
+            const [bx, by] = ringPt(uu, R - 22 - dep * 0.6); roots.push(`M${f(bx)} ${f(by)} q${f(rnd(-8, 8))} ${f(rnd(4, 10))} ${f(rnd(-12, 12))} ${f(rnd(10, 18))}`);
+        } else for (let u = u0 + 8; u < u1 - 8; u += rnd(9, 14)) {
+            const a = ringPt(u, R - 25), b = ringPt(u + 8, R - 25), c = ringPt(u + 8, R - 31), e = ringPt(u, R - 31);
+            foot.push(`M${pt(a)} L${pt(b)} L${pt(c)} L${pt(e)}Z`);
+        }
+    }
+    if (entry.family === 'jomon') for (let i = 0; i < 6; i++) {
+        // pottery shards in the soil, cord-marked
+        const [x, y] = ringPt(rnd(20, span - 20), R - rnd(60, 160));
+        under.push(`M${f(x - 5)} ${f(y)} L${f(x - 3)} ${f(y - 4)} L${f(x + 4)} ${f(y - 3)} L${f(x + 5)} ${f(y + 1)}Z M${f(x - 3)} ${f(y - 2)} l2 1 l2 -1 l2 1`);
+    }
     const p1 = el('path', { d: ticks.join(' '), fill: 'none', stroke: 'currentColor', 'stroke-width': SP * 0.5 }, pg);
-    const p2 = el('path', { d: under.join(' '), fill: 'none', stroke: 'currentColor', 'stroke-width': SP * 0.45, opacity: 0.55 }, pg);
+    const p2 = el('path', { d: under.join(' '), fill: 'none', stroke: 'currentColor', 'stroke-width': SP * 0.5, opacity: 0.6 }, pg);
+    el('path', { d: strata.join(' '), fill: 'none', stroke: 'currentColor', 'stroke-width': SP * 0.5, opacity: 0.42, 'stroke-linecap': 'round' }, pg);
+    if (foot.length) el('path', { d: foot.join(' '), fill: 'none', stroke: 'currentColor', 'stroke-width': SP * 0.5, opacity: 0.55 }, pg);
+    if (roots.length) el('path', { d: roots.join(' '), fill: 'none', stroke: 'currentColor', 'stroke-width': SP * 0.6, opacity: 0.5, 'stroke-linecap': 'round' }, pg);
     return [p1, p2];
 }
 
@@ -185,23 +222,25 @@ function refreshHeadline(p) {
 // ------------------------------------------------------------------ view: rotation, drag, inertia
 const startPlace = layout.byPlace.get(START_AT) || layout.byPlace.get('edo_sangaku');
 let view = START_AT && layout.byPlace.get(START_AT) ? startPlace.mid : (startPlace.s1 - 60);
-let vel = 0, VW = 960, VH = 540, GY = 400, ppu = 1, half = 600;
+let vel = 0, VW = 960, VH = 540, GY = 400, ppu = 1, half = 600, skyTop = 40;
 const drag = { id: null, x: 0, lastX: 0, lastT: 0, moved: false, v: 0 };
 const wind = pointerWind(svg, 0.25);
 
 function resize() {
     const r = stage.getBoundingClientRect();
-    const cw = Math.max(200, r.width), ch = Math.max(160, r.height);
-    ppu = cw < 560 ? clamp(cw / 276, 1.1, 1.5) : clamp(cw / 600, 1.1, 2.1);
-    VW = cw / ppu; VH = ch / ppu;
-    GY = VH - clamp(VH * 0.17, 48, 150);
+    // the HUD band at the top of the card is reserved: no sun, moon or train goes under it
+    const hb = document.querySelector('.hud-clock').getBoundingClientRect();
+    const fr = frameFor(r.width, r.height, { hudPx: Math.max(40, hb.bottom - r.top + 4) });
+    ({ ppu, VW, VH, GY } = fr);
+    skyTop = fr.skyTop;
+    card.classList.toggle('portrait', fr.portrait);
     svg.setAttribute('viewBox', `0 0 ${f(VW)} ${f(VH)}`);
     worldG.setAttribute('transform', `translate(${f(VW / 2)} ${f(GY + R)})`);
     glowWorld.setAttribute('transform', `translate(${f(VW / 2)} ${f(GY + R)})`);
     // the wobble only where there is ink to wobble: from above the tallest roofs down (not the empty sky)
     const fy0 = Math.max(0, GY - 330), fy1 = VH;
     for (const [k, v] of [['x', 0], ['y', fy0], ['width', VW], ['height', fy1 - fy0]]) filterEl.setAttribute(k, f(v));
-    sky.resize(VW, VH, GY);
+    sky.resize(VW, VH, GY, skyTop);
     half = Math.asin(Math.min(1, (VW / 2 + 90) / R)) * R + 60;
     render();
 }

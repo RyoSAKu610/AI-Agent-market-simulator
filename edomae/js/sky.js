@@ -45,16 +45,17 @@ export function createSky(root, glow, defs) {
         return { g: cg, gl, wins };
     });
     const smokeT = el('path', { fill: 'none', stroke: '#e9e2c8', 'stroke-width': 0.5, opacity: 0.6 }, trainG);
-    let VW = 960, VH = 540, horizon = 400;
+    let VW = 960, VH = 540, horizon = 400, top = 40;
     let trainT = 8;
 
-    const sunArc = u => [VW * 0.04 + VW * 0.92 * u, horizon - (horizon - VH * 0.1) * Math.sin(Math.PI * u)];
-    const moonArc = u => [VW * 0.06 + VW * 0.88 * u, horizon - (horizon - VH * 0.14) * 0.92 * Math.sin(Math.PI * u)];
-    const trainPath = u => [lerp(-60, VW + 60, u), VH * 0.5 - Math.sin(Math.PI * u) * VH * 0.2 + u * VH * 0.06];
+    const sunArc = u => [VW * 0.04 + VW * 0.92 * u, horizon - (horizon - (top + 24)) * Math.sin(Math.PI * u)];
+    const moonArc = u => [VW * 0.06 + VW * 0.88 * u, horizon - (horizon - (top + 20)) * Math.sin(Math.PI * u)];
+    // the night train runs between the HUD band and the rooftops
+    const trainPath = u => { const yEnd = Math.max(top + 40, Math.min(horizon - 130, top + 110)); return [lerp(-60, VW + 60, u), yEnd - Math.sin(Math.PI * u) * (yEnd - (top + 22)) + u * 8]; };
 
     return {
-        resize(w, h, hz) {
-            VW = w; VH = h; horizon = hz;
+        resize(w, h, hz, skyTop = h * 0.1) {
+            VW = w; VH = h; horizon = hz; top = skyTop;
             bg.setAttribute('width', f(w)); bg.setAttribute('height', f(h));
             for (const s of stars) { s.n.setAttribute('cx', f(s.u * w)); s.n.setAttribute('cy', f(s.v * hz * 0.92)); }
             const a = trainPath(0), b = trainPath(0.5), c = trainPath(1);
@@ -85,7 +86,7 @@ export function createSky(root, glow, defs) {
                 b.x += (1.6 + wind * 3) * dt;
                 const span = VW + b.w + 120;
                 const x = ((b.u * VW + b.x) % span + span) % span - b.w - 60;
-                b.n.setAttribute('d', cloudD(x, Math.max(VH * 0.27, b.v * horizon), b.w));
+                b.n.setAttribute('d', cloudD(x, Math.max(top + 14, b.v * horizon), b.w));
             }
             // the night train: runs only after dark, a crossing every ~50 s
             const on = smooth(0.3, 0.7, night);
