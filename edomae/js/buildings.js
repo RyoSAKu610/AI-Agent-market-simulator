@@ -8,7 +8,7 @@
 // negative) and registers the living parts in ctx.live.
 
 import { el, f, PAPER } from './lib/ink.js';
-import { lerp } from './lib/motion.js';
+import { lerp, smooth, ease } from './lib/motion.js';
 import {
     SP, P, S, B, C, G, rect, wallRect, oval, text, tileRoof, hisashi, thatchRoof, koshi, mushiko, shojiGrid, brick, pane,
     noren, chochin, lamp, smoke, kokuDial, banner, pine, blossomTree, roundTree, bamboo, barrel, well, bench, water, GOLD, hoshigaki, asagao
@@ -1086,14 +1086,14 @@ const FAMILY = {
     },
     reiwa(ctx, w) {
         const { g, rnd, d } = ctx;
-        if (has(d, '刻輪広場', '万世時計')) {
+        if (d.id === 'kokurin_hiroba') {
             S(g, `M${f(-w * 0.4)} 0 L${f(-w * 0.36)} -8 L${f(w * 0.36)} -8 L${f(w * 0.4)} 0Z`);
             P(g, `M-8 -8 L-6 -110 M8 -8 L6 -110`, SP * 1.1);
             ctx.live.dials.push(kokuDial(g, 0, -130, 24));
             const ring = []; for (let i = 0; i < 10; i++) { const a = (i / 10) * Math.PI * 2; ring.push(oval(Math.sin(a) * 30, -130 - Math.cos(a) * 30, 2.4, 2.4)); }
             C(g, ring.join(' '), '#c9a23a', SP * 0.4);
             sign(ctx, 0, -100, 40, { h: 9 });
-        } else if (has(d, '旅立ち口')) {
+        } else if (d.id === 'reiwa_tabidachi_guchi') {
             S(g, `M${f(-w * 0.42)} 0 L${f(-w * 0.42)} -60 Q0 -110 ${f(w * 0.42)} -60 L${f(w * 0.42)} 0 L${f(w * 0.3)} 0 L${f(w * 0.3)} -54 Q0 -92 ${f(-w * 0.3)} -54 L${f(-w * 0.3)} 0Z`);
             const ribs = []; for (let i = 1; i < 6; i++) { const t = i / 6; ribs.push(`M${f(lerp(-w * 0.42, w * 0.42, t))} ${f(-60 - Math.sin(Math.PI * t) * 46)} L${f(lerp(-w * 0.3, w * 0.3, t))} ${f(-54 - Math.sin(Math.PI * t) * 36)}`); }
             P(g, ribs.join(' '), SP * 0.5);
