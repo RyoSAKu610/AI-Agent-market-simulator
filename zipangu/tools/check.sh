@@ -31,9 +31,6 @@ node tools/character-stories.test.mjs
 node tools/character-drama.test.mjs
 node tools/live-camera.test.mjs
 
-echo "› 江戸前 Edomae (ring layout, 万世時計 day, planted feet, residents' looks)"
-node tools/edomae.test.mjs
-
 echo "› bringing an AI in (soul cards, QR, languages)"
 node tools/soul.test.mjs
 node tools/qr.test.mjs
@@ -55,9 +52,9 @@ node --check ../netlify/functions/zipangu-mind.mjs
 node --check ../netlify/functions/zipangu-zcash.mjs
 
 echo "› explorer syntax"
-for f in js/*.js edomae/js/*.js edomae/js/lib/*.js tools/*.mjs; do
-  # js/ and edomae/js/ are ES modules (import/export), so check them as modules; node --check alone treats .js as CommonJS
-  case "$f" in *js/*.js) [ -e "$f" ] && node --input-type=module --check < "$f" ;; *) [ -e "$f" ] && node --check "$f" ;; esac
+for f in js/*.js tools/*.mjs; do
+  # js/ is ES modules (import/export), so check it as a module; node --check alone treats .js as CommonJS
+  case "$f" in js/*) [ -e "$f" ] && node --input-type=module --check < "$f" ;; *) [ -e "$f" ] && node --check "$f" ;; esac
 done
 
 echo "› single-file bundle (tools/build-single.mjs)"

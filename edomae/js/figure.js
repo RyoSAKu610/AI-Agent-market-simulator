@@ -167,6 +167,13 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
     const nearSleeve = WIDE_SLEEVE.has(G) ? paint(nearArmG, colour.main) : null;
     const nearHand = el('ellipse', { rx: 1.8, ry: 1.5, fill: PAPER, stroke: 'currentColor', 'stroke-width': PEN * 0.7 }, nearArmG);
     const prop = buildProp(nearArmG, glowBody, look);
+    const sheet = look.sheet ? buildSheet(up, look.sheet) : null;
+    // a 番傘 for rain: oiled paper on bamboo ribs, opened over the head when it rains
+    const umb = el('g', { style: 'display:none' }, up);
+    const umbPole = pen(umb, PEN * 0.8);
+    const umbTop = paint(umb, ['#c8403a', '#c9a868', '#34507a'][Math.floor(((look.id || '').length * 7 + (look.id || '').charCodeAt(0)) % 3)], PEN * 0.9);
+    const umbRibs = pen(umb, PEN * 0.4);
+    const umbFill = umbTop.getAttribute('fill');
     const hip = look.hip === 'jar' ? buildJars(body, glowBody, look) : null;
     const pouch = look.hip === 'pouch' ? paint(up, '#8a6a4a', PEN * 0.7) : null;
     if (pouch) pouch.setAttribute('d', 'M46.2 66 Q49.6 66.6 49.4 70.4 Q49 73.6 46.6 73.4 Q45 72 46.2 66Z');
@@ -181,7 +188,7 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
     const slv = spring(40, 6), tail = spring(26, 3.4), hairS = spring(30, 4.4), stole = spring(22, 3.2);
     const breath = curve([[0, 0], [look.breath * 0.42, 0.36], [look.breath * 0.62, 0.3], [look.breath * 0.9, 0.04]], look.breath);
     const flatFills = [[torso, colour.main], [lower, colour.main], [farSleeve, colour.main], [nearSleeve, colour.main], [obi, colour.sub],
-        [pack, look.packColour || colour.sub], [apron, look.apron], [scarf, colour.accent], [hakamaPanels && hakamaPanels[0], colour.sub], [hakamaPanels && hakamaPanels[1], colour.sub]]
+        [pack, look.packColour || colour.sub], [umbTop, umbFill], [apron, look.apron], [scarf, colour.accent], [hakamaPanels && hakamaPanels[0], colour.sub], [hakamaPanels && hakamaPanels[1], colour.sub]]
         .filter(([n, c]) => n && c);
     let lastInk = -1;
 
@@ -197,6 +204,7 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
         const { phase, go, t, dt, P, wind } = st;
         const act = st.act || {};
         const bow = ease(act.bow || 0), reach = ease(act.reach || 0), chin = ease(act.chin || 0), start = act.start || 0;
+        const read = ease(act.read || 0), show = ease(act.show || 0), call = ease(act.call || 0), talk = act.talk || 0, umbrella = ease(act.umb || 0);
         const p = walkG.pose(phase, go);
         const b = p.bob, hy = p.hip[1];
         const iF = p.front, iR = 1 - iF;
@@ -268,6 +276,28 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
             const [e3, h3] = ik(SH_FAR, [44.4, 57.6], ARM[0], ARM[1], [0.3, 1]);   // the other hand props the elbow
             fe = L2(fe, e3, chin); fh = L2(fh, h3, chin);
         }
+        if (talk) {
+            // a small open-hand gesture while speaking (amplitude keyed by the caller)
+            const [e2, h2] = ik(SH_NEAR, [52 + talk * 3, 56 - talk * 6], ARM[0], ARM[1], [0, 1]);
+            ne = L2(ne, e2, Math.min(1, Math.abs(talk) * 2)); nh = L2(nh, h2, Math.min(1, Math.abs(talk) * 2));
+        }
+        if (read > 0.001 || show > 0.001) {
+            // both hands hold the sheet up in front of the face; shown: lowered and turned to us
+            const tN = L2([53.6, 46], [57, 60], show), tF = L2([49.6, 48], [51, 62], show);
+            const [e2, h2] = ik(SH_NEAR, tN, ARM[0], ARM[1], [0, 1]);
+            const [e3, h3] = ik(SH_FAR, tF, ARM[0], ARM[1], [0, 1]);
+            const w = Math.max(read, show);
+            ne = L2(ne, e2, w); nh = L2(nh, h2, w); fe = L2(fe, e3, w); fh = L2(fh, h3, w);
+        }
+        if (call > 0.001) {
+            // the 読売 calls out: the free arm up with a sheet, then down
+            const [e3, h3] = ik(SH_FAR, [52, 20], ARM[0], ARM[1], [1, -0.2]);
+            fe = L2(fe, e3, call); fh = L2(fh, h3, call);
+        }
+        if (umbrella > 0.001 && look.prop !== 'tray' && look.prop !== 'carry') {
+            const [e2, h2] = ik(SH_NEAR, [47.4, 50], ARM[0], ARM[1], [0.4, 1]);
+            ne = L2(ne, e2, umbrella); nh = L2(nh, h2, umbrella);
+        }
         farArm.draw([SH_FAR, fe, fh], [0.2, 0.5]);
         nearArm.draw([SH_NEAR, ne, nh], [0.2, 0.4]);
         farHand.setAttribute('cx', f(fh[0])); farHand.setAttribute('cy', f(fh[1]));
@@ -295,7 +325,17 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
             hireBack.setAttribute('d', `M${pt(a)} Q${f(28 + s)} ${f(hy - 6)} ${f(24 + s * 1.4)} ${f(hy + 18)} L${f(27 + s * 1.2)} ${f(hy + 20)} Q${f(31 + s * 0.6)} ${f(hy - 2)} ${f(c[0] - 4)} ${f(c[1] + 3)}Z`);
         }
         if (hatLift) hatLift(st.tip || 0, trail);
-        if (prop) prop.update(nh, ne, { go, dt, wind, P, phase, t, accel: Math.cos(phase * Math.PI * 4) * 1.4 * go, upToFig, reach });
+        if (prop) prop.update(nh, ne, { go, dt, wind, P, phase, t, accel: Math.cos(phase * Math.PI * 4) * 1.4 * go, upToFig, reach, call });
+        if (sheet) sheet.update(nh, fh, Math.max(read, show), show, call, fh);
+        if (umbrella > 0.001) {
+            umb.style.display = '';
+            const top = [nh[0] - 4 + (1 - umbrella) * 4, 14 + (1 - umbrella) * 26], k = umbrella;
+            umbPole.setAttribute('d', `M${f(nh[0] - 0.4)} ${f(nh[1] + 3)} L${pt(top)}`);
+            const r = 19 * k, dy = 6 * k;
+            umbTop.setAttribute('d', `M${f(top[0] - r)} ${f(top[1] + dy)} Q${f(top[0] - r * 0.7)} ${f(top[1] - dy * 0.2)} ${pt(top)} Q${f(top[0] + r * 0.7)} ${f(top[1] - dy * 0.2)} ${f(top[0] + r)} ${f(top[1] + dy)} Q${f(top[0])} ${f(top[1] + dy * 0.5)} ${f(top[0] - r)} ${f(top[1] + dy)}Z`);
+            umbRibs.setAttribute('d', [-0.8, -0.45, -0.15, 0.15, 0.45, 0.8].map(u => `M${pt(top)} L${f(top[0] + r * u)} ${f(top[1] + dy * (0.55 + 0.45 * Math.abs(u)))}`).join(' '));
+        } else umb.style.display = 'none';
+        fig.hand = upToFig(nh[0], nh[1]); fig.handFar = upToFig(fh[0], fh[1]);
         if (hip) hip.update(hy, { go, dt, wind, P, phase, t });
 
         // --- marks: ! for a start, … while thinking
@@ -312,7 +352,9 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
         return p;
     }
 
-    return { g, body, glowRoot, glowBody, look, gait: walkG, restHip, update, hit, upToFig: (x, y) => upToFig(x, y) };
+    const fig = { g, body, glowRoot, glowBody, look, gait: walkG, restHip, update, hit, upToFig: (x, y) => upToFig(x, y), hand: [56, 70], handFar: [50, 70],
+        setHeadline(text) { if (sheet) sheet.setText(text); } };
+    return fig;
 }
 
 // ------------------------------------------------------------------ parts
@@ -526,6 +568,28 @@ function buildProp(armG, glowG, look) {
                 if (extra) extra.setAttribute('d', `M${f(x - 3.8)} ${f(y + 1)} L${f(x + 3.8)} ${f(y + 1)} M${f(x)} ${f(y - 2)} L${f(x)} ${f(y + 4.6)}`);
             } };
         }
+        case 'sheets': {
+            // a 読売's stock of sheets draped over the forearm
+            const stack = shape(g, PEN * 0.8), edge = pen(g, PEN * 0.45);
+            return { update(h, e) {
+                const m = L2(e, h, 0.55);
+                stack.setAttribute('d', `M${f(m[0] - 7)} ${f(m[1] - 1)} L${f(m[0] + 6)} ${f(m[1] - 2.4)} L${f(m[0] + 7)} ${f(m[1] + 9)} L${f(m[0] - 6)} ${f(m[1] + 11)}Z`);
+                edge.setAttribute('d', `M${f(m[0] - 6.4)} ${f(m[1] + 1)} L${f(m[0] + 6.4)} ${f(m[1] - 0.4)} M${f(m[0] - 6)} ${f(m[1] + 3)} L${f(m[0] + 6.6)} ${f(m[1] + 1.6)} M${f(m[0] + 2)} ${f(m[1] + 2)} l0 7 M${f(m[0] - 1)} ${f(m[1] + 2.6)} l0 7`);
+            } };
+        }
+        case 'pinwheel': {
+            // a child's 風車 on a stick, turning in the wind and faster when running
+            const stick = pen(g, PEN * 0.7), wheel = el('g', {}, g);
+            const cols = ['#c8403a', '#e8b84a', '#3a6a9a', '#4f7a55'];
+            cols.forEach((c, i) => el('path', { d: 'M0 0 L0 -5.6 Q3.4 -4.6 0 0Z', fill: c, stroke: 'currentColor', 'stroke-width': PEN * 0.4, transform: `rotate(${i * 90})` }, wheel));
+            let a = 0;
+            return { update(h, e, c) {
+                const tip = [h[0] + 3, h[1] - 14];
+                stick.setAttribute('d', `M${f(h[0])} ${f(h[1] + 2)} L${pt(tip)}`);
+                a += (2 + c.go * 14 + Math.abs(c.wind) * 6) * c.dt;
+                wheel.setAttribute('transform', `translate(${pt(tip)}) rotate(${f(a * 57.3)})`);
+            } };
+        }
         case 'carry': {
             // a pole on the shoulder: a tamatebako behind, an Odawara lantern in front
             const pole = pen(g, PEN * 1.1), box = fill('#2c2a2a'), cord = el('path', { fill: 'none', stroke: '#c8504a', 'stroke-width': 0.9 }, g);
@@ -567,4 +631,55 @@ function buildJars(body, glowG, look) {
             j.gl.setAttribute('cx', f(x)); j.gl.setAttribute('cy', f(y + 2.8)); j.gl.setAttribute('opacity', f(lit * 0.8));
         }
     } };
+}
+
+// ------------------------------------------------------------------ 瓦版 / 新聞
+
+// A printed sheet held in both hands: drawn big enough to read as paper — a masthead,
+// columns of type as tick lines, a picture box, and the first characters of the real
+// headline it carries. kind: 'kawaraban' (one woodblock sheet) | 'shinbun' (a folded paper).
+function buildSheet(up, kind) {
+    const g = el('g', {}, up);
+    const paper = shape(g, PEN * 0.9);
+    const fold = pen(g, PEN * 0.45);
+    const mast = blot(g);
+    const title = el('text', { 'font-size': 4.2, 'font-weight': 700, fill: PAPER, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-family': '"Shippori Mincho",serif', class: 'sheet-title' }, g);
+    title.textContent = kind === 'kawaraban' ? '瓦版' : '新聞';
+    const head = el('text', { 'font-size': 3.6, 'font-weight': 700, fill: 'currentColor', 'text-anchor': 'middle', 'font-family': '"Shippori Mincho",serif', 'writing-mode': 'vertical-rl' }, g);
+    const lines = pen(g, PEN * 0.4);
+    const pic = shape(g, PEN * 0.55);
+    const picInk = pen(g, PEN * 0.45);
+    let text = '';
+    const W = kind === 'kawaraban' ? 22 : 24, H = kind === 'kawaraban' ? 28 : 30;
+    // the static artwork, drawn once around (0,0); the group is moved and scaled per frame
+    paper.setAttribute('d', `M${-W / 2} ${-H / 2} Q0 ${-H / 2 - 1} ${W / 2} ${-H / 2} L${W / 2 + 0.6} ${H / 2} Q0 ${H / 2 + 0.8} ${-W / 2 - 0.4} ${H / 2}Z`);
+    if (kind === 'kawaraban') {
+        mast.setAttribute('d', `M${W / 2 - 6.4} ${-H / 2 + 1.6} L${W / 2 - 1.6} ${-H / 2 + 1.6} L${W / 2 - 1.6} ${-H / 2 + 11} L${W / 2 - 6.4} ${-H / 2 + 11}Z`);
+        title.setAttribute('x', W / 2 - 4); title.setAttribute('y', -H / 2 + 6.2); title.setAttribute('writing-mode', 'vertical-rl'); title.setAttribute('font-size', 3.4);
+        head.setAttribute('x', W / 2 - 9.4); head.setAttribute('y', -H / 2 + 2);
+        const d = []; for (let x = W / 2 - 13; x > -W / 2 + 1.6; x -= 2.2) d.push(`M${x.toFixed(1)} ${(-H / 2 + 2).toFixed(1)} l0 ${(x < -1 ? 9 : 24).toFixed(1)}`);
+        lines.setAttribute('d', d.join(' '));
+        pic.setAttribute('d', `M${-W / 2 + 1.6} ${-H / 2 + 13} L${-1} ${-H / 2 + 13} L${-1} ${H / 2 - 1.6} L${-W / 2 + 1.6} ${H / 2 - 1.6}Z`);
+        picInk.setAttribute('d', `M${-W / 2 + 3} ${H / 2 - 4} q2 -5 4 -2 q2 -6 4 0 M${-W / 2 + 3.4} ${-H / 2 + 16} q2 -1.4 3.6 0`);
+    } else {
+        mast.setAttribute('d', `M${-W / 2 + 1.4} ${-H / 2 + 1.4} L${W / 2 - 1.4} ${-H / 2 + 1.4} L${W / 2 - 1.4} ${-H / 2 + 6.4} L${-W / 2 + 1.4} ${-H / 2 + 6.4}Z`);
+        title.setAttribute('x', 0); title.setAttribute('y', -H / 2 + 3.9);
+        head.setAttribute('x', W / 2 - 3.4); head.setAttribute('y', -H / 2 + 8);
+        fold.setAttribute('d', `M${-W / 2} 0 L${W / 2} 0`);
+        const d = []; for (let x = W / 2 - 7; x > -W / 2 + 1.4; x -= 2) d.push(`M${x.toFixed(1)} ${(-H / 2 + 8).toFixed(1)} l0 ${(x < -3 ? 6 : 12).toFixed(1)}`);
+        for (let x = W / 2 - 2; x > -W / 2 + 1.4; x -= 2) d.push(`M${x.toFixed(1)} 2 l0 ${(H / 2 - 4).toFixed(1)}`);
+        lines.setAttribute('d', d.join(' '));
+        pic.setAttribute('d', `M${-W / 2 + 1.6} ${-H / 2 + 15} L${-3} ${-H / 2 + 15} L${-3} ${-1.6} L${-W / 2 + 1.6} ${-1.6}Z`);
+        picInk.setAttribute('d', `M${-W / 2 + 3} ${-3.4} q2 -4 4 -1.6 q1.6 -3 3 0`);
+    }
+    return {
+        setText(s) { if (s !== text) { text = s; head.textContent = s.slice(0, kind === 'kawaraban' ? 7 : 6); } },
+        update(nh, fh, hold, show, call) {
+            if (hold < 0.02) { g.style.display = 'none'; return; }
+            g.style.display = '';
+            const c = L2(nh, fh, 0.5);
+            const k = 0.86 + 0.6 * show;
+            g.setAttribute('transform', `translate(${f(c[0] + 2 + show * 2)} ${f(c[1] - 11 + show * 3)}) scale(${f(k)}) rotate(${f(-4 + show * 3)})`);
+        }
+    };
 }

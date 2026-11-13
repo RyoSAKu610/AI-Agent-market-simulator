@@ -13,7 +13,7 @@ import { SP, oval } from './kit.js';
 
 const ARCH = { butterfly: 'butterfly', insect: 'dragonfly', bird: 'bird', fish: 'fish', jellyfish: 'jelly', beast: 'beast', dragon: 'dragon' };
 
-export function createLife(placeG, glowG, entry, W, R, { seed = 1, waterSpans = [], blossoms = [], fireflies = [] } = {}) {
+export function createLife(placeG, glowG, entry, W, R, { seed = 1, waterSpans = [], blossoms = [], fireflies = [], touch = null } = {}) {
     const rnd = seeded(seed);
     const g = el('g', { class: 'life' }, placeG);
     const gl = el('g', {}, glowG);
@@ -30,7 +30,7 @@ export function createLife(placeG, glowG, entry, W, R, { seed = 1, waterSpans = 
     const critters = chosen.map((c, i) => {
         const homeId = (c.home || []).find(h => ids.has(h));
         const span = spans.get(homeId) || [0, entry.s1 - entry.s0];
-        return createCritter(g, gl, c, span, ring, angleAt, rnd, waterSpans);
+        return createCritter(g, gl, c, span, ring, angleAt, rnd, waterSpans, touch);
     });
 
     // fireflies over the river at night
@@ -73,7 +73,7 @@ export function createLife(placeG, glowG, entry, W, R, { seed = 1, waterSpans = 
     };
 }
 
-function createCritter(g, gl, c, span, ring, angleAt, rnd, waterSpans) {
+function createCritter(g, gl, c, span, ring, angleAt, rnd, waterSpans, touch) {
     let kind = ARCH[c.kind] || 'mote';
     const pal = (c.visual && c.visual.palette) || ['#c9a23a', '#34507a'];
     const col = pal.find(x => /^#[0-9a-f]{6}$/i.test(x)) || '#c9a23a';
@@ -86,6 +86,7 @@ function createCritter(g, gl, c, span, ring, angleAt, rnd, waterSpans) {
     const hit = el('circle', { r: 9, fill: 'transparent' }, grp);
     const glowN = el('circle', { r: 16, fill: 'url(#e-coolglow)', opacity: 0 }, gl);
     const st = { u: lerp(span[0] + 10, span[1] - 10, rnd()), h: kind === 'bird' || kind === 'beast' ? 0 : lerp(14, 60, rnd()), tu: 0, th: 0, t: 0, flee: 0, timer: rnd(0, 3), face: 1, hop: 0 };
+    if (kind === 'fish' && water) st.u = lerp(water[0], water[1], rnd());   // koi live in the water, not beside it
     st.tu = st.u; st.th = st.h;
     const su = spring(6, 3.4, st.u), sh = spring(6, 3.4, st.h);
     let parts = {};
@@ -114,7 +115,9 @@ function createCritter(g, gl, c, span, ring, angleAt, rnd, waterSpans) {
     wander();
 
     return {
-        c, g: grp,
+        c, g: grp, kind,
+        jump() { if (kind === 'fish') { st.timer = 1.2; st.out = false; st.in = false; } },
+        get u() { return st.u; },
         draw(t, dt, wind, Pal) {
             st.t += dt; st.timer -= dt;
             if (st.flee > 0) {
@@ -131,7 +134,11 @@ function createCritter(g, gl, c, span, ring, angleAt, rnd, waterSpans) {
             if (kind === 'fish') {
                 // a jump: out of the water and back, a ring where it went in
                 const j = clamp(1 - st.timer / 1.2, 0, 1);
-                h = st.timer < 1.2 ? Math.sin(Math.PI * j) * 16 - 3 : -3;
+                // the koi breaks the surface going up and comes back down with a splash
+                if (st.timer < 1.2 && !st.out) { st.out = true; touch && touch(st.u, 0.55, 'splash'); }
+                if (st.out && j > 0.96 && !st.in) { st.in = true; touch && touch(st.u, 0.8, 'splash'); }
+                if (st.timer >= 1.2) { st.out = false; st.in = false; }
+                h = 6 + (st.timer < 1.2 ? Math.sin(Math.PI * j) * 16 : -2);   // from the water plane (mid-band), up and back
                 extra = st.timer < 1.2 ? `rotate(${f((j - 0.5) * 120 * st.face)})` : '';
                 body.style.opacity = st.timer < 1.2 ? 1 : 0;
             }
@@ -148,6 +155,7 @@ function createCritter(g, gl, c, span, ring, angleAt, rnd, waterSpans) {
                     break;
                 }
                 case 'dragonfly': {
+                    if (water && touch && Math.random() < dt * 0.35 && u > water[0] && u < water[1]) { touch(u, 0.25, 'poke'); st.th = 4; }
                     const w = 0.6 + 0.4 * Math.abs(Math.sin(st.t * 30));
                     parts.wings.setAttribute('d', `M0 0 Q-2 ${f(-5 * w)} -6 ${f(-4 * w)} Q-3 -1 0 0Z M1 0 Q3 ${f(-5 * w)} 7 ${f(-4 * w)} Q4 -1 1 0Z`);
                     parts.b.setAttribute('d', 'M-8 0.3 L4 -0.3 Q5.4 0 4 0.6 L-8 0.8Z');

@@ -18,4 +18,7 @@ for t in tests/*.test.js; do
   node "$t" >/dev/null
 done
 
+echo "› 江戸前 Edomae (edomae/tools/check.sh)"
+bash edomae/tools/check.sh >/dev/null
+
 echo "All checks passed."

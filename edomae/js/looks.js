@@ -137,3 +137,21 @@ export function lookOf(agent, place, family = 'reiwa') {
 
 // A short signature for tests: residents must be told apart at a glance.
 export const lookKey = L => [L.garment, L.hat, L.hair, L.prop, L.main, L.pattern].join('|');
+
+// A companion animal that walks with a resident, derived from the sprite hint when
+// it already implies one (足元に狐, 足元に鳥 …), otherwise a dog for some, by hash.
+// The cat and fox residents themselves get none. Charter: companions are free
+// animals that choose to follow; nobody is leashed, caged or caught.
+export function companionOf(agent) {
+    const id = String(agent && agent.id || 'x');
+    const name = String(agent && agent.name || '');
+    const text = String(agent && agent.sprite_hint || '');
+    if (/NEKO|KITSUNE|猫|狐/.test(name)) return null;
+    if (/足元に[^。]*狐/.test(text)) return { kind: 'fox', colour: '#c98a4a' };
+    if (/足元に[^。]*(鳥|雀)/.test(text)) return { kind: 'bird', colour: '#c9a23a' };
+    if (/足元[^。]*(雲)/.test(text)) return null;
+    if (/(肩|足元)[^。]*蝶/.test(text)) return { kind: 'butterfly', colour: (text.match(/#[0-9A-Fa-f]{6}/) || ['#7fc8e8'])[0] };
+    const u = hash01(id, 'companion');
+    if (u < 0.28) return { kind: 'dog', colour: ['#c9a06a', '#ece6d8', '#5a4a3a', '#a0704a'][Math.floor(hash01(id, 'dogc') * 4)] };
+    return null;
+}

@@ -135,7 +135,36 @@ export function brick(g, x0, y0, x1, y1, rnd) {
 export function pane(g, gl, x0, y0, x1, y1, rnd, opts = {}) {
     const n = el('path', { d: rect(x0, y0, x1, y1), fill: PAPER }, g);
     const glow = el('ellipse', { cx: f((x0 + x1) / 2), cy: f((y0 + y1) / 2), rx: f((x1 - x0) * 0.9 + 10), ry: f((y1 - y0) * 0.9 + 10), fill: 'url(#e-warmglow)', opacity: 0 }, gl);
-    return { n, glow, thr: opts.thr ?? rnd(0.12, 0.62), lateOff: opts.lateOff ?? (rnd() < 0.42 ? rnd(0.93, 1.12) : 9), warmth: rnd(), lit: 0, awake: opts.awake || 'night' };
+    const w = { n, glow, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, thr: opts.thr ?? rnd(0.12, 0.62), lateOff: opts.lateOff ?? (rnd() < 0.42 ? rnd(0.93, 1.12) : 9), warmth: rnd(), lit: 0, awake: opts.awake || 'night' };
+    // someone at home, seen as a shadow on the lit paper (drawn before the lattice)
+    if (opts.sil) {
+        const cx = lerp(x0, x1, opts.silAt ?? 0.4), hh = Math.min(y1 - y0, 26), base = y1, s = hh / 22;
+        w.sil = el('path', { d: `M${f(cx - 7 * s)} ${f(base)} Q${f(cx - 7 * s)} ${f(base - 9 * s)} ${f(cx - 2.6 * s)} ${f(base - 11 * s)} Q${f(cx - 4.4 * s)} ${f(base - 17 * s)} ${f(cx)} ${f(base - 18 * s)} Q${f(cx + 4.4 * s)} ${f(base - 17 * s)} ${f(cx + 2.6 * s)} ${f(base - 11 * s)} Q${f(cx + 7 * s)} ${f(base - 9 * s)} ${f(cx + 7 * s)} ${f(base)}Z`, fill: '#3a2a26', opacity: 0, class: 'sil' }, g);
+        if (opts.sil === 'wave') {
+            w.wave = el('path', { fill: 'none', stroke: '#3a2a26', 'stroke-width': 2.4 * s, 'stroke-linecap': 'round', opacity: 0 }, g);
+            w.waveAt = [cx + 4 * s, base - 10 * s, s];
+        }
+    }
+    // warm light spilling out of an open front onto the street
+    if (opts.spill) w.spill = el('path', { d: `M${f(x0)} ${f(y1)} L${f(x1)} ${f(y1)} L${f(x1 + 10)} 12 L${f(x0 - 10)} 12Z`, fill: 'url(#e-spill)', opacity: 0 }, gl);
+    return w;
+}
+
+/** 干し柿: persimmons drying on a string from the eave, swinging a little. */
+export function hoshigaki(g, x, y, n = 6) {
+    const grp = G(g);
+    P(grp, `M0 0 L0 ${f(n * 4.4 + 2)}`, SP * 0.4);
+    C(grp, Array.from({ length: n }, (_, i) => oval(0, 3 + i * 4.4, 1.9, 2.1)).join(' '), '#d9813a', SP * 0.5);
+    return { grp, x, y, p: { a: 0, v: 0, ph: Math.random() * 6 }, k: 14 };
+}
+
+/** A potted morning glory by a door: pot, a bamboo stake, the vine and a few flowers. */
+export function asagao(g, x) {
+    S(g, `M${f(x - 5)} 0 L${f(x - 6)} -8 L${f(x + 6)} -8 L${f(x + 5)} 0Z`, SP * 0.7);
+    P(g, `M${f(x)} -8 L${f(x)} -30 M${f(x)} -10 Q${f(x + 4)} -14 ${f(x)} -18 Q${f(x - 4)} -22 ${f(x)} -26 Q${f(x + 3)} -28 ${f(x + 1)} -31`, SP * 0.5);
+    C(g, [[x + 3, -15], [x - 3.4, -21], [x + 2.4, -27]].map(([a, b]) => oval(a, b, 2.2, 2.2)).join(' '), '#5a6fc8', SP * 0.45);
+    C(g, [[x + 3, -15], [x - 3.4, -21], [x + 2.4, -27]].map(([a, b]) => oval(a, b, 0.7, 0.7)).join(' '), '#f4f0e8', 0.2);
+    P(g, `M${f(x - 2)} -12 q-3 -1 -3 -3 M${f(x + 2)} -24 q3 0 3.4 -2.6`, SP * 0.5);
 }
 
 // ------------------------------------------------------------------ things that live
@@ -184,11 +213,12 @@ export function chochin(g, gl, x, y, rnd, { r = 6.4, h = 15, label = '', red = f
     const p = pendulum(10, 1.1, (rnd() - 0.5) * 0.1);
     const ph = rnd() * 6, T = thr ?? rnd(0.08, 0.3);
     return {
-        grp,
+        grp, x, y, litV: 0,
         draw(t, dt, wind, Pal) {
             const a = p.step(wind * 0.5 + Math.sin(t * 0.9 + ph) * 0.14, dt);
             grp.setAttribute('transform', `translate(${f(x)} ${f(y)}) rotate(${f(-a * 57.3)})`);
             const lit = smooth(T, T + 0.2, Pal.lamp);
+            this.litV = lit;
             const base = red ? mix(RED, RED_NIGHT, Pal.inkT * (1 - lit)) : Pal.paper;
             body.setAttribute('fill', rgb(mix(base, red ? toRGB('#ff8a4a') : WARM, lit * 0.95)));
             glow.setAttribute('cx', f(x + Math.sin(a) * -(h / 2 + 4))); glow.setAttribute('cy', f(y + Math.cos(a) * (h / 2 + 4)));

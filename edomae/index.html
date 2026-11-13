@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<!-- The same policy as ../index.html (and netlify.toml for /zipangu/*): only this site may run code here. -->
+<!-- The same policy as ../zipangu/index.html: only this site may run code here (no inline script; fonts from Google Fonts). -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://esm.sh 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>江戸前 Edomae — 万華京ジパング</title>
@@ -16,28 +16,27 @@
 </head>
 <body>
 <header class="page-head">
-  <a class="back" href="../">← 万華京ジパング <span>Kaleidoscope Zipangu</span></a>
+  <a class="back" href="../zipangu/">← 万華京ジパング <span>Kaleidoscope Zipangu</span></a>
   <h1>江戸前 <span>Edomae</span></h1>
+  <p class="lead-short">横から見る万華京ジパング · the world, from the side</p>
   <p class="lead">万華京ジパングを横から見た、線画の地球。住人は自分で商い、考え、時層鳥居をくぐって旅をします。<span>The same world, seen from the side in ink: residents trade, think and travel through the time-gates on their own.</span></p>
 </header>
 
 <main>
-  <div class="card" id="card" tabindex="0" aria-describedby="hint">
+  <div class="card" id="card" tabindex="0" aria-describedby="hint" aria-label="江戸前の地球。左右の矢印キーでも回せます / the Edomae globe; arrow keys turn it too">
     <div id="stage"></div>
-    <div class="hud hud-clock" aria-live="polite"><b id="koku"></b><span id="sekki"></span></div>
-    <div class="hud hud-place"><b id="place-name"></b><span id="place-sub"></span></div>
-    <p class="hud" id="hint">ドラッグで地球をまわす · 人や看板にふれる <span>drag to turn the world · tap people and signboards</span></p>
+    <div class="hud hud-clock" aria-live="polite"><p><b id="koku"></b><span id="sekki"></span></p><p class="hud-place" id="place-name"></p><p class="hud-sub" id="place-sub"></p></div>
+    <p class="hud" id="hint">ドラッグで回す · drag to turn</p>
     <div class="caption" id="caption" hidden>
       <button type="button" aria-label="閉じる / close">×</button>
       <b></b>
       <span class="cap-line"></span>
       <span class="cap-where"></span>
-      <a href="../"></a>
+      <a href="../zipangu/"></a>
     </div>
   </div>
-  <p class="foot">← → でも回せます / arrow keys turn it too · 読むだけの窓：探索の記録には書き込みません / read-only: your journey in the explorer is untouched · 線画の道具は <a href="THIRD_PARTY.md">line-art-animation (MIT)</a> より</p>
 </main>
-<noscript><p class="foot">江戸前は JavaScript で動きます。 / Edomae needs JavaScript.</p></noscript>
+<noscript><p>江戸前は JavaScript で動きます。 / Edomae needs JavaScript.</p></noscript>
 <script type="module" src="js/main.js"></script>
 </body>
 </html>

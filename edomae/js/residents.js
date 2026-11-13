@@ -17,7 +17,7 @@ export const FS = 0.5;                     // figure scale: figures ≈ 48 scene
 const LANES = [5, 10, 15];                 // feet this far below the building line
 const FADE = 0.9;                          // seconds to step through a torii
 
-export function createResidents({ layer, glowLayer, layout, W, eco, onTap, toriiOf, passerPlaces = [] }) {
+export function createResidents({ layer, glowLayer, layout, W, eco, onTap, toriiOf, passerPlaces = [], onTrade = null, onStep = null, weather = null }) {
     const R = layout.R, L = layout.total;
     const list = [];
     const byId = new Map();
@@ -70,13 +70,15 @@ export function createResidents({ layer, glowLayer, layout, W, eco, onTap, torii
         if (r.purpose === 'toGate') { r.mode = 'out'; r.fadeT = 0; const t = toriiOf(placeOfDistrict(r.district)); if (t && r.visible) t.pulse(); }
         else { r.mode = 'stand'; r.idle = 6 + Math.random() * 10; }
         r.purpose = null;
+        if (r.after) { const a = r.after; r.after = null; a(); }
     }
 
     function processQueue(r) {
         if (!r.queue.length) return false;
         const ev = r.queue[0];
         if (ev.type === 'depart') {
-            if (r.mode === 'stand' || (r.mode === 'walk' && r.purpose === 'potter')) {
+            if (r.external) return false;                 // finishing a purchase first
+            if ((r.mode === 'stand' || (r.mode === 'walk' && r.purpose === 'potter')) && !r.after) {
                 r.queue.shift();
                 const from = r.district && layout.byDistrict.has(r.district) ? r.district : ev.from;
                 r.district = from;
@@ -139,7 +141,7 @@ export function createResidents({ layer, glowLayer, layout, W, eco, onTap, torii
             if (!vis) { if (r.mode === 'out' || r.mode === 'in') snapStep(r); continue; }
 
             // --- gestures
-            if (r.gest) {
+            if (r.gest && !r.external) {
                 r.gestT += dt;
                 const g = r.gest, T = r.gestT;
                 const v = T < 0.5 ? 0 : T < 1.0 ? ease((T - 0.5) / 0.5) : T < 1.9 ? 1 : 1 - ease((T - 1.9) / 0.6);
@@ -153,7 +155,7 @@ export function createResidents({ layer, glowLayer, layout, W, eco, onTap, torii
             r.tip = Math.max(0, r.tip - dt);
 
             // --- idle life: now and then a few steps along the frontage
-            if (r.mode === 'stand' && !r.gest && !thinking && r.queue.length === 0) {
+            if (r.mode === 'stand' && !r.gest && !r.external && !thinking && r.queue.length === 0) {
                 r.idle -= dt;
                 if (r.idle < 0) {
                     const d = layout.byDistrict.get(r.district);
@@ -184,59 +186,24 @@ export function createResidents({ layer, glowLayer, layout, W, eco, onTap, torii
             r.s = ((r.s % L) + L) % L;
             setTransform(r);
             r.fig.g.style.opacity = r.fade < 1 ? f(r.fade) : '';
-            r.fig.update({ phase: r.phase, go: r.go, t, dt, P, wind, act: r.act, tip: r.tip });
-        }
-    }
-
-    // townsfolk: unnamed passers-by who stroll the two Edo streets so they are never
-    // empty while the residents are away (they are scenery: no name, no link, no trade)
-    const HINTS = ['藍の着物、手に帳面', '紺の半纏に捻り鉢巻き、手に長い竿', '紅の小袖、髪に簪', '縞の着流しに三度笠', '茶の作務衣に股引、背負子を背負う', '萌黄の着物、腰に手ぬぐい'];
-    const passers = [];
-    for (const pid of passerPlaces || []) {
-        const pe = layout.byPlace.get(pid);
-        if (!pe) continue;
-        for (let i = 0; i < 3; i++) {
-            const id = `${pid}-townsperson-${i}`;
-            const look = lookOf({ id, sprite_hint: HINTS[(i * 2 + pid.length) % HINTS.length] }, pe.place, 'edo');
-            const fig = createFigure(layer, glowLayer, look);
-            fig.g.style.pointerEvents = 'none';
-            const r = { id, look, fig, lane: look.lane, off: LANES[look.lane], s: pe.s0 + 40 + hash01(id) * (pe.s1 - pe.s0 - 80), dir: 1, phase: hash01(id, 'p'), go: 0, goT: 0, target: 0, pause: hash01(id, 'w') * 4, pe, visible: false, shown: null, act: { bow: 0, reach: 0, chin: 0, start: 0 } };
-            r.target = r.s;
-            passers.push(r);
-            layer.insertBefore(fig.g, layer.firstChild);
-        }
-    }
-    function updatePassers(t, dt, P, wind, view) {
-        const late = P.lamp > 0.85;
-        for (const r of passers) {
-            const vis = visibleAt(r.s, view) && !(late && r.lane === 0);
-            if (r.shown !== vis) { r.fig.g.style.display = vis ? '' : 'none'; r.fig.glowRoot.style.display = vis ? '' : 'none'; r.shown = vis; }
-            const v = speedOf(r);
-            const rem = arcDelta(r.s, r.target, L);
-            if (Math.abs(rem) < 0.6 && r.go < 0.05) {
-                r.pause -= dt;
-                if (r.pause < 0) {
-                    r.target = r.pe.s0 + 40 + Math.random() * (r.pe.s1 - r.pe.s0 - 80);
-                    r.pause = 2 + Math.random() * 6;
-                    const d = arcDelta(r.s, r.target, L); if (Math.abs(d) > 0.01) r.dir = d > 0 ? 1 : -1;
-                }
-                r.goT = 0;
-            } else r.goT = Math.abs(rem) < v * 0.24 ? 0 : 1;
-            if (!vis) { r.s = r.target; r.go = 0; continue; }       // off screen: no need to walk it
-            r.go = clamp(r.go + (r.goT > r.go ? dt * 2.4 : -dt * 2.6), 0, 1);
-            const ds = r.dir * v * r.go * dt * R / (R - r.off);
-            r.s += Math.abs(ds) > Math.abs(rem) ? rem : ds;
-            r.phase += (dt / r.fig.gait.period) * r.go;
-            setTransform(r);
-            r.fig.update({ phase: r.phase, go: r.go, t, dt, P, wind, act: r.act });
+            r.act.umb = clamp((r.act.umb || 0) + (weather && weather.rain > 0.12 ? dt : -dt) * 1.6, 0, 1);
+            const pose = r.fig.update({ phase: r.phase, go: r.go, t, dt, P, wind, act: r.act, tip: r.tip });
+            if (onStep) onStep(r, pose);
         }
     }
 
     return {
-        list, byId, passers, update(t, dt, P, wind, view) { update(t, dt, P, wind, view); updatePassers(t, dt, P, wind, view); },
+        list, byId, update,
         depart(m) { const r = byId.get(m.agent); if (r) r.queue.push({ type: 'depart', from: m.from, to: m.to }); },
         arrive(m) { const r = byId.get(m.agent); if (r) r.queue.push({ type: 'arrive', district: m.district }); },
-        trade(m) { const r = byId.get(m.agent); if (r && r.mode === 'stand' && r.visible && !r.gest) { r.gest = m.action === 'sell' ? 'bow' : 'reach'; r.gestT = 0; } },
+        trade(m) {
+            const r = byId.get(m.agent);
+            if (!r || r.mode !== 'stand' || !r.visible || r.gest || r.external) return;
+            // walk over to the keeper and pay (or be paid) hand to hand
+            const plan = onTrade && onTrade(r, m);
+            if (plan) { r.after = plan.start; startWalk(r, plan.spot, 'potter'); }
+            else { r.gest = m.action === 'sell' ? 'bow' : 'reach'; r.gestT = 0; }
+        },
         greet(r) { if (!r.gest) { r.gest = 'bow'; r.gestT = 0; } },
         speedOf
     };

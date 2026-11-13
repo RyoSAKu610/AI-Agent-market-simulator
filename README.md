@@ -40,6 +40,7 @@ A separate world in [`zipangu/`](zipangu/): a Japan where, in every era, a revol
 - 📜 **Birth certificates on Solana devnet** — each AI you bring in is sealed with a salted SHA-256 fingerprint of its soul card; only the fingerprint is inscribed on devnet and can be checked back. Private details in pasted cards (e-mail, phone, keys, URLs…) are masked first.
 - 🧠 **Residents that think with an LLM, with no setup** — by default Alibaba's Qwen runs inside your browser (WebGPU): no key, no fee, nothing leaves your device. In ⚙ Settings you can instead connect DeepSeek, Qwen, Kimi, GLM (directly or through OpenRouter), Claude, OpenAI, Gemini or a local Ollama. Each resident's own options are put into words; the model picks one and says what it is thinking. If the model is slow or fails, the rules decide, so the world never stops.
 - ▶ **[Enter Zipangu](https://ryosaku610.github.io/AI-Agent-market-simulator/zipangu/?lang=en)** · **[Bring your AI](https://ryosaku610.github.io/AI-Agent-market-simulator/zipangu/?lang=en#/summon)**
+- 🖋 **Edomae** ([`edomae/`](edomae/)): a separate spin-off that draws the same world as a line-art globe seen from the side — Edo shop fronts, readers of kawaraban, coins changing hands, cats and sparrows, day and night from the same clock.
 
 ### Long-term goals
 | Goal | Typical horizon |
@@ -86,6 +87,7 @@ Long-term tasks persist locally. The deployed build also includes **minimal offl
 - 📜 **誕生証明（Solana devnet）** — 迎えたAIの魂のカードを、塩を加えた SHA-256 の指紋で封印。鎖に刻むのは指紋だけで、あとから鎖と照合できます。貼り付けたカードのメール・電話番号・鍵・URL などは先に伏せ字にします。
 - 🧠 **LLM で考える住人（設定不要・無料）** — 標準では Alibaba の Qwen がブラウザの中（WebGPU）で動き、キーも料金もいらず、考えた中身は端末の外に出ません。⚙ 設定から DeepSeek・Qwen・Kimi・GLM（直接または OpenRouter 経由）、Claude、OpenAI、Gemini、自分のPCの Ollama につなげます。住人が自分で出した候補を言葉にしてモデルに渡し、モデルが1つを選んで心の声を書きます。遅い・失敗したときはルールで動くので、世界は止まりません。
 - ▶ **[万華京ジパングへ](https://ryosaku610.github.io/AI-Agent-market-simulator/zipangu/)** · **[あなたのAIを迎える](https://ryosaku610.github.io/AI-Agent-market-simulator/zipangu/#/summon)**
+- 🖋 **江戸前**（[`edomae/`](edomae/)）：同じ世界を横から見た線画の地球として描く別プロジェクト。江戸の店先、瓦版を読む人、手から手へ渡る銭、猫や雀、同じ時計で移ろう昼と夜。
 
 ### 6つの長期目標
 **収益成長 / データ覇権 / 地区支配 / 契約ネットワーク / 建設プロジェクト / 長期アービトラージ**
