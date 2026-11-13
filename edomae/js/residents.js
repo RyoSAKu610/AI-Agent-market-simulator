@@ -17,7 +17,7 @@ export const FS = 0.5;                     // figure scale: figures ≈ 48 scene
 const LANES = [5, 10, 15];                 // feet this far below the building line
 const FADE = 0.9;                          // seconds to step through a torii
 
-export function createResidents({ layer, glowLayer, layout, W, eco, onTap, toriiOf, passerPlaces = [], onTrade = null }) {
+export function createResidents({ layer, glowLayer, layout, W, eco, onTap, toriiOf, passerPlaces = [], onTrade = null, onStep = null, weather = null }) {
     const R = layout.R, L = layout.total;
     const list = [];
     const byId = new Map();
@@ -186,7 +186,9 @@ export function createResidents({ layer, glowLayer, layout, W, eco, onTap, torii
             r.s = ((r.s % L) + L) % L;
             setTransform(r);
             r.fig.g.style.opacity = r.fade < 1 ? f(r.fade) : '';
-            r.fig.update({ phase: r.phase, go: r.go, t, dt, P, wind, act: r.act, tip: r.tip });
+            r.act.umb = clamp((r.act.umb || 0) + (weather && weather.rain > 0.12 ? dt : -dt) * 1.6, 0, 1);
+            const pose = r.fig.update({ phase: r.phase, go: r.go, t, dt, P, wind, act: r.act, tip: r.tip });
+            if (onStep) onStep(r, pose);
         }
     }
 

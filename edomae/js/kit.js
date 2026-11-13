@@ -135,7 +135,7 @@ export function brick(g, x0, y0, x1, y1, rnd) {
 export function pane(g, gl, x0, y0, x1, y1, rnd, opts = {}) {
     const n = el('path', { d: rect(x0, y0, x1, y1), fill: PAPER }, g);
     const glow = el('ellipse', { cx: f((x0 + x1) / 2), cy: f((y0 + y1) / 2), rx: f((x1 - x0) * 0.9 + 10), ry: f((y1 - y0) * 0.9 + 10), fill: 'url(#e-warmglow)', opacity: 0 }, gl);
-    const w = { n, glow, thr: opts.thr ?? rnd(0.12, 0.62), lateOff: opts.lateOff ?? (rnd() < 0.42 ? rnd(0.93, 1.12) : 9), warmth: rnd(), lit: 0, awake: opts.awake || 'night' };
+    const w = { n, glow, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, thr: opts.thr ?? rnd(0.12, 0.62), lateOff: opts.lateOff ?? (rnd() < 0.42 ? rnd(0.93, 1.12) : 9), warmth: rnd(), lit: 0, awake: opts.awake || 'night' };
     // someone at home, seen as a shadow on the lit paper (drawn before the lattice)
     if (opts.sil) {
         const cx = lerp(x0, x1, opts.silAt ?? 0.4), hh = Math.min(y1 - y0, 26), base = y1, s = hh / 22;
@@ -213,11 +213,12 @@ export function chochin(g, gl, x, y, rnd, { r = 6.4, h = 15, label = '', red = f
     const p = pendulum(10, 1.1, (rnd() - 0.5) * 0.1);
     const ph = rnd() * 6, T = thr ?? rnd(0.08, 0.3);
     return {
-        grp,
+        grp, x, y, litV: 0,
         draw(t, dt, wind, Pal) {
             const a = p.step(wind * 0.5 + Math.sin(t * 0.9 + ph) * 0.14, dt);
             grp.setAttribute('transform', `translate(${f(x)} ${f(y)}) rotate(${f(-a * 57.3)})`);
             const lit = smooth(T, T + 0.2, Pal.lamp);
+            this.litV = lit;
             const base = red ? mix(RED, RED_NIGHT, Pal.inkT * (1 - lit)) : Pal.paper;
             body.setAttribute('fill', rgb(mix(base, red ? toRGB('#ff8a4a') : WARM, lit * 0.95)));
             glow.setAttribute('cx', f(x + Math.sin(a) * -(h / 2 + 4))); glow.setAttribute('cy', f(y + Math.cos(a) * (h / 2 + 4)));

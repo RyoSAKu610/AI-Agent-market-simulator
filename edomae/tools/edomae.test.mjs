@@ -9,12 +9,13 @@ const load = path => import(moduleUrl(readFileSync(new URL('../../' + path, impo
 const { buildWorld } = await load('zipangu/js/data.js');
 const { clockAt } = await load('zipangu/js/sim.js');
 const { ringLayout, ringOrder, signName, arcDelta, standSpot } = await load('edomae/js/layout.js');
-const { tauOf, tOfTau, warm } = await load('edomae/js/clock.js');
+const { tauOf, tOfTau, warm, legible, contrast } = await load('edomae/js/clock.js');
 const { palette } = await load('edomae/js/lib/daynight.js');
 const { gait } = await load('edomae/js/lib/gait.js');
 const { lookOf, lookKey, companionOf } = await load('edomae/js/looks.js');
 const news = await load('edomae/js/news.js');
 const { frameFor, TALLEST } = await load('edomae/js/frame.js');
+const WM = await load('edomae/js/watermath.js');
 
 const read = stem => JSON.parse(readFileSync(new URL('../../zipangu/world/' + stem + '.json', import.meta.url), 'utf8'));
 const W = buildWorld(Object.fromEntries(['world', 'eras', 'realms', 'districts', 'creatures', 'goods', 'currencies', 'agents', 'events', 'library'].map(k => [k, read(k)])));
@@ -197,12 +198,79 @@ for (const [name, [cw, ch]] of Object.entries(cards)) {
     assert.ok(F.GY - TALLEST * 0.92 >= F.skyTop - 1, `${name}: the tallest fronts stay under the HUD band`);
     assert.ok(F.GY < F.VH - 40, `${name}: the street and the kerb are inside the card`);
     if (F.portrait) {
-        assert.ok(F.GY / F.VH >= 0.6 && F.GY / F.VH <= 0.8, `${name}: in portrait the street sits in the lower middle (${(F.GY / F.VH).toFixed(2)})`);
-        assert.ok(48 * F.ppu >= 60, `${name}: people are drawn large on a phone (${(48 * F.ppu).toFixed(0)} px)`);
+        assert.ok((F.VH - F.GY) / F.VH <= 0.2, `${name}: in portrait the earth is a modest band (${((F.VH - F.GY) / F.VH).toFixed(2)})`);
+        assert.ok(48 * F.ppu >= 85, `${name}: people are drawn large on a phone (${(48 * F.ppu).toFixed(0)} px)`);
     } else assert.ok(F.GY / F.VH > 0.75, `${name}: in landscape the street runs low with the sky above`);
 }
 assert.equal(frameFor(374, 745, { hudPx: 82 }).portrait, true);
 assert.equal(frameFor(820, 347, { hudPx: 82 }).portrait, false);
 assert.deepEqual(frameFor(374, 745), frameFor(374, 745), 'framing is deterministic');
 
-console.log(`edomae: ${L.places.length} places, ${slots.length} districts on a ring of radius ${Math.round(L.R)}; tauOf, warm contrast, planted feet, ${keys.size} distinct residents, headlines, money, ${withPets} companions and framing ok`);
+// ---------------------------------------------------------------- water: the height field is stable and settles
+{
+    const hf = WM.createHeightField(60, { dx: 2, c: 30 });
+    hf.poke(40, -30, 3);
+    hf.step(1 / 60);
+    let e0 = hf.energy(), steps = 0;
+    const dts = [1 / 60, 1 / 30, 1 / 144, 0.05, 1 / 60, 0.2, 1 / 90];
+    for (let i = 0; i < 4000; i++) {
+        hf.step(dts[i % dts.length]);
+        const e = hf.energy();
+        assert.ok(Number.isFinite(e) && hf.h.every(Number.isFinite), 'no NaN in the field');
+        assert.ok(e <= e0 * (1 + 1e-9) + 1e-12, `energy never grows without input (step ${i})`);
+        e0 = e; steps++;
+    }
+    assert.ok(e0 < 1e-6, `the surface settles (${e0})`);
+    // a disturbance spreads: a cell away from the poke moves after a while, not before
+    const hf2 = WM.createHeightField(80, { dx: 2, c: 30 });
+    hf2.poke(20, -30, 2);
+    hf2.step(1 / 60);
+    const far = () => Math.abs(hf2.h[60]);
+    assert.ok(far() < 1e-3, 'not yet at the far cell');
+    let reached = 0; for (let i = 0; i < 300; i++) { hf2.step(1 / 60); reached = Math.max(reached, far()); }
+    assert.ok(reached > 1e-4, `the wave reaches the far cell (100 units at speed 30) (${reached})`);
+    // rings: radius follows the wave speed, amplitude decays
+    for (const t of [0, 0.25, 0.5, 1, 2]) { const r = WM.ringAt(t, { speed: 14 }); assert.ok(Math.abs(r.r - 14 * t) < 1e-9); }
+    assert.ok(WM.ringAt(2).a < WM.ringAt(1).a && WM.ringAt(1).a < WM.ringAt(0.1).a, 'rings fade as they grow');
+    // droplets land where the ballistic formula says
+    for (const [y0, vy, ys] of [[0, -40, 0], [-5, -20, 2], [-3, 10, 0]]) {
+        const tl = WM.landTime(y0, vy, 160, ys);
+        const [, yl] = WM.ballistic(0, y0, 12, vy, 160, tl);
+        assert.ok(Math.abs(yl - ys) < 1e-9, 'lands on the surface');
+        let x = 0, y = y0, v = vy; const dt = 1 / 2000; let t = 0;
+        while (!(y >= ys && v > 0) && t < 5) { v += 160 * dt; x += 12 * dt; y += v * dt; t += dt; }
+        assert.ok(Math.abs(t - tl) < 0.01 && Math.abs(x - 12 * tl) < 0.15, 'stepped flight agrees with the formula');
+    }
+    // pools never exceed their caps
+    const pool = WM.createPool(5, () => ({}));
+    const got = []; for (let i = 0; i < 12; i++) { const it = pool.acquire(); if (it) got.push(it); }
+    assert.equal(got.length, 5); assert.equal(pool.live, 5); assert.equal(pool.acquire(), null);
+    pool.release(got[0]); assert.equal(pool.live, 4); assert.ok(pool.acquire());
+    // the splash crown is a keyed sequence that ends
+    const k0 = WM.crownKeys(0), k5 = WM.crownKeys(0.5), k1 = WM.crownKeys(1);
+    assert.ok(k0.tongues.every(t => t.len === 0) && k5.tongues.some(t => t.len > 3) && k1.done, 'crown: rise → open → done');
+    // rain: deterministic per day and seed; the rainy season rains more
+    const sekkiOf = d => (4 + d) % 24;
+    for (const T of [0.1, 3.4, 8.8, 12.05, 20.6]) assert.equal(WM.rainAt(T, sekkiOf, 1), WM.rainAt(T, sekkiOf, 1), 'rain is deterministic');
+    const days = n => Array.from({ length: 400 }, (_, d) => WM.showerOf(d, n, 1)).filter(Boolean).length;
+    assert.ok(days(9) > days(21) * 2, `夏至 rains more than 冬至 (${days(9)} vs ${days(21)})`);
+    let maxR = 0; for (let T = 0; T < 48; T += 0.002) { const r = WM.rainAt(T, sekkiOf, 1); assert.ok(r >= 0 && r <= 1); maxR = Math.max(maxR, r); }
+    assert.ok(maxR > 0.3, 'it does rain over two seasons');
+    const w = []; for (let T = 0; T < 24; T += 0.01) w.push(WM.wetness(T, sekkiOf, 1));
+    assert.ok(w.every(v => v >= 0 && v <= 1) && w.some(v => v > 0.2), 'the street gets wet and dries');
+}
+
+// ---------------------------------------------------------------- legible through both ink flips (every 0.002 of a day)
+{
+    let worst = 99;
+    for (let i = 0; i < 500; i++) {
+        const tau = i * 0.002, P = legible(warm(palette(tau)));
+        const r = contrast(P.ink, P.paper);
+        assert.ok(r >= 4.5 - 1e-6, `ink/paper contrast ≥ 4.5:1 at τ=${tau.toFixed(3)} (${r.toFixed(2)})`);
+        worst = Math.min(worst, r);
+    }
+    // the day and night looks themselves are left exactly as they were
+    for (const tau of [0.3, 0.5, 0.62, 0.9, 0.95, 0.05]) { const P = warm(palette(tau)); assert.equal(legible(P), P, `τ=${tau} unchanged`); }
+}
+
+console.log(`edomae: ${L.places.length} places, ${slots.length} districts on a ring of radius ${Math.round(L.R)}; tauOf, warm contrast, planted feet, ${keys.size} distinct residents, headlines, money, ${withPets} companions, framing and water ok`);

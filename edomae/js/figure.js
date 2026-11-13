@@ -168,6 +168,12 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
     const nearHand = el('ellipse', { rx: 1.8, ry: 1.5, fill: PAPER, stroke: 'currentColor', 'stroke-width': PEN * 0.7 }, nearArmG);
     const prop = buildProp(nearArmG, glowBody, look);
     const sheet = look.sheet ? buildSheet(up, look.sheet) : null;
+    // a 番傘 for rain: oiled paper on bamboo ribs, opened over the head when it rains
+    const umb = el('g', { style: 'display:none' }, up);
+    const umbPole = pen(umb, PEN * 0.8);
+    const umbTop = paint(umb, ['#c8403a', '#c9a868', '#34507a'][Math.floor(((look.id || '').length * 7 + (look.id || '').charCodeAt(0)) % 3)], PEN * 0.9);
+    const umbRibs = pen(umb, PEN * 0.4);
+    const umbFill = umbTop.getAttribute('fill');
     const hip = look.hip === 'jar' ? buildJars(body, glowBody, look) : null;
     const pouch = look.hip === 'pouch' ? paint(up, '#8a6a4a', PEN * 0.7) : null;
     if (pouch) pouch.setAttribute('d', 'M46.2 66 Q49.6 66.6 49.4 70.4 Q49 73.6 46.6 73.4 Q45 72 46.2 66Z');
@@ -182,7 +188,7 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
     const slv = spring(40, 6), tail = spring(26, 3.4), hairS = spring(30, 4.4), stole = spring(22, 3.2);
     const breath = curve([[0, 0], [look.breath * 0.42, 0.36], [look.breath * 0.62, 0.3], [look.breath * 0.9, 0.04]], look.breath);
     const flatFills = [[torso, colour.main], [lower, colour.main], [farSleeve, colour.main], [nearSleeve, colour.main], [obi, colour.sub],
-        [pack, look.packColour || colour.sub], [apron, look.apron], [scarf, colour.accent], [hakamaPanels && hakamaPanels[0], colour.sub], [hakamaPanels && hakamaPanels[1], colour.sub]]
+        [pack, look.packColour || colour.sub], [umbTop, umbFill], [apron, look.apron], [scarf, colour.accent], [hakamaPanels && hakamaPanels[0], colour.sub], [hakamaPanels && hakamaPanels[1], colour.sub]]
         .filter(([n, c]) => n && c);
     let lastInk = -1;
 
@@ -198,7 +204,7 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
         const { phase, go, t, dt, P, wind } = st;
         const act = st.act || {};
         const bow = ease(act.bow || 0), reach = ease(act.reach || 0), chin = ease(act.chin || 0), start = act.start || 0;
-        const read = ease(act.read || 0), show = ease(act.show || 0), call = ease(act.call || 0), talk = act.talk || 0;
+        const read = ease(act.read || 0), show = ease(act.show || 0), call = ease(act.call || 0), talk = act.talk || 0, umbrella = ease(act.umb || 0);
         const p = walkG.pose(phase, go);
         const b = p.bob, hy = p.hip[1];
         const iF = p.front, iR = 1 - iF;
@@ -288,6 +294,10 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
             const [e3, h3] = ik(SH_FAR, [52, 20], ARM[0], ARM[1], [1, -0.2]);
             fe = L2(fe, e3, call); fh = L2(fh, h3, call);
         }
+        if (umbrella > 0.001 && look.prop !== 'tray' && look.prop !== 'carry') {
+            const [e2, h2] = ik(SH_NEAR, [47.4, 50], ARM[0], ARM[1], [0.4, 1]);
+            ne = L2(ne, e2, umbrella); nh = L2(nh, h2, umbrella);
+        }
         farArm.draw([SH_FAR, fe, fh], [0.2, 0.5]);
         nearArm.draw([SH_NEAR, ne, nh], [0.2, 0.4]);
         farHand.setAttribute('cx', f(fh[0])); farHand.setAttribute('cy', f(fh[1]));
@@ -317,6 +327,14 @@ export function createFigure(parent, glowParent, look, { stripes } = {}) {
         if (hatLift) hatLift(st.tip || 0, trail);
         if (prop) prop.update(nh, ne, { go, dt, wind, P, phase, t, accel: Math.cos(phase * Math.PI * 4) * 1.4 * go, upToFig, reach, call });
         if (sheet) sheet.update(nh, fh, Math.max(read, show), show, call, fh);
+        if (umbrella > 0.001) {
+            umb.style.display = '';
+            const top = [nh[0] - 4 + (1 - umbrella) * 4, 14 + (1 - umbrella) * 26], k = umbrella;
+            umbPole.setAttribute('d', `M${f(nh[0] - 0.4)} ${f(nh[1] + 3)} L${pt(top)}`);
+            const r = 19 * k, dy = 6 * k;
+            umbTop.setAttribute('d', `M${f(top[0] - r)} ${f(top[1] + dy)} Q${f(top[0] - r * 0.7)} ${f(top[1] - dy * 0.2)} ${pt(top)} Q${f(top[0] + r * 0.7)} ${f(top[1] - dy * 0.2)} ${f(top[0] + r)} ${f(top[1] + dy)} Q${f(top[0])} ${f(top[1] + dy * 0.5)} ${f(top[0] - r)} ${f(top[1] + dy)}Z`);
+            umbRibs.setAttribute('d', [-0.8, -0.45, -0.15, 0.15, 0.45, 0.8].map(u => `M${pt(top)} L${f(top[0] + r * u)} ${f(top[1] + dy * (0.55 + 0.45 * Math.abs(u)))}`).join(' '));
+        } else umb.style.display = 'none';
         fig.hand = upToFig(nh[0], nh[1]); fig.handFar = upToFig(fh[0], fh[1]);
         if (hip) hip.update(hy, { go, dt, wind, P, phase, t });
 

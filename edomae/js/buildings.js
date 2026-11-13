@@ -14,6 +14,8 @@ import {
     noren, chochin, lamp, smoke, kokuDial, banner, pine, blossomTree, roundTree, bamboo, barrel, well, bench, water, GOLD, hoshigaki, asagao
 } from './kit.js';
 import { createSitter } from './sitter.js';
+import { createSurface } from './water.js';
+import { createBoat, createFrog, createTub, createBucket } from './waterlife.js';
 import { signName } from './layout.js';
 
 const lm = d => (d.landmarks || []).map(l => l.name_ja || '').join(' ') + ' ' + (d.name_ja || '') + ' ' + (d.summary || '');
@@ -56,6 +58,17 @@ function win(ctx, x0, y0, x1, y1, kind = 'shoji', opts) {
     else if (kind === 'grid') { const d = []; for (let x = x0 + 4; x < x1; x += 4) d.push(`M${f(x)} ${f(y0)} L${f(x)} ${f(y1)}`); P(ctx.g, d.join(' '), SP * 0.35); P(ctx.g, rect(x0, y0, x1, y1), SP * 0.7); }
     else P(ctx.g, rect(x0, y0, x1, y1), SP * 0.8);
     return w;
+}
+
+// water in a building's space: a band from the far bank (yTop) to the building line
+function waterAt(ctx, x0, x1, top, kind = null) {
+    const fam = ctx.d && ctx.d.home;
+    const k = kind || (/海|港|浜|渡し|海上|竜宮/.test((ctx.d && ctx.d.name_ja) || '') ? 'sea' : /池|蓮|鯉|淵/.test(lm(ctx.d)) ? 'pond' : /谷川|渓|水路/.test(lm(ctx.d)) ? 'stream' : 'river');
+    const s = createSurface({ g: ctx.g, hl: ctx.hl, gl: ctx.gl, rnd: ctx.rnd }, { x0, x1, yTop: Math.min(top, -6) - 6, yBot: 0, kind: k, flow: k === 'pond' ? 0.25 : 0.7 });
+    s.draw = (t, dt, wind, P) => s.update(t, dt, wind, P);
+    ctx.live.surfaces.push(s);
+    if ((k === 'pond' || k === 'stream') && x1 - x0 > 40) ctx.live.waterlife.push(createFrog(ctx, s, { side: 0.08 + ctx.rnd() * 0.2 }));
+    return s;
 }
 
 function sitter(ctx, x, y, opts) {
@@ -238,6 +251,7 @@ const EDO = {
             ctx.live.swing.push({ grp, x, y: -48, p, k: 12 });
         }
         sign(ctx, 0, -84, 12, { vertical: true, h: 34 });
+        ctx.live.waterlife.push(createTub(ctx, -w / 2 + 26));
         ctx.live.smokes.push(smoke(g, w / 2 - 26, -76, rnd));
         P(g, `M${f(w / 2 - 28)} -64 L${f(w / 2 - 28)} -76 M${f(w / 2 - 24)} -64 L${f(w / 2 - 24)} -76`, SP * 0.8);
     },
@@ -253,7 +267,7 @@ const EDO = {
         P(g, `M${f(sx - 2)} -6 l1.4 -3 l-1 0 l1.6 -3`, SP * 0.6);
         // 雷瓶の井戸端: a well with lightning jars glowing beside it
         const wx = w / 2 - 34;
-        well(g, wx);
+        well(g, wx); ctx.live.waterlife.push(createBucket(ctx, wx)); ctx.live.wells.push(wx);
         for (let i = 0; i < 3; i++) {
             const jx = wx + 12 + i * 5;
             const jar = el('path', { d: `M${f(jx - 1.8)} 0 Q${f(jx - 3)} -3.4 ${f(jx - 1.8)} -6.4 L${f(jx + 1.8)} -6.4 Q${f(jx + 3)} -3.4 ${f(jx + 1.8)} 0Z M${f(jx - 1)} -6.4 l0 -1.6 l2 0 l0 1.6`, fill: PAPER, stroke: 'currentColor', 'stroke-width': SP * 0.6 }, g);
@@ -266,7 +280,9 @@ const EDO = {
         const { g, rnd } = ctx;
         // the river: a bridge arching over it, a bank of stone, water strokes
         const bx0 = -w / 2 + 6, bx1 = w * 0.1;
-        ctx.live.waters.push(water(g, bx0, bx1, -7, 0, rnd));
+        const river = waterAt(ctx, bx0, bx1, -7);
+        ctx.live.waters.push(river);
+        ctx.live.waterlife.push(createBoat(ctx, river));
         P(g, `M${f(bx0 - 2)} -6 Q${f((bx0 + bx1) / 2)} -40 ${f(bx1 + 2)} -6`, SP * 1.3);
         P(g, `M${f(bx0 - 2)} -12 Q${f((bx0 + bx1) / 2)} -46 ${f(bx1 + 2)} -12`, SP * 0.9);
         const rails = [];
@@ -274,6 +290,7 @@ const EDO = {
         P(g, rails.join(' '), SP * 0.6);
         posts(g, [lerp(bx0, bx1, 0.25), lerp(bx0, bx1, 0.5), lerp(bx0, bx1, 0.75)], -34, 0, SP * 0.9);
         ctx.live.fireflies.push({ x0: bx0, x1: bx1, y0: -36, y1: -4 });
+        for (const u of [0.32, 0.68]) ctx.live.lanterns.push(chochin(g, ctx.gl, lerp(bx0, bx1, u), -42 + Math.abs(u - 0.5) * 8, rnd, { r: 3.4, h: 8, red: true, thr: 0.12 }));
         // 光の版元: a print shop selling glowing prints, prints hung in the open front
         const m = machiya(ctx, bx1 + 6, w / 2 - 4, { task: 'sew', noren: '#7a2e3a', label: '版元', storeys: 2 });
         for (let i = 0; i < 4; i++) { const x = lerp(m.sx0 + 4, m.sx1 - 10, i / 3); S(g, rect(x, -m.H1 + 12, x + 7, -m.H1 + 22), SP * 0.5); P(g, `M${f(x + 1.4)} ${f(-m.H1 + 18)} q2 -3 4 0`, SP * 0.35); }
@@ -314,7 +331,7 @@ const EDO = {
         const pend = P(g, '', SP * 0.7), bob = S(g, '', SP * 0.6);
         ctx.live.pendulums.push({ pend, bob, x: cx, y: -38, len: 20, w: 2.6 });
         // 刻斑の庭と鯰井戸: the catfish well in the garden
-        well(g, w / 2 - 18);
+        well(g, w / 2 - 18); ctx.live.waterlife.push(createBucket(ctx, w / 2 - 18)); ctx.live.wells.push(w / 2 - 18);
         pine(g, w / 2 - 6, 62, rnd);
         ctx.live.smokes.push(smoke(g, -w / 2 + 30, m.ridge + 6, rnd));
         P(g, `M${f(-w / 2 + 28)} ${f(m.ridge + 18)} l0 -12 M${f(-w / 2 + 32)} ${f(m.ridge + 18)} l0 -12`, SP * 0.8);
@@ -469,7 +486,7 @@ const THIN = {
         FAMILY.showa(ctx, w);
         const { g, rnd } = ctx;
         // 蓮池の蜘蛛座: a lotus pond at the foot of the tower; 方丈ステーション hut with its window lit
-        ctx.live.waters.push(water(g, -w * 0.46, -w * 0.14, -6, 0, rnd));
+        ctx.live.waters.push(waterAt(ctx, -w * 0.46, -w * 0.14, -6));
         C(g, [-w * 0.4, -w * 0.3, -w * 0.2].map(x => oval(x, -6, 4, 1.4)).join(' '), '#4f7a55', SP * 0.4);
         C(g, oval(-w * 0.3, -9, 2, 2.4), '#e8a8bd', SP * 0.4);
         win(ctx, w * 0.22, -24, w * 0.38, -12, 'grid', { thr: 0.05, sil: 'sit' });
@@ -561,6 +578,256 @@ const THIN = {
     }
 };
 
+// a train of the 時環線 that pulls into a station at night: it slows in, stands for its
+// stop with lit windows and people getting on, and pulls out again (keyed, eased)
+function stationTrain(ctx, x0, x1, y, { cars = 3, stop = 20 } = {}) {
+    const { g, gl } = ctx;
+    const tg = el('g', { style: 'display:none' }, g);
+    const tgl = el('g', { style: 'display:none' }, gl);
+    const CW = 30;
+    const parts = Array.from({ length: cars }, (_, i) => {
+        const cg = el('g', {}, tg);
+        C(cg, i === 0 ? `M0 0 L0 -15 Q2 -19 10 -19 L${CW - 2} -19 L${CW} -15 L${CW} 0Z` : `M0 0 L0 -17 Q${CW / 2} -20 ${CW} -17 L${CW} 0Z`, '#1b2140', SP * 0.8);
+        const wins = [];
+        for (let k = 0; k < 4; k++) { const wx = 3 + k * 6.6; wins.push(el('rect', { x: f(wx), y: -14, width: 4.6, height: 5.4, fill: '#ffe2a0' }, cg)); }
+        // a seated figure in some windows, as a silhouette against the light
+        const sil = el('path', { d: `M${f(10)} -8.6 q0 -2.6 1.4 -3 q-1 -1.6 0.6 -2.2 q1.6 0.6 0.6 2.2 q1.4 0.4 1.4 3Z M${f(23.2)} -8.6 q0 -2.6 1.4 -3 q-1 -1.6 0.6 -2.2 q1.6 0.6 0.6 2.2 q1.4 0.4 1.4 3Z`, fill: '#3a2a26' }, cg);
+        P(cg, `M2 0 l0 1.6 M${CW - 2} 0 l0 1.6`, SP * 0.6);
+        const glw = el('ellipse', { rx: 20, ry: 9, fill: 'url(#e-warmglow)' }, tgl);
+        return { cg, glw, sil };
+    });
+    let t = 0;
+    const span = x1 - x0, L = cars * (CW + 2);
+    return {
+        draw(tt, dt, wind, Pal) {
+            const on = smooth(0.35, 0.7, Pal.night);
+            tg.style.display = on > 0.02 ? '' : 'none'; tgl.style.display = on > 0.02 ? '' : 'none';
+            if (on <= 0.02) return;
+            t += dt;
+            const cyc = 9 + stop + 9 + 14, u = t % cyc;
+            // in (eased to a stop), stand, out (eased from rest), then gone a while
+            let x;
+            if (u < 9) x = lerp(x1 + 20, x0 + span * 0.15, ease(u / 9));
+            else if (u < 9 + stop) x = x0 + span * 0.15;
+            else if (u < 18 + stop) x = lerp(x0 + span * 0.15, x0 - L - 30, ease((u - 9 - stop) / 9));
+            else x = x1 + 400;
+            tg.setAttribute('opacity', f(on)); tgl.setAttribute('opacity', f(on));
+            parts.forEach((pp, i) => {
+                const cx = x + i * (CW + 2);
+                pp.cg.setAttribute('transform', `translate(${f(cx)} ${f(y)})`);
+                pp.glw.setAttribute('cx', f(cx + CW / 2)); pp.glw.setAttribute('cy', f(y - 11));
+                pp.sil.style.display = (u > 12 + i * 3 || u < 9) ? '' : 'none';       // they sit down one by one during the stop
+            });
+        }
+    };
+}
+
+const BIG = {
+    // 令和
+    kokurin_hiroba(ctx, w) {
+        FAMILY.reiwa(ctx, w);
+        const { g, rnd } = ctx;
+        // 万華鏡の石畳 and the 合作工房 open to the square, someone at a bench
+        const st = []; for (let x = -w / 2 + 4; x < w / 2 - 4; x += 6) st.push(`M${f(x)} -1 l3 -1.4 l3 1.4`); P(g, st.join(' '), SP * 0.4);
+        openRoom(ctx, w * 0.18, w * 0.46, -36, 'hammer', { colour: '#d9813a', hair: 'cap' });
+        tileRoof(g, { x0: w * 0.15, x1: w * 0.49, eave: -36, ridge: -48, inset: 8, tile: 4.4, oni: false });
+        // 憲章の算額殿: a small board hall
+        S(g, rect(-w * 0.46, -30, -w * 0.24, 0), SP * 0.8);
+        for (let i = 0; i < 3; i++) S(g, rect(-w * 0.44 + i * 7, -26, -w * 0.44 + i * 7 + 5.4, -18), SP * 0.45);
+        tileRoof(g, { x0: -w * 0.49, x1: -w * 0.21, eave: -30, ridge: -42, inset: 8, tile: 4.4, oni: false });
+        ctx.live.lanterns.push(chochin(g, ctx.gl, -w * 0.18, -34, rnd, { r: 3.6, h: 8, red: true }));
+    },
+    reiwa_dojima_kaisho(ctx, w) {
+        FAMILY.reiwa(ctx, w);
+        const { g, rnd } = ctx;
+        // 大水盤の立会場: a great water basin at the foot of the tower, traders round it
+        const basin = waterAt(ctx, -w * 0.3, w * 0.3, -6, 'pond');
+        ctx.live.waters.push(basin);
+        S(g, rect(-w * 0.32, -4, w * 0.32, 0), SP * 0.6);
+        // 雷拍の拍子木櫓: a little clapper tower
+        P(g, `M${f(w * 0.4)} 0 L${f(w * 0.4)} -40 M${f(w * 0.46)} 0 L${f(w * 0.46)} -40`, SP * 0.9);
+        S(g, rect(w * 0.38, -46, w * 0.48, -40), SP * 0.8);
+        sitter(ctx, w * 0.43, -40, { kind: 'stand', task: 'flag', scale: 0.4, colour: '#2c2a2a' });
+    },
+    reiwa_aozora_shoko(ctx, w) {
+        FAMILY.reiwa(ctx, w);
+        const { g } = ctx;
+        // 昇り口の螺旋階段 up the side of the tower, a 栞雀 nest on the sill
+        const sp = []; for (let y = -10; y > -140; y -= 12) sp.push(`M${f(w / 2 - 8)} ${f(y)} L${f(w / 2 + 2)} ${f(y - 6)} L${f(w / 2 - 8)} ${f(y - 12)}`); P(g, sp.join(' '), SP * 0.6);
+        sitter(ctx, -w * 0.18, -0.01, { kind: 'bench', task: 'read', colour: '#3a5a8a' });
+    },
+    reiwa_neon_kyushigai(ctx, w) {
+        FAMILY.reiwa(ctx, w);
+        const { g, rnd } = ctx;
+        // 蝋燭横丁: a candle alley of little lit stalls at the tower's foot; 雪見の喫茶
+        for (let i = 0; i < 3; i++) { const a = -w / 2 + 6 + i * 16; S(g, rect(a, -16, a + 13, 0), SP * 0.6); win(ctx, a + 2, -14, a + 11, -6, 'plain', { thr: 0.02 + i * 0.05, sil: i === 1 ? 'sit' : null }); }
+        ctx.live.lanterns.push(chochin(g, ctx.gl, -w / 2 + 28, -20, rnd, { r: 3, h: 7, red: true }));
+        roundWin(ctx, w * 0.28, -60, 6, { thr: 0.1, sil: 'sit' });
+    },
+    reiwa_tabidachi_guchi(ctx, w) {
+        FAMILY.reiwa(ctx, w);
+        const { g } = ctx;
+        // フジバカマの原 at the gate, and the 膝栗毛屋 counter where travellers set off
+        P(g, Array.from({ length: 14 }, (_, i) => `M${f(-w / 2 + 4 + i * 3)} 0 q${f(i % 2 ? 1 : -1)} -5 0 -9`).join(' '), SP * 0.4);
+        C(g, Array.from({ length: 14 }, (_, i) => oval(-w / 2 + 4 + i * 3, -9.4, 1.1, 1.1)).join(' '), '#c8a8c8', SP * 0.25);
+        S(g, rect(w * 0.32, -14, w * 0.46, -10), SP * 0.7); P(g, `M${f(w * 0.33)} -10 l0 10 M${f(w * 0.45)} -10 l0 10`, SP * 0.6);
+        sitter(ctx, w * 0.39, -0.01, { kind: 'stand', task: 'abacus', colour: '#7a5a3c' });
+    },
+    // 天守の異界
+    tenshu_tomihime_no_miya(ctx, w) {
+        FAMILY.tenshu(ctx, w);
+        const { g, rnd } = ctx;
+        // 秋の間と吊り花壇: hanging flower baskets swinging from the eaves; a lit great hall
+        for (const x of [-w * 0.3, w * 0.3]) { const grp = G(g); P(grp, 'M0 0 L0 8', SP * 0.4); C(grp, 'M-4 8 Q0 13 4 8Z', '#c8a868', SP * 0.5); C(grp, `${oval(-2, 7, 1.4, 1.4)} ${oval(1.6, 6.6, 1.4, 1.4)}`, '#a24a7b', SP * 0.3); ctx.live.swing.push({ grp, x, y: -30, p: { a: 0, v: 0, ph: rnd() * 6 }, k: 10 }); }
+        openRoom(ctx, -w * 0.16, w * 0.16, -24, 'sew', { colour: '#f2eee3', hair: 'bun' });
+    },
+    tenshu_tsuyu_rankan(ctx, w) {
+        FAMILY.tenshu(ctx, w);
+        const { g, rnd } = ctx;
+        // 糸釣りの桟敷: a lady at the rail letting down a five-coloured thread with a dew drop
+        sitter(ctx, -w * 0.3, -12, { task: 'feed', colour: '#f2eee3', hair: 'bun' });
+        const cols = ['#c8403a', '#e8b84a', '#3a6a9a', '#4f7a55', '#a24a7b'];
+        cols.forEach((c, i) => el('path', { d: `M${f(-w * 0.26 + i * 1.4)} -18 Q${f(-w * 0.24 + i * 2)} -6 ${f(-w * 0.25 + i * 1.6)} 0`, fill: 'none', stroke: c, 'stroke-width': 0.5 }, g));
+        // 白露の瓶棚: a shelf of dew jars that catch the light
+        S(g, rect(w * 0.22, -22, w * 0.44, -20.6), SP * 0.6);
+        for (let i = 0; i < 4; i++) { const n = pane(g, ctx.gl, w * 0.24 + i * 5, -27, w * 0.24 + i * 5 + 3, -22, rnd, { thr: 0.05 }); n.n.setAttribute('d', `M${f(w * 0.24 + i * 5)} -22 Q${f(w * 0.235 + i * 5)} -25 ${f(w * 0.25 + i * 5)} -27 L${f(w * 0.27 + i * 5)} -27 Q${f(w * 0.285 + i * 5)} -25 ${f(w * 0.28 + i * 5)} -22Z`); ctx.live.windows.push(n); }
+    },
+    tenshu_bi_no_torihikijo(ctx, w) {
+        const { g, rnd } = ctx;
+        // 美の取引所: a white-clothed hall open to the street; three judges at their seats
+        const x0 = -w * 0.44, x1 = w * 0.3;
+        S(g, wallRect(x0, -54, x1, 0, 0.4));
+        tileRoof(g, { x0: x0 - 10, x1: x1 + 10, eave: -54, ridge: -78, inset: 16, tile: 5.2 });
+        openRoom(ctx, x0 + 4, x1 - 4, -48, 'write', { colour: '#2c2a2a', hair: 'cap', at: 0.2 });
+        sitter(ctx, lerp(x0, x1, 0.5), -10, { task: 'abacus', colour: '#a24a7b', hair: 'bun' });
+        sitter(ctx, lerp(x0, x1, 0.78), -10, { task: 'write', colour: '#d9be6e', hair: 'topknot' });
+        S(g, rect(lerp(x0, x1, 0.3), -14, lerp(x0, x1, 0.42), -10), SP * 0.6);            // 螺鈿と雪の台
+        C(g, oval(lerp(x0, x1, 0.36), -15.6, 2.6, 1.4), '#bfe3e8', SP * 0.4);
+        ctx.live.lanterns.push(chochin(g, ctx.gl, x1 + 8, -48, rnd));
+        sign(ctx, (x0 + x1) / 2, -70, 46, { h: 9 });
+    },
+    tenshu_hoshimi_no_ma(ctx, w) {
+        FAMILY.tenshu(ctx, w);
+        const { g } = ctx;
+        // ゆらぎ星図の机: someone at the star-chart desk under the telescope
+        sitter(ctx, -w * 0.3, -0.01, { kind: 'stand', task: 'write', colour: '#1b2547' });
+        roundWin(ctx, w * 0.1, -46, 5, { thr: 0.05 });
+    },
+    tenshu_shishigashira_no_ma(ctx, w) {
+        FAMILY.tenshu(ctx, w);
+        const { g } = ctx;
+        // 彫りかけの獅子頭たち and the 檜の木置き場: a carver at work among the half-carved heads
+        sitter(ctx, -w * 0.28, -0.01, { task: 'hammer', colour: '#c49a6c', hair: 'cap' });
+        for (let i = 0; i < 3; i++) { const x = -w * 0.12 + i * 9; C(g, `M${f(x - 4)} 0 L${f(x - 4)} -6 Q${f(x)} -11 ${f(x + 4)} -6 L${f(x + 4)} 0Z`, '#c49a6c', SP * 0.6); P(g, `M${f(x - 2)} -6 q2 1 4 0 M${f(x - 1)} -3 l2 0`, SP * 0.4); }
+        P(g, Array.from({ length: 4 }, (_, i) => `M${f(w * 0.3)} ${f(-2 - i * 3)} L${f(w * 0.46)} ${f(-2 - i * 3)}`).join(' '), SP * 0.9);
+    },
+    // 銀河鉄道
+    kenji_amanogawa_terminal(ctx, w) {
+        FAMILY.ginga(ctx, w);
+        const { g, rnd } = ctx;
+        // 天気輪の柱 and the green-ticket window with its clerk
+        P(g, `M${f(-w * 0.46)} 0 L${f(-w * 0.46)} -84`, SP * 1.2);
+        for (let i = 0; i < 4; i++) { const n = pane(g, ctx.gl, -w * 0.46 - 2, -82 + i * 10, -w * 0.46 + 2, -78 + i * 10, rnd, { thr: 0, lateOff: 9 }); ctx.live.windows.push(n); }
+        win(ctx, w * 0.26, -40, w * 0.4, -28, 'plain', { thr: 0.02, sil: 'sit' });
+        S(g, rect(w * 0.24, -42, w * 0.42, -26), SP * 0.7);
+        ctx.live.trains.push(stationTrain(ctx, -w / 2, w / 2, -10, { cars: 3, stop: 18 }));
+        // waiting passengers on the bench
+        sitter(ctx, -w * 0.2, -10, { kind: 'bench', task: 'read', colour: '#2f5bd3' });
+    },
+    kenji_hakucho_teishaba(ctx, w) {
+        FAMILY.ginga(ctx, w);
+        const { g, rnd } = ctx;
+        // 二十分停車の大時計: the great clock on its post with the sign hanging under it
+        P(g, `M${f(w * 0.38)} 0 L${f(w * 0.38)} -76`, SP * 1.2);
+        ctx.live.dials.push(kokuDial(g, w * 0.38, -86, 10));
+        const sg = G(g);
+        P(sg, 'M-6 0 L-6 4 M6 0 L6 4', SP * 0.5);
+        S(sg, rect(-9, 4, 9, 13), SP * 0.7);
+        text(sg, 0, 8.5, '二十分停車', 2.9, { weight: 700 });
+        ctx.live.swing.push({ grp: sg, x: w * 0.38, y: -76, p: { a: 0, v: 0, ph: rnd() * 6 }, k: 8 });
+        ctx.live.trains.push(stationTrain(ctx, -w / 2, w / 2, -10, { cars: 4, stop: 20 }));
+        // 水晶細工の銀杏: a crystal ginkgo glinting
+        const n = pane(g, ctx.gl, -w * 0.44, -46, -w * 0.3, -30, rnd, { thr: 0.02 }); n.n.setAttribute('d', `M${f(-w * 0.37)} -30 L${f(-w * 0.44)} -40 Q${f(-w * 0.37)} -50 ${f(-w * 0.3)} -40Z`); ctx.live.windows.push(n);
+        P(g, `M${f(-w * 0.37)} -30 L${f(-w * 0.37)} -10 ${n.n.getAttribute('d')}`, SP * 0.7);
+        sitter(ctx, -w * 0.12, -10, { kind: 'stand', task: 'read', colour: '#9fc3e8' });
+    },
+    kenji_pliocene_kaigan(ctx, w) {
+        FAMILY.ginga(ctx, w);
+        const { g } = ctx;
+        // 大学士の発掘場: the professor digging in the crystal sand
+        sitter(ctx, w * 0.24, -10, { task: 'hammer', colour: '#5e6b2a', hair: 'cap' });
+        S(g, `M${f(w * 0.3)} -10 Q${f(w * 0.36)} -16 ${f(w * 0.44)} -10Z`, SP * 0.6);
+        ctx.live.trains.push(stationTrain(ctx, -w / 2, w / 2, -10, { cars: 3, stop: 14 }));
+    },
+    kenji_albireo_kansokujo(ctx, w) {
+        FAMILY.ginga(ctx, w);
+        const { g, rnd } = ctx;
+        // 青宝玉と黄玉の球: the two spheres turning slowly over the observatory
+        const sph = G(g);
+        C(sph, oval(-5, 0, 4.4, 4.4), '#2f5bd3', SP * 0.6); C(sph, oval(5, 0, 4.4, 4.4), '#f2b33d', SP * 0.6);
+        ctx.live.spinners.push({ g: sph, x: w * 0.26, y: -94, a: 0, speed: 0.4 });
+        sitter(ctx, -w * 0.24, -10, { task: 'write', colour: '#0e1636', hair: 'cap' });
+    }
+};
+
+// ------------------------------------------------------------------ the dressing pass
+// Every district should show: someone at their work, a light for the night, something
+// that swings in the wind, and a couple of props that say who lives there. This tops up
+// whatever a district's own drawing left out, in the manner of its era.
+const PROPS = {
+    jomon: ['pots', 'cords', 'baskets'], heian: ['ox-cart-wheel', 'screens', 'pots'], hiraizumi: ['gold-boxes', 'baskets', 'barrels'],
+    sengoku: ['barrels', 'crates', 'pots'], meiji: ['crates', 'bicycle', 'pots'], taisho: ['bicycle', 'crates', 'flowerpots'],
+    showa: ['bicycle', 'crates', 'flowerpots'], reiwa: ['flowerpots', 'crates', 'bicycle'], ginga: ['crates', 'baskets', 'flowerpots'],
+    ihatov: ['baskets', 'barrels', 'flowerpots'], tono: ['baskets', 'barrels', 'pots'], sakura: ['baskets', 'pots', 'flowerpots'],
+    ryugu: ['shells', 'pots', 'baskets'], tsuki: ['pots', 'baskets', 'flowerpots'], tenshu: ['screens', 'pots', 'flowerpots'], yume: ['pots', 'screens', 'baskets']
+};
+const TASK = { jomon: 'sew', heian: 'write', hiraizumi: 'hammer', sengoku: 'hammer', meiji: 'write', taisho: 'sew', showa: 'hammer', reiwa: 'write', ginga: 'read', ihatov: 'write', tono: 'sew', sakura: 'tea', ryugu: 'abacus', tsuki: 'pour', tenshu: 'sew', yume: 'write' };
+function prop(g, kind, x, rnd) {
+    switch (kind) {
+        case 'pots': C(g, `M${f(x - 3)} 0 Q${f(x - 5)} -4 ${f(x - 2)} -8 L${f(x + 2)} -8 Q${f(x + 5)} -4 ${f(x + 3)} 0Z M${f(x + 6)} 0 Q${f(x + 4.6)} -3 ${f(x + 7)} -5 L${f(x + 9)} -5 Q${f(x + 11)} -3 ${f(x + 10)} 0Z`, '#9c5538', SP * 0.6); break;
+        case 'cords': P(g, Array.from({ length: 4 }, (_, i) => `M${f(x + i * 2.4)} -14 q1 6 0 12 m-1 -6 l2 0`).join(' '), SP * 0.5); P(g, `M${f(x - 2)} -14 L${f(x + 10)} -14`, SP * 0.8); break;
+        case 'baskets': C(g, `M${f(x - 4)} -7 L${f(x + 4)} -7 L${f(x + 3)} 0 L${f(x - 3)} 0Z`, '#c8a868', SP * 0.6); P(g, `M${f(x - 3.6)} -4.6 l7.2 0 M${f(x - 3.3)} -2.3 l6.6 0`, SP * 0.35); break;
+        case 'barrels': barrel(g, x); barrel(g, x + 9, 8, 8); break;
+        case 'crates': S(g, rect(x - 5, -8, x + 5, 0), SP * 0.6); S(g, rect(x - 3, -15, x + 4, -8), SP * 0.6); P(g, `M${f(x - 5)} -4 l10 0 M${f(x - 3)} -11.5 l7 0`, SP * 0.35); break;
+        case 'bicycle': P(g, `${oval(x - 6, -4, 4, 4)} ${oval(x + 6, -4, 4, 4)} M${f(x - 6)} -4 L${f(x - 1)} -10 L${f(x + 6)} -4 M${f(x - 1)} -10 L${f(x + 4)} -10 L${f(x + 6)} -4 M${f(x - 2)} -12 l3 0 M${f(x + 4)} -10 l0 -3 l2 0`, SP * 0.55); break;
+        case 'flowerpots': for (let i = 0; i < 2; i++) { const px = x + i * 8; S(g, `M${f(px - 3)} 0 L${f(px - 3.6)} -5 L${f(px + 3.6)} -5 L${f(px + 3)} 0Z`, SP * 0.6); P(g, `M${f(px)} -5 q-2 -4 0 -8 M${f(px)} -6 q3 -3 2 -6`, SP * 0.45); C(g, `${oval(px, -13.4, 1.6, 1.6)} ${oval(px + 2, -12, 1.4, 1.4)}`, i ? '#e8b84a' : '#c8403a', SP * 0.3); } break;
+        case 'gold-boxes': C(g, `${rect(x - 4, -6, x + 4, 0)} ${rect(x - 2.6, -11, x + 3, -6)}`, '#d9be6e', SP * 0.6); break;
+        case 'ox-cart-wheel': S(g, oval(x, -9, 9, 9), SP * 0.8); P(g, `${oval(x, -9, 2, 2)} ${Array.from({ length: 8 }, (_, i) => { const a = i * Math.PI / 4; return `M${f(x + Math.cos(a) * 2)} ${f(-9 + Math.sin(a) * 2)} L${f(x + Math.cos(a) * 8)} ${f(-9 + Math.sin(a) * 8)}`; }).join(' ')}`, SP * 0.45); break;
+        case 'screens': for (let i = 0; i < 3; i++) S(g, rect(x - 9 + i * 6, -14, x - 3.6 + i * 6, 0), SP * 0.55); break;
+        case 'shells': C(g, Array.from({ length: 4 }, (_, i) => `M${f(x + i * 4)} 0 q2 -3.4 4 0Z`).join(' '), '#efe4d0', SP * 0.4); break;
+        default: break;
+    }
+}
+function dress(entry, ctx, before) {
+    const { g, rnd } = ctx, w = entry.w, fam = entry.family;
+    const L = ctx.live;
+    const ox = -w / 2 + 14;                               // the near-left corner of the frontage
+    // someone at their work, in front of the building, on a mat or a bench
+    if (L.sitters.length === before.sit) {
+        C(g, rect(ox - 8, -1.4, ox + 18, 0), ['#c8403a', '#c8a868', '#34507a'][Math.floor(rnd() * 3)], SP * 0.5);
+        sitter(ctx, ox + 2, -1.4, { task: TASK[fam] || 'write', dir: 1 });
+    }
+    // a light for the night: a hanging lantern (or a lamp in the later eras)
+    if (L.lanterns.length === before.l && L.lamps.length === before.m) {
+        if (['meiji', 'taisho', 'showa', 'reiwa', 'ginga'].includes(fam)) L.lamps.push(lamp(g, ctx.gl, w / 2 - 8, -46, rnd, { kind: fam === 'meiji' || fam === 'taisho' ? 'gas' : 'post' }));
+        else L.lanterns.push(chochin(g, ctx.gl, w / 2 - 10, -36, rnd, { r: 3.6, h: 8, red: rnd() < 0.5 }));
+        P(g, `M${f(w / 2 - 14)} -40 L${f(w / 2 - 6)} -40`, SP * 0.7);
+    }
+    // something in the wind: a small hanging sign (or a wind-chime in the old places)
+    if (L.swing.length + L.banners.length + L.norens.length === before.sw) {
+        const grp = G(g);
+        P(grp, 'M-3 0 L-3 3 M3 0 L3 3', SP * 0.4);
+        if (['meiji', 'taisho', 'showa', 'reiwa', 'ginga'].includes(fam)) { S(grp, rect(-6, 3, 6, 10), SP * 0.6); P(grp, 'M-4 6.5 l8 0', SP * 0.4); }
+        else { C(grp, 'M-2.4 3 Q-3 8 0 9 Q3 8 2.4 3Z', '#3a6a9a', SP * 0.5); P(grp, 'M0 9 L0 14', SP * 0.35); S(grp, rect(-1.4, 14, 1.4, 18), SP * 0.35); }
+        L.swing.push({ grp, x: ox + 26, y: -44, p: { a: 0, v: 0, ph: rnd() * 6 }, k: 11 });
+        P(g, `M${f(ox + 20)} -44 L${f(ox + 32)} -44`, SP * 0.7);
+    }
+    // two props that say who lives here
+    const kinds = PROPS[fam] || ['pots', 'baskets'];
+    prop(g, kinds[Math.floor(rnd() * kinds.length)], w / 2 - 26, rnd);
+    prop(g, kinds[Math.floor(rnd() * kinds.length)], -w / 2 + 34 + (L.sitters.length === before.sit ? 0 : 0), rnd);
+}
+
 function buildEdo(ctx, w) {
     const fn = EDO[ctx.d.id];
     if (fn) return fn(ctx, w);
@@ -591,14 +858,14 @@ const FAMILY = {
             thatchRoof(g, { x0: xs[0] - 10, x1: xs[5] + 10, eave: -126, ridge: -146, inset: 14, rnd });
             sign(ctx, xs[5] + 4, -36, 10, { vertical: true, h: 40, colour: '#b3261e', light: true });
         } else if (has(d, '渡し')) {
-            ctx.live.waters.push(water(g, -w / 2 + 4, w / 2 - 4, -6, 0, rnd));
+            ctx.live.waters.push(waterAt(ctx, -w / 2 + 4, w / 2 - 4, -6));
             S(g, `M${f(-w * 0.3)} -8 Q${f(-w * 0.32)} -2 ${f(-w * 0.2)} -2 L${f(w * 0.1)} -2 Q${f(w * 0.2)} -2 ${f(w * 0.18)} -8Z`, SP * 0.9);
             P(g, `M${f(-w * 0.05)} -8 L${f(-w * 0.15)} -50`, SP * 0.9);
             pitHouse(ctx, w * 0.3, 46, 40);
             sign(ctx, -w * 0.3, -40, 10, { vertical: true, h: 30 });
         } else {
             pitHouse(ctx, -w * 0.16, 64, 52);
-            if (has(d, '渓')) { ctx.live.waters.push(water(g, w * 0.08, w / 2 - 4, -5, 0, rnd)); for (let i = 0; i < 4; i++) C(g, oval(w * 0.16 + i * 10, -5, 4, 3), '#78b596', SP * 0.6); }
+            if (has(d, '渓')) { ctx.live.waters.push(waterAt(ctx, w * 0.08, w / 2 - 4, -5)); for (let i = 0; i < 4; i++) C(g, oval(w * 0.16 + i * 10, -5, 4, 3), '#78b596', SP * 0.6); }
             else { for (let i = 0; i < 2; i++) { roundTree(g, w * 0.16 + i * 22, 70 + i * 10, rnd); C(g, `M${f(w * 0.16 + i * 22 - 1.6)} -30 l3.2 0 l0 3 l-3.2 0Z`, '#b3261e', SP * 0.4); } }
             sign(ctx, -w * 0.16 + 38, -36, 10, { vertical: true, h: 34 });
         }
@@ -614,7 +881,7 @@ const FAMILY = {
             S(g, rect(-w * 0.4, -40, -w * 0.06, 0));
             P(g, `${oval(-w * 0.23, -60, 16, 16)} ${oval(-w * 0.23, -60, 16, 6)} M${f(-w * 0.23)} -76 L${f(-w * 0.23)} -40`, SP * 0.8);
         } else if (has(d, '水路')) {
-            ctx.live.waters.push(water(g, -w / 2 + 6, -w * 0.02, -6, 0, rnd));
+            ctx.live.waters.push(waterAt(ctx, -w / 2 + 6, -w * 0.02, -6));
             P(g, `M${f(-w * 0.42)} -4 Q${f(-w * 0.22)} -22 ${f(-w * 0.04)} -4`, SP * 1.1);
             C(g, `M${f(-w * 0.42)} -8 Q${f(-w * 0.22)} -26 ${f(-w * 0.04)} -8 L${f(-w * 0.04)} -10 Q${f(-w * 0.22)} -28 ${f(-w * 0.42)} -10Z`, red, SP * 0.6);
         } else if (has(d, '桑')) {
@@ -653,7 +920,7 @@ const FAMILY = {
             ctx.live.mirrors.push({ n: null, glow: el('ellipse', { cx: 0, cy: -40, rx: w * 0.4, ry: 50, fill: 'url(#e-sunglow2)', opacity: 0 }, ctx.gl) });
             sign(ctx, 0, -80, 34, { h: 9 });
         } else if (has(d, '港', '川')) {
-            ctx.live.waters.push(water(g, -w / 2 + 4, w * 0.1, -6, 0, rnd));
+            ctx.live.waters.push(waterAt(ctx, -w / 2 + 4, w * 0.1, -6));
             C(g, `M${f(-w * 0.36)} -6 L${f(-w * 0.32)} -12 L${f(w * 0.02)} -12 L${f(w * 0.06)} -6Z`, '#8a5a36');
             C(g, `M${f(-w * 0.16)} -12 L${f(-w * 0.16)} -60 L${f(-w * 0.02)} -20Z`, '#efe4c0', SP * 0.6);
             machiya(ctx, w * 0.12, w / 2 - 2, { task: 'abacus', noren: '#c9a23a', label: '金', storeys: 1 });
@@ -794,7 +1061,7 @@ const FAMILY = {
             win(ctx, w * 0.22, -28, w * 0.4, -16, 'grid');
             sign(ctx, w * 0.31, -46, 46, { h: 10 });
         } else if (has(d, '海上')) {
-            ctx.live.waters.push(water(g, -w / 2 + 2, w / 2 - 2, -8, 0, rnd));
+            ctx.live.waters.push(waterAt(ctx, -w / 2 + 2, w / 2 - 2, -8));
             posts(g, [-w * 0.36, -w * 0.12, w * 0.12, w * 0.36], -40, 0, SP * 1.3);
             S(g, rect(-w * 0.44, -76, w * 0.44, -40));
             for (let i = 0; i < 5; i++) win(ctx, -w * 0.4 + i * w * 0.17, -70, -w * 0.4 + i * w * 0.17 + w * 0.12, -48, 'sash');
@@ -876,7 +1143,7 @@ const FAMILY = {
             tileRoof(g, { x0: -w / 2, x1: w / 2, eave: -70, ridge: -92, inset: 20, oni: false });
             sign(ctx, 0, -66, 50, { h: 9 });
         } else if (has(d, '谷川')) {
-            ctx.live.waters.push(water(g, -w / 2 + 4, w / 2 - 4, -8, 0, rnd));
+            ctx.live.waters.push(waterAt(ctx, -w / 2 + 4, w / 2 - 4, -8));
             roundTree(g, -w * 0.3, 70, rnd); roundTree(g, w * 0.28, 60, rnd);
             sign(ctx, 0, -30, 10, { vertical: true, h: 34 });
         } else if (has(d, '夜市')) {
@@ -905,7 +1172,7 @@ const FAMILY = {
             ctx.live.smokes.push(smoke(g, -w * 0.12, -92, rnd));
             sign(ctx, w * 0.32, -26, 10, { vertical: true, h: 24 });
         } else if (has(d, '水車')) {
-            ctx.live.waters.push(water(g, -w / 2 + 4, 0, -6, 0, rnd));
+            ctx.live.waters.push(waterAt(ctx, -w / 2 + 4, 0, -6));
             const wheel = G(g); const sp = []; for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; sp.push(`M0 0 L${f(Math.cos(a) * 20)} ${f(Math.sin(a) * 20)}`); }
             P(wheel, `${oval(0, 0, 20, 20)} ${oval(0, 0, 16, 16)} ${sp.join(' ')}`, SP * 0.7);
             ctx.live.spinners.push({ g: wheel, x: -w * 0.18, y: -20, a: 0, speed: 0.6 });
@@ -947,6 +1214,8 @@ const FAMILY = {
             sign(ctx, w * 0.3, -40, 10, { vertical: true, h: 0 });
             return;
         }
+        // the sea of the dragon palace behind the pavilion
+        ctx.live.waters.push(waterAt(ctx, -w / 2 + 1, w / 2 - 1, -10, 'sea'));
         // a pavilion on coral-red columns, wave pattern on the frieze, a tortoise-shell roof
         const x0 = -w / 2 + 10, x1 = w / 2 - 10;
         const cols = []; for (let x = x0 + 4; x <= x1 - 2; x += (x1 - x0 - 6) / 4) cols.push(x);
@@ -1015,7 +1284,7 @@ const FAMILY = {
             P(g, lil.join(' '), SP * 0.5);
             sign(ctx, w * 0.3, -40, 10, { vertical: true, h: 0 });
         } else if (has(d, '鯉')) {
-            ctx.live.waters.push(water(g, -w / 2 + 6, w / 2 - 6, -7, 0, rnd));
+            ctx.live.waters.push(waterAt(ctx, -w / 2 + 6, w / 2 - 6, -7));
             ctx.live.ponds.push({ x0: -w / 2 + 10, x1: w / 2 - 10, y: -6 });
             P(g, `M${f(-w * 0.3)} -6 Q0 -30 ${f(w * 0.3)} -6`, SP);
             sign(ctx, 0, -40, 10, { vertical: true, h: 0 });
@@ -1032,14 +1301,28 @@ const FAMILY = {
 };
 
 export function buildDistrict(entry, ctx) {
+    const before = { w: ctx.live.windows.length, l: ctx.live.lanterns.length, m: ctx.live.lamps.length, s: ctx.live.surfaces.length, wl: ctx.live.wells.length, sit: ctx.live.sitters.length, sw: ctx.live.swing.length + ctx.live.banners.length + ctx.live.norens.length };
+    buildDistrictInner(entry, ctx);
+    if (entry.family !== 'edo') dress(entry, ctx, before);
+    for (const x of ctx.live.wells.slice(before.wl)) ctx.live.wellsAbs.push(entry.s + x);
+    // water reflects the lights of its own building
+    const wins = ctx.live.windows.slice(before.w), lans = ctx.live.lanterns.slice(before.l);
+    for (const sf of ctx.live.surfaces.slice(before.s)) {
+        sf.u = entry.s;                                 // where this surface's building stands (for things that touch it)
+        sf.setLights(() => [...wins.map(w => ({ x: w.cx, get lit() { return w.lit; } })), ...lans.map(l => ({ x: l.x, get lit() { return l.litV; } }))]);
+    }
+}
+
+function buildDistrictInner(entry, ctx) {
     const w = entry.w;
     ctx.d = entry.district;
     if (entry.family === 'edo') return buildEdo(ctx, w);
     if (THIN[entry.id]) return THIN[entry.id](ctx, w);
+    if (BIG[entry.id]) return BIG[entry.id](ctx, w);
     const fn = FAMILY[entry.family] || FAMILY.reiwa;
     fn(ctx, w);
 }
 
 export function emptyLive() {
-    return { windows: [], lanterns: [], norens: [], lamps: [], smokes: [], waters: [], banners: [], dials: [], sitters: [], signs: [], swing: [], jars: [], mirrors: [], pendulums: [], spinners: [], signals: [], neon: [], fireflies: [], perches: [], blossoms: [], ponds: [], awake: [] };
+    return { windows: [], lanterns: [], norens: [], lamps: [], smokes: [], waters: [], banners: [], dials: [], sitters: [], signs: [], swing: [], jars: [], mirrors: [], pendulums: [], spinners: [], signals: [], neon: [], fireflies: [], perches: [], blossoms: [], ponds: [], awake: [], surfaces: [], waterlife: [], wells: [], wellsAbs: [], trains: [] };
 }

@@ -49,3 +49,30 @@ export function warm(P) {
         top: mix3(P.top, [236, 226, 210], 0.12 * d)
     };
 }
+
+// ---------------------------------------------------------------- legible through the ink flip
+// WCAG relative luminance and contrast ratio of two sRGB colours (0–255 triples).
+const lin = c => { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+export const relLum = c => 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]);
+export const contrast = (a, b) => { const x = relLum(a), y = relLum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+const DARK = [28, 28, 28], LIGHT = [239, 230, 207];
+
+// At dawn and dusk the paper passes through mid-tones while the ink changes sides, and for a
+// moment the two meet. legible() leaves the palette alone whenever ink on paper already clears
+// `floor`; otherwise it moves the ink toward whichever end (dark ink or pale ink) reads better
+// on this paper, just far enough to clear the floor. Day and night are untouched.
+export function legible(P, floor = 4.5) {
+    if (contrast(P.ink, P.paper) >= floor) return P;
+    const toDark = contrast(DARK, P.paper) >= contrast(LIGHT, P.paper);
+    const end = toDark ? DARK : LIGHT;
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 18; i++) {
+        const m = (lo + hi) / 2;
+        if (contrast(mix3(P.ink, end, m), P.paper) >= floor) hi = m; else lo = m;
+    }
+    let ink = mix3(P.ink, end, hi);
+    let paper = P.paper;
+    // if even the far end cannot clear the floor, nudge the paper away from the ink
+    for (let k = 0; k < 20 && contrast(ink, paper) < floor; k++) paper = mix3(paper, toDark ? [255, 250, 240] : [12, 14, 28], 0.08);
+    return { ...P, ink, paper };
+}

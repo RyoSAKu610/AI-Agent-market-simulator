@@ -20,6 +20,8 @@ import { moneyOf, goodsOf, amountText, currencyFor, sheetOf, ambientDelay } from
 import { createDog, createCat, createFlock, createBeast, createRabbit } from './animals.js';
 import { SP, oval, bench as drawBench, smoke, noren as drawNoren, chochin, text as drawText, C, S as shapeP, P as penP, rect, hisashi } from './kit.js';
 import { createSitter } from './sitter.js';
+import { createSurface } from './water.js';
+import { createBirdCompanion, createButterflyCompanion } from './companions.js';
 import { FS } from './residents.js';
 
 const LANES = [5, 10, 15];
@@ -54,7 +56,8 @@ const FAUNA = {
 const STALL = { edo: ['団子', 'dango'], sengoku: ['餅', 'dango'], meiji: ['蕎麦', 'soba'], taisho: ['焼芋', 'imo'], showa: ['焼芋', 'imo'], tono: ['団子', 'dango'] };
 const KEEPER_COLOURS = ['#34507a', '#7a5a3c', '#4f6b55', '#6a4a6a', '#8a5a3c', '#2f3f5f', '#7a2e3a'];
 
-export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, onReaderTap, onFolkTap }) {
+export function createTown({ layer, glowLayer, fxLayer, hiLayer, groundLayer, layout, W, rnd: rnd0, onReaderTap, onFolkTap }) {
+    const weather = { rain: 0, wet: 0 };
     const R = layout.R, L = layout.total;
     const rnd = rnd0 || seeded(77);
     const places = new Map();            // place id → { entry, folk:[], keepers:Map(districtId→folk), animals:[], benches:[], stall, readers:[] }
@@ -88,7 +91,7 @@ export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, on
         const pr = seeded(Math.floor(hash01(pe.id, 'town') * 2147483646) + 1);
         const pick = arr => arr[Math.floor(pr() * arr.length)];
         const dress = DRESS[fam] || DRESS.edo;
-        const T = { entry: pe, folk: [], keepers: new Map(), animals: [], benches: [], readers: [], stall: null, decor: el('g', {}, fxLayer), nextAmbient: ambientDelay(pe.s0 | 0, 0, 4, 9), n: 0, money: moneyOf(fam) };
+        const T = { entry: pe, folk: [], keepers: new Map(), animals: [], benches: [], readers: [], stall: null, decor: el('g', {}, fxLayer), ground: el('g', {}, groundLayer), nextAmbient: ambientDelay(pe.s0 | 0, 0, 4, 9), n: 0, money: moneyOf(fam) };
         T.decor.setAttribute('class', 'town-decor');
         places.set(pe.id, T);
         const dIds = new Set(pe.districts.map(d => d.id));
@@ -152,6 +155,20 @@ export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, on
         }
         // animals
         for (const a of FAUNA[fam] || ['flock']) T.animals.push(makeAnimal(a, pe, T, pr, bs));
+        // puddles: hollows in the street that fill when it rains and dry slowly afterwards
+        T.puddles = [];
+        const nP = pe.hero ? 4 : 2;
+        for (let i = 0; i < nP; i++) {
+            const ps = lerp(pe.s0 + 50, pe.s1 - 50, (i + 0.3 + pr() * 0.4) / nP), off = [7, 12, 16][i % 3], w = 26 + pr() * 18;
+            const g = el('g', { transform: trAt(ps, off) }, T.ground);
+            const hg = el('g', { transform: trAt(ps, off) }, hiLayer);
+            const gg = el('g', { transform: trAt(ps, off) }, glowLayer);
+            const inner = el('g', {}, g), hin = el('g', {}, hg), gin = el('g', {}, gg);
+            const sf = createSurface({ g: inner, hl: hin, gl: gin, rnd: pr }, { x0: -w / 2, x1: w / 2, yTop: -2.6, yBot: 2.6, kind: 'puddle', shape: 'ellipse', flow: 0.05 });
+            // the lanterns of the street are what a puddle reflects
+            sf.setLights(() => []);
+            T.puddles.push({ sf, s: ps, off, w, g: inner, hg: hin, gg: gin, k: -1 });
+        }
         // a dog at the heel of one townsperson in the everyday places
         if (pe.hero || ['taisho', 'showa', 'jomon'].includes(fam)) {
             const owner = T.folk.find(p => p.role === 'passer' && p.id.endsWith('-0'));
@@ -168,7 +185,15 @@ export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, on
             const s = onBench ? benchS + 10 : pe.hero ? benchS + 26 : lerp(span[0], span[1], pr());
             cat.place(trAt(s, onBench ? 3.6 : 3, onBench ? 11 : 0), pr() < 0.5 ? 1 : -1);
             cat.hit.addEventListener('pointerup', e => { if (!e.__dragged) cat.poke(); });
-            return { kind, a: cat, s, update(dt, t, P) { cat.update(dt, t, P, (x, y) => ringXY(s, onBench ? 3.6 : 3, x * cat.dir * cat.scale, y * cat.scale - (onBench ? 11 : 0))); } };
+            let under = 0, lastUnder = -1;
+            return { kind, a: cat, s, update(dt, t, P) {
+                // in the rain the cat on the bench slips underneath it, and comes back up when it stops
+                const want = onBench && weather.rain > 0.15 ? 1 : 0;
+                under = want;
+                const lift = onBench && !under ? 11 : 0, ss = under ? benchS + 4 : s;
+                if (under !== lastUnder) { lastUnder = under; cat.place(trAt(ss, onBench ? 3.6 : 3, lift), cat.dir || 1); }
+                cat.update(dt, t, P, (x, y) => ringXY(ss, onBench ? 3.6 : 3, x * cat.dir * cat.scale, y * cat.scale - lift));
+            } };
         }
         if (kind === 'flock' || kind === 'hens') {
             const hen = kind === 'hens';
@@ -343,7 +368,26 @@ export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, on
         p.fig.glowRoot.setAttribute('transform', trAt(p.s, p.off));
         place(p.fig.body, 0, 0, p.dir, FS * p.look.scale);
         place(p.fig.glowBody, 0, 0, p.dir, FS * p.look.scale);
-        p.fig.update({ phase: p.phase, go: p.go, t, dt, P, wind, act: p.act });
+        const pose = p.fig.update({ phase: p.phase, go: p.go, t, dt, P, wind, act: p.act });
+        footfall(p, pose, p.pe.id);
+    }
+    // a foot coming down in a puddle throws a small crown (the foot itself stays planted)
+    function footfall(p, pose, placeId) {
+        if (weather.wet < 0.08 || !pose) return;
+        const T = places.get(placeId); if (!T) return;
+        p.stance = p.stance || [true, true];
+        const k = FS * p.look.scale;
+        for (let i = 0; i < 2; i++) {
+            const st = pose.feet[i].stance;
+            if (st && !p.stance[i] && p.go > 0.3) {
+                const fs = p.s + p.dir * k * (pose.feet[i].ankle[0] - 40);
+                for (const pd of T.puddles) {
+                    const half = pd.w / 2 * pd.k;
+                    if (Math.abs(arcDelta(pd.s, fs, L)) < half && Math.abs(pd.off - p.off) < 4.5) { pd.sf.splash(arcDelta(pd.s, fs, L) / Math.max(0.2, pd.k), 0.55, 0.5); break; }
+                }
+            }
+            p.stance[i] = st;
+        }
     }
 
     // each kind of townsperson decides what to do next (only while their place is in view)
@@ -351,7 +395,7 @@ export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, on
         const pe = T.entry;
         if (p.busy) return;
         p.timer -= 1;
-        if (p.role === 'passer' && p.state === 'idle') {
+        if (p.role === 'passer' && p.state === 'idle' && !p.sheltering) {
             walkTo(p, clamp(p.s + (Math.random() < 0.5 ? -1 : 1) * (30 + Math.random() * 120), pe.s0 + 30, pe.s1 - 30));
         } else if (p.role === 'child' && p.parent) {
             const want = p.parent.s + (p.parent.dir || 1) * (p.parent.go > 0.3 ? 16 : (Math.random() < 0.5 ? 14 : -14));
@@ -415,7 +459,7 @@ export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, on
             const vis = visiblePlaces.has(id);
             if (T.shown !== vis) {
                 T.shown = vis;
-                T.decor.style.display = vis ? '' : 'none';
+                T.decor.style.display = vis ? '' : 'none'; T.ground.style.display = vis ? '' : 'none';
                 for (const p of T.folk) { p.fig.g.style.display = vis ? '' : 'none'; p.fig.glowRoot.style.display = vis ? '' : 'none'; p.shown = vis; p.visible = vis; p.away = undefined; }
                 for (const a of T.animals) if (a.a && a.a.g) { a.a.g.style.display = vis ? '' : 'none'; if (a.a.gl) a.a.gl.style.display = vis ? '' : 'none'; }
             }
@@ -442,10 +486,27 @@ export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, on
                 stepFolk(p, dt, t, P, wind, view);
             }
             for (const a of T.animals) a.update(dt, t, P, near, wind);
+            // puddles grow with the wetness of the street and take the rain
+            for (const pd of T.puddles) {
+                const k = Math.round(weather.wet * 40) / 40;
+                if (k !== pd.k) { pd.k = k; const tr = `scale(${f(Math.max(0.01, k))} ${f(Math.max(0.01, 0.6 + 0.4 * k))})`; pd.g.setAttribute('transform', tr); pd.hg.setAttribute('transform', tr); pd.gg.setAttribute('transform', tr); const v = k > 0.02 ? '' : 'none'; pd.g.style.display = v; pd.hg.style.display = v; pd.gg.style.display = v; }
+                if (pd.k > 0.02) { if (weather.rain > 0 && Math.random() < weather.rain * 9 * dt) pd.sf.rain((Math.random() - 0.5) * pd.w * 0.9, 0.2 + Math.random() * 0.6); pd.sf.update(t, dt, wind, P); }
+            }
+            // rain: most people open a 番傘; the rest wait it out under an eave
+            const raining = weather.rain > 0.12;
+            for (const p of T.folk) {
+                const brolly = hash01(p.id, 'umb') < 0.62 && p.role !== 'keeper';
+                p.act.umb = clamp((p.act.umb || 0) + (raining && brolly ? dt : -dt) * 1.6, 0, 1);
+                if (p.role === 'passer' && !brolly && !p.busy) {
+                    if (raining && !p.sheltering) { p.sheltering = true; const k = [...T.keepers.values()].reduce((a, b) => Math.abs(arcDelta(p.s, b.s, L)) < Math.abs(arcDelta(p.s, a.s, L)) ? b : a); p.off = 3.6; walkTo(p, k.s + 12); }
+                    else if (!raining && p.sheltering) { p.sheltering = false; p.off = LANES[hash01(p.id, 'lane') * 3 | 0]; }
+                }
+            }
             for (const b of T.benches) for (const s of b.sitters) s.draw(t, dt, P);
             if (T.stall) T.stall.draw(t, dt, wind, P);
         }
         for (const d of dogs) updateDog(d, dt, t, P, wind);
+        for (const c of companions) c.c.update(dt, t, P, c.owner.visible !== false && c.owner.mode !== 'gone' && c.owner.shown !== false);
         for (let i = exchanges.length - 1; i >= 0; i--) { updateExchange(exchanges[i], dt); if (exchanges[i].finished) exchanges.splice(i, 1); }
     }
 
@@ -468,7 +529,19 @@ export function createTown({ layer, glowLayer, fxLayer, layout, W, rnd: rnd0, on
         } };
     }
 
-    return { places, all, dogs, update, exchange, residentTrade, makeDog, figToRing, get busySlots() { return slots.filter(s => s.busy).length; } };
+    // a bird or a butterfly that keeps a resident company
+    const companions = [];
+    function addCompanion(owner, spec) {
+        const at = (fx, fy) => { const q = owner.fig.upToFig(fx, fy); return figToRing(owner, q[0], q[1]); };
+        const angle = () => (owner.s / R) * 57.29578;
+        const perch = o => { const side = Math.random() < 0.5 ? -1 : 1; return ringXY(o.s + side * (16 + Math.random() * 10), 2, 0, -50 - Math.random() * 10); };
+        const c = spec.kind === 'bird' ? createBirdCompanion(layer, glowLayer, owner, { colour: spec.colour, at, angle, perch })
+            : createButterflyCompanion(layer, glowLayer, owner, { colour: spec.colour, at, angle });
+        companions.push({ owner, c });
+        return c;
+    }
+
+    return { places, all, dogs, update, addCompanion, companions, exchange, residentTrade, makeDog, figToRing, footfall, weather, get busySlots() { return slots.filter(s => s.busy).length; } };
 }
 
 // ------------------------------------------------------------------ art for money and goods (drawn around 0,0, ~6 units)
